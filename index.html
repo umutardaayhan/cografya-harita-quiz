@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KPSS Coğrafya Harita Ezber & Test</title>
+  
+  <!-- Leaflet Harita Kütüphanesi -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Uygulama Stili -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Üst Kategori ve Mod Seçim Menüsü -->
+  <nav class="top-nav">
+    <div id="categories-container" style="display: flex; gap: 6px; align-items: center;">
+      <!-- JS ile dinamik doldurulur -->
+    </div>
+    <div class="nav-divider"></div>
+    <button id="mode-toggle-btn" class="mode-toggle-btn" title="Mod Değiştir">
+      <span>🧭</span> <span>Keşif Modu</span>
+    </button>
+  </nav>
+
+  <!-- Harita Alanı -->
+  <div id="map"></div>
+
+  <!-- Sol Alt Harita Araçları -->
+  <div class="map-controls-left">
+    <button id="map-layer-btn" class="tool-btn" title="Harita Tipini Değiştir">
+      <span>🗺️</span> <span>Sade Harita (Aktif)</span>
+    </button>
+    <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
+      <span>🎯</span> <span>Merkezle</span>
+    </button>
+  </div>
+
+  <!-- Sağ Alt Quiz / Soru Paneli -->
+  <main id="quiz-panel" class="quiz-panel">
+    <!-- İstatistik Barı -->
+    <div class="stats-bar">
+      <div class="stat-item correct">
+        <span>✓</span> <span id="stat-correct">0</span>
+      </div>
+      <div class="stat-item wrong">
+        <span>✗</span> <span id="stat-wrong">0</span>
+      </div>
+      <div class="stat-item streak">
+        <span id="stat-streak">0</span>
+      </div>
+      <div class="stat-item">
+        <span>Başarı:</span> <span id="stat-rate" style="color: #60a5fa; font-weight:700;">%0</span>
+      </div>
+    </div>
+
+    <!-- Keşif Modu Bilgisi -->
+    <div id="explore-banner" class="explore-banner"></div>
+
+    <!-- Soru Başlığı -->
+    <div class="question-header">
+      <span id="question-badge" class="question-badge">🏔️ DAĞLAR - [KONUM SORUSU]</span>
+      <h2 id="question-title" class="question-title">Haritada işaretli dağ hangisidir?</h2>
+    </div>
+
+    <!-- 4 Seçenek Şıklar Listesi -->
+    <div id="options-grid" class="options-grid">
+      <!-- JS ile dinamik butonlar (1, 2, 3, 4) -->
+    </div>
+
+    <!-- KPSS Hap Bilgi Kutusu -->
+    <div id="kpss-info-card" class="kpss-info-card">
+      <div class="kpss-info-header">
+        <span id="kpss-info-title">Erciyes Dağı</span>
+        <span id="kpss-info-type" class="kpss-badge">Volkanik Dağ (İç Anadolu)</span>
+      </div>
+      <p id="kpss-info-text"></p>
+    </div>
+
+    <!-- Sonraki Soru Butonu -->
+    <button id="next-btn" class="next-btn">
+      Sonraki Soru → (Boşluk / Enter)
+    </button>
+  </main>
+
+  <!-- Uygulama Scriptleri -->
+  <script src="data/cografya_data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

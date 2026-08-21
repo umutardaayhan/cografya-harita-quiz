@@ -1,0 +1,15 @@
+=========================================
+🕒 Tarih/Saat: 21.08.2026 - 21:07
+⚠️ Sorun/İhtiyaç: KPSS Coğrafya yer şekilleri (Dağlar, Ovalar, Platolar, Akarsu/Göller, Geçitler) için kişisel harita ezber ve test uygulaması ihtiyacı.
+🎯 İşlem Özeti: Leaflet.js tabanlı, Türkiye koordinatlarına odaklı, tam ekran interaktif harita üzerinde konum sorma motoru ve KPSS hap bilgileri içeren sade web uygulaması geliştirildi.
+📁 Etkilenen Kapsam: 
+  - docs/MIMARI.md
+  - docs/KPSS_MUDREDAT.md
+  - data/cografya_data.js
+  - css/style.css
+  - js/map.js
+  - js/quiz.js
+  - js/app.js
+  - index.html
+🔄 Geri Dönüş: git checkout veya dosyaları silerek sıfırlanabilir.
+=========================================
