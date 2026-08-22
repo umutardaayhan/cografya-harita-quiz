@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalCloseBtn = document.getElementById('modal-close-btn');
   const modalCancelBtn = document.getElementById('modal-cancel-btn');
   const shapeNameInput = document.getElementById('shape-name');
+  const shapeCategoryInput = document.getElementById('shape-category');
   const shapeTypeInput = document.getElementById('shape-type');
   const shapeRegionInput = document.getElementById('shape-region');
   const shapeNoteInput = document.getElementById('shape-note');
@@ -582,12 +583,19 @@ document.addEventListener('DOMContentLoaded', () => {
     drawModal.style.display = 'flex';
     drawSaveForm.reset();
     
+    // Varsayılan olarak o anki aktif kategoriyi seç
+    shapeCategoryInput.value = activeCategory || 'daglar';
+
     if (pendingDrawingData.shapeType === 'polyline') {
       shapeTypeInput.value = 'Akarsu / Vadi / Hat';
     } else if (pendingDrawingData.shapeType === 'polygon') {
       shapeTypeInput.value = 'Plato / Havza / Bölge';
     } else {
-      shapeTypeInput.value = 'Özel Yer Şekli / Geçit';
+      if (activeCategory === 'daglar') shapeTypeInput.value = 'Volkanik Dağ / Sıra Dağ';
+      else if (activeCategory === 'ovalar') shapeTypeInput.value = 'Tektonik Ova / Delta';
+      else if (activeCategory === 'platolar') shapeTypeInput.value = 'Tabaka Düzlüğü Platosu';
+      else if (activeCategory === 'gecitler') shapeTypeInput.value = 'Dağ Geçidi';
+      else shapeTypeInput.value = 'Özel Yer Şekli';
     }
 
     shapeNameInput.focus();
@@ -609,10 +617,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!pendingDrawingData) return;
 
     const selectedColorInput = document.querySelector('input[name="shape-color"]:checked');
-    const color = selectedColorInput ? selectedColorInput.value : '#ef4444';
+    const color = selectedColorInput ? selectedColorInput.value : '#8b5cf6';
+    const targetCat = shapeCategoryInput.value || 'ozel_cizimler';
 
     const newItem = {
       name: shapeNameInput.value,
+      category: targetCat,
       shapeType: pendingDrawingData.shapeType,
       coordinates: pendingDrawingData.coordinates,
       type: shapeTypeInput.value || 'Özel Konum',
@@ -622,10 +632,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     customDrawManager.addDrawing(newItem);
+    geoQuiz.reloadCategoryItems();
     renderCategories();
     closeSaveModal();
 
-    alert(`🎉 "${newItem.name}" başarıyla kaydedildi ve Quiz veritabanına eklendi!`);
+    const catObj = CATEGORIES.find(c => c.id === targetCat) || { title: 'Özel Çizimlerim' };
+    alert(`🎉 "${newItem.name}" başarıyla kaydedildi ve "${catObj.title}" konusuna eklendi!`);
   });
 
   // --- ÇİZİMLERİ YÖNETME & JSON İÇE/DIŞA AKTARMA MODALI ---
@@ -651,6 +663,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const catLabels = {
+      daglar: '🏔️ Dağlar',
+      ovalar: '🌾 Ovalar',
+      platolar: '⛰️ Platolar',
+      su_kaynaklari: '🌊 Akarsu/Göl',
+      gecitler: '🚪 Geçitler',
+      ozel_cizimler: '🎨 Özel'
+    };
+
     drawings.forEach(item => {
       const itemEl = document.createElement('div');
       itemEl.className = 'drawing-list-item';
@@ -659,9 +680,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (item.shapeType === 'polyline') shapeIcon = '📏';
       if (item.shapeType === 'polygon') shapeIcon = '📐';
 
+      const catBadge = catLabels[item.category] || '🎨 Özel';
+
       itemEl.innerHTML = `
         <div class="drawing-item-info">
-          <div class="drawing-item-title">${shapeIcon} ${item.name}</div>
+          <div class="drawing-item-title">
+            ${shapeIcon} ${item.name} 
+            <span style="font-size: 0.72rem; background: rgba(139, 92, 246, 0.25); color: #c084fc; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${catBadge}</span>
+          </div>
           <div class="drawing-item-sub">${item.type} | ${item.region || ''}</div>
         </div>
         <button class="drawing-item-delete" data-id="${item.id}" title="Çizimi Sil">Sil</button>
@@ -670,6 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
       itemEl.querySelector('.drawing-item-delete').addEventListener('click', () => {
         if (confirm(`"${item.name}" çizimini silmek istediğinize emin misiniz?`)) {
           customDrawManager.deleteDrawing(item.id);
+          geoQuiz.reloadCategoryItems();
           renderDrawingsList();
           renderCategories();
         }

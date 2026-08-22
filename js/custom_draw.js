@@ -1,6 +1,7 @@
 /**
  * Özel Çizim ve Kullanıcı Harita Katmanı Yöneticisi
- * Nokta (Point), Çizgi (Polyline), Geometrik Alan (Polygon) destekler.
+ * - Hem Bağımsız Çizimler (Özel Çizimlerim) hem de Gömülü Kategorilere (Dağlar, Ovalar, Platolar, vb.) Yeni Şekil Ekleme Desteği
+ * - Nokta (Point), Çizgi (Polyline), Geometrik Alan (Polygon) destekler.
  */
 
 class CustomDrawManager {
@@ -26,19 +27,23 @@ class CustomDrawManager {
     localStorage.setItem(this.storageKey, JSON.stringify(this.drawings));
   }
 
-  // Yeni çizim öğesi ekle
+  // Yeni çizim öğesi ekle (İsteğe bağlı hedef kategori ile: 'daglar', 'ovalar', 'platolar', 'su_kaynaklari', 'gecitler', 'ozel_cizimler')
   addDrawing(item) {
+    const targetCategory = item.category || 'ozel_cizimler';
+
     const newDrawing = {
       id: 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       name: item.name.trim(),
+      category: targetCategory,
       shapeType: item.shapeType, // 'point', 'polyline', 'polygon'
       coordinates: item.coordinates, // LatLng array veya single [lat, lng]
       lat: item.shapeType === 'point' ? item.coordinates[0] : this.calculateCenter(item.coordinates)[0],
       lng: item.shapeType === 'point' ? item.coordinates[1] : this.calculateCenter(item.coordinates)[1],
       type: item.type || 'Özel İşaret',
       region: item.region || 'Özel Konum',
-      color: item.color || '#f59e0b',
+      color: item.color || '#8b5cf6',
       kpssNot: item.kpssNot || 'Kullanıcı tarafından oluşturulan özel not.',
+      isCustomUserAdded: true,
       createdAt: new Date().toISOString()
     };
 
@@ -70,11 +75,35 @@ class CustomDrawManager {
     this.saveDrawings();
   }
 
-  // Çizimleri Quiz motorunun anlayacağı formata çevir
+  // Belirli bir kategoriye ait kullanıcı çizimlerini getir
+  getDrawingsByCategory(categoryKey) {
+    if (categoryKey === 'ozel_cizimler') {
+      return this.getQuizItems();
+    }
+    return this.drawings
+      .filter(d => d.category === categoryKey)
+      .map(d => ({
+        id: d.id,
+        name: d.name,
+        category: d.category,
+        shapeType: d.shapeType,
+        coordinates: d.coordinates,
+        lat: d.lat,
+        lng: d.lng,
+        type: d.type,
+        region: d.region,
+        color: d.color,
+        kpssNot: d.kpssNot,
+        isCustomUserAdded: true
+      }));
+  }
+
+  // Tüm çizimleri Quiz motorunun anlayacağı formata çevir
   getQuizItems() {
     return this.drawings.map(d => ({
       id: d.id,
       name: d.name,
+      category: d.category || 'ozel_cizimler',
       shapeType: d.shapeType,
       coordinates: d.coordinates,
       lat: d.lat,
@@ -82,7 +111,8 @@ class CustomDrawManager {
       type: d.type,
       region: d.region,
       color: d.color,
-      kpssNot: d.kpssNot
+      kpssNot: d.kpssNot,
+      isCustomUserAdded: true
     }));
   }
 
@@ -98,33 +128,66 @@ class CustomDrawManager {
       lngSum += pt[1];
     });
 
-    return [latSum / coords.length, lngSum / coords.length];
+    return [
+      Number((latSum / coords.length).toFixed(5)),
+      Number((lngSum / coords.length).toFixed(5))
+    ];
   }
 
-  // JSON Dışa Aktarma
+  // JSON Dışa Aktar
   exportJSON() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.drawings, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `kpss_ozel_cizimler_${new Date().toISOString().slice(0,10)}.json`);
+    downloadAnchor.setAttribute("download", `kpss_harita_cizimlerim_${new Date().toISOString().slice(0,10)}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
   }
 
-  // JSON İçe Aktarma
+  // JSON İçe Aktar (NotebookLM veya dosya çıktısı)
   importJSON(jsonString) {
     try {
-      const data = JSON.parse(jsonString);
-      if (Array.isArray(data)) {
-        // Temel alanları olan öğeleri filtrele
-        const validItems = data.filter(item => item.name && item.shapeType && item.coordinates);
-        this.drawings = [...validItems, ...this.drawings];
-        this.saveDrawings();
-        return { success: true, count: validItems.length };
+      let data = JSON.parse(jsonString);
+      if (!Array.isArray(data)) {
+        if (data && typeof data === 'object') {
+          // Eğer tek bir obje veya sarmalanmış liste ise
+          if (Array.isArray(data.items)) data = data.items;
+          else if (Array.isArray(data.drawings)) data = data.drawings;
+          else data = [data];
+        } else {
+          throw new Error('Geçersiz JSON formatı. Dizi (Array) bekleniyor.');
+        }
       }
-      return { success: false, error: 'Geçersiz veri formatı.' };
+
+      let addedCount = 0;
+      data.forEach(item => {
+        if (item.name && (item.coordinates || (item.lat && item.lng))) {
+          let coords = item.coordinates;
+          let shapeType = item.shapeType || 'point';
+
+          if (!coords && item.lat && item.lng) {
+            coords = [item.lat, item.lng];
+            shapeType = 'point';
+          }
+
+          this.addDrawing({
+            name: item.name,
+            category: item.category || 'ozel_cizimler',
+            shapeType: shapeType,
+            coordinates: coords,
+            type: item.type || 'Özel Konum',
+            region: item.region || 'Türkiye',
+            color: item.color || '#8b5cf6',
+            kpssNot: item.kpssNot || item.note || 'İçe aktarılan yer şekli.'
+          });
+          addedCount++;
+        }
+      });
+
+      return { success: true, count: addedCount };
     } catch (e) {
+      console.error('JSON Import Hatası:', e);
       return { success: false, error: e.message };
     }
   }

@@ -122,7 +122,9 @@ class GeographyQuiz {
     if (this.categoryKey === 'ozel_cizimler') {
       source = this.customDrawManager ? this.customDrawManager.getQuizItems() : [];
     } else {
-      source = COGRAFYA_DATA[this.categoryKey] || [];
+      const defaultItems = COGRAFYA_DATA[this.categoryKey] || [];
+      const userAddedItems = this.customDrawManager ? this.customDrawManager.getDrawingsByCategory(this.categoryKey) : [];
+      source = [...defaultItems, ...userAddedItems];
     }
 
     if (this.activeSubType && this.activeSubType !== 'all' && typeof SUB_TYPES !== 'undefined' && SUB_TYPES[this.categoryKey]) {
