@@ -1180,18 +1180,25 @@ document.addEventListener('DOMContentLoaded', () => {
   if (focusModeBtn) focusModeBtn.addEventListener('click', () => toggleFocusMode());
   if (focusExitBtn) focusExitBtn.addEventListener('click', () => toggleFocusMode(false));
 
+  const quizExpandBtn = document.getElementById('quiz-expand-btn');
+
   if (quizMinimizeBtn) {
     quizMinimizeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      quizPanel.classList.toggle('minimized');
-      quizMinimizeBtn.querySelector('span').textContent = quizPanel.classList.contains('minimized') ? '▴' : '▾';
+      quizPanel.classList.add('minimized');
+    });
+  }
+
+  if (quizExpandBtn) {
+    quizExpandBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      quizPanel.classList.remove('minimized');
     });
   }
 
   quizPanel.addEventListener('click', (e) => {
-    if (quizPanel.classList.contains('minimized') && (e.target === quizPanel || e.target.classList.contains('panel-minimize-btn'))) {
+    if (quizPanel.classList.contains('minimized')) {
       quizPanel.classList.remove('minimized');
-      if (quizMinimizeBtn) quizMinimizeBtn.querySelector('span').textContent = '▾';
     }
   });
 

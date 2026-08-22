@@ -303,3 +303,13 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:29
+⚠️ Sorun/İhtiyaç: format-dropdown menüsünün sub-categories-bar altında kalması hatası, quiz panel küçültme butonunun Sıfırla butonunun üzerine binmesi ve tüm arayüz için sivri köşeli premium keskin tema talebi.
+🎯 İşlem Özeti: top-nav ve sub-categories-bar için stacking context hiyerarşisi (z-index: 100 ve 10) kurularak menünün altta kalma sorunu çözüldü; quiz-minimize-btn stats-bar içine Sıfırla butonunun hemen yanına hizalandı ve küçültülmüş quiz barı eklendi; tüm arayüzdeki border-radius değerleri sıfırlanarak keskin, sivri köşeli lüks ve modern bir tema inşa edildi.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - css/style.css
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

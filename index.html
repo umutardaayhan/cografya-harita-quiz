@@ -166,7 +166,12 @@
 
   <!-- Sağ Alt Quiz / Soru Paneli (Kompakt Basık Düzen) -->
   <main id="quiz-panel" class="quiz-panel">
-    <button id="quiz-minimize-btn" class="panel-minimize-btn quiz-min-btn" title="Soru Panelini Küçült / Aç"><span>▾</span></button>
+    <!-- Küçültülmüş Panel Durumu Çubuğu -->
+    <div id="quiz-collapsed-bar" class="quiz-collapsed-bar" style="display: none;">
+      <span>📊 Soru Paneli</span>
+      <button id="quiz-expand-btn" class="panel-minimize-btn" title="Paneli Aç"><span>▴</span></button>
+    </div>
+
     <div id="quiz-panel-inner" class="quiz-panel-inner">
       <!-- İstatistik, Deneme ve Şimşek Turu Barı -->
       <div class="stats-bar">
@@ -199,9 +204,14 @@
           <div class="stat-item rate" title="Genel Başarı Oranı">
             <span class="stat-label">Başarı:</span> <span id="stat-rate">%0</span>
           </div>
-          <button id="reset-stats-btn" class="reset-stats-btn" title="Çalışma İstatistiklerini Sıfırla">
-            <span>🔄</span> <span>Sıfırla</span>
-          </button>
+          <div class="stats-bar-actions">
+            <button id="reset-stats-btn" class="reset-stats-btn" title="Çalışma İstatistiklerini Sıfırla">
+              <span>🔄</span> <span>Sıfırla</span>
+            </button>
+            <button id="quiz-minimize-btn" class="panel-minimize-btn quiz-min-btn" title="Soru Panelini Küçült">
+              <span>▾</span>
+            </button>
+          </div>
         </div>
       </div>
 
