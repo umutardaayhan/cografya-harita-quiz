@@ -445,6 +445,18 @@ body {
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
+/* Dilsiz Harita (Yazısız Mod) Stilleri */
+body.map-no-labels .leaflet-tooltip-pane {
+  display: none !important;
+}
+
+#toggle-labels-btn.active {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: rgba(139, 92, 246, 0.7);
+  color: #d8b4fe;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.45);
+}
+
 .tool-btn.danger {
   color: #f87171;
   border-color: rgba(239, 68, 68, 0.3);

@@ -313,3 +313,14 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:35
+⚠️ Sorun/İhtiyaç: Haritadaki şehir, ilçe ve coğrafi yer isimlerinin kullanıcının dikkatini dağıtmaması ve sınav simülasyonu için tamamen dilsiz/yazısız bir harita üzerinde yalnızca soruya konu olan şekillerin görünmesi ihtiyacı.
+🎯 İşlem Özeti: GeographyMap sınıfına noLabels katman motoru (CartoDB no-labels, ESRI Shaded Relief & Imagery) ve localStorage kalıcılığı entegre edildi; sol alt araç çubuğuna '🔇 Dilsiz Harita' aç/kapa butonu eklendi; dilsiz modda haritadaki tüm şehir, yol ve harita yazıları ile gereksiz etiketler gizlenerek yalnızca soru şekillerinin parıldaması sağlandı.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - css/style.css
+  - js/map.js
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

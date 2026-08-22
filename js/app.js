@@ -1153,6 +1153,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // --- DİLSİZ HARİTA (YAZISIZ MOD) BUTONU ---
+  const toggleLabelsBtn = document.getElementById('toggle-labels-btn');
+  const labelsBtnLabel = document.getElementById('labels-btn-label');
+
+  function updateLabelsBtnUI() {
+    if (!toggleLabelsBtn) return;
+    const isLabelsOff = !geoMap.labelsEnabled;
+    if (isLabelsOff) {
+      toggleLabelsBtn.classList.add('active');
+      toggleLabelsBtn.title = "Harita Dilsiz (Yazısız) Modda. Yazıları açmak için tıklayın.";
+      if (labelsBtnLabel) labelsBtnLabel.textContent = "Dilsiz (Açık)";
+    } else {
+      toggleLabelsBtn.classList.remove('active');
+      toggleLabelsBtn.title = "Haritadaki tüm şehir ve yer isimlerini gizlemek için tıklayın.";
+      if (labelsBtnLabel) labelsBtnLabel.textContent = "Dilsiz Harita";
+    }
+  }
+
+  if (toggleLabelsBtn) {
+    updateLabelsBtnUI();
+    toggleLabelsBtn.addEventListener('click', () => {
+      geoMap.toggleLabels();
+      updateLabelsBtnUI();
+    });
+  }
+
   resetViewBtn.addEventListener('click', () => {
     geoMap.resetView();
   });

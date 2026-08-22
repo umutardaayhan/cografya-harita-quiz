@@ -17,6 +17,9 @@ class GeographyMap {
     // Otomatik Yakınlaştırma (Auto-Zoom) Ayarı (LocalStorage destekli)
     this.autoZoomEnabled = this.loadAutoZoomSetting();
 
+    // Dilsiz Harita (Yazısız / No-Labels Modu) (LocalStorage destekli)
+    this.labelsEnabled = this.loadLabelsSetting();
+
     // Aktif çizim durumu
     this.isDrawing = false;
     this.drawingShapeType = null; // 'point', 'polyline', 'polygon'
@@ -25,53 +28,42 @@ class GeographyMap {
     this.drawingVertexMarkers = [];
     this.onDrawingComplete = null;
 
-    // Harita Katmanları Havuzu
-    this.layers = {
+    // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri)
+    this.layerConfigs = {
       voyager: {
         name: 'Sade / Renkli',
-        layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; OpenStreetMap &copy; CARTO',
-          subdomains: 'abcd',
-          maxZoom: 18,
-          minZoom: 5
-        })
+        withLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        noLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 5 }
       },
       topo: {
         name: 'Fiziki / Topografik',
-        layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap &copy; OpenTopoMap',
-          maxZoom: 17,
-          minZoom: 5
-        })
+        withLabels: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: '&copy; OpenStreetMap &copy; OpenTopoMap / Esri', maxZoom: 17, minZoom: 5 }
       },
       satellite: {
         name: '🛰️ Gerçek Uydu',
-        layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '&copy; Esri &copy; Earthstar Geographics',
-          maxZoom: 18,
-          minZoom: 5
-        })
+        withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 18, minZoom: 5 }
       },
       dark: {
         name: '🌙 Gece / Karanlık',
-        layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; OpenStreetMap &copy; CARTO',
-          subdomains: 'abcd',
-          maxZoom: 18,
-          minZoom: 5
-        })
+        withLabels: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        noLabels: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 5 }
       },
       terrain: {
         name: '⛰️ Kabartı / Arazi',
-        layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '&copy; Esri &copy; HERE, DeLorme, USGS, Intermap',
-          maxZoom: 18,
-          minZoom: 5
-        })
+        withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: '&copy; Esri &copy; USGS', maxZoom: 18, minZoom: 5 }
       }
     };
 
     this.activeLayerKey = 'voyager';
+    this.currentTileLayer = null;
     this.initMap();
   }
 
@@ -90,6 +82,29 @@ class GeographyMap {
     return this.autoZoomEnabled;
   }
 
+  loadLabelsSetting() {
+    const saved = localStorage.getItem('kpss_cografya_labels_enabled');
+    return saved !== null ? JSON.parse(saved) : true;
+  }
+
+  setLabelsEnabled(enabled) {
+    this.labelsEnabled = enabled;
+    localStorage.setItem('kpss_cografya_labels_enabled', JSON.stringify(enabled));
+    if (this.map) {
+      if (!enabled) {
+        document.body.classList.add('map-no-labels');
+      } else {
+        document.body.classList.remove('map-no-labels');
+      }
+      this.updateTileLayer();
+    }
+  }
+
+  toggleLabels() {
+    this.setLabelsEnabled(!this.labelsEnabled);
+    return this.labelsEnabled;
+  }
+
   initMap() {
     // Türkiye merkezli harita başlatma
     this.map = L.map(this.containerId, {
@@ -104,8 +119,13 @@ class GeographyMap {
       zoomControl: false
     });
 
-    // Varsayılan katmanı ekle
-    this.layers[this.activeLayerKey].layer.addTo(this.map);
+    if (!this.labelsEnabled) {
+      document.body.classList.add('map-no-labels');
+    }
+
+    // İlk katmanı yükle
+    this.updateTileLayer();
+
     this.exploreLayerGroup.addTo(this.map);
     this.multiChoiceLayerGroup.addTo(this.map);
     this.drawingLayerGroup.addTo(this.map);
@@ -124,16 +144,26 @@ class GeographyMap {
     });
   }
 
-  setLayer(layerKey) {
-    if (!this.layers[layerKey]) return;
+  updateTileLayer() {
+    const config = this.layerConfigs[this.activeLayerKey] || this.layerConfigs.voyager;
+    const url = this.labelsEnabled ? config.withLabels : config.noLabels;
 
-    if (this.layers[this.activeLayerKey]) {
-      this.map.removeLayer(this.layers[this.activeLayerKey].layer);
+    if (this.currentTileLayer) {
+      this.map.removeLayer(this.currentTileLayer);
     }
 
+    this.currentTileLayer = L.tileLayer(url, config.options).addTo(this.map);
+    // Tile layer'ı en alta gönder
+    if (this.currentTileLayer.bringToBack) {
+      this.currentTileLayer.bringToBack();
+    }
+  }
+
+  setLayer(layerKey) {
+    if (!this.layerConfigs[layerKey]) return;
     this.activeLayerKey = layerKey;
-    this.layers[layerKey].layer.addTo(this.map);
-    return this.layers[layerKey].name;
+    this.updateTileLayer();
+    return this.layerConfigs[layerKey].name;
   }
 
   // 3D Üçgen Prizma Dağ Kabartma İkonu Üretici
