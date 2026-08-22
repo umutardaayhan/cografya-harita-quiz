@@ -11,8 +11,10 @@ class GeographyMap {
     this.currentShapeLayer = null;
     this.exploreLayerGroup = L.layerGroup();
     this.drawingLayerGroup = L.layerGroup();
-    this.isTopoLayer = false;
     
+    // Otomatik Yakınlaştırma (Auto-Zoom) Ayarı (LocalStorage destekli)
+    this.autoZoomEnabled = this.loadAutoZoomSetting();
+
     // Aktif çizim durumu
     this.isDrawing = false;
     this.drawingShapeType = null; // 'point', 'polyline', 'polygon'
@@ -21,21 +23,69 @@ class GeographyMap {
     this.drawingVertexMarkers = [];
     this.onDrawingComplete = null;
 
-    // Katmanlar
-    this.lightTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 18,
-      minZoom: 5
-    });
+    // Harita Katmanları Havuzu
+    this.layers = {
+      voyager: {
+        name: 'Sade / Renkli',
+        layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap &copy; CARTO',
+          subdomains: 'abcd',
+          maxZoom: 18,
+          minZoom: 5
+        })
+      },
+      topo: {
+        name: 'Fiziki / Topografik',
+        layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap &copy; OpenTopoMap',
+          maxZoom: 17,
+          minZoom: 5
+        })
+      },
+      satellite: {
+        name: '🛰️ Gerçek Uydu',
+        layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '&copy; Esri &copy; Earthstar Geographics',
+          maxZoom: 18,
+          minZoom: 5
+        })
+      },
+      dark: {
+        name: '🌙 Gece / Karanlık',
+        layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap &copy; CARTO',
+          subdomains: 'abcd',
+          maxZoom: 18,
+          minZoom: 5
+        })
+      },
+      terrain: {
+        name: '⛰️ Kabartı / Arazi',
+        layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '&copy; Esri &copy; HERE, DeLorme, USGS, Intermap',
+          maxZoom: 18,
+          minZoom: 5
+        })
+      }
+    };
 
-    this.topoTileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap &copy; OpenTopoMap',
-      maxZoom: 17,
-      minZoom: 5
-    });
-
+    this.activeLayerKey = 'voyager';
     this.initMap();
+  }
+
+  loadAutoZoomSetting() {
+    const saved = localStorage.getItem('kpss_cografya_auto_zoom');
+    return saved !== null ? JSON.parse(saved) : true;
+  }
+
+  setAutoZoom(enabled) {
+    this.autoZoomEnabled = enabled;
+    localStorage.setItem('kpss_cografya_auto_zoom', JSON.stringify(enabled));
+  }
+
+  toggleAutoZoom() {
+    this.setAutoZoom(!this.autoZoomEnabled);
+    return this.autoZoomEnabled;
   }
 
   initMap() {
@@ -52,8 +102,8 @@ class GeographyMap {
       zoomControl: false
     });
 
-    // Katmanları ekle
-    this.lightTileLayer.addTo(this.map);
+    // Varsayılan katmanı ekle
+    this.layers[this.activeLayerKey].layer.addTo(this.map);
     this.exploreLayerGroup.addTo(this.map);
     this.drawingLayerGroup.addTo(this.map);
 
@@ -71,20 +121,27 @@ class GeographyMap {
     });
   }
 
-  toggleMapLayer() {
-    this.isTopoLayer = !this.isTopoLayer;
-    if (this.isTopoLayer) {
-      this.map.removeLayer(this.lightTileLayer);
-      this.topoTileLayer.addTo(this.map);
-      return 'Fiziki Harita (Aktif)';
-    } else {
-      this.map.removeLayer(this.topoTileLayer);
-      this.lightTileLayer.addTo(this.map);
-      return 'Sade Harita (Aktif)';
+  // Harita Katmanını Değiştir (Döngüsel veya Anahtar ile)
+  setLayer(layerKey) {
+    if (!this.layers[layerKey]) return;
+
+    if (this.layers[this.activeLayerKey]) {
+      this.map.removeLayer(this.layers[this.activeLayerKey].layer);
     }
+
+    this.activeLayerKey = layerKey;
+    this.layers[layerKey].layer.addTo(this.map);
+    return this.layers[layerKey].name;
   }
 
-  // --- SORU VURGULAMA MOTORU (NOKTA, ÇİZGİ, POLİGON DESTEKLİ) ---
+  cycleNextLayer() {
+    const keys = Object.keys(this.layers);
+    const currentIndex = keys.indexOf(this.activeLayerKey);
+    const nextKey = keys[(currentIndex + 1) % keys.length];
+    return { key: nextKey, name: this.setLayer(nextKey) };
+  }
+
+  // --- SORU VURGULAMA MOTORU (AUTO-ZOOM KONTROLLÜ) ---
   highlightQuestionShape(questionItem) {
     this.clearQuestionHighlight();
 
@@ -106,15 +163,17 @@ class GeographyMap {
 
       this.currentMarker = L.marker([lat, lng], { icon: pulseIcon }).addTo(this.map);
 
-      this.map.flyTo([lat, lng], Math.max(this.map.getZoom(), 7.2), {
-        duration: 0.8,
-        easeLinearity: 0.25
-      });
+      // Yalnızca otomatik yakınlaştırma açıksa odaklan
+      if (this.autoZoomEnabled) {
+        this.map.flyTo([lat, lng], Math.max(this.map.getZoom(), 7.2), {
+          duration: 0.8,
+          easeLinearity: 0.25
+        });
+      }
     } else if (shapeType === 'polyline') {
       // Çizgi / Akarsu / Hat Sorusu
       const coords = questionItem.coordinates;
       
-      // Parıldayan ana çizgi
       this.currentShapeLayer = L.polyline(coords, {
         color: '#ef4444',
         weight: 6,
@@ -124,9 +183,10 @@ class GeographyMap {
         lineJoin: 'round'
       }).addTo(this.map);
 
-      // Merkez odak ve sınır ayarlama
-      const bounds = L.latLngBounds(coords);
-      this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+      if (this.autoZoomEnabled) {
+        const bounds = L.latLngBounds(coords);
+        this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+      }
     } else if (shapeType === 'polygon') {
       // Geometrik Alan / Bölge / Havza Sorusu
       const coords = questionItem.coordinates;
@@ -139,8 +199,10 @@ class GeographyMap {
         className: 'animated-pulse-polygon'
       }).addTo(this.map);
 
-      const bounds = L.latLngBounds(coords);
-      this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+      if (this.autoZoomEnabled) {
+        const bounds = L.latLngBounds(coords);
+        this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+      }
     }
   }
 
@@ -174,7 +236,6 @@ class GeographyMap {
     this.drawingCoords = [];
     this.onDrawingComplete = onComplete;
 
-    // Harita imlecini değiştir
     const mapDiv = document.getElementById(this.containerId);
     if (mapDiv) {
       mapDiv.classList.add('drawing-mode-active');
@@ -187,13 +248,11 @@ class GeographyMap {
     const latLng = [Number(e.latlng.lat.toFixed(5)), Number(e.latlng.lng.toFixed(5))];
 
     if (this.drawingShapeType === 'point') {
-      // Nokta çizimi tek tıkta biter
       this.addVertexMarker(latLng);
       this.finishDrawing([latLng[0], latLng[1]]);
       return;
     }
 
-    // Çizgi veya Çokgen için köşe ekle
     this.drawingCoords.push(latLng);
     this.addVertexMarker(latLng);
     this.updateDrawingPreview();
@@ -281,7 +340,6 @@ class GeographyMap {
     let finalCoords = explicitCoords || this.drawingCoords;
     const shapeType = this.drawingShapeType;
 
-    // Minimum köşe kontrolü
     if (shapeType === 'polyline' && finalCoords.length < 2) {
       alert('Çizgi oluşturmak için haritada en az 2 noktaya tıklamalısınız!');
       return;

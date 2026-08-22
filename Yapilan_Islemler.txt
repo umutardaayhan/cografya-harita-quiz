@@ -28,3 +28,15 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout veya ilgili modüller kaldırılarak önceki sürüme dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 17:20
+⚠️ Sorun/İhtiyaç: Her soruda haritanın otomatik yakınlaşmasını (auto-zoom) kapatabilme, dosya seçme zorunluluğu olmadan NotebookLM çıktısını direkt metin olarak yapıştırıp yükleyebilme ve yeni harita görünümleri (Uydu, Gece, Arazi) ihtiyacı.
+🎯 İşlem Özeti: Esri Uydu, CartoDB Gece ve Esri Kabartı harita katmanları entegre edildi. Açılıp kapanabilir Otomatik Odak (Auto-Zoom) mekanizması ve dosyasız doğrudan JSON yapıştırma kutusu eklendi.
+📁 Etkilenen Kapsam: 
+  - js/map.js
+  - js/app.js
+  - index.html
+  - css/style.css
+  - docs/OZEL_HARITA_VE_ADAPTIF_MOTOR.md
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

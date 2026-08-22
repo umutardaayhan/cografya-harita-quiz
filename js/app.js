@@ -1,6 +1,8 @@
 /**
  * Ana Uygulama Yöneticisi (App Controller)
- * - Çizim Editörü Entegrasyonu
+ * - Çizim Editörü & Doğrudan JSON Yapıştırma
+ * - Çoklu Harita Katmanları (Uydu, Gece, Arazi, Topografik, Sade)
+ * - Açılıp Kapanabilir Otomatik Yakınlaştırma (Auto-Zoom)
  * - Dinamik Şık Sayısı Seçimi (2, 3, 4, 5 Şık)
  * - Adaptif Soru & Spaced Repetition Akışı
  */
@@ -15,8 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const categoriesContainer = document.getElementById('categories-container');
   const drawModeBtn = document.getElementById('draw-mode-btn');
   const modeToggleBtn = document.getElementById('mode-toggle-btn');
-  const mapLayerBtn = document.getElementById('map-layer-btn');
   const resetViewBtn = document.getElementById('reset-view-btn');
+
+  // Harita Katmanları & Auto-Zoom
+  const mapLayerBtn = document.getElementById('map-layer-btn');
+  const mapLayerLabel = document.getElementById('map-layer-label');
+  const layerDropdown = document.getElementById('layer-dropdown');
+  const layerOptionBtns = document.querySelectorAll('.layer-option-btn');
+  const autoZoomBtn = document.getElementById('auto-zoom-btn');
+  const autoZoomLabel = document.getElementById('auto-zoom-label');
 
   // Çizim Araç Çubuğu Elemanları
   const drawingToolbar = document.getElementById('drawing-toolbar');
@@ -40,9 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const shapeRegionInput = document.getElementById('shape-region');
   const shapeNoteInput = document.getElementById('shape-note');
 
-  // Çizim Yönetim Modalı
+  // Çizim Yönetim & JSON Yapıştırma Modalı
   const drawManageModal = document.getElementById('draw-manage-modal');
   const manageModalCloseBtn = document.getElementById('manage-modal-close-btn');
+  const pasteJsonTextarea = document.getElementById('paste-json-textarea');
+  const importPastedJsonBtn = document.getElementById('import-pasted-json-btn');
   const exportJsonBtn = document.getElementById('export-json-btn');
   const importJsonInput = document.getElementById('import-json-input');
   const clearDrawingsBtn = document.getElementById('clear-drawings-btn');
@@ -105,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchCategory(categoryKey) {
     if (categoryKey === 'ozel_cizimler' && customDrawManager.drawings.length === 0) {
-      if (confirm('Henüz kayıtlı özel bir çiziminiz yok! Harita editörünü açıp ilk noktanızı veya çizginizi eklemek ister misiniz?')) {
-        openDrawingToolbar();
+      if (confirm('Henüz kayıtlı özel bir çiziminiz yok! Harita editöründen yeni şekil eklemek veya NotebookLM çıktısını yapıştırmak ister misiniz?')) {
+        openManageModal();
       }
       return;
     }
@@ -188,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qData = geoQuiz.nextQuestion();
     if (!qData) {
       if (activeCategory === 'ozel_cizimler' && customDrawManager.drawings.length === 0) {
-        questionTitle.textContent = 'Özel çizim bulunamadı. Lütfen Harita Editörü ile yeni şekil ekleyin.';
+        questionTitle.textContent = 'Özel çizim bulunamadı. Lütfen Harita Editörü veya JSON Yapıştırma ile yeni şekiller ekleyin.';
         optionsGrid.innerHTML = '';
         return;
       }
@@ -292,6 +303,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // --- HARİTA KATMANLARI VE AUTO-ZOOM YÖNETİMİ ---
+  mapLayerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isVisible = layerDropdown.style.display === 'flex';
+    layerDropdown.style.display = isVisible ? 'none' : 'flex';
+  });
+
+  layerOptionBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const layerKey = btn.dataset.layer;
+      const layerName = geoMap.setLayer(layerKey);
+
+      layerOptionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      mapLayerLabel.textContent = layerName;
+      layerDropdown.style.display = 'none';
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!layerDropdown.contains(e.target) && e.target !== mapLayerBtn) {
+      layerDropdown.style.display = 'none';
+    }
+  });
+
+  // Auto-Zoom Aç / Kapat
+  function updateAutoZoomUI() {
+    if (geoMap.autoZoomEnabled) {
+      autoZoomBtn.classList.add('active');
+      autoZoomLabel.textContent = 'Otomatik Odak: Açık';
+    } else {
+      autoZoomBtn.classList.remove('active');
+      autoZoomLabel.textContent = 'Otomatik Odak: Kapalı';
+    }
+  }
+
+  autoZoomBtn.addEventListener('click', () => {
+    geoMap.toggleAutoZoom();
+    updateAutoZoomUI();
+  });
+
+  updateAutoZoomUI();
+
   // --- ÇİZİM EDİTÖRÜ MODU VE ARAÇ ÇUBUĞU ---
   function openDrawingToolbar() {
     currentMode = 'drawing';
@@ -350,7 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
     drawModal.style.display = 'flex';
     drawSaveForm.reset();
     
-    // Varsayılan tip önerisi
     if (pendingDrawingData.shapeType === 'polyline') {
       shapeTypeInput.value = 'Akarsu / Vadi / Hat';
     } else if (pendingDrawingData.shapeType === 'polygon') {
@@ -366,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     drawModal.style.display = 'none';
     pendingDrawingData = null;
     if (currentMode === 'drawing') {
-      setDrawShape(activeDrawShape); // Yeni çizim için hazırla
+      setDrawShape(activeDrawShape);
     }
   }
 
@@ -397,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
     alert(`🎉 "${newItem.name}" başarıyla kaydedildi ve Quiz veritabanına eklendi!`);
   });
 
-  // --- ÇİZİMLERİ YÖNETME MODALI ---
+  // --- ÇİZİMLERİ YÖNETME & JSON İÇE/DIŞA AKTARMA MODALI ---
   function openManageModal() {
     drawManageModal.style.display = 'flex';
     renderDrawingsList();
@@ -413,8 +468,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (drawings.length === 0) {
       drawingsListContainer.innerHTML = `
-        <div style="text-align: center; color: var(--text-muted); padding: 30px 10px;">
-          Henüz eklenmiş özel çizim bulunmuyor. Harita editöründen ilk noktanızı veya çizginizi ekleyebilirsiniz.
+        <div style="text-align: center; color: var(--text-muted); padding: 20px 10px;">
+          Henüz kayıtlı özel çizim bulunmuyor. Yukarıdaki kutucuğa JSON yapıştırabilir veya haritadan çizebilirsiniz.
         </div>
       `;
       return;
@@ -451,12 +506,33 @@ document.addEventListener('DOMContentLoaded', () => {
   drawManageBtn.addEventListener('click', openManageModal);
   manageModalCloseBtn.addEventListener('click', closeManageModal);
 
-  // JSON Dışa Aktar
+  // Doğrudan JSON Yapıştırarak İçe Aktar (NotebookLM için dosyasız)
+  importPastedJsonBtn.addEventListener('click', () => {
+    const rawText = pasteJsonTextarea.value.trim();
+    if (!rawText) {
+      alert('Lütfen kutucuğa bir JSON metni yapıştırın!');
+      return;
+    }
+
+    const result = customDrawManager.importJSON(rawText);
+    if (result.success) {
+      alert(`🎉 Tebrikler! ${result.count} adet yer şekli ve soru başarıyla içe aktarıldı!`);
+      pasteJsonTextarea.value = '';
+      renderDrawingsList();
+      renderCategories();
+      switchCategory('ozel_cizimler');
+      closeManageModal();
+    } else {
+      alert(`❌ Geçersiz JSON Formatı! Lütfen NotebookLM prompt çıktısını eksiksiz kopyaladığınızdan emin olun.\nHata: ${result.error}`);
+    }
+  });
+
+  // JSON Dışa Aktar (Dosya İndir)
   exportJsonBtn.addEventListener('click', () => {
     customDrawManager.exportJSON();
   });
 
-  // JSON İçe Aktar
+  // JSON Dosyadan İçe Aktar
   importJsonInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -468,6 +544,8 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`✅ ${result.count} adet çizim başarıyla içe aktarıldı!`);
         renderDrawingsList();
         renderCategories();
+        switchCategory('ozel_cizimler');
+        closeManageModal();
       } else {
         alert(`❌ Hata: ${result.error}`);
       }
@@ -489,24 +567,16 @@ document.addEventListener('DOMContentLoaded', () => {
   modeToggleBtn.addEventListener('click', toggleMode);
   nextBtn.addEventListener('click', loadNextQuestion);
 
-  mapLayerBtn.addEventListener('click', () => {
-    const layerName = geoMap.toggleMapLayer();
-    mapLayerBtn.innerHTML = `<span>🗺️</span> <span>${layerName}</span>`;
-  });
-
   resetViewBtn.addEventListener('click', () => {
     geoMap.resetView();
   });
 
   // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ) ---
   document.addEventListener('keydown', (e) => {
-    // Modal veya input açıkken kısayolları engelle
     if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex') return;
     if (currentMode !== 'quiz') return;
 
     const key = e.key.toUpperCase();
-
-    // 1-5 arası sayılar veya A-E harfleri
     const numKeys = ['1', '2', '3', '4', '5'];
     const letterKeys = ['A', 'B', 'C', 'D', 'E'];
 
@@ -525,7 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Space veya Enter ile sonraki soru
     if ((e.key === ' ' || e.key === 'Enter') && geoQuiz.isAnswered) {
       e.preventDefault();
       loadNextQuestion();

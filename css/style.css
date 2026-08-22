@@ -307,6 +307,11 @@ body {
   background: rgba(255, 255, 255, 0.15);
 }
 
+.tool-btn.active {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
 .tool-btn.danger {
   color: #f87171;
   border-color: rgba(239, 68, 68, 0.3);
@@ -314,6 +319,53 @@ body {
 
 .tool-btn.danger:hover {
   background: rgba(239, 68, 68, 0.2);
+}
+
+/* Harita Katman Menüsü Dropdown */
+.layer-selector-container {
+  position: relative;
+}
+
+.layer-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 170px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  z-index: 1100;
+  animation: fadeIn 0.15s ease;
+}
+
+.layer-option-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.layer-option-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.layer-option-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  font-weight: 700;
 }
 
 /* Dinamik Şık Sayısı Seçici */
@@ -457,7 +509,7 @@ body {
   line-height: 1.4;
 }
 
-/* Şıklar Listesi (Dinamik 2, 3, 4, 5 seçenekler) */
+/* Şıklar Listesi */
 .options-grid {
   display: flex;
   flex-direction: column;
@@ -637,7 +689,6 @@ body {
   }
 }
 
-/* Çizgi & Poligon Vurgu Efektleri */
 .animated-pulse-polyline {
   stroke-dasharray: 12, 12;
   animation: polylineDash 1s linear infinite;
@@ -657,7 +708,6 @@ body {
   to { fill-opacity: 0.55; stroke-width: 6; }
 }
 
-/* Çizim Köşe Noktası (Vertex Marker) */
 .vertex-marker-icon {
   display: flex;
   align-items: center;
@@ -718,8 +768,9 @@ body {
 }
 
 .modal-card.modal-large {
-  width: 640px;
-  max-height: 85vh;
+  width: 680px;
+  max-height: 88vh;
+  overflow-y: auto;
 }
 
 .modal-header {
@@ -829,6 +880,9 @@ body {
   font-weight: 600;
   cursor: pointer;
   border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .modal-btn.primary {
@@ -845,11 +899,56 @@ body {
   color: var(--text-main);
 }
 
-/* Çizim Listesi Yönetim Modalı */
-.manage-modal-actions {
+/* JSON Yapıştırma Alanı */
+.paste-import-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(139, 92, 246, 0.4);
+  border-radius: var(--radius-md);
+  padding: 14px;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paste-label {
+  font-size: 0.85rem;
+  color: #c084fc;
+}
+
+#paste-json-textarea {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+#paste-json-textarea:focus {
+  border-color: var(--accent-purple);
+  outline: none;
+}
+
+.paste-btn-row {
+  display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.paste-or-divider {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.manage-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--bg-card-border);
 }
 
 .file-input-label {
@@ -860,7 +959,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 45vh;
+  max-height: 35vh;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -939,5 +1038,10 @@ body {
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .paste-btn-row {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

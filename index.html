@@ -57,8 +57,8 @@
       <button id="draw-finish-btn" class="draw-action-btn primary" title="Çizimi Tamamla ve Bilgi Ekle">
         <span>✅ Tamamla</span>
       </button>
-      <button id="draw-manage-btn" class="draw-action-btn info" title="Kayıtlı Çizimleri Yönet / İçe-Dışa Aktar">
-        <span>📁 Çizimlerim (<span id="custom-draw-count">0</span>)</span>
+      <button id="draw-manage-btn" class="draw-action-btn info" title="Kayıtlı Çizimleri Yönet / Yapıştırarak İçe Aktar">
+        <span>📁 Çizimlerim & İçe Aktar (<span id="custom-draw-count">0</span>)</span>
       </button>
       <button id="draw-exit-btn" class="draw-action-btn danger" title="Çizim Modunu Kapat">
         <span>❌ Kapat</span>
@@ -74,9 +74,25 @@
 
   <!-- Sol Alt Harita & Quiz Araçları -->
   <div class="map-controls-left">
-    <button id="map-layer-btn" class="tool-btn" title="Harita Tipini Değiştir">
-      <span>🗺️</span> <span>Sade Harita (Aktif)</span>
+    <!-- Harita Katmanı Seçici Menüsü -->
+    <div class="layer-selector-container">
+      <button id="map-layer-btn" class="tool-btn" title="Harita Görünümünü Değiştir">
+        <span>🗺️</span> <span id="map-layer-label">Sade / Renkli</span>
+      </button>
+      <div id="layer-dropdown" class="layer-dropdown" style="display: none;">
+        <button class="layer-option-btn active" data-layer="voyager">🗺️ Sade / Renkli</button>
+        <button class="layer-option-btn" data-layer="topo">⛰️ Fiziki / Topografik</button>
+        <button class="layer-option-btn" data-layer="satellite">🛰️ Gerçek Uydu</button>
+        <button class="layer-option-btn" data-layer="dark">🌙 Gece / Karanlık</button>
+        <button class="layer-option-btn" data-layer="terrain">🏔️ Kabartı / Arazi</button>
+      </div>
+    </div>
+
+    <!-- Otomatik Yakınlaştırma (Auto-Zoom) Aç/Kapa Butonu -->
+    <button id="auto-zoom-btn" class="tool-btn active" title="Sorularda Haritanın Otomatik Yakınlaşmasını Açar/Kapatır">
+      <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak: Açık</span>
     </button>
+
     <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
       <span>🎯</span> <span>Merkezle</span>
     </button>
@@ -192,21 +208,36 @@
     </div>
   </div>
 
-  <!-- Kayıtlı Çizimleri Yönetme Modalı -->
+  <!-- Kayıtlı Çizimleri Yönetme ve JSON Yapıştırma Modalı -->
   <div id="draw-manage-modal" class="modal-overlay" style="display: none;">
     <div class="modal-card modal-large">
       <div class="modal-header">
-        <h3>📁 Özel Çizimlerim & Harita Veritabanı</h3>
+        <h3>📁 Özel Çizimler & JSON İçe / Dışa Aktarma</h3>
         <button id="manage-modal-close-btn" class="modal-close">&times;</button>
+      </div>
+
+      <!-- Doğrudan JSON Metni Yapıştırma Alanı (NotebookLM İçin) -->
+      <div class="paste-import-box">
+        <label for="paste-json-textarea" class="paste-label">
+          📋 <strong>JSON Metnini Direkt Yapıştır & Yükle</strong> (NotebookLM Çıktısı):
+        </label>
+        <textarea id="paste-json-textarea" rows="4" placeholder="NotebookLM'den kopyaladığınız [...] şeklindeki JSON dizisini buraya doğrudan yapıştırın..."></textarea>
+        <div class="paste-btn-row">
+          <button id="import-pasted-json-btn" class="modal-btn primary">
+            <span>🚀</span> <span>Yapıştırılan JSON'u İçe Aktar</span>
+          </button>
+          <span class="paste-or-divider">veya</span>
+          <label class="tool-btn file-input-label">
+            <span>📂</span> <span>Dosyadan JSON Seç</span>
+            <input type="file" id="import-json-input" accept=".json" style="display: none;">
+          </label>
+          <button id="export-json-btn" class="tool-btn"><span>💾</span> <span>Mevcutları Yedekle (Dışa Aktar)</span></button>
+        </div>
       </div>
       
       <div class="manage-modal-actions">
-        <button id="export-json-btn" class="tool-btn"><span>💾</span> <span>JSON Olarak Yedekle (Dışa Aktar)</span></button>
-        <label class="tool-btn file-input-label">
-          <span>📥</span> <span>JSON Yükle (İçe Aktar)</span>
-          <input type="file" id="import-json-input" accept=".json" style="display: none;">
-        </label>
-        <button id="clear-drawings-btn" class="tool-btn danger"><span>🗑️</span> <span>Tümünü Temizle</span></button>
+        <span style="font-weight: 700; color: #cbd5e1; font-size: 0.88rem;">Kayıtlı Özel Çizimler Listesi:</span>
+        <button id="clear-drawings-btn" class="tool-btn danger" style="margin-left: auto;"><span>🗑️</span> <span>Tümünü Temizle</span></button>
       </div>
 
       <div id="drawings-list-container" class="drawings-list-container">
