@@ -1,10 +1,23 @@
-# 🎨 KPSS Harita Quiz: Zorluk Sistemi, Ustalık Seyreltme, Test Modelleri & Çizim Kılavuzu
+# 🎨 KPSS Harita Quiz: Zorluk Sistemi, Ustalık Seyreltme, Alt Oluşum Filtreleri & Çizim Kılavuzu
 
-Bu doküman; uygulamada yer alan **Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi**, **Ustalık Düzeyi & İyi Bilinenleri Seyreltme (Mastery Decay)**, **ÖSYM Çift Yönlü Test Formatları**, **Harita Çizim Editörü** ve **Doğrudan JSON Yapıştırma** sistemlerinin çalışma prensiplerini açıklar.
+Bu doküman; uygulamada yer alan **Alt Oluşum Türü Filtreleme**, **Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi**, **Ustalık Düzeyi & İyi Bilinenleri Seyreltme (Mastery Decay)**, **ÖSYM Çift Yönlü Test Formatları**, **Harita Çizim Editörü** ve **Doğrudan JSON Yapıştırma** sistemlerinin çalışma prensiplerini açıklar.
 
 ---
 
-## 1. ⚡ Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi
+## 1. 🌋 Oluşum Türüne Göre Alt Kategori Filtreleme
+
+Kullanıcı, ana kategori seçtikten sonra üst panelin hemen altındaki dinamik filtre haplarından (pills) belirli bir oluşum türünü seçerek **hem test hem de keşif modunda** yalnızca o konuya odaklanabilir:
+
+- **🏔️ Dağlar:** `[Tüm Dağlar]` | `[🌋 Volkanik Dağlar]` | `[⚡ Kırık Dağlar (Horst)]` | `[⛰️ Kıvrım Dağları]`
+- **🌾 Ovalar:** `[Tüm Ovalar]` | `[🏖️ Delta Ovaları]` | `[💥 Tektonik / Çöküntü]` | `[💧 Karstik (Polye)]`
+- **⛰️ Platolar:** `[Tüm Platolar]` | `[🌋 Volkanik (Lav)]` | `[💧 Karstik Platolar]` | `[📉 Aşınım (Peneplen)]` | `[🥞 Tabaka Düzlüğü]`
+- **🌊 Su Kaynakları:** `[Tüm Su Kaynakları]` | `[〰️ Akarsular / Nehirler (Polyline)]` | `[🏞️ Göller]`
+- **🚪 Geçitler:** `[Tüm Geçitler]` | `[🌲 Karadeniz Geçitleri]` | `[☀️ Akdeniz Geçitleri]`
+- **🎨 Çizimlerim:** `[Tümü]` | `[📍 Noktalar]` | `[📏 Çizgiler]` | `[📐 Alanlar]`
+
+---
+
+## 2. ⚡ Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi
 
 Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevabın koordinatlarına olan **Haversine Kuş Uçuşu Mesafesine (km)** göre seçer:
 
@@ -16,7 +29,7 @@ Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevab�
 
 ---
 
-## 2. 🧠 Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay)
+## 3. 🧠 Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay)
 
 Öğrencinin zaten ezberlediği sorularla vakit kaybetmesini önlemek için akıllı seyreltme devrededir:
 - **Ustalaşılan Sorular (Seri $\ge 3$ Doğru):** Seçim ağırlığı $0.04 - 0.12$ bandına iner (%90-95 oranında havuzdan geri çekilir). Sadece uzun aralıklarla hafızayı yoklamak için nadiren gelir ve kartta `🎓 Ustalaşılan Soru` rozeti yanar.
@@ -24,7 +37,7 @@ Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevab�
 
 ---
 
-## 3. 🎯 Çift Yönlü Test Formatları
+## 4. 🎯 Çift Yönlü Test Formatları
 
 - 📍 **İsimden Haritada Bul (ÖSYM Tipi I-V / A-E):** İsim verilir -> Haritada 2-5 adet parıldayan harita pini (I-V) belirir. Doğrudan haritadan veya klavyeden cevaplanır.
 - 🔍 **Konumdan İsmi Bul (Klasik):** Haritada 1 yer parıldar -> Şıklardan ismi bulunur.
@@ -32,6 +45,6 @@ Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevab�
 
 ---
 
-## 4. 📋 Doğrudan JSON Yapıştırma & Harita Katmanları
+## 5. 📋 Doğrudan JSON Yapıştırma & Harita Katmanları
 - NotebookLM çıktısını kopyalayıp dosyasız tek tıkla yapıştırma desteği.
 - 5 Harita Katmanı (Sade, Fiziki, Gerçek Uydu, Gece, Kabartı) ve açılıp kapanabilir Otomatik Odak (Auto-Zoom).

@@ -97,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
 
-  // --- KATEGORİ MENÜSÜ ---
+  const subCategoriesBar = document.getElementById('sub-categories-bar');
+
+  // --- KATEGORİ VE ALT OLUŞUM MENÜSÜ ---
   function renderCategories() {
     categoriesContainer.innerHTML = '';
 
@@ -122,6 +124,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     customDrawCountBadge.textContent = customDrawManager.drawings.length;
+    renderSubCategories();
+  }
+
+  function renderSubCategories() {
+    subCategoriesBar.innerHTML = '';
+    const subTypes = (typeof SUB_TYPES !== 'undefined' && SUB_TYPES[activeCategory]) ? SUB_TYPES[activeCategory] : [];
+
+    if (!subTypes || subTypes.length <= 1) {
+      subCategoriesBar.style.display = 'none';
+      return;
+    }
+
+    subCategoriesBar.style.display = 'flex';
+    const activeSubId = geoQuiz.getSubType();
+
+    // Toplam elemanları saymak için kategori ham veri seti
+    let baseItems = [];
+    if (activeCategory === 'ozel_cizimler') {
+      baseItems = customDrawManager.getQuizItems();
+    } else {
+      baseItems = COGRAFYA_DATA[activeCategory] || [];
+    }
+
+    subTypes.forEach(sub => {
+      let count = baseItems.length;
+      if (sub.id !== 'all' && typeof sub.filter === 'function') {
+        count = baseItems.filter(sub.filter).length;
+      }
+
+      const pillBtn = document.createElement('button');
+      pillBtn.className = `sub-type-btn ${sub.id === activeSubId ? 'active' : ''}`;
+      pillBtn.dataset.sub = sub.id;
+      pillBtn.innerHTML = `<span>${sub.icon || '📍'}</span> <span>${sub.label} (${count})</span>`;
+
+      pillBtn.addEventListener('click', () => {
+        switchSubType(sub.id);
+      });
+
+      subCategoriesBar.appendChild(pillBtn);
+    });
+  }
+
+  function switchSubType(subTypeId) {
+    geoQuiz.setSubType(subTypeId);
+
+    document.querySelectorAll('.sub-type-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.sub === subTypeId);
+    });
+
+    if (currentMode === 'quiz') {
+      loadNextQuestion();
+    } else {
+      loadExploreMode();
+    }
   }
 
   function switchCategory(categoryKey) {
@@ -138,6 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.category-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.category === categoryKey);
     });
+
+    renderSubCategories();
 
     if (currentMode === 'drawing') {
       closeDrawingToolbar();
@@ -169,20 +227,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- KEŞİF MODU ---
   function loadExploreMode() {
-    let items = [];
+    // geoQuiz.items zaten seçili alt oluşum türüne göre filtrelenmiştir!
+    const items = geoQuiz.items;
     let catTitle = '';
     let catColor = '#3b82f6';
 
     if (activeCategory === 'ozel_cizimler') {
-      items = customDrawManager.getQuizItems();
       catTitle = 'Özel Çizimlerim';
       catColor = '#8b5cf6';
     } else {
-      items = COGRAFYA_DATA[activeCategory] || [];
       const catObj = CATEGORIES.find(c => c.id === activeCategory);
       catTitle = catObj ? catObj.title : '';
       catColor = catObj ? catObj.color : '#3b82f6';
     }
+
+    const subTypes = SUB_TYPES[activeCategory] || [];
+    const activeSubObj = subTypes.find(s => s.id === geoQuiz.getSubType());
+    const subTitle = activeSubObj && activeSubObj.id !== 'all' ? ` > ${activeSubObj.label}` : '';
 
     geoMap.showAllPoints(items, catColor);
 
@@ -193,8 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
     nextBtn.style.display = 'none';
     exploreBanner.style.display = 'block';
     exploreBanner.innerHTML = `
-      <strong>🧭 Keşif Modu Aktif:</strong><br>
-      Harita üzerindeki şekillere tıklayarak <strong>${catTitle}</strong> konusundaki tüm yer şekillerini ve KPSS hap bilgilerini inceleyebilirsiniz.
+      <strong>🧭 Keşif Modu Aktif [${catTitle}${subTitle}]:</strong><br>
+      Harita üzerinde seçili türe ait <strong>${items.length} adet</strong> yer şekli gösteriliyor. Şekillere tıklayarak KPSS hap bilgilerini inceleyebilirsiniz.
     `;
   }
 

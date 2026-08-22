@@ -1232,3 +1232,42 @@ const CATEGORIES = [
   { id: "su_kaynaklari", title: "Akarsu & Göller", icon: "🌊", color: "#2980b9", count: COGRAFYA_DATA.su_kaynaklari.length },
   { id: "gecitler", title: "Geçitler & Boğazlar", icon: "🚪", color: "#8e44ad", count: COGRAFYA_DATA.gecitler.length }
 ];
+
+// KPSS Oluşum ve Alt Tür Filtreleme Haritası
+const SUB_TYPES = {
+  daglar: [
+    { id: "all", label: "Tüm Dağlar", icon: "🏔️" },
+    { id: "volkanik", label: "Volkanik Dağlar", icon: "🌋", filter: (item) => (item.type || "").toLowerCase().includes("volkanik") },
+    { id: "kirik", label: "Kırık Dağlar (Horst)", icon: "⚡", filter: (item) => (item.type || "").toLowerCase().includes("kırık") || (item.type || "").toLowerCase().includes("horst") },
+    { id: "kivrim", label: "Kıvrım Dağları", icon: "⛰️", filter: (item) => (item.type || "").toLowerCase().includes("kıvrım") }
+  ],
+  ovalar: [
+    { id: "all", label: "Tüm Ovalar", icon: "🌾" },
+    { id: "delta", label: "Delta Ovaları (Kıyı)", icon: "🏖️", filter: (item) => (item.type || "").toLowerCase().includes("delta") },
+    { id: "tektonik", label: "Tektonik / Çöküntü", icon: "💥", filter: (item) => (item.type || "").toLowerCase().includes("tektonik") },
+    { id: "karstik", label: "Karstik (Polye)", icon: "💧", filter: (item) => (item.type || "").toLowerCase().includes("karstik") || (item.type || "").toLowerCase().includes("polye") }
+  ],
+  platolar: [
+    { id: "all", label: "Tüm Platolar", icon: "⛰️" },
+    { id: "volkanik", label: "Volkanik (Lav) Platoları", icon: "🌋", filter: (item) => (item.type || "").toLowerCase().includes("volkanik") || (item.type || "").toLowerCase().includes("lav") },
+    { id: "karstik", label: "Karstik Platolar", icon: "💧", filter: (item) => (item.type || "").toLowerCase().includes("karstik") },
+    { id: "asinim", label: "Aşınım (Peneplen) Platoları", icon: "📉", filter: (item) => (item.type || "").toLowerCase().includes("aşınım") || (item.type || "").toLowerCase().includes("peneplen") },
+    { id: "tabaka", label: "Tabaka Düzlüğü Platoları", icon: "🥞", filter: (item) => (item.type || "").toLowerCase().includes("tabaka") || (item.type || "").toLowerCase().includes("düzlüğü") }
+  ],
+  su_kaynaklari: [
+    { id: "all", label: "Tüm Su Kaynakları", icon: "🌊" },
+    { id: "akarsular", label: "Akarsular / Nehirler", icon: "〰️", filter: (item) => item.shapeType === "polyline" || (item.type || "").toLowerCase().includes("akarsu") || (item.type || "").toLowerCase().includes("çay") },
+    { id: "goller", label: "Göller", icon: "🏞️", filter: (item) => (item.type || "").toLowerCase().includes("göl") }
+  ],
+  gecitler: [
+    { id: "all", label: "Tüm Geçitler", icon: "🚪" },
+    { id: "karadeniz", label: "Karadeniz Geçitleri", icon: "🌲", filter: (item) => (item.region || "").toLowerCase().includes("karadeniz") },
+    { id: "akdeniz", label: "Akdeniz Geçitleri", icon: "☀️", filter: (item) => (item.region || "").toLowerCase().includes("akdeniz") }
+  ],
+  ozel_cizimler: [
+    { id: "all", label: "Tüm Çizimlerim", icon: "🎨" },
+    { id: "point", label: "Noktalar (Pin)", icon: "📍", filter: (item) => item.shapeType === "point" || !item.shapeType },
+    { id: "polyline", label: "Çizgiler / Hatlar", icon: "📏", filter: (item) => item.shapeType === "polyline" },
+    { id: "polygon", label: "Alanlar / Çokgenler", icon: "📐", filter: (item) => item.shapeType === "polygon" }
+  ]
+};

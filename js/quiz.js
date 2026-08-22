@@ -11,6 +11,7 @@ class GeographyQuiz {
   constructor(categoryKey = 'daglar', customDrawManager = null) {
     this.categoryKey = categoryKey;
     this.customDrawManager = customDrawManager;
+    this.activeSubType = 'all'; // 'all', 'volkanik', 'kirik', 'delta', vb.
     this.items = [];
     this.remainingPool = [];
     this.wrongPool = [];
@@ -105,18 +106,40 @@ class GeographyQuiz {
     return this.optionCount;
   }
 
+  setSubType(subTypeId) {
+    this.activeSubType = subTypeId || 'all';
+    this.reloadCategoryItems();
+    this.currentQuestion = null;
+    this.isAnswered = false;
+  }
+
+  getSubType() {
+    return this.activeSubType;
+  }
+
   reloadCategoryItems() {
+    let source = [];
     if (this.categoryKey === 'ozel_cizimler') {
-      this.items = this.customDrawManager ? this.customDrawManager.getQuizItems() : [];
+      source = this.customDrawManager ? this.customDrawManager.getQuizItems() : [];
     } else {
-      this.items = COGRAFYA_DATA[this.categoryKey] || [];
+      source = COGRAFYA_DATA[this.categoryKey] || [];
     }
+
+    if (this.activeSubType && this.activeSubType !== 'all' && typeof SUB_TYPES !== 'undefined' && SUB_TYPES[this.categoryKey]) {
+      const subObj = SUB_TYPES[this.categoryKey].find(s => s.id === this.activeSubType);
+      if (subObj && typeof subObj.filter === 'function') {
+        source = source.filter(subObj.filter);
+      }
+    }
+
+    this.items = source;
     this.remainingPool = [...this.items];
     this.wrongPool = [];
   }
 
   setCategory(categoryKey) {
     this.categoryKey = categoryKey;
+    this.activeSubType = 'all';
     this.reloadCategoryItems();
     this.currentQuestion = null;
     this.isAnswered = false;

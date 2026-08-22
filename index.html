@@ -15,42 +15,49 @@
 <body>
 
   <!-- Üst Kategori ve Mod Seçim Menüsü -->
-  <nav class="top-nav">
-    <div id="categories-container" class="categories-container">
-      <!-- JS ile dinamik doldurulur -->
-    </div>
-    
-    <div class="nav-divider"></div>
-
-    <!-- Mod ve Araç Butonları -->
-    <div class="nav-actions">
-      <!-- Soru Formatı Seçici (Klasik vs Haritada Bul I-V vs Karışık) -->
-      <div class="quiz-format-selector">
-        <button id="format-toggle-btn" class="nav-btn format-btn" title="Soru Formatını Değiştir">
-          <span>🎯</span> <span id="format-label">Haritada Bul</span>
-        </button>
-        <div id="format-dropdown" class="format-dropdown" style="display: none;">
-          <button class="format-option-btn active" data-format="find_on_map">
-            <span>📍</span> <span>İsimden Haritada Bul (ÖSYM I-V)</span>
-          </button>
-          <button class="format-option-btn" data-format="identify">
-            <span>🔍</span> <span>Konumdan İsmi Bul (Klasik)</span>
-          </button>
-          <button class="format-option-btn" data-format="mixed">
-            <span>🎲</span> <span>Karışık Sürpriz Modu</span>
-          </button>
-        </div>
+  <header class="top-nav-wrapper">
+    <nav class="top-nav">
+      <div id="categories-container" class="categories-container">
+        <!-- JS ile dinamik doldurulur -->
       </div>
+      
+      <div class="nav-divider"></div>
 
-      <button id="draw-mode-btn" class="nav-btn draw-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
-        <span>✏️</span> <span>Harita Editörü</span>
-      </button>
+      <!-- Mod ve Araç Butonları -->
+      <div class="nav-actions">
+        <!-- Soru Formatı Seçici (Klasik vs Haritada Bul I-V vs Karışık) -->
+        <div class="quiz-format-selector">
+          <button id="format-toggle-btn" class="nav-btn format-btn" title="Soru Formatını Değiştir">
+            <span>🎯</span> <span id="format-label">Haritada Bul</span>
+          </button>
+          <div id="format-dropdown" class="format-dropdown" style="display: none;">
+            <button class="format-option-btn active" data-format="find_on_map">
+              <span>📍</span> <span>İsimden Haritada Bul (ÖSYM I-V)</span>
+            </button>
+            <button class="format-option-btn" data-format="identify">
+              <span>🔍</span> <span>Konumdan İsmi Bul (Klasik)</span>
+            </button>
+            <button class="format-option-btn" data-format="mixed">
+              <span>🎲</span> <span>Karışık Sürpriz Modu</span>
+            </button>
+          </div>
+        </div>
 
-      <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Mod Değiştir">
-        <span>🧭</span> <span>Keşif Modu</span>
-      </button>
+        <button id="draw-mode-btn" class="nav-btn draw-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
+          <span>✏️</span> <span>Harita Editörü</span>
+        </button>
+
+        <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Mod Değiştir">
+          <span>🧭</span> <span>Keşif Modu</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Alt Oluşum / Tür Filtreleme Barı -->
+    <div id="sub-categories-bar" class="sub-categories-bar">
+      <!-- JS ile dinamik hap butonları -->
     </div>
-  </nav>
+  </header>
 
   <!-- Çizim Modu Üst Araç Çubuğu (Varsayılan gizli) -->
   <div id="drawing-toolbar" class="drawing-toolbar" style="display: none;">
