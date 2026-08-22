@@ -508,24 +508,24 @@ body {
   border-color: var(--primary);
 }
 
-/* --- SAĞ ALT QUIZ PANELİ --- */
+/* --- SAĞ ALT QUIZ PANELİ (GENİŞLETİLMİŞ & BASIK KOMPAKT DÜZEN) --- */
 .quiz-panel {
   position: absolute;
-  right: 24px;
-  bottom: 24px;
-  width: 410px;
-  max-width: calc(100vw - 48px);
+  right: 20px;
+  bottom: 20px;
+  width: 540px;
+  max-width: calc(100vw - 40px);
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
   z-index: 1000;
-  padding: 20px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  transition: all 0.3s ease;
+  gap: 8px;
+  transition: all 0.25s ease;
 }
 
 /* İstatistik Çubuğu */
@@ -534,8 +534,8 @@ body {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--bg-card-border);
-  padding-bottom: 10px;
-  font-size: 0.82rem;
+  padding-bottom: 6px;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 
@@ -562,7 +562,7 @@ body {
 .question-header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .question-badge-container {
@@ -573,44 +573,44 @@ body {
 }
 
 .question-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background: rgba(59, 130, 246, 0.2);
   color: #60a5fa;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 2px 7px;
+  border-radius: 5px;
   font-weight: 700;
 }
 
 .difficulty-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   background: rgba(245, 158, 11, 0.2);
   color: var(--accent-gold);
   border: 1px solid rgba(245, 158, 11, 0.4);
-  padding: 3px 7px;
-  border-radius: 6px;
+  padding: 2px 6px;
+  border-radius: 5px;
   font-weight: 700;
 }
 
 .adaptive-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.4);
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 2px 7px;
+  border-radius: 5px;
   font-weight: 700;
   animation: pulseBadge 2s infinite ease-in-out;
 }
 
 .mastered-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   background: rgba(6, 182, 212, 0.2);
   color: var(--accent-cyan);
   border: 1px solid rgba(6, 182, 212, 0.4);
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 2px 7px;
+  border-radius: 5px;
   font-weight: 700;
   animation: pulseMastered 2.5s infinite ease-in-out;
 }
@@ -626,55 +626,57 @@ body {
 }
 
 .question-title {
-  font-size: 1.08rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 800;
   color: #ffffff;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
-/* Şıklar Listesi */
+/* Şıklar Listesi (Kompakt 2/3 Sütunlu Yatay Izgara) */
 .options-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
 }
 
 .option-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  padding: 11px 14px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-md);
   color: var(--text-main);
-  font-size: 0.93rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
   overflow: hidden;
+  min-height: 40px;
 }
 
 .option-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.25);
-  transform: translateX(3px);
+  transform: translateY(-2px);
 }
 
 .option-key {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 /* Doğru - Yanlış Durumları */
@@ -704,17 +706,17 @@ body {
   border: 1px solid rgba(245, 158, 11, 0.3);
   border-left: 4px solid var(--accent-gold);
   border-radius: var(--radius-md);
-  padding: 12px;
-  font-size: 0.85rem;
-  line-height: 1.45;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  line-height: 1.35;
   color: #e2e8f0;
-  animation: fadeIn 0.25s ease;
+  animation: fadeIn 0.2s ease;
 }
 
 .kpss-info-header {
   font-weight: 700;
   color: var(--accent-gold);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -724,9 +726,9 @@ body {
   display: inline-block;
   background: rgba(245, 158, 11, 0.2);
   color: var(--accent-gold);
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: 4px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   margin-left: auto;
 }
@@ -735,17 +737,17 @@ body {
 .next-btn {
   display: none;
   width: 100%;
-  padding: 12px;
+  padding: 8px 12px;
   background: var(--primary);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-md);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
-  animation: fadeIn 0.25s ease;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35);
+  animation: fadeIn 0.2s ease;
 }
 
 .next-btn:hover {

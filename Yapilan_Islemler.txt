@@ -65,3 +65,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 17:35
+⚠️ Sorun/İhtiyaç: Sağ alt köşedeki soru panelinin haritanın doğu kısmını kapatması ve soru başlıklarındaki gereksiz uzun uzatmaların ('Haritada numaralandırılmış konumlardan...') kaldırılması ihtiyacı.
+🎯 İşlem Özeti: Quiz paneli dikeyde basıklaştırılıp 540px genişletildi, şıklar kompakt 2-3 sütunlu yatay ızgara düzenine alındı. Konum bulma soruları doğrudan yer şeklinin adı ve tipini verecek şekilde kristal netliğinde sadeleştirildi.
+📁 Etkilenen Kapsam: 
+  - js/quiz.js
+  - css/style.css
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

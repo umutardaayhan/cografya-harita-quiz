@@ -4,6 +4,7 @@
  * - Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay / Spaced Repetition)
  * - Çift Yönlü Test Modları ('find_on_map', 'identify', 'mixed')
  * - Dinamik Şık Sayısı (2, 3, 4, 5 Şık)
+ * - Net, Doğrudan ve Sade Soru Metinleri
  */
 
 class GeographyQuiz {
@@ -25,7 +26,7 @@ class GeographyQuiz {
     // Genel Test İstatistikleri
     this.stats = this.loadStats();
 
-    // Soru Bazlı Adaptif Analitik (Hata Ağırlıkları ve Ustalık Seviyeleri)
+    // Soru Bazlı Adaptif Analitik
     this.analytics = this.loadAnalytics();
 
     this.reloadCategoryItems();
@@ -84,7 +85,7 @@ class GeographyQuiz {
 
   loadDifficultyLevel() {
     const saved = localStorage.getItem('kpss_cografya_difficulty');
-    return saved ? parseInt(saved, 10) : 5; // Varsayılan olarak en zorlu ve gerçekçi Seviye 5 (En Yakın Komşular)
+    return saved ? parseInt(saved, 10) : 5;
   }
 
   setDifficultyLevel(level) {
@@ -121,9 +122,9 @@ class GeographyQuiz {
     this.isAnswered = false;
   }
 
-  // --- HAVERSINE COĞRAFİ MESAFE FORMÜLÜ (KM) ---
+  // Haversine Mesafe Formülü (KM)
   getDistanceInKm(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Dünya yarıçapı km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -134,29 +135,24 @@ class GeographyQuiz {
     return Math.round(R * c);
   }
 
-  // --- GELİŞMİŞ ADAPTİF AĞIRLIK (USTALIK SEYRELTME / MASTERY DECAY) ---
+  // Ustalık Düzeyi & Hata Ağırlığı
   calculateItemWeight(item) {
     const itemAnalytics = this.analytics[item.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
     
-    // 1. Durum: Çok iyi bilinen / Ustalaşılan Soru (Streak >= 3)
-    // Soru havuzundaki ağırlığı çok büyük oranda düşürülür (nadiren sorulur)
     if (itemAnalytics.streak >= 4) {
-      return 0.04; // %96 oranında daha az gelir
+      return 0.04; // %96 oranında nadirleşir
     }
     if (itemAnalytics.streak === 3) {
-      return 0.12; // %88 oranında daha az gelir
+      return 0.12;
     }
     if (itemAnalytics.streak === 2) {
-      return 0.35; // %65 oranında daha az gelir
+      return 0.35;
     }
 
-    // 2. Durum: Hata Yapılan Soru
-    // Yanlış sayısı kadar ağırlığı katlanır
     if (itemAnalytics.wrongCount > 0) {
       return 1.0 + (itemAnalytics.wrongCount * 3.2) - (itemAnalytics.streak * 0.4);
     }
 
-    // 3. Durum: Henüz yeni veya nötr soru
     return 1.0;
   }
 
@@ -178,13 +174,12 @@ class GeographyQuiz {
     return pool[pool.length - 1];
   }
 
-  // --- ZORLUK DERECESİNE GÖRE ÇELDIRICI SEÇİMİ (MESAFE TABANLI) ---
+  // Zorluğa Göre Çeldirici Seçimi
   selectDistractorsByProximity(targetQuestion, candidatePool, count) {
     if (candidatePool.length <= count) {
       return [...candidatePool];
     }
 
-    // Tüm adayların hedef soruya olan coğrafi mesafesini hesapla ve sırala
     const withDistance = candidatePool.map(item => ({
       item,
       distance: this.getDistanceInKm(targetQuestion.lat, targetQuestion.lng, item.lat, item.lng)
@@ -193,44 +188,32 @@ class GeographyQuiz {
     const totalCandidates = withDistance.length;
     let selected = [];
 
-    // 5 Kademeli Coğrafi Zorluk Matrisi:
     if (this.difficultyLevel === 5) {
-      // 🌟 SEVİYE 5 (UZMAN / DİP DİBE KOMŞULAR):
-      // Mesafesi en küçük olan en yakın komşulardan seçilir
       const sliceSize = Math.max(count, Math.min(count + 2, totalCandidates));
       const nearestSlice = withDistance.slice(0, sliceSize);
       selected = nearestSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
     } 
     else if (this.difficultyLevel === 4) {
-      // 🌟 SEVİYE 4 (ZOR / AYNI/KOMŞU YÖRE):
-      // En yakın %40'lık dilimden seçilir
       const sliceSize = Math.max(count, Math.ceil(totalCandidates * 0.45));
       const nearSlice = withDistance.slice(0, sliceSize);
       selected = nearSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
     } 
     else if (this.difficultyLevel === 3) {
-      // 🌟 SEVİYE 3 (ORTA / BÖLGESEL):
-      // %25 - %75 arası orta mesafeli dilimden seçilir
       const start = Math.floor(totalCandidates * 0.2);
       const end = Math.ceil(totalCandidates * 0.8);
       const midSlice = withDistance.slice(start, Math.max(start + count, end));
       selected = midSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
     } 
     else if (this.difficultyLevel === 2) {
-      // 🌟 SEVİYE 2 (KOLAY / UZAK BÖLGELER):
-      // En uzak %50'lik dilimden seçilir
       const start = Math.floor(totalCandidates * 0.45);
       const farSlice = withDistance.slice(start);
       selected = farSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
     } 
     else {
-      // 🌟 SEVİYE 1 (ÇOK KOLAY / TÜRKİYE GENELİ VE EN UZAKLAR):
-      // Mesafesi en büyük olan en uzak öğelerden seçilir
       const farSlice = withDistance.slice(Math.max(0, totalCandidates - count - 3));
       selected = farSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
     }
 
-    // Güvenlik fallback: Yetersiz kaldıysa havuzdan tamamla
     if (selected.length < count) {
       const remaining = candidatePool.filter(c => !selected.some(s => s.id === c.id));
       selected.push(...remaining.slice(0, count - selected.length));
@@ -239,7 +222,7 @@ class GeographyQuiz {
     return selected;
   }
 
-  // Yeni Soru Üret
+  // Yeni Soru Üret (Kısa, Net ve Doğrudan Başlıklar)
   nextQuestion() {
     this.reloadCategoryItems();
     if (this.items.length === 0) return null;
@@ -258,19 +241,16 @@ class GeographyQuiz {
     this.remainingPool = this.remainingPool.filter(i => i.id !== selectedQuestion.id);
     this.isAnswered = false;
 
-    // Soru formatını belirle
     if (this.quizFormat === 'mixed') {
       this.currentActualFormat = Math.random() > 0.5 ? 'find_on_map' : 'identify';
     } else {
       this.currentActualFormat = this.quizFormat;
     }
 
-    // Soru analitik ve ustalık durumu
     const itemAnalytics = this.analytics[selectedQuestion.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
     const isProblematic = itemAnalytics.wrongCount >= 2 && itemAnalytics.wrongCount > itemAnalytics.correctCount;
     const isMastered = itemAnalytics.streak >= 3;
 
-    // Dinamik Çeldirici Sayısı
     const targetDistractorCount = this.optionCount - 1;
     let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
 
@@ -285,28 +265,26 @@ class GeographyQuiz {
       candidatePool = [...candidatePool, ...additionalOthers];
     }
 
-    // Coğrafi mesafe tabanlı akıllı çeldirici seçimi
     const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, targetDistractorCount);
-
-    // Doğru cevapla çeldiricileri harmanla
     this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
 
-    // Soru başlığı
+    // SADE, NET VE LAF KALABALIĞINDAN ARINDIRILMIŞ SORU BAŞLIKLARI
     let questionText = '';
     let questionTypeTitle = '';
 
     if (this.currentActualFormat === 'find_on_map') {
-      questionText = `Haritada numaralandırılmış konumlardan hangisi <strong style="color: #60a5fa; text-decoration: underline;">${this.currentQuestion.name}</strong> (${this.currentQuestion.type}) konumudur?`;
-      questionTypeTitle = 'HARİTADA BUL (I-V)';
+      // Doğrudan isim ve tip
+      questionText = `📍 <span style="color: #60a5fa; font-weight:800;">${this.currentQuestion.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${this.currentQuestion.type})</span>`;
+      questionTypeTitle = 'HARİTADA BUL';
     } else {
       if (this.currentQuestion.shapeType === 'polyline') {
-        questionText = 'Haritada işaretli hat / akarsu / sıra hangisidir?';
-        questionTypeTitle = 'HAT / AKARSU SORUSU';
+        questionText = 'İşaretli Akarsu / Hat Nedir?';
+        questionTypeTitle = 'HAT SORUSU';
       } else if (this.currentQuestion.shapeType === 'polygon') {
-        questionText = 'Haritada taranmış alan / bölge / plato hangisidir?';
-        questionTypeTitle = 'ALAN / BÖLGE SORUSU';
+        questionText = 'İşaretli Alan / Plato Nedir?';
+        questionTypeTitle = 'ALAN SORUSU';
       } else {
-        questionText = 'Haritada işaretli yer şekli / nokta hangisidir?';
+        questionText = 'İşaretli Yer Şekli Nedir?';
         questionTypeTitle = 'KONUM SORUSU';
       }
     }
@@ -353,7 +331,7 @@ class GeographyQuiz {
       this.stats.streak = 0;
 
       this.analytics[qId].wrongCount++;
-      this.analytics[qId].streak = 0; // Seri sıfırlanır
+      this.analytics[qId].streak = 0;
       this.analytics[qId].lastSeen = Date.now();
 
       if (!this.wrongPool.some(i => i.id === this.currentQuestion.id)) {
