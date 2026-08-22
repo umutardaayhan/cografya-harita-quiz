@@ -16,6 +16,7 @@
   --danger-bg: rgba(239, 68, 68, 0.15);
   --accent-gold: #f59e0b;
   --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
   --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --radius-lg: 16px;
   --radius-md: 10px;
@@ -427,6 +428,43 @@ body {
   font-weight: 700;
 }
 
+/* Coğrafi Mesafe Zorluk Seçici */
+.difficulty-selector {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+}
+
+.diff-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.diff-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.diff-btn.active {
+  background: var(--accent-gold);
+  color: #0f172a;
+  font-weight: 800;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
 /* Dinamik Şık Sayısı Seçici */
 .options-count-selector {
   display: flex;
@@ -520,7 +558,7 @@ body {
   color: var(--accent-gold);
 }
 
-/* Soru Başlığı ve Adaptif Rozet */
+/* Soru Başlığı ve Rozetler */
 .question-header {
   display: flex;
   flex-direction: column;
@@ -530,7 +568,7 @@ body {
 .question-badge-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -541,6 +579,16 @@ body {
   background: rgba(59, 130, 246, 0.2);
   color: #60a5fa;
   padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.difficulty-badge {
+  font-size: 0.72rem;
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--accent-gold);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 3px 7px;
   border-radius: 6px;
   font-weight: 700;
 }
@@ -556,9 +604,25 @@ body {
   animation: pulseBadge 2s infinite ease-in-out;
 }
 
+.mastered-badge {
+  font-size: 0.72rem;
+  background: rgba(6, 182, 212, 0.2);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  animation: pulseMastered 2.5s infinite ease-in-out;
+}
+
 @keyframes pulseBadge {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.75; transform: scale(0.97); }
+}
+
+@keyframes pulseMastered {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(6, 182, 212, 0.4); }
+  50% { opacity: 0.85; box-shadow: 0 0 12px rgba(6, 182, 212, 0.8); }
 }
 
 .question-title {

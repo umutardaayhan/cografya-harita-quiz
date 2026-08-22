@@ -106,15 +106,16 @@
       </div>
     </div>
 
-    <!-- Otomatik Yakınlaştırma (Auto-Zoom) Aç/Kapa Butonu -->
-    <button id="auto-zoom-btn" class="tool-btn active" title="Sorularda Haritanın Otomatik Yakınlaşmasını Açar/Kapatır">
-      <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak: Açık</span>
-    </button>
+    <!-- Coğrafi Mesafe Zorluk Seçici (1-5 Kademe) -->
+    <div class="difficulty-selector" title="Zorluk Seviyesi (Şıklar Arası Coğrafi Yakınlık Mesafesi)">
+      <span class="selector-label">⚡ Zorluk:</span>
+      <button class="diff-btn" data-level="1" title="1. Seviye: Kolay (Uzak Bölgeler)">1</button>
+      <button class="diff-btn" data-level="2" title="2. Seviye: Orta-Kolay">2</button>
+      <button class="diff-btn" data-level="3" title="3. Seviye: Orta">3</button>
+      <button class="diff-btn" data-level="4" title="4. Seviye: Zor (Aynı Yöre)">4</button>
+      <button class="diff-btn active" data-level="5" title="5. Seviye: Uzman / ÖSYM Eleme (En Yakın Komşular)">5 (Uzman)</button>
+    </div>
 
-    <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
-      <span>🎯</span> <span>Merkezle</span>
-    </button>
-    
     <!-- Dinamik Şık Sayısı Seçici -->
     <div class="options-count-selector" title="Testteki Şık Sayısını Seçin">
       <span class="selector-label">Şık:</span>
@@ -123,6 +124,15 @@
       <button class="opt-count-btn active" data-count="4">4</button>
       <button class="opt-count-btn" data-count="5">5 (ÖSYM)</button>
     </div>
+
+    <!-- Otomatik Yakınlaştırma (Auto-Zoom) Aç/Kapa Butonu -->
+    <button id="auto-zoom-btn" class="tool-btn active" title="Sorularda Haritanın Otomatik Yakınlaşmasını Açar/Kapatır">
+      <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak: Açık</span>
+    </button>
+
+    <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
+      <span>🎯</span> <span>Merkezle</span>
+    </button>
   </div>
 
   <!-- Sağ Alt Quiz / Soru Paneli -->
@@ -146,12 +156,16 @@
     <!-- Keşif Modu Bilgisi -->
     <div id="explore-banner" class="explore-banner"></div>
 
-    <!-- Soru Başlığı -->
+    <!-- Soru Başlığı ve Rozetler -->
     <div class="question-header">
       <div class="question-badge-container">
         <span id="question-badge" class="question-badge">🏔️ DAĞLAR - [HARİTADA BUL (I-V)]</span>
+        <span id="question-difficulty-badge" class="difficulty-badge" title="Seçenekler birbirine en yakın coğrafi konumlardan seçildi.">⚡ Seviye 5</span>
         <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
           ⚠️ Sık Yanıldığın Soru
+        </span>
+        <span id="question-mastered-badge" class="mastered-badge" style="display: none;" title="Bu yer şeklini çok iyi bildiğiniz için hafıza tazelemek amacıyla nadiren soruluyor.">
+          🎓 Ustalaşılan Soru
         </span>
       </div>
       <h2 id="question-title" class="question-title">Haritada numaralandırılmış konumlardan hangisi Erciyes Dağı'dır?</h2>
@@ -234,7 +248,6 @@
         <button id="manage-modal-close-btn" class="modal-close">&times;</button>
       </div>
 
-      <!-- Doğrudan JSON Metni Yapıştırma Alanı (NotebookLM İçin) -->
       <div class="paste-import-box">
         <label for="paste-json-textarea" class="paste-label">
           📋 <strong>JSON Metnini Direkt Yapıştır & Yükle</strong> (NotebookLM Çıktısı):

@@ -1,41 +1,37 @@
-# 🎨 KPSS Harita Quiz: Çift Yönlü Test Modelleri, Çizim Editörü & Adaptif Motor Kılavuzu
+# 🎨 KPSS Harita Quiz: Zorluk Sistemi, Ustalık Seyreltme, Test Modelleri & Çizim Kılavuzu
 
-Bu doküman; uygulamada yer alan çift yönlü soru modlarını (İsimden Haritada Konum Bulma I-V & Konumdan İsim Bulma), serbest harita çizimini, doğrudan JSON yapıştırmayı ve çoklu harita katmanlarını açıklar.
-
----
-
-## 1. 🎯 Çift Yönlü Test Formatları (Soru Tipleri)
-
-Üst menüdeki **"🎯 Soru Formatı"** seçicisinden dilediğiniz modda çalışabilirsiniz:
-
-### A. 📍 İsimden Haritada Bul (ÖSYM Tipi I-V / A-E):
-- **Nasıl Çalışır?:** Soru başlığında yer şeklinin adı ve türü verilir: *(Örn: "Haritada numaralandırılmış konumlardan hangisi **Nemrut Dağı**'dır?")*
-- Harita üzerinde seçtiğiniz şık adedi kadar (2, 3, 4 veya 5 adet) **(I, II, III, IV, V)** ve **(A, B, C, D, E)** rozetli parıldayan pinler belirir.
-- Doğrudan **haritadaki numaralara tıklayarak**, panelden veya klavyeden (`1-5` / `A-E`) cevap verebilirsiniz.
-- Doğru pin anında yeşil dalga efektiyle onaylanır, yanlış pin kırmızı yanıp söner ve KPSS bilgi kartı açılır.
-
-### B. 🔍 Konumdan İsmi Bul (Klasik Mod):
-- Haritada tek bir konum veya çizgi/alan parıldayarak gösterilir, paneldeki şıklardan ismi seçilir.
-
-### C. 🎲 Karışık Sürpriz Modu:
-- Her soruda rastgele olarak bu iki formattan biri karşınıza gelir.
+Bu doküman; uygulamada yer alan **Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi**, **Ustalık Düzeyi & İyi Bilinenleri Seyreltme (Mastery Decay)**, **ÖSYM Çift Yönlü Test Formatları**, **Harita Çizim Editörü** ve **Doğrudan JSON Yapıştırma** sistemlerinin çalışma prensiplerini açıklar.
 
 ---
 
-## 2. 📋 Doğrudan JSON Metni Yapıştırma (NotebookLM Uyumlu)
+## 1. ⚡ Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi
 
-1. **"✏️ Harita Editörü"** -> **"📁 Çizimlerim & İçe Aktar"** butonuna basın.
-2. NotebookLM'in ürettiği JSON dizisini üstteki kutucuğa yapıştırın ve **"🚀 Yapıştırılan JSON'u İçe Aktar"** butonuna tıklayın.
-3. Tüm coğrafi yer şekilleri ve KPSS soruları anında haritanıza işlenir.
+Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevabın koordinatlarına olan **Haversine Kuş Uçuşu Mesafesine (km)** göre seçer:
 
----
-
-## 3. 🗺️ Harita Katmanları ve Yakınlaştırma (Auto-Zoom)
-
-- 5 Katman: 🗺️ **Sade / Renkli**, ⛰️ **Fiziki / Topografik**, 🛰️ **Gerçek Uydu**, 🌙 **Gece / Karanlık**, 🏔️ **Kabartı / Arazi**.
-- **🔍 Otomatik Odak (Auto-Zoom):** Açıp kapatarak haritanın sabit Türkiye görünümünde kalmasını veya her soruda otomatik odaklanmasını ayarlayabilirsiniz.
+- **⭐ Seviye 1 (Kolay):** Çeldiriciler Türkiye geneline dağılır (Farklı coğrafi bölgeler, > 500 km).
+- **⭐⭐ Seviye 2 (Orta-Kolay):** Çeldiriciler 350 - 500 km mesafeden seçilir.
+- **⭐⭐⭐ Seviye 3 (Orta / Bölgesel):** Çeldiriciler aynı veya komşu coğrafi bölgelerden seçilir (~150 - 350 km).
+- **⭐⭐⭐⭐ Seviye 4 (Zor / Aynı Yöre):** Çeldiriciler 75 - 150 km yakınlıktaki komşu yer şekillerinden seçilir.
+- **⭐⭐⭐⭐⭐ Seviye 5 (Uzman / ÖSYM Eleme Modu):** Çeldiriciler **birbirine en yakın, adeta aynı dağ silsilesi / fay hattı / havzadaki en yakın komşulardan** seçilir! (Örn: Kaz Dağı sorulduğunda Madra, Yunt, Spil dağları gelir; hepsi Ege'de dip dibe olduğu için tam koordinat bilgisi gerektirir).
 
 ---
 
-## 4. 🧠 Hata Ağırlıklı Adaptif Soru Motoru (Spaced Repetition)
-- En çok takıldığınız sorular Rulet Tekerleği algoritması ile daha sık gelir ve `⚠️ Sık Yanıldığın Soru` rozetiyle uyarır.
+## 2. 🧠 Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay)
+
+Öğrencinin zaten ezberlediği sorularla vakit kaybetmesini önlemek için akıllı seyreltme devrededir:
+- **Ustalaşılan Sorular (Seri $\ge 3$ Doğru):** Seçim ağırlığı $0.04 - 0.12$ bandına iner (%90-95 oranında havuzdan geri çekilir). Sadece uzun aralıklarla hafızayı yoklamak için nadiren gelir ve kartta `🎓 Ustalaşılan Soru` rozeti yanar.
+- **Takılınan Sorular (Yanlış $\ge 1$):** Yanlış sayısı kadar ağırlığı katlanarak artar ve `⚠️ Sık Yanıldığın Soru` rozetiyle öncelikli olarak tekrar tekrar karşınıza çıkarılır.
+
+---
+
+## 3. 🎯 Çift Yönlü Test Formatları
+
+- 📍 **İsimden Haritada Bul (ÖSYM Tipi I-V / A-E):** İsim verilir -> Haritada 2-5 adet parıldayan harita pini (I-V) belirir. Doğrudan haritadan veya klavyeden cevaplanır.
+- 🔍 **Konumdan İsmi Bul (Klasik):** Haritada 1 yer parıldar -> Şıklardan ismi bulunur.
+- 🎲 **Karışık Sürpriz Modu:** Her soruda rastgele bir mod gelir.
+
+---
+
+## 4. 📋 Doğrudan JSON Yapıştırma & Harita Katmanları
+- NotebookLM çıktısını kopyalayıp dosyasız tek tıkla yapıştırma desteği.
+- 5 Harita Katmanı (Sade, Fiziki, Gerçek Uydu, Gece, Kabartı) ve açılıp kapanabilir Otomatik Odak (Auto-Zoom).

@@ -1,12 +1,9 @@
 /**
  * Ana Uygulama Yöneticisi (App Controller)
- * - Çift Yönlü Soru Modları:
- *   1. 'find_on_map': İsimden Haritada I-V / A-E Konumu Bulma (ÖSYM Formatı)
- *   2. 'identify': Konumdan İsim Bulma (Klasik)
- *   3. 'mixed': Karışık Sürpriz Modu
- * - Çoklu Seçenek Harita Rozetleri ile İnteraktif Tıklama
- * - Çizim Editörü & Doğrudan JSON Yapıştırma
- * - Çoklu Harita Katmanları & Açılıp Kapanabilir Auto-Zoom
+ * - Coğrafi Mesafe Tabanlı 5 Kademeli Zorluk Sistemi
+ * - Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay)
+ * - Çift Yönlü Soru Modları (İsimden Haritada Bul I-V vs Konumdan İsim Bul)
+ * - Çizim Editörü, Doğrudan JSON Yapıştırma, Çoklu Harita Katmanları & Auto-Zoom
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const formatLabel = document.getElementById('format-label');
   const formatDropdown = document.getElementById('format-dropdown');
   const formatOptionBtns = document.querySelectorAll('.format-option-btn');
+
+  // Zorluk Seviyesi Butonları (1-5 Kademe)
+  const diffBtns = document.querySelectorAll('.diff-btn');
 
   // Harita Katmanları & Auto-Zoom
   const mapLayerBtn = document.getElementById('map-layer-btn');
@@ -74,7 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const quizPanel = document.getElementById('quiz-panel');
   const exploreBanner = document.getElementById('explore-banner');
   const questionBadge = document.getElementById('question-badge');
+  const questionDifficultyBadge = document.getElementById('question-difficulty-badge');
   const questionAdaptiveBadge = document.getElementById('question-adaptive-badge');
+  const questionMasteredBadge = document.getElementById('question-mastered-badge');
   const questionTitle = document.getElementById('question-title');
   const optionsGrid = document.getElementById('options-grid');
   const kpssInfoCard = document.getElementById('kpss-info-card');
@@ -225,12 +227,22 @@ document.addEventListener('DOMContentLoaded', () => {
     questionBadge.textContent = `${catIcon} ${catName} - [${qData.questionTypeTitle}]`;
     questionTitle.innerHTML = qData.questionText;
 
-    // Adaptif hata rozeti
+    // Zorluk rozeti
+    const diffNames = { 1: '1 (Kolay)', 2: '2 (Orta-Kolay)', 3: '3 (Orta)', 4: '4 (Zor)', 5: '5 (Uzman/Yakın)' };
+    questionDifficultyBadge.textContent = `⚡ Seviye ${diffNames[qData.difficultyLevel] || qData.difficultyLevel}`;
+
+    // Adaptif hata ve ustalık rozetleri
     if (qData.isProblematic) {
       questionAdaptiveBadge.style.display = 'inline-block';
       questionAdaptiveBadge.textContent = `⚠️ Sık Yanıldığın Soru (${qData.wrongCount} Yanlış)`;
+      questionMasteredBadge.style.display = 'none';
+    } else if (qData.isMastered) {
+      questionMasteredBadge.style.display = 'inline-block';
+      questionMasteredBadge.textContent = `🎓 Ustalaşılan Soru (${qData.streak} Seri Doğru)`;
+      questionAdaptiveBadge.style.display = 'none';
     } else {
       questionAdaptiveBadge.style.display = 'none';
+      questionMasteredBadge.style.display = 'none';
     }
 
     // Şıkları render et ve harita işaretçilerini kur
@@ -302,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Harita üzerindeki çoklu pinleri renklendir (Eğer find_on_map modundaysa)
+    // Harita üzerindeki çoklu pinleri renklendir
     if (result.actualFormat === 'find_on_map') {
       geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
     }
@@ -326,6 +338,26 @@ document.addEventListener('DOMContentLoaded', () => {
     statStreak.textContent = geoQuiz.stats.streak > 0 ? `🔥 ${geoQuiz.stats.streak}` : '0';
     statRate.textContent = `%${geoQuiz.getSuccessRate()}`;
   }
+
+  // --- ZORLUK SEVİYESİ YÖNETİMİ (1-5 KADEME) ---
+  diffBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      diffBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const level = parseInt(btn.dataset.level, 10);
+      geoQuiz.setDifficultyLevel(level);
+
+      if (currentMode === 'quiz') {
+        loadNextQuestion();
+      }
+    });
+  });
+
+  // Başlangıç zorluk butonunu aktif et
+  const initialDiff = geoQuiz.getDifficultyLevel();
+  diffBtns.forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.level, 10) === initialDiff);
+  });
 
   // --- SORU FORMATI YÖNETİMİ (KLASİK / HARİTADA BUL / KARIŞIK) ---
   formatToggleBtn.addEventListener('click', (e) => {
@@ -359,14 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Format menüsü dışına tıklayınca kapat
   document.addEventListener('click', (e) => {
     if (!formatDropdown.contains(e.target) && e.target !== formatToggleBtn) {
       formatDropdown.style.display = 'none';
     }
   });
 
-  // Başlangıç format etiketini ayarla
   const initialFormat = geoQuiz.getQuizFormat();
   formatOptionBtns.forEach(b => {
     b.classList.toggle('active', b.dataset.format === initialFormat);

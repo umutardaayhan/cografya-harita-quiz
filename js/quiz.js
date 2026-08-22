@@ -1,11 +1,9 @@
 /**
  * KPSS Coğrafya Quiz ve Adaptif Soru Motoru
- * - Akıllı Hata Ağırlıklı Soru Seçimi (Smart Repetition)
+ * - Coğrafi Mesafe (Haversine km) Tabanlı 5 Kademeli Dinamik Zorluk Sistemi
+ * - Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay / Spaced Repetition)
+ * - Çift Yönlü Test Modları ('find_on_map', 'identify', 'mixed')
  * - Dinamik Şık Sayısı (2, 3, 4, 5 Şık)
- * - Çift Yönlü Test Modları:
- *   1. 'identify': Haritada Tek Yer Gösterir -> İsmini Sorar.
- *   2. 'find_on_map': İsmi Söyler -> Haritada I, II, III, IV, V'ten Doğru Olanı İster (ÖSYM Formatı).
- *   3. 'mixed': Karışık Sürpriz Modu.
  */
 
 class GeographyQuiz {
@@ -19,14 +17,15 @@ class GeographyQuiz {
     this.currentQuestion = null;
     this.currentOptions = [];
     this.isAnswered = false;
-    this.optionCount = 4; // Varsayılan 4 şık (2, 3, 4, 5 seçilebilir)
+    this.optionCount = 4; // 2, 3, 4, 5
+    this.difficultyLevel = this.loadDifficultyLevel(); // 1, 2, 3, 4, 5
     this.quizFormat = this.loadQuizFormat(); // 'identify', 'find_on_map', 'mixed'
     this.currentActualFormat = 'identify';
 
     // Genel Test İstatistikleri
     this.stats = this.loadStats();
 
-    // Soru Bazlı Adaptif Analitik (Hata Ağırlıkları)
+    // Soru Bazlı Adaptif Analitik (Hata Ağırlıkları ve Ustalık Seviyeleri)
     this.analytics = this.loadAnalytics();
 
     this.reloadCategoryItems();
@@ -71,7 +70,7 @@ class GeographyQuiz {
 
   loadQuizFormat() {
     const saved = localStorage.getItem('kpss_cografya_quiz_format');
-    return saved || 'find_on_map'; // Varsayılan olarak heyecan verici yeni ÖSYM modunu açalım
+    return saved || 'find_on_map';
   }
 
   setQuizFormat(format) {
@@ -81,6 +80,20 @@ class GeographyQuiz {
 
   getQuizFormat() {
     return this.quizFormat;
+  }
+
+  loadDifficultyLevel() {
+    const saved = localStorage.getItem('kpss_cografya_difficulty');
+    return saved ? parseInt(saved, 10) : 5; // Varsayılan olarak en zorlu ve gerçekçi Seviye 5 (En Yakın Komşular)
+  }
+
+  setDifficultyLevel(level) {
+    this.difficultyLevel = Math.max(1, Math.min(5, level));
+    localStorage.setItem('kpss_cografya_difficulty', this.difficultyLevel.toString());
+  }
+
+  getDifficultyLevel() {
+    return this.difficultyLevel;
   }
 
   setOptionCount(count) {
@@ -108,11 +121,43 @@ class GeographyQuiz {
     this.isAnswered = false;
   }
 
-  // --- ADAPTİF AĞIRLIK HESAPLAMA (SPACED REPETITION) ---
+  // --- HAVERSINE COĞRAFİ MESAFE FORMÜLÜ (KM) ---
+  getDistanceInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Dünya yarıçapı km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Math.round(R * c);
+  }
+
+  // --- GELİŞMİŞ ADAPTİF AĞIRLIK (USTALIK SEYRELTME / MASTERY DECAY) ---
   calculateItemWeight(item) {
     const itemAnalytics = this.analytics[item.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
-    let weight = 1.0 + (itemAnalytics.wrongCount * 2.5) - (itemAnalytics.streak * 0.6);
-    return Math.max(0.3, weight);
+    
+    // 1. Durum: Çok iyi bilinen / Ustalaşılan Soru (Streak >= 3)
+    // Soru havuzundaki ağırlığı çok büyük oranda düşürülür (nadiren sorulur)
+    if (itemAnalytics.streak >= 4) {
+      return 0.04; // %96 oranında daha az gelir
+    }
+    if (itemAnalytics.streak === 3) {
+      return 0.12; // %88 oranında daha az gelir
+    }
+    if (itemAnalytics.streak === 2) {
+      return 0.35; // %65 oranında daha az gelir
+    }
+
+    // 2. Durum: Hata Yapılan Soru
+    // Yanlış sayısı kadar ağırlığı katlanır
+    if (itemAnalytics.wrongCount > 0) {
+      return 1.0 + (itemAnalytics.wrongCount * 3.2) - (itemAnalytics.streak * 0.4);
+    }
+
+    // 3. Durum: Henüz yeni veya nötr soru
+    return 1.0;
   }
 
   getWeightedRandomItem(pool) {
@@ -131,6 +176,67 @@ class GeographyQuiz {
     }
 
     return pool[pool.length - 1];
+  }
+
+  // --- ZORLUK DERECESİNE GÖRE ÇELDIRICI SEÇİMİ (MESAFE TABANLI) ---
+  selectDistractorsByProximity(targetQuestion, candidatePool, count) {
+    if (candidatePool.length <= count) {
+      return [...candidatePool];
+    }
+
+    // Tüm adayların hedef soruya olan coğrafi mesafesini hesapla ve sırala
+    const withDistance = candidatePool.map(item => ({
+      item,
+      distance: this.getDistanceInKm(targetQuestion.lat, targetQuestion.lng, item.lat, item.lng)
+    })).sort((a, b) => a.distance - b.distance);
+
+    const totalCandidates = withDistance.length;
+    let selected = [];
+
+    // 5 Kademeli Coğrafi Zorluk Matrisi:
+    if (this.difficultyLevel === 5) {
+      // 🌟 SEVİYE 5 (UZMAN / DİP DİBE KOMŞULAR):
+      // Mesafesi en küçük olan en yakın komşulardan seçilir
+      const sliceSize = Math.max(count, Math.min(count + 2, totalCandidates));
+      const nearestSlice = withDistance.slice(0, sliceSize);
+      selected = nearestSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    } 
+    else if (this.difficultyLevel === 4) {
+      // 🌟 SEVİYE 4 (ZOR / AYNI/KOMŞU YÖRE):
+      // En yakın %40'lık dilimden seçilir
+      const sliceSize = Math.max(count, Math.ceil(totalCandidates * 0.45));
+      const nearSlice = withDistance.slice(0, sliceSize);
+      selected = nearSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    } 
+    else if (this.difficultyLevel === 3) {
+      // 🌟 SEVİYE 3 (ORTA / BÖLGESEL):
+      // %25 - %75 arası orta mesafeli dilimden seçilir
+      const start = Math.floor(totalCandidates * 0.2);
+      const end = Math.ceil(totalCandidates * 0.8);
+      const midSlice = withDistance.slice(start, Math.max(start + count, end));
+      selected = midSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    } 
+    else if (this.difficultyLevel === 2) {
+      // 🌟 SEVİYE 2 (KOLAY / UZAK BÖLGELER):
+      // En uzak %50'lik dilimden seçilir
+      const start = Math.floor(totalCandidates * 0.45);
+      const farSlice = withDistance.slice(start);
+      selected = farSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    } 
+    else {
+      // 🌟 SEVİYE 1 (ÇOK KOLAY / TÜRKİYE GENELİ VE EN UZAKLAR):
+      // Mesafesi en büyük olan en uzak öğelerden seçilir
+      const farSlice = withDistance.slice(Math.max(0, totalCandidates - count - 3));
+      selected = farSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    }
+
+    // Güvenlik fallback: Yetersiz kaldıysa havuzdan tamamla
+    if (selected.length < count) {
+      const remaining = candidatePool.filter(c => !selected.some(s => s.id === c.id));
+      selected.push(...remaining.slice(0, count - selected.length));
+    }
+
+    return selected;
   }
 
   // Yeni Soru Üret
@@ -152,55 +258,47 @@ class GeographyQuiz {
     this.remainingPool = this.remainingPool.filter(i => i.id !== selectedQuestion.id);
     this.isAnswered = false;
 
-    // Soru formatını belirle (identify, find_on_map veya mixed)
+    // Soru formatını belirle
     if (this.quizFormat === 'mixed') {
       this.currentActualFormat = Math.random() > 0.5 ? 'find_on_map' : 'identify';
     } else {
       this.currentActualFormat = this.quizFormat;
     }
 
-    // Soru analitik durumu
-    const itemAnalytics = this.analytics[selectedQuestion.id] || { wrongCount: 0, correctCount: 0 };
+    // Soru analitik ve ustalık durumu
+    const itemAnalytics = this.analytics[selectedQuestion.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
     const isProblematic = itemAnalytics.wrongCount >= 2 && itemAnalytics.wrongCount > itemAnalytics.correctCount;
+    const isMastered = itemAnalytics.streak >= 3;
 
-    // Dinamik Çeldiriciler
+    // Dinamik Çeldirici Sayısı
     const targetDistractorCount = this.optionCount - 1;
-    let otherItems = this.items.filter(item => item.id !== this.currentQuestion.id);
+    let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
 
-    if (otherItems.length < targetDistractorCount) {
+    if (candidatePool.length < targetDistractorCount) {
       const allGlobalItems = [];
       Object.keys(COGRAFYA_DATA).forEach(cat => {
         allGlobalItems.push(...COGRAFYA_DATA[cat]);
       });
       const additionalOthers = allGlobalItems.filter(
-        item => item.id !== this.currentQuestion.id && !otherItems.some(o => o.id === item.id)
+        item => item.id !== this.currentQuestion.id && !candidatePool.some(o => o.id === item.id)
       );
-      otherItems = [...otherItems, ...additionalOthers];
+      candidatePool = [...candidatePool, ...additionalOthers];
     }
 
-    const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
-    const distractors = shuffledOthers.slice(0, Math.min(targetDistractorCount, shuffledOthers.length));
+    // Coğrafi mesafe tabanlı akıllı çeldirici seçimi
+    const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, targetDistractorCount);
 
     // Doğru cevapla çeldiricileri harmanla
     this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
 
-    const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
-    const letters = ['A', 'B', 'C', 'D', 'E'];
-
-    // Soru formatına göre metin ve başlık oluşturma
+    // Soru başlığı
     let questionText = '';
     let questionTypeTitle = '';
 
     if (this.currentActualFormat === 'find_on_map') {
-      // YENİ ÖSYM TEST MODELİ (İsim verilir -> Haritada I-V arasından doğru konum istenir)
-      let shapeLabel = 'yer şekli';
-      if (this.currentQuestion.shapeType === 'polyline') shapeLabel = 'akarsu/hat';
-      if (this.currentQuestion.shapeType === 'polygon') shapeLabel = 'alan/bölge';
-
       questionText = `Haritada numaralandırılmış konumlardan hangisi <strong style="color: #60a5fa; text-decoration: underline;">${this.currentQuestion.name}</strong> (${this.currentQuestion.type}) konumudur?`;
       questionTypeTitle = 'HARİTADA BUL (I-V)';
     } else {
-      // KLASİK MOD (Haritada konum gösterilir -> İsmi sorulur)
       if (this.currentQuestion.shapeType === 'polyline') {
         questionText = 'Haritada işaretli hat / akarsu / sıra hangisidir?';
         questionTypeTitle = 'HAT / AKARSU SORUSU';
@@ -220,8 +318,11 @@ class GeographyQuiz {
       questionTypeTitle,
       actualFormat: this.currentActualFormat,
       isProblematic,
+      isMastered,
       wrongCount: itemAnalytics.wrongCount,
-      correctCount: itemAnalytics.correctCount
+      correctCount: itemAnalytics.correctCount,
+      streak: itemAnalytics.streak,
+      difficultyLevel: this.difficultyLevel
     };
   }
 
@@ -252,7 +353,7 @@ class GeographyQuiz {
       this.stats.streak = 0;
 
       this.analytics[qId].wrongCount++;
-      this.analytics[qId].streak = 0;
+      this.analytics[qId].streak = 0; // Seri sıfırlanır
       this.analytics[qId].lastSeen = Date.now();
 
       if (!this.wrongPool.some(i => i.id === this.currentQuestion.id)) {
