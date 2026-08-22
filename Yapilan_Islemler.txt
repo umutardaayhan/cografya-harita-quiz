@@ -13,3 +13,18 @@
   - index.html
 🔄 Geri Dönüş: git checkout veya dosyaları silerek sıfırlanabilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 16:32
+⚠️ Sorun/İhtiyaç: Haritaya serbest nokta, çizgi (akarsu/sıra) ve geometrik alan (poligon) ekleyebilme, bu çizimlerden özel quiz oluşturabilme, hata-ağırlıklı adaptif soru tekrar algoritması ve dinamik şık sayısı (2, 3, 4, 5 şık) ihtiyacı.
+🎯 İşlem Özeti: CustomDrawManager modülü, Leaflet serbest geometri çizim ve animasyonlu soru vurgulama motoru, Rulet Tekerleği tabanlı Spaced Repetition algoritması, dinamik 2-5 şık seçicisi ve JSON dışa/içe aktarma sistemi entegre edildi.
+📁 Etkilenen Kapsam: 
+  - js/custom_draw.js
+  - js/map.js
+  - js/quiz.js
+  - js/app.js
+  - index.html
+  - css/style.css
+  - docs/MIMARI.md
+  - docs/OZEL_HARITA_VE_ADAPTIF_MOTOR.md
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout veya ilgili modüller kaldırılarak önceki sürüme dönülebilir.
+=========================================

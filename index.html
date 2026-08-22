@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KPSS Coğrafya Harita Ezber & Test</title>
+  <title>KPSS Coğrafya Harita Ezber, Çizim & Adaptif Test</title>
   
   <!-- Leaflet Harita Kütüphanesi -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -16,19 +16,63 @@
 
   <!-- Üst Kategori ve Mod Seçim Menüsü -->
   <nav class="top-nav">
-    <div id="categories-container" style="display: flex; gap: 6px; align-items: center;">
+    <div id="categories-container" class="categories-container">
       <!-- JS ile dinamik doldurulur -->
     </div>
+    
     <div class="nav-divider"></div>
-    <button id="mode-toggle-btn" class="mode-toggle-btn" title="Mod Değiştir">
-      <span>🧭</span> <span>Keşif Modu</span>
-    </button>
+
+    <!-- Mod ve Araç Butonları -->
+    <div class="nav-actions">
+      <button id="draw-mode-btn" class="nav-btn draw-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
+        <span>✏️</span> <span>Harita Editörü</span>
+      </button>
+
+      <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Mod Değiştir">
+        <span>🧭</span> <span>Keşif Modu</span>
+      </button>
+    </div>
   </nav>
+
+  <!-- Çizim Modu Üst Araç Çubuğu (Varsayılan gizli) -->
+  <div id="drawing-toolbar" class="drawing-toolbar" style="display: none;">
+    <div class="drawing-title">
+      <span>🎨 <strong>Harita Çizim Modu</strong></span>
+    </div>
+    <div class="drawing-tools-group">
+      <button id="draw-point-btn" class="draw-tool-btn active" data-shape="point">
+        <span>📍</span> <span>Nokta (Pin)</span>
+      </button>
+      <button id="draw-line-btn" class="draw-tool-btn" data-shape="polyline">
+        <span>📏</span> <span>Çizgi / Hat / Nehir</span>
+      </button>
+      <button id="draw-poly-btn" class="draw-tool-btn" data-shape="polygon">
+        <span>📐</span> <span>Alan / Bölge (Çokgen)</span>
+      </button>
+    </div>
+    <div class="drawing-actions-group">
+      <button id="draw-undo-btn" class="draw-action-btn secondary" title="Son Köşeyi Geri Al">
+        <span>↩️ Geri Al</span>
+      </button>
+      <button id="draw-finish-btn" class="draw-action-btn primary" title="Çizimi Tamamla ve Bilgi Ekle">
+        <span>✅ Tamamla</span>
+      </button>
+      <button id="draw-manage-btn" class="draw-action-btn info" title="Kayıtlı Çizimleri Yönet / İçe-Dışa Aktar">
+        <span>📁 Çizimlerim (<span id="custom-draw-count">0</span>)</span>
+      </button>
+      <button id="draw-exit-btn" class="draw-action-btn danger" title="Çizim Modunu Kapat">
+        <span>❌ Kapat</span>
+      </button>
+    </div>
+    <div id="drawing-hint" class="drawing-hint">
+      💡 Haritada bir noktaya tıklayın.
+    </div>
+  </div>
 
   <!-- Harita Alanı -->
   <div id="map"></div>
 
-  <!-- Sol Alt Harita Araçları -->
+  <!-- Sol Alt Harita & Quiz Araçları -->
   <div class="map-controls-left">
     <button id="map-layer-btn" class="tool-btn" title="Harita Tipini Değiştir">
       <span>🗺️</span> <span>Sade Harita (Aktif)</span>
@@ -36,22 +80,31 @@
     <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
       <span>🎯</span> <span>Merkezle</span>
     </button>
+    
+    <!-- Dinamik Şık Sayısı Seçici -->
+    <div class="options-count-selector" title="Testteki Şık Sayısını Seçin">
+      <span class="selector-label">Şık:</span>
+      <button class="opt-count-btn" data-count="2">2</button>
+      <button class="opt-count-btn" data-count="3">3</button>
+      <button class="opt-count-btn active" data-count="4">4</button>
+      <button class="opt-count-btn" data-count="5">5 (ÖSYM)</button>
+    </div>
   </div>
 
   <!-- Sağ Alt Quiz / Soru Paneli -->
   <main id="quiz-panel" class="quiz-panel">
     <!-- İstatistik Barı -->
     <div class="stats-bar">
-      <div class="stat-item correct">
+      <div class="stat-item correct" title="Doğru Sayısı">
         <span>✓</span> <span id="stat-correct">0</span>
       </div>
-      <div class="stat-item wrong">
+      <div class="stat-item wrong" title="Yanlış Sayısı">
         <span>✗</span> <span id="stat-wrong">0</span>
       </div>
-      <div class="stat-item streak">
+      <div class="stat-item streak" title="Seri Doğru">
         <span id="stat-streak">0</span>
       </div>
-      <div class="stat-item">
+      <div class="stat-item" title="Genel Başarı Oranı">
         <span>Başarı:</span> <span id="stat-rate" style="color: #60a5fa; font-weight:700;">%0</span>
       </div>
     </div>
@@ -61,13 +114,18 @@
 
     <!-- Soru Başlığı -->
     <div class="question-header">
-      <span id="question-badge" class="question-badge">🏔️ DAĞLAR - [KONUM SORUSU]</span>
-      <h2 id="question-title" class="question-title">Haritada işaretli dağ hangisidir?</h2>
+      <div class="question-badge-container">
+        <span id="question-badge" class="question-badge">🏔️ DAĞLAR - [KONUM SORUSU]</span>
+        <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
+          ⚠️ Sık Yanıldığın Soru
+        </span>
+      </div>
+      <h2 id="question-title" class="question-title">Haritada işaretli yer şekli hangisidir?</h2>
     </div>
 
-    <!-- 4 Seçenek Şıklar Listesi -->
+    <!-- Dinamik Seçenek Şıklar Listesi -->
     <div id="options-grid" class="options-grid">
-      <!-- JS ile dinamik butonlar (1, 2, 3, 4) -->
+      <!-- JS ile dinamik butonlar (1-5 arası) -->
     </div>
 
     <!-- KPSS Hap Bilgi Kutusu -->
@@ -85,8 +143,81 @@
     </button>
   </main>
 
+  <!-- Çizim Kaydetme Modalı -->
+  <div id="draw-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✨ Çizimi Quiz'e Kaydet</h3>
+        <button id="modal-close-btn" class="modal-close">&times;</button>
+      </div>
+      <form id="draw-save-form" class="modal-form">
+        <div class="form-group">
+          <label for="shape-name">Yer Şekli / Konum Adı *</label>
+          <input type="text" id="shape-name" placeholder="Örn: Çoruh Nehri, Kaz Dağı, Menteşe Yöresi" required autocomplete="off">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="shape-type">Kategori / Oluşum Türü</label>
+            <input type="text" id="shape-type" placeholder="Örn: Akarsu, Horst, Karstik Ova, Plato">
+          </div>
+          <div class="form-group">
+            <label for="shape-region">Bölge / Konum</label>
+            <input type="text" id="shape-region" placeholder="Örn: Karadeniz, Ege, Akdeniz">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="shape-note">KPSS Hap Bilgisi / Sınav Notu</label>
+          <textarea id="shape-note" rows="3" placeholder="Örn: Türkiye'nin en hızlı akan nehirlerinden biridir, rafting turizmi için önemlidir..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Harita Vurgu Rengi</label>
+          <div class="color-picker-palette">
+            <label class="color-radio"><input type="radio" name="shape-color" value="#ef4444" checked><span style="background: #ef4444;"></span></label>
+            <label class="color-radio"><input type="radio" name="shape-color" value="#3b82f6"><span style="background: #3b82f6;"></span></label>
+            <label class="color-radio"><input type="radio" name="shape-color" value="#10b981"><span style="background: #10b981;"></span></label>
+            <label class="color-radio"><input type="radio" name="shape-color" value="#f59e0b"><span style="background: #f59e0b;"></span></label>
+            <label class="color-radio"><input type="radio" name="shape-color" value="#8b5cf6"><span style="background: #8b5cf6;"></span></label>
+            <label class="color-radio"><input type="radio" name="shape-color" value="#ec4899"><span style="background: #ec4899;"></span></label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="modal-cancel-btn" class="modal-btn secondary">Vazgeç</button>
+          <button type="submit" class="modal-btn primary">💾 Kaydet ve Quiz'e Ekle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Kayıtlı Çizimleri Yönetme Modalı -->
+  <div id="draw-manage-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <h3>📁 Özel Çizimlerim & Harita Veritabanı</h3>
+        <button id="manage-modal-close-btn" class="modal-close">&times;</button>
+      </div>
+      
+      <div class="manage-modal-actions">
+        <button id="export-json-btn" class="tool-btn"><span>💾</span> <span>JSON Olarak Yedekle (Dışa Aktar)</span></button>
+        <label class="tool-btn file-input-label">
+          <span>📥</span> <span>JSON Yükle (İçe Aktar)</span>
+          <input type="file" id="import-json-input" accept=".json" style="display: none;">
+        </label>
+        <button id="clear-drawings-btn" class="tool-btn danger"><span>🗑️</span> <span>Tümünü Temizle</span></button>
+      </div>
+
+      <div id="drawings-list-container" class="drawings-list-container">
+        <!-- JS ile doldurulur -->
+      </div>
+    </div>
+  </div>
+
   <!-- Uygulama Scriptleri -->
   <script src="data/cografya_data.js"></script>
+  <script src="js/custom_draw.js"></script>
   <script src="js/map.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/app.js"></script>

@@ -1,5 +1,5 @@
 /* ============================================================
-   KPSS Coğrafya Harita Ezber ve Test Uygulaması - Ana Stil
+   KPSS Coğrafya Harita Ezber, Çizim & Adaptif Test - Ana Stil
    ============================================================ */
 
 :root {
@@ -15,9 +15,11 @@
   --danger: #ef4444;
   --danger-bg: rgba(239, 68, 68, 0.15);
   --accent-gold: #f59e0b;
+  --accent-purple: #8b5cf6;
   --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --radius-lg: 16px;
   --radius-md: 10px;
+  --radius-sm: 6px;
   --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
 }
 
@@ -59,6 +61,18 @@ body {
   max-width: 95vw;
 }
 
+.categories-container {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.categories-container::-webkit-scrollbar {
+  display: none;
+}
+
 .category-btn {
   display: flex;
   align-items: center;
@@ -86,6 +100,11 @@ body {
   box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
 }
 
+.category-btn.custom-category-btn.active {
+  background: var(--accent-purple);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+}
+
 .nav-divider {
   width: 1px;
   height: 24px;
@@ -93,23 +112,157 @@ body {
   margin: 0 4px;
 }
 
-.mode-toggle-btn {
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
   border-radius: 9999px;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--accent-gold);
   font-weight: 600;
   font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.draw-btn {
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+}
+
+.draw-btn:hover, .draw-btn.active {
+  background: rgba(139, 92, 246, 0.35);
+  color: #f3e8ff;
+  border-color: rgba(139, 92, 246, 0.8);
+}
+
+.mode-toggle-btn {
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--accent-gold);
 }
 
 .mode-toggle-btn:hover {
-  background: rgba(245, 158, 11, 0.22);
+  background: rgba(245, 158, 11, 0.25);
+}
+
+/* --- ÇİZİM MODU ÜST ARAÇ ÇUBUĞU --- */
+.drawing-toolbar {
+  position: absolute;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 10px 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow), 0 0 20px rgba(139, 92, 246, 0.2);
+  animation: slideDown 0.25s ease;
+  max-width: 95vw;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.drawing-tools-group, .drawing-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.draw-tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--bg-card-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.draw-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+}
+
+.draw-tool-btn.active {
+  background: var(--accent-purple);
+  color: #ffffff;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+.draw-action-btn {
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.draw-action-btn.primary {
+  background: var(--success);
+  color: #ffffff;
+}
+
+.draw-action-btn.primary:hover {
+  background: #059669;
+}
+
+.draw-action-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.draw-action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.draw-action-btn.info {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.draw-action-btn.danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.drawing-hint {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  text-align: center;
+}
+
+/* Harita Çizim İçi İmleç */
+.drawing-mode-active {
+  cursor: crosshair !important;
 }
 
 /* --- HARİTA ALANI --- */
@@ -121,14 +274,16 @@ body {
   background-color: #1e293b;
 }
 
-/* --- SOL ALT KATMAN VE BİLGİ DÜĞMESİ --- */
+/* --- SOL ALT HARİTA & QUIZ ARAÇLARI --- */
 .map-controls-left {
   position: absolute;
   bottom: 24px;
   left: 24px;
   z-index: 1000;
   display: flex;
+  align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tool-btn {
@@ -145,18 +300,71 @@ body {
   gap: 6px;
   box-shadow: var(--shadow);
   transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .tool-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* --- SAĞ ALT / YAN QUIZ PANELİ --- */
+.tool-btn.danger {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.tool-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Dinamik Şık Sayısı Seçici */
+.options-count-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+}
+
+.selector-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+
+.opt-count-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.opt-count-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.opt-count-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* --- SAĞ ALT QUIZ PANELİ --- */
 .quiz-panel {
   position: absolute;
   right: 24px;
   bottom: 24px;
-  width: 380px;
+  width: 400px;
   max-width: calc(100vw - 48px);
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
@@ -201,15 +409,21 @@ body {
   color: var(--accent-gold);
 }
 
-/* Soru Başlığı */
+/* Soru Başlığı ve Adaptif Rozet */
 .question-header {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+}
+
+.question-badge-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .question-badge {
-  align-self: flex-start;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -220,14 +434,30 @@ body {
   font-weight: 700;
 }
 
+.adaptive-badge {
+  font-size: 0.72rem;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  animation: pulseBadge 2s infinite ease-in-out;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(0.97); }
+}
+
 .question-title {
-  font-size: 1.1rem;
+  font-size: 1.08rem;
   font-weight: 700;
   color: #ffffff;
   line-height: 1.4;
 }
 
-/* Şıklar Listesi */
+/* Şıklar Listesi (Dinamik 2, 3, 4, 5 seçenekler) */
 .options-grid {
   display: flex;
   flex-direction: column;
@@ -239,12 +469,12 @@ body {
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 12px 14px;
+  padding: 11px 14px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-md);
   color: var(--text-main);
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -365,7 +595,7 @@ body {
   line-height: 1.4;
 }
 
-/* --- HARİTA İŞARETÇİ ANİMASYONLARI (PULSE PIN) --- */
+/* --- HARİTA İŞARETÇİ VE ŞEKİL ANİMASYONLARI --- */
 .pulse-marker-icon {
   display: flex;
   align-items: center;
@@ -407,7 +637,42 @@ body {
   }
 }
 
-/* Keşif Modu Noktaları */
+/* Çizgi & Poligon Vurgu Efektleri */
+.animated-pulse-polyline {
+  stroke-dasharray: 12, 12;
+  animation: polylineDash 1s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.9));
+}
+
+@keyframes polylineDash {
+  to { stroke-dashoffset: -24; }
+}
+
+.animated-pulse-polygon {
+  animation: polygonGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes polygonGlow {
+  from { fill-opacity: 0.25; stroke-width: 3; }
+  to { fill-opacity: 0.55; stroke-width: 6; }
+}
+
+/* Çizim Köşe Noktası (Vertex Marker) */
+.vertex-marker-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vertex-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f59e0b;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
 .explore-point-icon {
   width: 14px;
   height: 14px;
@@ -422,42 +687,223 @@ body {
   transform: scale(1.4);
 }
 
-/* Leaflet Popup Teması */
-.leaflet-popup-content-wrapper {
-  background: var(--bg-card) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--bg-card-border) !important;
-  border-radius: var(--radius-md) !important;
-  backdrop-filter: blur(12px) !important;
-  box-shadow: var(--shadow) !important;
+/* --- MODAL PENCERELER --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
 }
 
-.leaflet-popup-tip {
-  background: var(--bg-card) !important;
+.modal-card {
+  background: var(--bg-dark);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-lg);
+  width: 480px;
+  max-width: 100%;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.popup-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #60a5fa;
-  margin-bottom: 4px;
+.modal-card.modal-large {
+  width: 640px;
+  max-height: 85vh;
 }
 
-.popup-type {
-  display: inline-block;
-  font-size: 0.75rem;
-  background: rgba(245, 158, 11, 0.2);
-  color: var(--accent-gold);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-bottom: 6px;
-  font-weight: 600;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--bg-card-border);
+  padding-bottom: 12px;
 }
 
-.popup-text {
+.modal-header h3 {
+  font-size: 1.15rem;
+  color: #ffffff;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #ffffff;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
   font-size: 0.82rem;
-  color: #cbd5e1;
-  line-height: 1.4;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.form-group input, .form-group textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Renk Paleti */
+.color-picker-palette {
+  display: flex;
+  gap: 10px;
+}
+
+.color-radio {
+  cursor: pointer;
+}
+
+.color-radio input {
+  display: none;
+}
+
+.color-radio span {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.color-radio input:checked + span {
+  border-color: #ffffff;
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-btn {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.modal-btn.primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.modal-btn.primary:hover {
+  background: var(--primary-hover);
+}
+
+.modal-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+/* Çizim Listesi Yönetim Modalı */
+.manage-modal-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.file-input-label {
+  cursor: pointer;
+}
+
+.drawings-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 45vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.drawing-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--bg-card-border);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+}
+
+.drawing-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawing-item-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.drawing-item-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.drawing-item-delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.drawing-item-delete:hover {
+  background: rgba(239, 68, 68, 0.3);
 }
 
 /* --- RESPONSIVE TASARIM --- */
@@ -470,18 +916,28 @@ body {
     padding: 6px 8px;
   }
 
+  .drawing-toolbar {
+    top: 68px;
+    width: 95vw;
+    padding: 8px 10px;
+  }
+
   .quiz-panel {
     right: 12px;
     bottom: 12px;
     left: 12px;
     width: auto;
     padding: 14px;
-    max-height: 50vh;
+    max-height: 52vh;
     overflow-y: auto;
   }
 
   .map-controls-left {
-    bottom: calc(50vh + 20px);
+    bottom: calc(52vh + 16px);
     left: 12px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
 }
