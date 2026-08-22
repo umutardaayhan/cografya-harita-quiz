@@ -990,6 +990,13 @@ body {
   display: none;
 }
 
+/* Canli ayar rozeti: sol alttaki Zorluk / Sik secimini yansitir */
+.mk-settings-chip {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  color: #7dd3fc !important;
+}
+
 /* Koordinat avcisi: harita uzerindeki paralel/meridyen etiketleri */
 .mk-grid-label {
   background: transparent !important;

@@ -909,6 +909,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const level = parseInt(btn.dataset.level, 10);
       geoQuiz.setDifficultyLevel(level);
 
+      // Mutlak konum modlari zorlugu siklarin cografi yakinligi olarak kullanir
+      if (mkRefreshRound()) return;
+
       if (currentMode === 'quiz') {
         loadNextQuestion();
       }
@@ -1339,6 +1342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mkRoundEl = document.getElementById('mk-round');
   const mkMaxRoundEl = document.getElementById('mk-maxround');
   const mkScoreEl = document.getElementById('mk-score');
+  const mkSettingsChip = document.getElementById('mk-settings-chip');
   const mkStreakChip = document.getElementById('mk-streak-chip');
   const mkStreakEl = document.getElementById('mk-streak');
   const mkTimerChip = document.getElementById('mk-timer-chip');
@@ -1362,7 +1366,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mkCloseBtn = document.getElementById('mk-close-btn');
   const mkRestartBtn = document.getElementById('mk-restart-btn');
 
-  const MK_OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const MK_OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
   function mkActiveGame() {
     return activeMkKey ? mkGames[activeMkKey] : null;
@@ -1390,6 +1394,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mkHud) mkHud.style.display = 'flex';
 
     const game = mkGames[key];
+    // Sol alt paneldeki Zorluk ve Sik ayarlari her turda buradan okunur
+    game.getSettings = () => ({
+      optionCount: geoQuiz.getOptionCount(),
+      difficulty: geoQuiz.getDifficultyLevel()
+    });
     game.onTick = (secondsLeft) => mkUpdateTimer(secondsLeft);
     game.onTimeout = (view) => mkRender(view);
 
@@ -1411,6 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mkRoundEl) mkRoundEl.textContent = view.round;
     if (mkMaxRoundEl) mkMaxRoundEl.textContent = view.maxRounds;
     if (mkScoreEl) mkScoreEl.textContent = view.score;
+    if (mkSettingsChip) mkSettingsChip.textContent = view.settings || '';
 
     if (mkStreakChip) {
       const hasStreak = typeof view.streak === 'number';
@@ -1489,6 +1499,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const game = mkActiveGame();
     if (!game) return;
     mkRender(game.next());
+  }
+
+  /** Zorluk / sik sayisi oyun ortasinda degisirse turu yeni ayarlarla yeniden kurar */
+  function mkRefreshRound() {
+    const game = mkActiveGame();
+    if (!game || !game.isActive) return false;
+    mkRender(game.refreshRound());
+    return true;
   }
 
   function mkShowResults(summary) {
@@ -1601,7 +1619,10 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       const countVal = btn.dataset.count === 'all' ? 'all' : parseInt(btn.dataset.count, 10);
       geoQuiz.setOptionCount(countVal);
-      
+
+      // Mutlak konum modlarinda sik sayisi secenek/kart adedini belirler
+      if (mkRefreshRound()) return;
+
       if (isExamActive) {
         loadExamQuestion();
       } else if (currentMode === 'quiz') {

@@ -6,7 +6,14 @@
  *   🌡️ TempDetectiveGame     - İndirgenmiş vs. gerçek sıcaklık dedektifi
  *   🌓 DayNightOrderGame     - Gece-gündüz süre farkı avcısı (sıralama)
  *   🎯 CoordinateHunterGame  - Paralel-meridyen koordinat avcısı (harita tıklama)
- *   🏃 CityDuelGame          - İki şehir karşılaştırması (5 saniyelik zaman yarışı)
+ *   🏃 CityDuelGame          - Şehir kapışması (süreli hızlı seçim)
+ *
+ * DİNAMİK AYARLAR (sol alt kontrol panelinden):
+ *   • Şık sayısı  -> tur başına kaç seçenek/kart üretileceği
+ *                    (Koordinat Avcısı'nda: kaç koordinat turu ekleneceği)
+ *   • Zorluk 1-5  -> seçeneklerin birbirine COĞRAFİ YAKINLIĞI.
+ *                    1 = uçlar (Hatay/Sinop gibi), 5 = neredeyse aynı enlem/rakım.
+ *                    (Koordinat Avcısı'nda: ızgara detayı + puanlama toleransı)
  *
  * Hepsi app.js'e AYNI "view" nesnesini döndürür; tek bir HUD hepsini render eder.
  * Tüm cevaplar lat/lng/rakımdan HESAPLANIR, hiçbir sonuç veriye elle yazılmaz.
@@ -21,6 +28,22 @@ const MK = {
     aralik21:  { label: '21 Aralık',  icon: '❄️', decl: -23.45, note: 'Oğlak Dönencesi' },
     mart21:    { label: '21 Mart',    icon: '🌱', decl: 0,      note: 'Ekinoks (Ilım)' },
     eylul23:   { label: '23 Eylül',   icon: '🍂', decl: 0,      note: 'Ekinoks (Ilım)' }
+  },
+
+  /**
+   * Zorluk kademesi, şıkların TOPLAM coğrafi yayılımını belirler.
+   * 1.0 = şıklar Türkiye'nin bir ucundan diğerine, 0.16 = hepsi dar bir kuşakta.
+   * (Sabit "minimum aralık" yaklaşımı, şık sayısı arttıkça havuza sığmadığı için
+   *  seviyeleri birbirinin aynısı yapıyordu.)
+   */
+  SPREAD: { 1: 1.0, 2: 0.75, 3: 0.52, 4: 0.32, 5: 0.16 },
+
+  /** Cevabın tartışmasız kalması için iki şık arasındaki mutlak alt sınır */
+  FLOOR: { lat: 0.15, lng: 0.35, alt: 45 },
+
+  /** Zorluk kademesine göre zorluk etiketi */
+  levelLabel(level) {
+    return { 1: 'Kolay', 2: 'Orta-Kolay', 3: 'Orta', 4: 'Zor', 5: 'Uzman' }[level] || 'Orta';
   },
 
   rad(d) { return d * Math.PI / 180; },
@@ -91,34 +114,84 @@ const MK = {
   randomOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
 
   /**
-   * Belirtilen anahtara göre birbirinden yeterince FARKLI n adet şehir seçer.
-   * Böylece "en dik / en uzun / en fazla" sorusunun tek ve tartışmasız cevabı olur.
+   * Zorluğa göre n şehir seçer.
+   *
+   * Havuzun tam genişliği S ise, o turun hedef yayılımı T = S × SPREAD[zorluk].
+   * Rastgele bir [lo, lo+T] kuşağı seçilir, kuşak n eşit dilime bölünür ve her
+   * dilimden rastgele bir şehir alınır. Böylece hem zorluk gerçekten değişir
+   * hem de aynı seviyede her tur farklı şehirler gelir.
+   *
+   * T asla (n−1) × floor × 1,3'ün altına inmez: iki şıkkın neredeyse eşit
+   * değer alıp soruyu tartışmalı hale getirmesi engellenir.
    */
-  pickDistinct(pool, count, keyFn, minGap) {
-    for (let attempt = 0; attempt < 60; attempt++) {
-      const shuffled = this.shuffle(pool);
-      const chosen = [];
-      for (const city of shuffled) {
-        if (chosen.every(c => Math.abs(keyFn(c) - keyFn(city)) >= minGap)) {
-          chosen.push(city);
-          if (chosen.length === count) return chosen;
-        }
-      }
-    }
-    // Yeterli aralık bulunamazsa boşluğu zorlamadan en ayrık olanları döndür
+  pickBySpread(pool, count, keyFn, difficulty, floor) {
+    const n = Math.min(count, pool.length);
+    if (n < 2) return pool.slice(0, n);
+
     const sorted = pool.slice().sort((a, b) => keyFn(a) - keyFn(b));
-    const step = Math.max(1, Math.floor(sorted.length / count));
+    const minVal = keyFn(sorted[0]);
+    const span = keyFn(sorted[sorted.length - 1]) - minVal;
+
+    const frac = this.SPREAD[difficulty] !== undefined ? this.SPREAD[difficulty] : 0.52;
+    const minSpan = (n - 1) * floor * 1.35;
+    let target = Math.min(span, Math.max(span * frac, minSpan));
+
+    /**
+     * Kusak icinde n adet ESIT ARALIKLI "ideal konum" belirlenir; her biri icin
+     * o konuma en yakin, henuz alinmamis ve bir oncekinden en az floor uzaktaki
+     * sehir secilir. Ideal konumlara jitter eklenir ki ayni seviyede her tur
+     * farkli sehirler gelsin.
+     */
+    const collect = (band, lo) => {
+      const step = target / (n - 1);
+      const used = new Set();
+      const chosen = [];
+      let last = -Infinity;
+
+      for (let i = 0; i < n; i++) {
+        const ideal = lo + i * step + (Math.random() * 2 - 1) * step * 0.35;
+        let best = null;
+        let bestDist = Infinity;
+        for (const city of band) {
+          if (used.has(city.id)) continue;
+          const v = keyFn(city);
+          if (v - last < floor) continue;
+          const d = Math.abs(v - ideal);
+          if (d < bestDist) { bestDist = d; best = city; }
+        }
+        if (!best) return chosen;
+        used.add(best.id);
+        chosen.push(best);
+        last = keyFn(best);
+      }
+      return chosen;
+    };
+
+    for (let attempt = 0; attempt < 40; attempt++) {
+      const lo = minVal + Math.random() * Math.max(0, span - target);
+      const band = sorted.filter(c => keyFn(c) >= lo - 1e-9 && keyFn(c) <= lo + target + 1e-9);
+      if (band.length >= n) {
+        const chosen = collect(band, lo);
+        if (chosen.length === n) return this.shuffle(chosen);
+      }
+      // Kusak bu zorlukta n adet ayrik sehir barindiramiyorsa kademeli genislet
+      if (attempt % 8 === 7) target = Math.min(span, target * 1.2);
+    }
+
+    // Son care: tum havuza esit yayilmis secim (en genis ayrim, daima net cevap)
+    const fallbackStep = (sorted.length - 1) / (n - 1);
     const fallback = [];
-    for (let i = 0; i < count; i++) fallback.push(sorted[Math.min(i * step, sorted.length - 1)]);
+    for (let i = 0; i < n; i++) fallback.push(sorted[Math.round(i * fallbackStep)]);
     return this.shuffle(fallback);
   },
 
-  /** Mesafeye göre puan (koordinat avcısı) */
-  distanceScore(km) {
-    if (km <= 25) return 1000;
-    if (km <= 75) return Math.round(1000 - (km - 25) * 9);
-    if (km <= 200) return Math.round(550 - (km - 75) * 3.2);
-    if (km <= 450) return Math.max(0, Math.round(150 - (km - 200) * 0.6));
+  /** Mesafeye göre puan. tolerance = "tam isabet" sayılan yarıçap (km). */
+  distanceScore(km, tolerance) {
+    const t = tolerance || 25;
+    if (km <= t) return 1000;
+    if (km <= t * 3) return Math.round(1000 - ((km - t) / (t * 2)) * 450);
+    if (km <= t * 8) return Math.round(550 - ((km - t * 3) / (t * 5)) * 400);
+    if (km <= t * 18) return Math.max(0, Math.round(150 - ((km - t * 8) / (t * 10)) * 150));
     return 0;
   }
 };
@@ -136,6 +209,39 @@ class MutlakKonumGameBase {
     this.correctCount = 0;
     this.history = [];
     this.answered = false;
+
+    // Dinamik ayarlar (app.js getSettings ile besler)
+    this.getSettings = null;
+    this.minOptionCount = 2;
+    this.maxOptionCount = 10;
+    this.optionCount = 4;
+    this.difficulty = 5;
+  }
+
+  /** Sol alt panelde seçili şık sayısı ve zorluğu her turda yeniden okur */
+  applySettings() {
+    const s = (typeof this.getSettings === 'function' && this.getSettings()) || {};
+
+    const level = parseInt(s.difficulty, 10);
+    this.difficulty = Number.isFinite(level) ? Math.max(1, Math.min(5, level)) : 5;
+
+    if (s.optionCount === 'all') {
+      this.optionCount = this.maxOptionCount;
+    } else {
+      const raw = parseInt(s.optionCount, 10);
+      const wanted = Number.isFinite(raw) ? raw : 4;
+      this.optionCount = Math.max(this.minOptionCount, Math.min(this.maxOptionCount, wanted));
+    }
+  }
+
+  /** HUD'da gösterilen "⚡ Sv.5 (Uzman) · 4 şık" rozeti */
+  settingsLabel(optionWord = 'şık') {
+    return `⚡ Sv.${this.difficulty} (${MK.levelLabel(this.difficulty)}) · ${this.optionCount} ${optionWord}`;
+  }
+
+  /** Bu zorlukta şıkların hangi coğrafi genişliğe yayıldığı (yüzde) */
+  spreadPercent() {
+    return Math.round((MK.SPREAD[this.difficulty] || 0.52) * 100);
   }
 
   resetProgress() {
@@ -148,8 +254,8 @@ class MutlakKonumGameBase {
   }
 
   /** Şehirleri haritada A-B-C-D pinleri olarak gösterir */
-  showPins(cities, onSelect) {
-    this.geoMap.showMultipleChoiceLocations(cities, onSelect);
+  showPins(cities) {
+    this.geoMap.showMultipleChoiceLocations(cities, null);
   }
 
   baseView(extra) {
@@ -159,6 +265,7 @@ class MutlakKonumGameBase {
       round: this.round,
       maxRounds: this.maxRounds,
       score: this.score,
+      settings: this.settingsLabel(),
       badge: '',
       prompt: '',
       hint: '',
@@ -180,6 +287,13 @@ class MutlakKonumGameBase {
     return this.nextRound();
   }
 
+  /** Ayarlar oyun ortasında değişince aynı turu yeni ayarlarla yeniden kurar */
+  refreshRound() {
+    if (!this.isActive) return null;
+    this.answered = false;
+    return this.nextRound();
+  }
+
   buildSummary() {
     const maxScore = this.maxRounds * this.pointsPerRound;
     const ratio = maxScore > 0 ? this.score / maxScore : 0;
@@ -192,7 +306,7 @@ class MutlakKonumGameBase {
     return {
       badge,
       title,
-      subtitle: this.modeTitle,
+      subtitle: `${this.modeTitle} · ${this.settingsLabel()}`,
       stats: [
         { val: this.score, label: '🏆 Toplam Puan', cls: 'record' },
         { val: `${this.correctCount}/${this.maxRounds}`, label: '✓ Doğru Tur', cls: 'correct' }
@@ -218,6 +332,8 @@ class SunShadowGame extends MutlakKonumGameBase {
     this.modeTitle = 'Güneş Açısı & Gölge Boyu';
     this.maxRounds = 8;
     this.pointsPerRound = 100;
+    this.minOptionCount = 2;
+    this.maxOptionCount = 10;
   }
 
   start() {
@@ -229,6 +345,7 @@ class SunShadowGame extends MutlakKonumGameBase {
 
   nextRound() {
     this.answered = false;
+    this.applySettings();
 
     const dateKey = MK.randomOf(Object.keys(MK.DATES));
     const dateInfo = MK.DATES[dateKey];
@@ -240,7 +357,7 @@ class SunShadowGame extends MutlakKonumGameBase {
     ];
     const criterion = MK.randomOf(criteria);
 
-    const cities = MK.pickDistinct(TR_CITIES, 4, c => c.lat, 0.9);
+    const cities = MK.pickBySpread(TR_CITIES, this.optionCount, c => c.lat, this.difficulty, MK.FLOOR.lat);
     const scored = cities.map(c => ({
       city: c,
       angle: MK.sunAngle(c.lat, dateInfo.decl),
@@ -249,14 +366,16 @@ class SunShadowGame extends MutlakKonumGameBase {
 
     const sorted = scored.slice().sort((a, b) => b.angle - a.angle);
     const winner = criterion.wantMaxAngle ? sorted[0] : sorted[sorted.length - 1];
+    const closestGap = Math.abs(sorted[0].angle - sorted[1].angle);
 
     this.current = { dateKey, dateInfo, criterion, scored, correctId: winner.city.id };
-    this.showPins(cities, null);
+    this.showPins(cities);
 
     return this.baseView({
       badge: `${dateInfo.icon} ${dateInfo.label} · ${dateInfo.note}`,
       prompt: criterion.text,
-      hint: `Öğle vakti güneş açısı = 90° − |enlem − ${dateInfo.decl}°| · Enlemi dönenceye yakın olan ışığı daha dik alır.`,
+      hint: `Öğle vakti güneş açısı = 90° − |enlem − ${dateInfo.decl}°| · Enlemi dönenceye yakın olan ışığı daha dik alır.` +
+            (this.difficulty >= 4 ? ` <em>En yakın iki şık arasında yalnızca ${closestGap.toFixed(2)}° var.</em>` : ''),
       options: cities.map(c => ({ id: c.id, label: c.name, sub: `${c.lat.toFixed(2)}° K` })),
       mapPins: cities
     });
@@ -272,9 +391,10 @@ class SunShadowGame extends MutlakKonumGameBase {
 
     const ordered = scored.slice().sort((a, b) => b.angle - a.angle);
     const winnerName = scored.find(s => s.city.id === correctId).city.name;
+    const wantsMax = criterion.wantMaxAngle;
 
     this.history.push({
-      left: `${this.round}. ${dateInfo.label} · ${criterion.key === 'uzun_golge' || criterion.key === 'egik' ? 'en eğik/uzun gölge' : 'en dik/kısa gölge'}`,
+      left: `${this.round}. ${dateInfo.label} · ${wantsMax ? 'en dik / en kısa gölge' : 'en eğik / en uzun gölge'}`,
       right: winnerName,
       ok
     });
@@ -315,6 +435,8 @@ class TempDetectiveGame extends MutlakKonumGameBase {
     this.modeTitle = 'İndirgenmiş Sıcaklık Dedektifi';
     this.maxRounds = 8;
     this.pointsPerRound = 100;
+    this.minOptionCount = 2;
+    this.maxOptionCount = 10;
   }
 
   start() {
@@ -326,30 +448,38 @@ class TempDetectiveGame extends MutlakKonumGameBase {
 
   nextRound() {
     this.answered = false;
+    this.applySettings();
 
     const kind = MK.randomOf(['max', 'max', 'min', 'coastal']);
     let cities, correctId, prompt, hint;
 
     if (kind === 'coastal') {
-      // Tam olarak BİR tane alçak (kıyı) il, üçü yüksek olsun
+      // Tam olarak BİR tane alçak (kıyı) il, geri kalanı yüksek olsun.
+      // Zorluk arttıkça "yüksek" eşiği düşer; ayırt etmek zorlaşır.
+      const highThreshold = { 1: 900, 2: 750, 3: 600, 4: 420, 5: 300 }[this.difficulty];
       const low = MK.shuffle(TR_CITIES.filter(c => c.alt <= 60));
-      const high = MK.pickDistinct(TR_CITIES.filter(c => c.alt >= 550), 3, c => c.alt, 150);
+      const highPool = TR_CITIES.filter(c => c.alt >= highThreshold);
+      const high = MK.pickBySpread(highPool, this.optionCount - 1, c => c.alt, this.difficulty, MK.FLOOR.alt);
       cities = MK.shuffle([low[0], ...high]);
       correctId = low[0].id;
       prompt = 'Hangi ilin ölçülen sıcaklığı <strong>indirgeme gerektirmez</strong>; yani sıcaklığı neredeyse yalnızca <strong>ENLEM</strong> ile açıklanır?';
       hint = 'İndirgenmiş sıcaklık, yükseltinin etkisini silmek için hesaplanır. Rakımı deniz seviyesine yakın illerde gerçek ve indirgenmiş sıcaklık neredeyse aynıdır.';
     } else {
-      cities = MK.pickDistinct(TR_CITIES, 4, c => c.alt, 260);
+      cities = MK.pickBySpread(TR_CITIES, this.optionCount, c => c.alt, this.difficulty, MK.FLOOR.alt);
       const sorted = cities.slice().sort((a, b) => b.alt - a.alt);
       correctId = (kind === 'max' ? sorted[0] : sorted[sorted.length - 1]).id;
+      const closest = kind === 'max'
+        ? sorted[0].alt - sorted[1].alt
+        : sorted[sorted.length - 2].alt - sorted[sorted.length - 1].alt;
       prompt = kind === 'max'
         ? 'Gerçek sıcaklık ile indirgenmiş sıcaklık arasındaki fark <strong>EN FAZLA</strong> olan il hangisidir?'
         : 'Gerçek sıcaklık ile indirgenmiş sıcaklık arasındaki fark <strong>EN AZ</strong> olan il hangisidir?';
-      hint = 'Her 100 metrede sıcaklık 0,5 °C değişir. Fark = (rakım ÷ 100) × 0,5 °C · Rakım yükseldikçe fark büyür.';
+      hint = 'Her 100 metrede sıcaklık 0,5 °C değişir. Fark = (rakım ÷ 100) × 0,5 °C · Rakım yükseldikçe fark büyür.' +
+             (this.difficulty >= 4 ? ` <em>En yakın iki şık arasında yalnızca ${closest} m var.</em>` : '');
     }
 
     this.current = { kind, cities, correctId, prompt };
-    this.showPins(cities, null);
+    this.showPins(cities);
 
     return this.baseView({
       badge: '🌡️ Yükselti & Sıcaklık İndirgeme',
@@ -418,7 +548,13 @@ class DayNightOrderGame extends MutlakKonumGameBase {
     this.modeTitle = 'Gece-Gündüz Süre Avcısı';
     this.maxRounds = 6;
     this.pointsPerRound = 100;
-    this.cardCount = 4;
+    this.minOptionCount = 2;
+    this.maxOptionCount = 8; // 8'den fazla kartı sıralamak oynanabilirliği bozuyor
+    this.picked = [];
+  }
+
+  settingsLabel() {
+    return super.settingsLabel('kart');
   }
 
   start() {
@@ -431,6 +567,7 @@ class DayNightOrderGame extends MutlakKonumGameBase {
   nextRound() {
     this.answered = false;
     this.picked = [];
+    this.applySettings();
 
     const dateKey = MK.randomOf(['haziran21', 'aralik21']);
     const dateInfo = MK.DATES[dateKey];
@@ -441,7 +578,7 @@ class DayNightOrderGame extends MutlakKonumGameBase {
     ];
     const task = MK.randomOf(tasks);
 
-    const cities = MK.pickDistinct(TR_CITIES, this.cardCount, c => c.lat, 1.0);
+    const cities = MK.pickBySpread(TR_CITIES, this.optionCount, c => c.lat, this.difficulty, MK.FLOOR.lat);
     const measured = cities.map(c => {
       const day = MK.dayLengthHours(c.lat, dateInfo.decl);
       return { city: c, day, night: 24 - day };
@@ -452,13 +589,19 @@ class DayNightOrderGame extends MutlakKonumGameBase {
       .sort((a, b) => task.desc ? value(b) - value(a) : value(a) - value(b))
       .map(m => m.city.id);
 
+    // En yakın iki şehir arasındaki süre farkı (dakika) - zor seviyelerde ipucu
+    const sortedVals = measured.map(m => value(m) * 60).sort((a, b) => a - b);
+    let tightest = Infinity;
+    for (let i = 1; i < sortedVals.length; i++) tightest = Math.min(tightest, sortedVals[i] - sortedVals[i - 1]);
+
     this.current = { dateKey, dateInfo, task, measured, correctOrder };
-    this.showPins(cities, null);
+    this.showPins(cities);
 
     return this.baseView({
       badge: `${dateInfo.icon} ${dateInfo.label} · Sıralama`,
       prompt: task.text,
-      hint: `${dateInfo.label}'da Kuzey Yarım Küre'de kuzeye gidildikçe gündüz ${dateInfo.decl > 0 ? 'UZAR' : 'KISALIR'}. Şehirleri istenen sıraya göre tek tek tıkla.`,
+      hint: `${dateInfo.label}'da Kuzey Yarım Küre'de kuzeye gidildikçe gündüz ${dateInfo.decl > 0 ? 'UZAR' : 'KISALIR'}. ${this.optionCount} şehri istenen sıraya göre tek tek tıkla.` +
+            (this.difficulty >= 4 && Number.isFinite(tightest) ? ` <em>En yakın iki şehir arasında yalnızca ${tightest.toFixed(0)} dakika var.</em>` : ''),
       options: cities.map(c => ({ id: c.id, label: c.name, sub: `${c.lat.toFixed(2)}° K` })),
       mapPins: cities,
       orderProgress: []
@@ -504,7 +647,6 @@ class DayNightOrderGame extends MutlakKonumGameBase {
       ok: perfect
     });
 
-    const value = m => (task.metric === 'day' ? m.day : m.night);
     const orderedRows = correctOrder.map((id, i) => {
       const m = measured.find(x => x.city.id === id);
       return {
@@ -548,8 +690,9 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     super(mapInstance);
     this.modeKey = 'coord';
     this.modeTitle = 'Koordinat Avcısı';
-    this.maxRounds = 8;
     this.pointsPerRound = 1000;
+    this.minOptionCount = 2;
+    this.maxOptionCount = 10;
     this.gridLayer = L.layerGroup();
     this.guessLayer = L.layerGroup();
     if (this.geoMap && this.geoMap.map) {
@@ -559,25 +702,44 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     this.prevLabelsEnabled = null;
   }
 
+  /** Bu modda "şık sayısı" = uç noktalara eklenen koordinat turu sayısı */
+  settingsLabel() {
+    return `⚡ Sv.${this.difficulty} (${MK.levelLabel(this.difficulty)}) · ${this.optionCount} koordinat turu`;
+  }
+
+  /** Zorluk arttıkça ızgara seyrekleşir, etiketler kaybolur, tolerans daralır */
+  get gridProfile() {
+    return {
+      1: { latStep: 1, lngStep: 1, labelEvery: 1, tolerance: 70, showHint: true },
+      2: { latStep: 1, lngStep: 1, labelEvery: 1, tolerance: 50, showHint: true },
+      3: { latStep: 1, lngStep: 1, labelEvery: 2, tolerance: 35, showHint: true },
+      4: { latStep: 1, lngStep: 2, labelEvery: 4, tolerance: 22, showHint: false },
+      5: { latStep: 2, lngStep: 2, labelEvery: 0, tolerance: 12, showHint: false }
+    }[this.difficulty];
+  }
+
   /** Paralel ve meridyen ızgarasını haritaya çizer */
   drawGraticule() {
     this.gridLayer.clearLayers();
+    const p = this.gridProfile;
 
-    for (let lat = 36; lat <= 42; lat++) {
+    for (let lat = 36; lat <= 42; lat += p.latStep) {
       this.gridLayer.addLayer(L.polyline([[lat, 25], [lat, 46]], {
         color: '#38bdf8', weight: lat % 2 === 0 ? 1.4 : 0.8, opacity: 0.5, dashArray: '5, 7', interactive: false
       }));
-      this.gridLayer.addLayer(L.marker([lat, 25.9], {
-        interactive: false,
-        icon: L.divIcon({ className: 'mk-grid-label', html: `<span>${lat}°K</span>`, iconSize: [40, 16], iconAnchor: [20, 8] })
-      }));
+      if (p.labelEvery > 0 && lat % p.labelEvery === 0) {
+        this.gridLayer.addLayer(L.marker([lat, 25.9], {
+          interactive: false,
+          icon: L.divIcon({ className: 'mk-grid-label', html: `<span>${lat}°K</span>`, iconSize: [40, 16], iconAnchor: [20, 8] })
+        }));
+      }
     }
 
-    for (let lng = 26; lng <= 45; lng++) {
+    for (let lng = 26; lng <= 45; lng += p.lngStep) {
       this.gridLayer.addLayer(L.polyline([[35.5, lng], [42.5, lng]], {
         color: '#38bdf8', weight: lng % 2 === 0 ? 1.4 : 0.8, opacity: 0.5, dashArray: '5, 7', interactive: false
       }));
-      if (lng % 2 === 0) {
+      if (p.labelEvery > 0 && lng % Math.max(2, p.labelEvery) === 0) {
         this.gridLayer.addLayer(L.marker([35.85, lng], {
           interactive: false,
           icon: L.divIcon({ className: 'mk-grid-label', html: `<span>${lng}°D</span>`, iconSize: [40, 16], iconAnchor: [20, 8] })
@@ -586,8 +748,17 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     }
   }
 
+  buildQueue() {
+    // 4 uç nokta her zaman sorulur; üzerine "şık sayısı" kadar koordinat turu eklenir
+    const extremes = MK.shuffle(TR_EXTREME_POINTS).map(p => ({ type: 'extreme', point: p }));
+    const coords = MK.shuffle(TR_CITIES).slice(0, this.optionCount).map(c => ({ type: 'coord', city: c }));
+    this.queue = MK.shuffle([...extremes, ...coords]);
+    this.maxRounds = this.queue.length;
+  }
+
   start() {
     this.resetProgress();
+    this.applySettings();
     this.guessLayer.clearLayers();
     this.geoMap.clearAll();
 
@@ -600,32 +771,46 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     if (this.prevLabelsEnabled === null) this.prevLabelsEnabled = this.geoMap.labelsEnabled;
     this.geoMap.setLabelsEnabled(false, false);
 
+    this.buildQueue();
     this.drawGraticule();
-
-    // 4 uç nokta + 4 koordinat turu, karışık
-    const extremes = MK.shuffle(TR_EXTREME_POINTS).map(p => ({ type: 'extreme', point: p }));
-    const coords = MK.shuffle(TR_CITIES).slice(0, 4).map(c => ({ type: 'coord', city: c }));
-    this.queue = MK.shuffle([...extremes, ...coords]);
-    this.maxRounds = this.queue.length;
-
     this.geoMap.resetView();
+    return this.nextRound();
+  }
+
+  /** Ayar değişince kuyruğu ve ızgarayı baştan kurmak gerekir */
+  refreshRound() {
+    if (!this.isActive) return null;
+    const prevCount = this.optionCount;
+    const prevDiff = this.difficulty;
+    this.applySettings();
+    if (this.optionCount !== prevCount) {
+      this.buildQueue();
+      this.round = Math.min(this.round, this.maxRounds);
+    }
+    if (this.difficulty !== prevDiff) this.drawGraticule();
+    this.answered = false;
     return this.nextRound();
   }
 
   nextRound() {
     this.answered = false;
+    this.applySettings();
     this.guessLayer.clearLayers();
     this.geoMap.resetView();
 
     const task = this.queue[this.round - 1];
+    if (!task) return this.baseView({ finished: true, summary: this.buildSummary() });
     this.current = task;
+    const p = this.gridProfile;
 
     if (task.type === 'extreme') {
-      const p = task.point;
+      const pt = task.point;
       return this.baseView({
-        badge: `${p.icon} Türkiye'nin Uç Noktaları`,
-        prompt: `Türkiye'nin <strong>en ${p.dir.toLowerCase()}</strong> noktası olan <strong>${p.name}</strong>'nu haritada tıkla.`,
-        hint: `İpucu: ${p.coordText} · Izgaradaki paralel ve meridyenleri kullan.`,
+        badge: `${pt.icon} Türkiye'nin Uç Noktaları`,
+        prompt: `Türkiye'nin <strong>en ${pt.dir.toLowerCase()}</strong> noktası olan <strong>${pt.name}</strong>'nu haritada tıkla.`,
+        hint: p.showHint
+          ? `İpucu: ${pt.coordText} · Izgaradaki paralel ve meridyenleri kullan.`
+          : `Bu seviyede koordinat ipucu yok. ${p.tolerance} km içinde tıklarsan tam puan.`,
         options: null,
         mapPins: null
       });
@@ -635,7 +820,9 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     return this.baseView({
       badge: '🎯 Koordinat Okuma',
       prompt: `<strong>${MK.formatCoord(c.lat, true)}</strong> &nbsp;–&nbsp; <strong>${MK.formatCoord(c.lng, false)}</strong> koordinatını haritada tıkla.`,
-      hint: 'Önce paraleli (yatay çizgi), sonra meridyeni (dikey çizgi) bul; kesiştikleri noktaya tıkla.',
+      hint: p.labelEvery > 0
+        ? `Önce paraleli (yatay çizgi), sonra meridyeni (dikey çizgi) bul; kesiştikleri noktaya tıkla. Tam puan sınırı: ${p.tolerance} km.`
+        : `Izgarada etiket yok — dereceleri kendin saymalısın. Tam puan sınırı: ${p.tolerance} km.`,
       options: null,
       mapPins: null
     });
@@ -646,24 +833,25 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     this.answered = true;
 
     const target = this.current.type === 'extreme' ? this.current.point : this.current.city;
+    const tolerance = this.gridProfile.tolerance;
     const km = MK.haversineKm(lat, lng, target.lat, target.lng);
-    const earned = MK.distanceScore(km);
+    const earned = MK.distanceScore(km, tolerance);
     this.score += earned;
-    if (km <= 75) this.correctCount++;
+    if (km <= tolerance * 3) this.correctCount++;
 
     this.history.push({
       left: `${this.round}. ${target.name}`,
       right: `${km} km · +${earned} puan`,
-      ok: km <= 75
+      ok: km <= tolerance * 3
     });
 
-    this.renderResultOnMap(lat, lng, target, km, earned);
+    this.renderResultOnMap(lat, lng, target, km, earned, tolerance);
 
     const isExtreme = this.current.type === 'extreme';
     const rows = [
       { label: 'Tıkladığın nokta', value: `${MK.formatCoord(lat, true)} – ${MK.formatCoord(lng, false)}` },
       { label: 'Doğru konum', value: `${MK.formatCoord(target.lat, true)} – ${MK.formatCoord(target.lng, false)}`, highlight: true },
-      { label: 'Sapma', value: `${km} km` }
+      { label: 'Sapma', value: `${km} km (tam puan sınırı ${tolerance} km)` }
     ];
 
     return this.baseView({
@@ -671,8 +859,8 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
       prompt: `<strong>${target.name}</strong>${isExtreme ? ` · ${this.current.point.place}` : ''}`,
       options: null,
       feedback: {
-        ok: km <= 75,
-        title: km <= 25 ? `🎯 Tam isabet! (+${earned})` : (km <= 75 ? `✓ Çok yakın — ${km} km (+${earned})` : `${km} km saptın (+${earned})`),
+        ok: km <= tolerance * 3,
+        title: km <= tolerance ? `🎯 Tam isabet! (+${earned})` : (km <= tolerance * 3 ? `✓ Yakın — ${km} km (+${earned})` : `${km} km saptın (+${earned})`),
         rows,
         note: isExtreme ? this.current.point.kpssNot
           : `Bu koordinat ${target.name} il merkezine karşılık gelir. Rakım ${target.alt} m, bölge: ${target.region}.`
@@ -681,12 +869,18 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
     });
   }
 
-  renderResultOnMap(lat, lng, target, km, earned) {
+  renderResultOnMap(lat, lng, target, km, earned, tolerance) {
     this.guessLayer.clearLayers();
 
     this.guessLayer.addLayer(L.polyline([[lat, lng], [target.lat, target.lng]], {
-      color: km <= 75 ? '#10b981' : km <= 200 ? '#f59e0b' : '#ef4444',
+      color: km <= tolerance ? '#10b981' : km <= tolerance * 3 ? '#f59e0b' : '#ef4444',
       weight: 3, dashArray: '6, 8', opacity: 0.9
+    }));
+
+    // Tam puan yarıçapını göster: zorluk seviyesi görünür olsun
+    this.guessLayer.addLayer(L.circle([target.lat, target.lng], {
+      radius: tolerance * 1000,
+      color: '#10b981', fillColor: '#10b981', fillOpacity: 0.1, weight: 1.5, dashArray: '4, 6'
     }));
 
     this.guessLayer.addLayer(L.circleMarker([lat, lng], {
@@ -725,33 +919,83 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
 }
 
 // ============================================================
-// 🏃 9. İKİ ŞEHİR KARŞILAŞTIRMASI (5 SANİYELİK ZAMAN YARIŞI)
+// 🏃 9. ŞEHİR KAPIŞMASI (SÜRELİ HIZLI SEÇİM)
 // ============================================================
 class CityDuelGame extends MutlakKonumGameBase {
   constructor(mapInstance) {
     super(mapInstance);
     this.modeKey = 'duel';
-    this.modeTitle = 'İki Şehir Kapışması';
+    this.modeTitle = 'Şehir Kapışması';
     this.maxRounds = 10;
-    this.pointsPerRound = 150;
-    this.roundSeconds = 5;
+    this.pointsPerRound = 250;
+    this.minOptionCount = 2;
+    this.maxOptionCount = 10;
     this.timerInterval = null;
     this.streak = 0;
     this.bestStreak = 0;
   }
 
+  /**
+   * two : iki şehir varken karşılaştırmalı ifade  ("daha ileridir")
+   * many: üç ve üzeri şehirde üstünlük ifadesi     ("EN ileridir")
+   */
   static get QUESTIONS() {
     return [
-      { text: 'Hangisinin <strong>YEREL SAATİ</strong> daha ileridir?',            key: c => c.lng, dir: 'max', gap: 2.5, unit: c => `${c.lng.toFixed(2)}° D`, why: 'Daha DOĞUDA olan ilin yerel saati ileridir.' },
-      { text: 'Güneş hangisinde daha <strong>ERKEN DOĞAR</strong>?',               key: c => c.lng, dir: 'max', gap: 2.5, unit: c => `${c.lng.toFixed(2)}° D`, why: 'Dünya batıdan doğuya döndüğü için güneşi önce doğudaki il görür.' },
-      { text: 'Güneş hangisinde daha <strong>GEÇ BATAR</strong>?',                 key: c => c.lng, dir: 'min', gap: 2.5, unit: c => `${c.lng.toFixed(2)}° D`, why: 'Daha BATIDA olan ilde güneş daha geç batar.' },
-      { text: '<strong>21 Haziran</strong>\'da <strong>GÜNDÜZÜ</strong> daha uzun olan?', key: c => c.lat, dir: 'max', gap: 2.0, unit: c => `${c.lat.toFixed(2)}° K · ${MK.formatHours(MK.dayLengthHours(c.lat, 23.45))}`, why: '21 Haziran\'da Kuzey Yarım Küre\'de kuzeye gidildikçe gündüz uzar.' },
-      { text: '<strong>21 Aralık</strong>\'ta <strong>GÜNDÜZÜ</strong> daha uzun olan?',  key: c => c.lat, dir: 'min', gap: 2.0, unit: c => `${c.lat.toFixed(2)}° K · ${MK.formatHours(MK.dayLengthHours(c.lat, -23.45))}`, why: '21 Aralık\'ta kuzeye gidildikçe gündüz KISALIR; güneydeki ilin gündüzü daha uzundur.' },
-      { text: '<strong>21 Aralık</strong>\'ta <strong>GECESİ</strong> daha uzun olan?',   key: c => c.lat, dir: 'max', gap: 2.0, unit: c => `${c.lat.toFixed(2)}° K · gece ${MK.formatHours(24 - MK.dayLengthHours(c.lat, -23.45))}`, why: '21 Aralık\'ta en uzun geceyi en kuzeydeki il yaşar.' },
-      { text: '<strong>21 Haziran</strong> öğlesinde <strong>GÖLGE BOYU</strong> daha kısa olan?', key: c => c.lat, dir: 'min', gap: 2.0, unit: c => `${c.lat.toFixed(2)}° K · açı ${MK.sunAngle(c.lat, 23.45).toFixed(1)}°`, why: 'Güneye gidildikçe ışınlar dikleşir, gölge kısalır.' },
-      { text: '<strong>ÇİZGİSEL HIZI</strong> daha fazla olan?',                   key: c => c.lat, dir: 'min', gap: 2.0, unit: c => `${c.lat.toFixed(2)}° K · ${Math.round(MK.linearSpeed(c.lat))} km/sa`, why: 'Ekvatora yaklaştıkça (enlem küçüldükçe) çizgisel hız artar.' },
-      { text: 'Gerçek – indirgenmiş sıcaklık <strong>FARKI</strong> daha fazla olan?', key: c => c.alt, dir: 'max', gap: 500, unit: c => `${c.alt} m · +${MK.reducedTempDiff(c.alt).toFixed(2)} °C`, why: 'Rakım yükseldikçe indirgeme farkı büyür (her 100 m\'de 0,5 °C).' }
+      { keyType: 'lng', dir: 'max',
+        two: 'Hangisinin <strong>YEREL SAATİ</strong> daha ileridir?',
+        many: 'Hangisinin <strong>YEREL SAATİ</strong> EN ileridir?',
+        unit: c => `${c.lng.toFixed(2)}° D`,
+        why: 'Daha DOĞUDA olan ilin yerel saati ileridir.' },
+      { keyType: 'lng', dir: 'max',
+        two: 'Güneş hangisinde daha <strong>ERKEN DOĞAR</strong>?',
+        many: 'Güneş hangisinde <strong>EN ERKEN</strong> doğar?',
+        unit: c => `${c.lng.toFixed(2)}° D`,
+        why: 'Dünya batıdan doğuya döndüğü için güneşi önce doğudaki il görür.' },
+      { keyType: 'lng', dir: 'min',
+        two: 'Güneş hangisinde daha <strong>GEÇ BATAR</strong>?',
+        many: 'Güneş hangisinde <strong>EN GEÇ</strong> batar?',
+        unit: c => `${c.lng.toFixed(2)}° D`,
+        why: 'Daha BATIDA olan ilde güneş daha geç batar.' },
+      { keyType: 'lat', dir: 'max',
+        two: '<strong>21 Haziran</strong>\'da <strong>GÜNDÜZÜ</strong> daha uzun olan?',
+        many: '<strong>21 Haziran</strong>\'da <strong>GÜNDÜZÜ EN UZUN</strong> olan?',
+        unit: c => `${c.lat.toFixed(2)}° K · ${MK.formatHours(MK.dayLengthHours(c.lat, 23.45))}`,
+        why: '21 Haziran\'da Kuzey Yarım Küre\'de kuzeye gidildikçe gündüz uzar.' },
+      { keyType: 'lat', dir: 'min',
+        two: '<strong>21 Aralık</strong>\'ta <strong>GÜNDÜZÜ</strong> daha uzun olan?',
+        many: '<strong>21 Aralık</strong>\'ta <strong>GÜNDÜZÜ EN UZUN</strong> olan?',
+        unit: c => `${c.lat.toFixed(2)}° K · ${MK.formatHours(MK.dayLengthHours(c.lat, -23.45))}`,
+        why: '21 Aralık\'ta kuzeye gidildikçe gündüz KISALIR; güneydeki ilin gündüzü daha uzundur.' },
+      { keyType: 'lat', dir: 'max',
+        two: '<strong>21 Aralık</strong>\'ta <strong>GECESİ</strong> daha uzun olan?',
+        many: '<strong>21 Aralık</strong>\'ta <strong>GECESİ EN UZUN</strong> olan?',
+        unit: c => `${c.lat.toFixed(2)}° K · gece ${MK.formatHours(24 - MK.dayLengthHours(c.lat, -23.45))}`,
+        why: '21 Aralık\'ta en uzun geceyi en kuzeydeki il yaşar.' },
+      { keyType: 'lat', dir: 'min',
+        two: '<strong>21 Haziran</strong> öğlesinde <strong>GÖLGE BOYU</strong> daha kısa olan?',
+        many: '<strong>21 Haziran</strong> öğlesinde <strong>GÖLGE BOYU EN KISA</strong> olan?',
+        unit: c => `${c.lat.toFixed(2)}° K · açı ${MK.sunAngle(c.lat, 23.45).toFixed(1)}°`,
+        why: 'Güneye gidildikçe ışınlar dikleşir, gölge kısalır.' },
+      { keyType: 'lat', dir: 'min',
+        two: '<strong>ÇİZGİSEL HIZI</strong> daha fazla olan?',
+        many: '<strong>ÇİZGİSEL HIZI EN FAZLA</strong> olan?',
+        unit: c => `${c.lat.toFixed(2)}° K · ${Math.round(MK.linearSpeed(c.lat))} km/sa`,
+        why: 'Ekvatora yaklaştıkça (enlem küçüldükçe) çizgisel hız artar.' },
+      { keyType: 'alt', dir: 'max',
+        two: 'Gerçek – indirgenmiş sıcaklık <strong>FARKI</strong> daha fazla olan?',
+        many: 'Gerçek – indirgenmiş sıcaklık <strong>FARKI EN FAZLA</strong> olan?',
+        unit: c => `${c.alt} m · +${MK.reducedTempDiff(c.alt).toFixed(2)} °C`,
+        why: 'Rakım yükseldikçe indirgeme farkı büyür (her 100 m\'de 0,5 °C).' }
     ];
+  }
+
+  /** Şık sayısı arttıkça okuma süresi de artsın: 2 şık = 5 sn, 6 şık = 9 sn */
+  get roundSeconds() {
+    return 3 + this.optionCount;
+  }
+
+  keyFn(keyType) {
+    return keyType === 'lng' ? (c => c.lng) : keyType === 'alt' ? (c => c.alt) : (c => c.lat);
   }
 
   start() {
@@ -765,23 +1009,26 @@ class CityDuelGame extends MutlakKonumGameBase {
 
   nextRound() {
     this.answered = false;
-    const q = MK.randomOf(CityDuelGame.QUESTIONS);
-    const pair = MK.pickDistinct(TR_CITIES, 2, q.key, q.gap);
-    const [a, b] = pair;
-    const winner = q.dir === 'max'
-      ? (q.key(a) > q.key(b) ? a : b)
-      : (q.key(a) < q.key(b) ? a : b);
+    clearInterval(this.timerInterval);
+    this.applySettings();
 
-    this.current = { q, pair, correctId: winner.id };
-    this.showPins(pair, null);
+    const q = MK.randomOf(CityDuelGame.QUESTIONS);
+    const key = this.keyFn(q.keyType);
+    const cities = MK.pickBySpread(TR_CITIES, this.optionCount, key, this.difficulty, MK.FLOOR[q.keyType]);
+
+    const sorted = cities.slice().sort((a, b) => key(b) - key(a));
+    const winner = q.dir === 'max' ? sorted[0] : sorted[sorted.length - 1];
+
+    this.current = { q, key, cities, correctId: winner.id };
+    this.showPins(cities);
     this.startTimer();
 
     return this.baseView({
-      badge: '🏃 5 saniyen var!',
-      prompt: q.text,
+      badge: `🏃 ${this.roundSeconds} saniyen var!`,
+      prompt: this.optionCount === 2 ? q.two : q.many,
       hint: 'Süre dolarsa tur yanlış sayılır. Hızlı cevap daha çok puan getirir.',
-      options: pair.map(c => ({ id: c.id, label: c.name, sub: c.region })),
-      mapPins: pair,
+      options: cities.map(c => ({ id: c.id, label: c.name, sub: c.region })),
+      mapPins: cities,
       timer: this.roundSeconds,
       streak: this.streak
     });
@@ -807,7 +1054,7 @@ class CityDuelGame extends MutlakKonumGameBase {
     this.answered = true;
     clearInterval(this.timerInterval);
 
-    const { q, pair, correctId } = this.current;
+    const { q, cities, correctId } = this.current;
     const timedOut = cityId === null;
     const ok = !timedOut && cityId === correctId;
 
@@ -823,11 +1070,10 @@ class CityDuelGame extends MutlakKonumGameBase {
       this.streak = 0;
     }
 
-    const winner = pair.find(c => c.id === correctId);
-    const loser = pair.find(c => c.id !== correctId);
+    const winner = cities.find(c => c.id === correctId);
 
     this.history.push({
-      left: `${this.round}. ${winner.name} / ${loser.name}`,
+      left: `${this.round}. ${winner.name} (${cities.length} şehir)`,
       right: timedOut ? 'süre doldu' : (ok ? `+${earned} puan` : 'yanlış'),
       ok
     });
@@ -836,8 +1082,8 @@ class CityDuelGame extends MutlakKonumGameBase {
 
     return this.baseView({
       badge: timedOut ? '⌛ Süre doldu!' : (ok ? '✓ Doğru!' : '✗ Yanlış'),
-      prompt: q.text,
-      options: pair.map(c => ({
+      prompt: this.optionCount === 2 ? q.two : q.many,
+      options: cities.map(c => ({
         id: c.id,
         label: c.name,
         sub: q.unit(c),
@@ -848,7 +1094,9 @@ class CityDuelGame extends MutlakKonumGameBase {
       feedback: {
         ok,
         title: timedOut ? `⌛ Süre doldu — Doğrusu: ${winner.name}` : (ok ? `✓ ${winner.name} (+${earned} puan)` : `✗ Doğrusu: ${winner.name}`),
-        rows: pair.map(c => ({ label: c.name, value: q.unit(c), highlight: c.id === correctId })),
+        rows: cities.slice()
+          .sort((a, b) => this.current.key(b) - this.current.key(a))
+          .map(c => ({ label: c.name, value: q.unit(c), highlight: c.id === correctId })),
         note: q.why
       },
       showNext: true
