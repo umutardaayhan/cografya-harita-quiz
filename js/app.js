@@ -94,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ⚡ Şimşek Turu (Speedrun) DOM Elemanları
   const speedrunBtn = document.getElementById('speedrun-btn');
-  const speedrunHud = document.getElementById('speedrun-hud');
+  const speedrunStatsBlock = document.getElementById('speedrun-stats-block');
+  const normalStatsBlock = document.getElementById('normal-stats-block');
   const speedrunTimeLeft = document.getElementById('speedrun-time-left');
   const speedrunScoreText = document.getElementById('speedrun-score');
   const speedrunAbortBtn = document.getElementById('speedrun-abort-btn');
@@ -449,14 +450,16 @@ document.addEventListener('DOMContentLoaded', () => {
     speedrunStats = { correct: 0, wrong: 0, bestStreak: 0, currentStreak: 0 };
 
     speedrunBtn.classList.add('active');
-    speedrunHud.style.display = 'flex';
+    
+    // Stats barını Şimşek Turu moduna geçir
+    if (normalStatsBlock) normalStatsBlock.style.display = 'none';
+    if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'flex';
+
     speedrunTimeLeft.textContent = speedrunSeconds;
     speedrunScoreText.textContent = speedrunScore;
 
-    const speedrunHudPill = document.querySelector('.speedrun-hud-pill');
-    const speedrunProgressCircle = document.getElementById('speedrun-progress-circle');
-    if (speedrunHudPill) speedrunHudPill.classList.remove('critical');
-    if (speedrunProgressCircle) speedrunProgressCircle.setAttribute('stroke-dasharray', '100, 100');
+    const timerChip = speedrunStatsBlock ? speedrunStatsBlock.querySelector('.speedrun-stat-chip.timer') : null;
+    if (timerChip) timerChip.classList.remove('critical');
 
     // Şıkları 4 şıkka sabitle
     geoQuiz.setOptionCount(4);
@@ -467,15 +470,10 @@ document.addEventListener('DOMContentLoaded', () => {
       speedrunSeconds--;
       speedrunTimeLeft.textContent = speedrunSeconds;
 
-      const progressPercent = Math.max(0, (speedrunSeconds / 60) * 100);
-      if (speedrunProgressCircle) {
-        speedrunProgressCircle.setAttribute('stroke-dasharray', `${progressPercent.toFixed(1)}, 100`);
-      }
-
       if (speedrunSeconds <= 10) {
-        if (speedrunHudPill) speedrunHudPill.classList.add('critical');
+        if (timerChip) timerChip.classList.add('critical');
       } else {
-        if (speedrunHudPill) speedrunHudPill.classList.remove('critical');
+        if (timerChip) timerChip.classList.remove('critical');
       }
 
       if (speedrunSeconds <= 0) {
@@ -491,11 +489,11 @@ document.addEventListener('DOMContentLoaded', () => {
     speedrunInterval = null;
     isSpeedrunActive = false;
 
-    const speedrunHudPill = document.querySelector('.speedrun-hud-pill');
-    if (speedrunHudPill) speedrunHudPill.classList.remove('critical');
-
     speedrunBtn.classList.remove('active');
-    speedrunHud.style.display = 'none';
+
+    // Stats barını normal çalışma moduna geri al
+    if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
+    if (normalStatsBlock) normalStatsBlock.style.display = 'flex';
 
     // Rekor Skor Kontrolü
     const savedBest = parseInt(localStorage.getItem('kpss_speedrun_best_score') || '0', 10);

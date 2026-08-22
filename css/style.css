@@ -593,56 +593,132 @@ body {
   transition: all 0.25s ease;
 }
 
-/* İstatistik Çubuğu */
+/* İstatistik ve Şimşek Turu Çubuğu */
 .stats-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid var(--bg-card-border);
-  padding-bottom: 6px;
-  font-size: 0.8rem;
+  padding-bottom: 8px;
+  min-height: 28px;
+}
+
+.normal-stats-block {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  font-size: 0.82rem;
   color: var(--text-muted);
 }
 
 .stat-item {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-weight: 600;
+  gap: 5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .stat-item.correct {
-  color: var(--success);
+  color: #4ade80;
 }
 
 .stat-item.wrong {
-  color: var(--danger);
+  color: #f87171;
 }
 
 .stat-item.streak {
-  color: var(--accent-gold);
+  color: #fbbf24;
+}
+
+.stat-item.rate {
+  color: #60a5fa;
+  margin-left: 2px;
+}
+
+.stat-item.rate .stat-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.78rem;
 }
 
 .reset-stats-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--bg-card-border);
   color: var(--text-muted);
   font-size: 0.72rem;
   font-weight: 600;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   transition: all 0.2s ease;
   margin-left: auto;
 }
 
 .reset-stats-btn:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
+  border-color: rgba(239, 68, 68, 0.4);
   color: #fca5a5;
+}
+
+/* Şimşek Turu (Speedrun) İstatistik Barı Bloğu */
+.speedrun-stats-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.speedrun-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.speedrun-stat-chip.timer {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #fef08a;
+  min-width: 68px;
+}
+
+.speedrun-stat-chip.timer.critical {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+.speedrun-stat-chip.score {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+.speedrun-abort-chip {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.speedrun-abort-chip:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
 }
 
 /* Soru Başlığı ve Rozetler */
@@ -1663,196 +1739,6 @@ body {
   font-weight: 800;
   border-color: #fef08a;
   box-shadow: 0 0 20px rgba(234, 179, 8, 0.85);
-}
-
-/* Fütüristik Cam & Neon Sayaç Kapsülü (HUD Pill) */
-.speedrun-hud {
-  position: absolute;
-  top: 92px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1500;
-  animation: hudDropIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes hudDropIn {
-  from { opacity: 0; transform: translate(-50%, -20px) scale(0.92); }
-  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
-
-.speedrun-hud-pill {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: rgba(11, 15, 25, 0.88);
-  border: 1.5px solid rgba(250, 204, 21, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 6px 14px 6px 8px;
-  border-radius: 40px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 25px rgba(234, 179, 8, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-}
-
-/* Şimşek Neon Kapsülü */
-.speedrun-bolt-wrapper {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #facc15, #ea580c);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 15px rgba(250, 204, 21, 0.75);
-  animation: boltPulse 1.6s ease-in-out infinite alternate;
-}
-
-.speedrun-bolt-icon {
-  font-size: 1.25rem;
-  color: #000000;
-  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.4));
-}
-
-@keyframes boltPulse {
-  0% { transform: scale(1); box-shadow: 0 0 10px rgba(250, 204, 21, 0.6); }
-  100% { transform: scale(1.08); box-shadow: 0 0 20px rgba(250, 204, 21, 0.95); }
-}
-
-/* Bilgi & Skor Bloğu */
-.speedrun-info-block {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.speedrun-hud-label {
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #fbbf24;
-  text-transform: uppercase;
-}
-
-.speedrun-score-box {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-
-.speedrun-score-title {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-.speedrun-score-number {
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: #ffffff;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
-}
-
-/* Dairesel SVG Kronometre Kadranı */
-.speedrun-timer-dial {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.timer-svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.timer-bg {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 3.2;
-}
-
-.timer-progress {
-  fill: none;
-  stroke: #facc15;
-  stroke-width: 3.2;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.3s linear, stroke 0.3s ease;
-  filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.8));
-}
-
-.timer-digit-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-}
-
-.timer-digits {
-  font-size: 0.98rem;
-  font-weight: 900;
-  color: #fef08a;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.timer-unit {
-  font-size: 0.55rem;
-  color: var(--text-muted);
-  font-weight: 700;
-  margin-left: 1px;
-}
-
-/* Kritik Son 10 Saniye Alarmı */
-.speedrun-hud-pill.critical {
-  border-color: rgba(239, 68, 68, 0.8);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(239, 68, 68, 0.5);
-  animation: criticalVibe 0.5s ease infinite alternate;
-}
-
-.speedrun-hud-pill.critical .timer-progress {
-  stroke: #ef4444 !important;
-  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.9));
-}
-
-.speedrun-hud-pill.critical .timer-digits {
-  color: #f87171 !important;
-}
-
-@keyframes criticalVibe {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.03); }
-}
-
-/* Çıkış Butonu */
-.speedrun-abort-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-size: 0.72rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-left: 2px;
-}
-
-.speedrun-abort-btn:hover {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.6);
-  color: #ffffff;
-  transform: rotate(90deg);
 }
 
 .speedrun-modal-card {

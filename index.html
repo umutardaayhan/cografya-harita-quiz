@@ -152,23 +152,33 @@
 
   <!-- Sağ Alt Quiz / Soru Paneli (Kompakt Basık Düzen) -->
   <main id="quiz-panel" class="quiz-panel">
-    <!-- İstatistik Barı -->
+    <!-- İstatistik ve Şimşek Turu Barı -->
     <div class="stats-bar">
-      <div class="stat-item correct" title="Doğru Sayısı">
-        <span>✓</span> <span id="stat-correct">0</span>
+      <!-- Şimşek Turu Bölümü (Yalnızca Speedrun Aktifken Görünür) -->
+      <div id="speedrun-stats-block" class="speedrun-stats-block" style="display: none;">
+        <span class="speedrun-stat-chip timer">⚡ <span id="speedrun-time-left">60</span>s</span>
+        <span class="speedrun-stat-chip score">Puan: <span id="speedrun-score">0</span></span>
+        <button id="speedrun-abort-btn" class="speedrun-abort-chip" title="Şimşek Turunu Bitir">✕ Çık</button>
       </div>
-      <div class="stat-item wrong" title="Yanlış Sayısı">
-        <span>✗</span> <span id="stat-wrong">0</span>
+
+      <!-- Normal Çalışma İstatistikleri -->
+      <div id="normal-stats-block" class="normal-stats-block">
+        <div class="stat-item correct" title="Doğru Sayısı">
+          <span class="stat-icon">✓</span> <span id="stat-correct">0</span>
+        </div>
+        <div class="stat-item wrong" title="Yanlış Sayısı">
+          <span class="stat-icon">✗</span> <span id="stat-wrong">0</span>
+        </div>
+        <div class="stat-item streak" title="Seri Doğru">
+          <span id="stat-streak">0</span>
+        </div>
+        <div class="stat-item rate" title="Genel Başarı Oranı">
+          <span class="stat-label">Başarı:</span> <span id="stat-rate">%0</span>
+        </div>
+        <button id="reset-stats-btn" class="reset-stats-btn" title="Çalışma İstatistiklerini Sıfırla">
+          <span>🔄</span> <span>Sıfırla</span>
+        </button>
       </div>
-      <div class="stat-item streak" title="Seri Doğru">
-        <span id="stat-streak">0</span>
-      </div>
-      <div class="stat-item" title="Genel Başarı Oranı">
-        <span>Başarı:</span> <span id="stat-rate" style="color: #60a5fa; font-weight:700;">%0</span>
-      </div>
-      <button id="reset-stats-btn" class="reset-stats-btn" title="Çalışma İstatistiklerini Sıfırla">
-        <span>🔄</span> <span>Sıfırla</span>
-      </button>
     </div>
 
     <!-- Keşif Modu Bilgisi -->
@@ -308,35 +318,7 @@
     </div>
   </div>
 
-  <!-- ⚡ Şimşek Turu (Speedrun) Ultra-Estetik HUD Sayacı -->
-  <div id="speedrun-hud" class="speedrun-hud" style="display: none;">
-    <div class="speedrun-hud-pill">
-      <div class="speedrun-bolt-wrapper">
-        <span class="speedrun-bolt-icon">⚡</span>
-      </div>
-      
-      <div class="speedrun-info-block">
-        <span class="speedrun-hud-label">ŞİMŞEK TURU</span>
-        <div class="speedrun-score-box">
-          <span class="speedrun-score-title">PUAN</span>
-          <span id="speedrun-score" class="speedrun-score-number">0</span>
-        </div>
-      </div>
 
-      <div class="speedrun-timer-dial" id="speedrun-timer-dial">
-        <svg class="timer-svg" viewBox="0 0 36 36">
-          <path class="timer-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path id="speedrun-progress-circle" class="timer-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-        </svg>
-        <div class="timer-digit-wrapper">
-          <span id="speedrun-time-left" class="timer-digits">60</span>
-          <span class="timer-unit">sn</span>
-        </div>
-      </div>
-
-      <button id="speedrun-abort-btn" class="speedrun-abort-btn" title="Şimşek Turundan Çık">✕</button>
-    </div>
-  </div>
 
   <!-- ⚡ Şimşek Turu Sonuç Modalı -->
   <div id="speedrun-modal" class="modal-overlay" style="display: none;">

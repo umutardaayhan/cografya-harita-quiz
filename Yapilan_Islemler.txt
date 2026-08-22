@@ -181,3 +181,13 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:13
+⚠️ Sorun/İhtiyaç: Harita üstünde yüzen bağımsız HUD sayacının diğer butonları kapatması ve stats-bar içindeki istatistik elemanlarının birbirine çok yapışık olması sorunu.
+🎯 İşlem Özeti: Harita üzerindeki bağımsız speedrun-hud divi tamamen kaldırıldı; Şimşek Turu sayacı, puanı ve çıkış butonu doğrudan sağ alt quiz panelinin stats-bar bölümüne (speedrun-stats-block) entegre edildi. Normal çalışma istatistikleri (✓ Doğru, ✗ Yanlış, 🔥 Seri, % Başarı) arasındaki boşluklar gap: 18px ve temiz tipografi ile ferahlatıldı.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - css/style.css
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
