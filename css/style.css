@@ -990,6 +990,29 @@ body {
   display: none;
 }
 
+/* 🌊 Gol daireleri: buyuklukle orantili, mavi.
+   Soru vurgusundaki daire nabiz gibi atarak dikkat ceker. */
+.lake-circle {
+  transition: fill-opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.lake-circle:hover {
+  fill-opacity: 0.9;
+}
+
+.lake-circle.highlight {
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
+  animation: lakePulse 1.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes lakePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
 /* Canli ayar rozeti: sol alttaki Zorluk / Sik secimini yansitir */
 .mk-settings-chip {
   background: rgba(56, 189, 248, 0.15) !important;

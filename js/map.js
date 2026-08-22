@@ -266,6 +266,42 @@ class GeographyMap {
     });
   }
 
+  // --- 🌊 GÖL DAİRELERİ ---
+  // Göller artık sabit boyutlu "pulse-circle" ikonu yerine, gerçek
+  // büyüklükleriyle orantılı mavi dairelerle gösterilir. Küçük göllerde
+  // iri ikon gölün üzerine oturmuyordu; daire küçüldükçe sorun kalmıyor.
+  isLakePoint(item) {
+    if (!item) return false;
+    const shapeType = item.shapeType || 'point';
+    if (shapeType !== 'point') return false;
+    const typeStr = (item.type || '').toLocaleLowerCase('tr');
+    return item.category === 'su_kaynaklari' || typeStr.includes('göl') || typeStr.includes('lagün');
+  }
+
+  /**
+   * Alanı bilinen göller logaritmik olarak ölçeklenir (Van 3713 km² -> 17 px,
+   * Meke Tuzlası 0,5 km² -> 4,5 px). Alan bilinmiyorsa orta-küçük varsayılan
+   * kullanılır. Piksel yarıçapı tercih edildi ki en küçük göller ülke
+   * ölçeğinde bile görünür ve tıklanabilir kalsın.
+   */
+  getLakeRadius(item) {
+    const area = typeof item.areaKm2 === 'number' && item.areaKm2 > 0 ? item.areaKm2 : 6;
+    const r = 3.4 + 1.7 * Math.log(1 + area);
+    // Alt sinir tiklanabilirlik icin; ust sinir dev gollerin ekrani yutmamasi icin
+    return Math.max(4, Math.min(18, r));
+  }
+
+  createLakeCircle(item, isHighlight = false) {
+    return L.circleMarker([item.lat, item.lng], {
+      radius: this.getLakeRadius(item),
+      className: isHighlight ? 'lake-circle highlight' : 'lake-circle',
+      color: isHighlight ? '#e0f2fe' : '#7dd3fc',
+      weight: isHighlight ? 3 : 2,
+      fillColor: isHighlight ? '#0284c7' : '#0ea5e9',
+      fillOpacity: isHighlight ? 0.85 : 0.65
+    });
+  }
+
   // Öğe kategorisine göre en uygun özel ikonu döndür
   getCustomCategoryIcon(item) {
     const cat = item.category || '';
@@ -304,9 +340,13 @@ class GeographyMap {
     if (shapeType === 'point' || !questionItem.coordinates || !Array.isArray(questionItem.coordinates[0])) {
       const lat = questionItem.lat;
       const lng = questionItem.lng;
-      const icon = this.getCustomCategoryIcon(questionItem);
 
-      this.currentMarker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
+      if (this.isLakePoint(questionItem)) {
+        this.currentMarker = this.createLakeCircle(questionItem, true).addTo(this.map);
+      } else {
+        const icon = this.getCustomCategoryIcon(questionItem);
+        this.currentMarker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
+      }
 
       if (this.autoZoomEnabled) {
         this.flySafely([lat, lng], Math.max(this.map.getZoom(), 7.2), { easeLinearity: 0.25 });
@@ -332,11 +372,7 @@ class GeographyMap {
         lineJoin: 'round'
       }).addTo(this.map);
 
-      // Tepe / Merkez noktasına özel kategori ikonu koy
-      if (questionItem.lat && questionItem.lng) {
-        const centerIcon = this.getCustomCategoryIcon(questionItem);
-        this.currentMarker = L.marker([questionItem.lat, questionItem.lng], { icon: centerIcon }).addTo(this.map);
-      }
+      // Akarsu ve sıra dağlarda merkez noktası YOK: şekli çizginin kendisi temsil eder.
 
       if (this.autoZoomEnabled) {
         this.flyToBoundsSafely(L.latLngBounds(coords).pad(0.35));
@@ -692,12 +728,14 @@ class GeographyMap {
       const customIcon = this.getCustomCategoryIcon(item);
 
       if (shapeType === 'point' || !item.coordinates || !Array.isArray(item.coordinates[0])) {
-        const marker = L.marker([item.lat, item.lng], { icon: customIcon });
         const popupContent = `
           <div class="popup-title">${item.name}</div>
           <div class="popup-type">${item.type} (${item.region || ''})</div>
           <div class="popup-text">${item.kpssNot || ''}</div>
         `;
+        const marker = this.isLakePoint(item)
+          ? this.createLakeCircle(item, false)
+          : L.marker([item.lat, item.lng], { icon: customIcon });
         marker.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(marker);
       } else if (shapeType === 'polyline') {
@@ -719,13 +757,7 @@ class GeographyMap {
         `;
         line.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(line);
-
-        // Tepe veya merkez noktasına da rozet ikonunu koy
-        if (item.lat && item.lng) {
-          const centerMarker = L.marker([item.lat, item.lng], { icon: customIcon });
-          centerMarker.bindPopup(popupContent, { maxWidth: 280 });
-          this.exploreLayerGroup.addLayer(centerMarker);
-        }
+        // Akarsu ve sıra dağlarda merkez noktası YOK: tıklama hedefi çizginin kendisi.
       } else if (shapeType === 'polygon') {
         const polygon = L.polygon(item.coordinates, {
           color: color,
