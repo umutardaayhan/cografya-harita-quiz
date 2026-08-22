@@ -302,42 +302,45 @@
         </div>
       </div>
 
-      <!-- Keşif Modu Bilgisi -->
-      <div id="explore-banner" class="explore-banner"></div>
+      <!-- Standart Test / Quiz Gövdesi (Oyun modlarında tamamen gizlenir) -->
+      <div id="standard-quiz-body" class="standard-quiz-body">
+        <!-- Keşif Modu Bilgisi -->
+        <div id="explore-banner" class="explore-banner"></div>
 
-      <!-- Soru Başlığı ve Rozetler -->
-      <div class="question-header">
-        <div class="question-badge-container">
-          <span id="question-badge" class="question-badge">🏔️ DAĞLAR</span>
-          <span id="question-difficulty-badge" class="difficulty-badge">⚡ Seviye 5</span>
-          <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
-            ⚠️ Sık Yanıldığın Soru
-          </span>
-          <span id="question-mastered-badge" class="mastered-badge" style="display: none;" title="Bu yer şeklini çok iyi bildiğiniz için hafıza tazelemek amacıyla nadiren soruluyor.">
-            🎓 Ustalaşılan Soru
-          </span>
+        <!-- Soru Başlığı ve Rozetler -->
+        <div class="question-header">
+          <div class="question-badge-container">
+            <span id="question-badge" class="question-badge">🏔️ DAĞLAR</span>
+            <span id="question-difficulty-badge" class="difficulty-badge">⚡ Seviye 5</span>
+            <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
+              ⚠️ Sık Yanıldığın Soru
+            </span>
+            <span id="question-mastered-badge" class="mastered-badge" style="display: none;" title="Bu yer şeklini çok iyi bildiğiniz için hafıza tazelemek amacıyla nadiren soruluyor.">
+              🎓 Ustalaşılan Soru
+            </span>
+          </div>
+          <h2 id="question-title" class="question-title">📍 Erciyes Dağı (Volkanik Dağ)</h2>
         </div>
-        <h2 id="question-title" class="question-title">📍 Erciyes Dağı (Volkanik Dağ)</h2>
-      </div>
 
-      <!-- Dinamik Seçenek Şıklar Listesi -->
-      <div id="options-grid" class="options-grid">
-        <!-- JS ile dinamik butonlar (1-5 arası) -->
-      </div>
-
-      <!-- KPSS Hap Bilgi Kutusu -->
-      <div id="kpss-info-card" class="kpss-info-card">
-        <div class="kpss-info-header">
-          <span id="kpss-info-title">Erciyes Dağı</span>
-          <span id="kpss-info-type" class="kpss-badge">Volkanik Dağ (İç Anadolu)</span>
+        <!-- Dinamik Seçenek Şıklar Listesi -->
+        <div id="options-grid" class="options-grid">
+          <!-- JS ile dinamik butonlar (1-5 arası) -->
         </div>
-        <p id="kpss-info-text"></p>
-      </div>
 
-      <!-- Sonraki Soru Butonu -->
-      <button id="next-btn" class="next-btn">
-        Sonraki Soru → (Boşluk / Enter)
-      </button>
+        <!-- KPSS Hap Bilgi Kutusu -->
+        <div id="kpss-info-card" class="kpss-info-card">
+          <div class="kpss-info-header">
+            <span id="kpss-info-title">Erciyes Dağı</span>
+            <span id="kpss-info-type" class="kpss-badge">Volkanik Dağ (İç Anadolu)</span>
+          </div>
+          <p id="kpss-info-text"></p>
+        </div>
+
+        <!-- Sonraki Soru Butonu -->
+        <button id="next-btn" class="next-btn">
+          Sonraki Soru → (Boşluk / Enter)
+        </button>
+      </div>
     </div>
   </main>
 

@@ -150,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const matchRestartBtn = document.getElementById('match-restart-btn');
 
   const quizDefaultStatsBar = document.getElementById('quiz-default-stats-bar');
+  const standardQuizBody = document.getElementById('standard-quiz-body');
 
   // ⚡ Şimşek Turu (Speedrun) DOM Elemanları
   const speedrunBtn = document.getElementById('speedrun-btn');
@@ -886,9 +887,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
     if (examStatsBlock) examStatsBlock.style.display = 'none';
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'flex';
-    if (optionsGrid) optionsGrid.style.display = 'grid';
-    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'flex';
+    if (standardQuizBody) standardQuizBody.style.display = 'flex';
     if (exploreBanner) exploreBanner.style.display = 'none';
   }
 
@@ -898,10 +897,9 @@ document.addEventListener('DOMContentLoaded', () => {
     currentMode = 'geoguessr';
     hideAllGameHuds();
 
+    // Standart test arayüzünü ve çubuklarını tamamen kapat
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
-    if (optionsGrid) optionsGrid.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'none';
-    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+    if (standardQuizBody) standardQuizBody.style.display = 'none';
     if (subCategoriesBar) subCategoriesBar.style.display = 'none';
 
     if (geoguessrHud) geoguessrHud.style.display = 'flex';
@@ -991,6 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
     if (conquerorHud) conquerorHud.style.display = 'flex';
+    if (standardQuizBody) standardQuizBody.style.display = 'flex';
     if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
 
     const status = conquerorGame.start();
@@ -1054,10 +1053,9 @@ document.addEventListener('DOMContentLoaded', () => {
     currentMode = 'match';
     hideAllGameHuds();
 
+    // Standart test arayüzünü ve çubuklarını tamamen kapat
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
-    if (optionsGrid) optionsGrid.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'none';
-    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+    if (standardQuizBody) standardQuizBody.style.display = 'none';
     if (subCategoriesBar) subCategoriesBar.style.display = 'none';
 
     if (matchHud) matchHud.style.display = 'flex';

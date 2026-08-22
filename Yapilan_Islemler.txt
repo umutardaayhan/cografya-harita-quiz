@@ -353,3 +353,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:58
+⚠️ Sorun/İhtiyaç: Oyun modlarından biri seçildiğinde standart test modunun ve soru şıklarının 'quiz-panel' içinde açık kalması ve oyun HUD'ı ile görsel çakışma yaşaması sorunu.
+🎯 İşlem Özeti: Standart quiz bileşenleri tek bir 'standard-quiz-body' kapsayıcısına toplandı; Kör Atış (GeoGuessr) ve Şekil Yapbozu (Match) gibi bağımsız modlar seçildiği an standart test paneli ve istatistik çubukları tamamen gizlendi; yalnızca o oyun moduna ait HUD görüntülendi; moddan çıkıldığında standart test modu temiz bir şekilde geri yüklendi.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
