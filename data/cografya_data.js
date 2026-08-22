@@ -128,14 +128,20 @@ const COGRAFYA_DATA = {
       kpssNot: "Türkiye'nin en genç volkanik arazisidir. 'Yanık Ülke (Katakekaumene)' olarak bilinir. Türkiye'nin ilk UNESCO Jeoparkıdır."
     },
 
-    // --- KIRIK DAĞLAR (HORST) ---
+    // --- KIRIK DAĞLAR (HORST SIRALARI) ---
     {
       id: "dag_kaz",
       name: "Kaz Dağları",
       category: "daglar",
-      type: "Kırık Dağ (Horst)",
+      shapeType: "polyline",
+      coordinates: [
+        [39.60, 26.50],
+        [39.70, 26.85],
+        [39.75, 27.20]
+      ],
       lat: 39.70,
       lng: 26.85,
+      type: "Kırık Dağ (Horst)",
       region: "Ege / Marmara",
       kpssNot: "Edremit Körfezi kuzeyindedir. Yüksek oksijen oranı ve milli parkı ile bilinir. Kırık dağdır."
     },
@@ -143,9 +149,15 @@ const COGRAFYA_DATA = {
       id: "dag_madra",
       name: "Madra Dağı",
       category: "daglar",
-      type: "Kırık Dağ (Horst)",
+      shapeType: "polyline",
+      coordinates: [
+        [39.20, 26.85],
+        [39.30, 27.05],
+        [39.40, 27.25]
+      ],
       lat: 39.30,
       lng: 27.05,
+      type: "Kırık Dağ (Horst)",
       region: "Ege",
       kpssNot: "Bakırçay Grabeni'nin kuzeyinde yer alan horst dağdır."
     },
@@ -153,9 +165,15 @@ const COGRAFYA_DATA = {
       id: "dag_yunt",
       name: "Yunt Dağı",
       category: "daglar",
-      type: "Kırık Dağ (Horst)",
+      shapeType: "polyline",
+      coordinates: [
+        [38.80, 27.10],
+        [38.90, 27.30],
+        [39.00, 27.50]
+      ],
       lat: 38.90,
       lng: 27.30,
+      type: "Kırık Dağ (Horst)",
       region: "Ege",
       kpssNot: "Bakırçay ile Gediz grabenleri arasında yükselen horst dağıdır."
     },
@@ -163,9 +181,15 @@ const COGRAFYA_DATA = {
       id: "dag_bozdaglar",
       name: "Bozdağlar",
       category: "daglar",
-      type: "Kırık Dağ (Horst)",
+      shapeType: "polyline",
+      coordinates: [
+        [38.25, 27.70],
+        [38.35, 28.10],
+        [38.45, 28.50]
+      ],
       lat: 38.35,
       lng: 28.10,
+      type: "Kırık Dağ (Horst)",
       region: "Ege",
       kpssNot: "Gediz ile Küçük Menderes grabenleri arasında uzanır. Kış turizmi yapılır."
     },
@@ -173,9 +197,15 @@ const COGRAFYA_DATA = {
       id: "dag_aydin",
       name: "Aydın Dağları",
       category: "daglar",
-      type: "Kırık Dağ (Horst)",
+      shapeType: "polyline",
+      coordinates: [
+        [37.85, 27.70],
+        [37.95, 28.10],
+        [38.05, 28.60]
+      ],
       lat: 37.95,
       lng: 28.10,
+      type: "Kırık Dağ (Horst)",
       region: "Ege",
       kpssNot: "Küçük Menderes ile Büyük Menderes grabenleri arasında uzanan horsttur."
     },
@@ -183,9 +213,15 @@ const COGRAFYA_DATA = {
       id: "dag_mentese",
       name: "Menteşe Dağları",
       category: "daglar",
-      type: "Kırık / Engebeli Dağ",
+      shapeType: "polyline",
+      coordinates: [
+        [37.05, 27.80],
+        [37.20, 28.20],
+        [37.35, 28.60]
+      ],
       lat: 37.20,
       lng: 28.20,
+      type: "Kırık / Engebeli Dağ",
       region: "Ege",
       kpssNot: "Ege'de kıyıya PARALEL uzanan tek dağ grubudur. Bu yüzden bol yamaç yağışı alır, nüfusu ve ulaşımı seyrektir."
     },
@@ -193,21 +229,33 @@ const COGRAFYA_DATA = {
       id: "dag_nur_amanos",
       name: "Nur (Amanos) Dağları",
       category: "daglar",
-      type: "Kırık Dağ (Horst)",
+      shapeType: "polyline",
+      coordinates: [
+        [36.30, 36.15],
+        [36.75, 36.30],
+        [37.10, 36.45]
+      ],
       lat: 36.75,
       lng: 36.30,
+      type: "Kırık Dağ (Horst)",
       region: "Akdeniz",
       kpssNot: "Ege dışındaki tek kırık (horst) dağımızdır. Doğusunda Amik Grabeni yer alır. Üzerinde Belen Geçidi bulunur."
     },
 
-    // --- KIVRIM DAĞLARI ---
+    // --- KIVRIM DAĞLARI (SIRADAĞ SİLSİLELERİ) ---
     {
       id: "dag_kackar",
       name: "Kaçkar Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [40.60, 40.80],
+        [40.83, 41.16],
+        [41.10, 41.60]
+      ],
       lat: 40.83,
       lng: 41.16,
+      type: "Kıvrım Dağı",
       region: "Karadeniz",
       kpssNot: "Kuzey Anadolu Dağları'nın en yüksek bölümüdür (3.932 m). Zirvelerinde buzul (sirk) gölleri ve aktüel buzullar vardır."
     },
@@ -215,9 +263,15 @@ const COGRAFYA_DATA = {
       id: "dag_canik",
       name: "Canik Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [40.85, 36.10],
+        [41.00, 36.60],
+        [41.05, 37.20]
+      ],
       lat: 41.00,
       lng: 36.60,
+      type: "Kıvrım Dağı",
       region: "Karadeniz",
       kpssNot: "Yükseltisi azdır ve kıyıdan geride başlar. Bu sayede Samsun'un hinterlandı geniştir ve Bafra-Çarşamba deltaları oluşmuştur."
     },
@@ -225,9 +279,15 @@ const COGRAFYA_DATA = {
       id: "dag_kure",
       name: "Küre (İsfendiyar) Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [41.60, 33.10],
+        [41.70, 33.70],
+        [41.80, 34.30]
+      ],
       lat: 41.70,
       lng: 33.70,
+      type: "Kıvrım Dağı",
       region: "Karadeniz",
       kpssNot: "Batı Karadeniz'de kıyıya paraleldir. Bakır yatakları (Kastamonu-Küre) ve zengin ormanlarıyla bilinir."
     },
@@ -235,9 +295,15 @@ const COGRAFYA_DATA = {
       id: "dag_ilgaz",
       name: "Ilgaz Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [40.95, 33.30],
+        [41.08, 33.73],
+        [41.20, 34.15]
+      ],
       lat: 41.08,
       lng: 33.73,
+      type: "Kıvrım Dağı",
       region: "Karadeniz",
       kpssNot: "Batı Karadeniz iç kuşağındadır. Milli park ve kış turizmi alanıdır. Üzerinde Ilgaz Geçidi bulunur."
     },
@@ -245,9 +311,15 @@ const COGRAFYA_DATA = {
       id: "dag_bolu_koroglu",
       name: "Köroğlu Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [40.45, 31.40],
+        [40.60, 31.80],
+        [40.75, 32.20]
+      ],
       lat: 40.60,
       lng: 31.80,
+      type: "Kıvrım Dağı",
       region: "Karadeniz",
       kpssNot: "Batı Karadeniz iç sırasında yer alır. Kartalkaya kayak merkezi buradadır."
     },
@@ -255,9 +327,15 @@ const COGRAFYA_DATA = {
       id: "dag_cilo_hakkari",
       name: "Cilo (Buzul) Dağı / Reşko",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [37.35, 43.70],
+        [37.48, 44.02],
+        [37.60, 44.30]
+      ],
       lat: 37.48,
       lng: 44.02,
+      type: "Kıvrım Dağı",
       region: "Doğu Anadolu",
       kpssNot: "Türkiye'nin ikinci en yüksek zirvesi olan Uludoruk (Reşko-4.135 m) buradadır. Türkiye'nin en büyük vadi buzulu Cilo'dadır."
     },
@@ -265,9 +343,15 @@ const COGRAFYA_DATA = {
       id: "dag_munzur_mercan",
       name: "Munzur (Mercan) Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [39.25, 39.10],
+        [39.35, 39.45],
+        [39.45, 39.80]
+      ],
       lat: 39.35,
       lng: 39.45,
+      type: "Kıvrım Dağı",
       region: "Doğu Anadolu",
       kpssNot: "Tunceli-Erzincan arasında yer alır. Karstik kaynaklar ve buzul gölleri barındırır. Milli parktır."
     },
@@ -275,9 +359,15 @@ const COGRAFYA_DATA = {
       id: "dag_bolkar",
       name: "Bolkar Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı (Orta Toroslar)",
+      shapeType: "polyline",
+      coordinates: [
+        [37.05, 34.20],
+        [37.25, 34.60],
+        [37.45, 35.00]
+      ],
       lat: 37.25,
       lng: 34.60,
+      type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz",
       kpssNot: "Orta Toroslar'dadır. Karstik şekiller ve buzul izleri taşır. Sadece burada yaşayan endemik Toros Kurbağası bulunur."
     },
@@ -285,9 +375,15 @@ const COGRAFYA_DATA = {
       id: "dag_aladaglar",
       name: "Aladağlar",
       category: "daglar",
-      type: "Kıvrım Dağı (Orta Toroslar)",
+      shapeType: "polyline",
+      coordinates: [
+        [37.60, 34.90],
+        [37.80, 35.15],
+        [38.00, 35.40]
+      ],
       lat: 37.80,
       lng: 35.15,
+      type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz",
       kpssNot: "Torosların en yüksek kısmıdır (Demirkazık Zirvesi). Dağcılık ve karstik kanyonlarıyla (Kapuzbaşı) ünlüdür."
     },
@@ -295,9 +391,15 @@ const COGRAFYA_DATA = {
       id: "dag_beydaglari",
       name: "Bey Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı (Batı Toroslar)",
+      shapeType: "polyline",
+      coordinates: [
+        [36.40, 30.15],
+        [36.60, 30.30],
+        [36.80, 30.45]
+      ],
       lat: 36.60,
       lng: 30.30,
+      type: "Kıvrım Dağı (Batı Toroslar)",
       region: "Akdeniz",
       kpssNot: "Antalya Körfezi'nin batısında yükselir. Saklıkent kayak merkezi buradadır."
     },
@@ -305,9 +407,15 @@ const COGRAFYA_DATA = {
       id: "dag_geyik",
       name: "Geyik Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı (Batı Toroslar)",
+      shapeType: "polyline",
+      coordinates: [
+        [36.70, 31.80],
+        [36.90, 32.20],
+        [37.10, 32.60]
+      ],
       lat: 36.90,
       lng: 32.20,
+      type: "Kıvrım Dağı (Batı Toroslar)",
       region: "Akdeniz",
       kpssNot: "Antalya-Konya sınırında Batı Toroslar kuşağında yer alır."
     },
@@ -315,9 +423,15 @@ const COGRAFYA_DATA = {
       id: "dag_tahtali",
       name: "Tahtalı Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı (Orta Toroslar)",
+      shapeType: "polyline",
+      coordinates: [
+        [38.05, 36.00],
+        [38.30, 36.30],
+        [38.55, 36.60]
+      ],
       lat: 38.30,
       lng: 36.30,
+      type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz / İç Anadolu",
       kpssNot: "Seyhan Nehri kolları tarafından yarılmış Orta Toros kütlesidir."
     },
@@ -325,9 +439,15 @@ const COGRAFYA_DATA = {
       id: "dag_binboga",
       name: "Binboğa Dağları",
       category: "daglar",
-      type: "Kıvrım Dağı (Orta Toroslar)",
+      shapeType: "polyline",
+      coordinates: [
+        [38.05, 36.40],
+        [38.25, 36.70],
+        [38.45, 37.00]
+      ],
       lat: 38.25,
       lng: 36.70,
+      type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz / Doğu Anadolu",
       kpssNot: "Kahramanmaraş-Kayseri sınırında uzanan Toros uzantısıdır."
     },
@@ -335,9 +455,15 @@ const COGRAFYA_DATA = {
       id: "dag_yildiz",
       name: "Yıldız (Istranca) Dağları",
       category: "daglar",
-      type: "Kıvrım / Masif Dağı",
+      shapeType: "polyline",
+      coordinates: [
+        [41.50, 27.20],
+        [41.75, 27.55],
+        [41.95, 28.00]
+      ],
       lat: 41.75,
       lng: 27.55,
+      type: "Kıvrım / Masif Dağı",
       region: "Marmara",
       kpssNot: "Marmara'nın Karadeniz kıyısındaki engebeli masif alanıdır. Ulaşım yollarına sapa kaldığı için seyrek nüfusludur."
     },
@@ -345,9 +471,9 @@ const COGRAFYA_DATA = {
       id: "dag_uludag",
       name: "Uludağ",
       category: "daglar",
-      type: "Derinlik Volkanizması (Batolit)",
       lat: 40.07,
       lng: 29.22,
+      type: "Derinlik Volkanizması (Batolit)",
       region: "Marmara",
       kpssNot: "İç püskürük (batolit) yapılıdır. Marmara'nın en yüksek dağıdır. Sirk gölleri ve kış turizmi ile ünlüdür."
     }

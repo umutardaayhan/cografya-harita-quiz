@@ -1030,6 +1030,109 @@ body {
   transform: scale(1.4);
 }
 
+/* --- 3D ÜÇGEN PRİZMA DAĞ KABARTMA İKONU (FİZİKİ KABARTMA) --- */
+.mountain-3d-icon {
+  background: transparent !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mountain-prism {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.8));
+  transition: transform 0.2s ease;
+  animation: mountainPulse 1.8s ease-in-out infinite alternate;
+  cursor: pointer;
+}
+
+.mountain-prism:hover {
+  transform: scale(1.35) translateY(-5px);
+  z-index: 10000;
+}
+
+.prism-pyramid {
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 26px solid #b45309; /* Dağ kayası */
+  position: relative;
+}
+
+/* Sol Işıklı Yüz (3D Prizma Efekti) */
+.prism-pyramid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -15px;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 0px solid transparent;
+  border-bottom: 26px solid #f59e0b; /* Güneş vuran yüz */
+  opacity: 0.85;
+}
+
+/* Karlı Doruk / Takke Buzulu */
+.prism-snow-cap {
+  position: absolute;
+  top: 0;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 9px solid #ffffff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  z-index: 3;
+}
+
+/* Volkanik Koni Yanardağ */
+.mountain-prism.volcanic .prism-pyramid {
+  border-bottom-color: #991b1b;
+}
+
+.mountain-prism.volcanic .prism-pyramid::before {
+  border-bottom-color: #ef4444;
+}
+
+/* Kırık Dağ (Horst) */
+.mountain-prism.horst .prism-pyramid {
+  border-bottom-color: #7c2d12;
+}
+
+.mountain-prism.horst .prism-pyramid::before {
+  border-bottom-color: #ea580c;
+}
+
+/* Kıvrım Sıra Dağı */
+.mountain-prism.folded .prism-pyramid {
+  border-bottom-color: #365314;
+}
+
+.mountain-prism.folded .prism-pyramid::before {
+  border-bottom-color: #65a30d;
+}
+
+@keyframes mountainPulse {
+  0% { transform: scale(1) translateY(0); }
+  100% { transform: scale(1.15) translateY(-4px); filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.9)); }
+}
+
+/* Sıradağ Silsile Kabartma Çizgisi */
+.mountain-range-polyline {
+  stroke-dasharray: 10, 8;
+  animation: polylineDash 1.2s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.85));
+}
+
 /* --- KEŞİF MODU BİLGİ PANELİ --- */
 .explore-banner {
   display: none;

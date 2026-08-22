@@ -136,25 +136,55 @@ class GeographyMap {
     return this.layers[layerKey].name;
   }
 
+  // 3D Üçgen Prizma Dağ Kabartma İkonu Üretici
+  createMountainPrismIcon(item) {
+    let typeClass = 'folded';
+    const typeStr = (item.type || '').toLowerCase();
+    if (typeStr.includes('volkanik') || typeStr.includes('yanardağ')) {
+      typeClass = 'volcanic';
+    } else if (typeStr.includes('kırık') || typeStr.includes('horst')) {
+      typeClass = 'horst';
+    }
+
+    return L.divIcon({
+      className: 'mountain-3d-icon',
+      html: `
+        <div class="mountain-prism ${typeClass}" title="${item.name}">
+          <div class="prism-pyramid">
+            <div class="prism-snow-cap"></div>
+          </div>
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 26]
+    });
+  }
+
   // --- KLASİK MOD: TEK SORU VURGULAMA MOTORU ---
   highlightQuestionShape(questionItem) {
     this.clearQuestionHighlight();
     if (!questionItem) return;
 
     const shapeType = questionItem.shapeType || 'point';
+    const isMountain = questionItem.category === 'daglar' || (questionItem.type || '').toLowerCase().includes('dağ');
 
     if (shapeType === 'point' || !questionItem.coordinates || !Array.isArray(questionItem.coordinates[0])) {
       const lat = questionItem.lat;
       const lng = questionItem.lng;
 
-      const pulseIcon = L.divIcon({
-        className: 'pulse-marker-icon',
-        html: '<div class="pulse-circle"></div>',
-        iconSize: [26, 26],
-        iconAnchor: [13, 13]
-      });
+      let icon = null;
+      if (isMountain) {
+        icon = this.createMountainPrismIcon(questionItem);
+      } else {
+        icon = L.divIcon({
+          className: 'pulse-marker-icon',
+          html: '<div class="pulse-circle"></div>',
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
+        });
+      }
 
-      this.currentMarker = L.marker([lat, lng], { icon: pulseIcon }).addTo(this.map);
+      this.currentMarker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
 
       if (this.autoZoomEnabled) {
         this.map.flyTo([lat, lng], Math.max(this.map.getZoom(), 7.2), {
@@ -165,14 +195,23 @@ class GeographyMap {
     } else if (shapeType === 'polyline') {
       const coords = questionItem.coordinates;
       
+      const polyColor = isMountain ? '#f59e0b' : '#ef4444';
+      const polyClass = isMountain ? 'mountain-range-polyline' : 'animated-pulse-polyline';
+
       this.currentShapeLayer = L.polyline(coords, {
-        color: '#ef4444',
-        weight: 6,
+        color: polyColor,
+        weight: isMountain ? 7 : 6,
         opacity: 0.9,
-        className: 'animated-pulse-polyline',
+        className: polyClass,
         lineCap: 'round',
         lineJoin: 'round'
       }).addTo(this.map);
+
+      // Sıra dağın tepe noktasına 3D Dağ Prizması koy
+      if (isMountain && questionItem.lat && questionItem.lng) {
+        const prismIcon = this.createMountainPrismIcon(questionItem);
+        this.currentMarker = L.marker([questionItem.lat, questionItem.lng], { icon: prismIcon }).addTo(this.map);
+      }
 
       if (this.autoZoomEnabled) {
         const bounds = L.latLngBounds(coords);
@@ -467,36 +506,52 @@ class GeographyMap {
     items.forEach(item => {
       const color = item.color || defaultColor;
       const shapeType = item.shapeType || 'point';
+      const isMountain = item.category === 'daglar' || (item.type || '').toLowerCase().includes('dağ');
 
       if (shapeType === 'point' || !item.coordinates || !Array.isArray(item.coordinates[0])) {
-        const pointIcon = L.divIcon({
-          className: 'explore-point-marker',
-          html: `<div class="explore-point-icon" style="background-color: ${color};"></div>`,
-          iconSize: [14, 14],
-          iconAnchor: [7, 7]
-        });
+        let markerIcon = null;
+        if (isMountain) {
+          markerIcon = this.createMountainPrismIcon(item);
+        } else {
+          markerIcon = L.divIcon({
+            className: 'explore-point-marker',
+            html: `<div class="explore-point-icon" style="background-color: ${color};"></div>`,
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+          });
+        }
 
-        const marker = L.marker([item.lat, item.lng], { icon: pointIcon });
+        const marker = L.marker([item.lat, item.lng], { icon: markerIcon });
         const popupContent = `
-          <div class="popup-title">${item.name}</div>
+          <div class="popup-title">${isMountain ? '🏔️ ' : ''}${item.name}</div>
           <div class="popup-type">${item.type} (${item.region || ''})</div>
           <div class="popup-text">${item.kpssNot || ''}</div>
         `;
         marker.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(marker);
       } else if (shapeType === 'polyline') {
+        const polyColor = isMountain ? '#d97706' : color;
         const line = L.polyline(item.coordinates, {
-          color: color,
-          weight: 4,
-          opacity: 0.85
+          color: polyColor,
+          weight: isMountain ? 5 : 4,
+          opacity: 0.9,
+          dashArray: isMountain ? '8, 4' : null
         });
         const popupContent = `
-          <div class="popup-title">${item.name}</div>
-          <div class="popup-type">${item.type} (${item.region || 'Çizgi/Hat'})</div>
+          <div class="popup-title">${isMountain ? '🏔️ ' : ''}${item.name}</div>
+          <div class="popup-type">${item.type} (${item.region || 'Sıradağ / Hat'})</div>
           <div class="popup-text">${item.kpssNot || ''}</div>
         `;
         line.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(line);
+
+        // Sıra dağın tepe noktasına da 3D Prizma koy
+        if (isMountain && item.lat && item.lng) {
+          const mountainIcon = this.createMountainPrismIcon(item);
+          const peakMarker = L.marker([item.lat, item.lng], { icon: mountainIcon });
+          peakMarker.bindPopup(popupContent, { maxWidth: 280 });
+          this.exploreLayerGroup.addLayer(peakMarker);
+        }
       } else if (shapeType === 'polygon') {
         const polygon = L.polygon(item.coordinates, {
           color: color,
