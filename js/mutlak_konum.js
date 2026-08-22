@@ -897,9 +897,8 @@ class CoordinateHunterGame extends MutlakKonumGameBase {
       permanent: true, direction: 'bottom', className: 'geoguessr-tooltip target'
     }));
 
-    this.geoMap.map.flyToBounds(
-      L.latLngBounds([[lat, lng], [target.lat, target.lng]]).pad(0.4),
-      { duration: 0.8 }
+    this.geoMap.flyToBoundsSafely(
+      L.latLngBounds([[lat, lng], [target.lat, target.lng]]).pad(0.4)
     );
   }
 

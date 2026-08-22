@@ -34,31 +34,31 @@ class GeographyMap {
         name: 'Sade / Renkli',
         withLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         noLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 5 }
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 2 }
       },
       topo: {
         name: 'Fiziki / Topografik',
         withLabels: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; OpenStreetMap &copy; OpenTopoMap / Esri', maxZoom: 17, minZoom: 5 }
+        options: { attribution: '&copy; OpenStreetMap &copy; OpenTopoMap / Esri', maxZoom: 17, minZoom: 2 }
       },
       satellite: {
         name: '🛰️ Gerçek Uydu',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 18, minZoom: 5 }
+        options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 18, minZoom: 2 }
       },
       dark: {
         name: '🌙 Gece / Karanlık',
         withLabels: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         noLabels: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 5 }
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 2 }
       },
       terrain: {
         name: '⛰️ Kabartı / Arazi',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; USGS', maxZoom: 18, minZoom: 5 }
+        options: { attribution: '&copy; Esri &copy; USGS', maxZoom: 18, minZoom: 2 }
       }
     };
 
@@ -111,15 +111,18 @@ class GeographyMap {
 
   initMap() {
     // Türkiye merkezli harita başlatma
+    // Harita Turkiye'ye kilitli degildir: tum dunya gezilebilir.
+    // maxBounds yalnizca kutuplarin otesine surukleyip haritayi kaybetmeyi
+    // engelleyen yumusak bir siniridir (viscosity 0 = surukleme sirasinda direnc yok).
     this.map = L.map(this.containerId, {
       center: [39.0, 35.3],
       zoom: 6.4,
-      minZoom: 5,
+      minZoom: 2,
       maxBounds: [
-        [34.0, 24.0],
-        [43.5, 46.0]
+        [-85.0, -240.0],
+        [85.0, 240.0]
       ],
-      maxBoundsViscosity: 0.8,
+      maxBoundsViscosity: 0.0,
       zoomControl: false
     });
 
@@ -306,10 +309,7 @@ class GeographyMap {
       this.currentMarker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
 
       if (this.autoZoomEnabled) {
-        this.map.flyTo([lat, lng], Math.max(this.map.getZoom(), 7.2), {
-          duration: 0.8,
-          easeLinearity: 0.25
-        });
+        this.flySafely([lat, lng], Math.max(this.map.getZoom(), 7.2), { easeLinearity: 0.25 });
       }
     } else if (shapeType === 'polyline') {
       const coords = questionItem.coordinates;
@@ -339,8 +339,7 @@ class GeographyMap {
       }
 
       if (this.autoZoomEnabled) {
-        const bounds = L.latLngBounds(coords);
-        this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+        this.flyToBoundsSafely(L.latLngBounds(coords).pad(0.35));
       }
     } else if (shapeType === 'polygon') {
       const coords = questionItem.coordinates;
@@ -354,8 +353,7 @@ class GeographyMap {
       }).addTo(this.map);
 
       if (this.autoZoomEnabled) {
-        const bounds = L.latLngBounds(coords);
-        this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+        this.flyToBoundsSafely(L.latLngBounds(coords).pad(0.35));
       }
     }
   }
@@ -429,8 +427,7 @@ class GeographyMap {
 
     // Haritayı tüm seçenekleri kapsayacak şekilde kadrajla
     if (this.autoZoomEnabled && boundsCoords.length > 0) {
-      const bounds = L.latLngBounds(boundsCoords);
-      this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+      this.flyToBoundsSafely(L.latLngBounds(boundsCoords).pad(0.35));
     }
   }
 
@@ -492,8 +489,42 @@ class GeographyMap {
     this.highlightQuestionShape({ shapeType: 'point', lat, lng });
   }
 
+  /**
+   * Harita artik tum dunyada gezilebiliyor. Kullanici Avustralya'ya gidip
+   * yeni bir soru yuklerse, flyTo kitalar arasi 0,8 saniyelik bir savrulma
+   * animasyonu oynatir; bu hem yon duygusunu kaybettirir hem de her soruda
+   * tekrarlanir. Bu yuzden uzun atlayislarda animasyonu atlayip dogrudan
+   * setView/fitBounds ile aninda konumlaniyoruz. Kisa mesafelerde (Turkiye
+   * ici tum ucuslar dahil) yumusak animasyon korunur.
+   */
+  isLongJump(targetCenter, targetZoom) {
+    const current = this.map.getCenter();
+    const farAway = current.distanceTo(targetCenter) > 1800000; // 1800 km
+    const bigZoomJump = Math.abs(this.map.getZoom() - targetZoom) > 4;
+    return farAway || bigZoomJump;
+  }
+
+  flySafely(latLng, zoom, options = {}) {
+    const target = L.latLng(latLng);
+    if (this.isLongJump(target, zoom)) {
+      this.map.setView(target, zoom, { animate: false });
+      return;
+    }
+    this.map.flyTo(target, zoom, Object.assign({ duration: 0.8 }, options));
+  }
+
+  flyToBoundsSafely(bounds, options = {}) {
+    const target = bounds.getCenter();
+    const targetZoom = this.map.getBoundsZoom(bounds);
+    if (this.isLongJump(target, targetZoom)) {
+      this.map.fitBounds(bounds, { animate: false });
+      return;
+    }
+    this.map.flyToBounds(bounds, Object.assign({ duration: 0.8 }, options));
+  }
+
   resetView() {
-    this.map.flyTo([39.0, 35.3], 6.4, { duration: 0.8 });
+    this.flySafely([39.0, 35.3], 6.4);
   }
 
   // --- ÇİZİM MODU (DRAWING ENGINE) ---

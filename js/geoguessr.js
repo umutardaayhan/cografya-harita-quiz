@@ -160,7 +160,7 @@ class GeoGuessrGame {
     this.guessLayerGroup.addLayer(targetMarker);
 
     const bounds = L.latLngBounds([[clickLat, clickLng], [targetLat, targetLng]]);
-    this.geoMap.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+    this.geoMap.flyToBoundsSafely(bounds.pad(0.35));
   }
 
   proceedToNext() {
