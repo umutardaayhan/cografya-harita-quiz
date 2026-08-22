@@ -276,3 +276,11 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:11
+⚠️ Sorun/İhtiyaç: Soru formatı seçim menüsü olan 'format-dropdown' kutusunun diğer katmanların ve harita kontrollerinin altında kalmaması için z-index değerinin artırılması.
+🎯 İşlem Özeti: format-dropdown z-index değeri 9999'a, ebeveyn quiz-format-selector ve top-nav-wrapper z-index değerleri 1500'e çıkarılarak tüm harita katmanlarının ve panellerin üzerinde sorunsuz açılması sağlandı.
+📁 Etkilenen Kapsam: 
+  - css/style.css
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
