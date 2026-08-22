@@ -284,3 +284,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:15
+⚠️ Sorun/İhtiyaç: Haritada Bul modunda şıklarda sadece 'I. Konum' yazması yerine pasif öğrenmeyi destekleyecek şekilde o yerin bulunduğu il/illerin adının şıklara yazılması ihtiyacı.
+🎯 İşlem Özeti: Tüm coğrafi yer şekillerine (Dağlar, Ovalar, Platolar, Göller, Akarsular, Geçitler) bulundukları tekli ve çoklu şehir bilgileri ('city' alanı) eklendi; Haritada Bul soru formatındaki şık butonlarında '📍 Şehir Adı (I / A Pini)' şeklinde pasif il öğrenme gösterimi sağlandı.
+📁 Etkilenen Kapsam: 
+  - data/cografya_data.js
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

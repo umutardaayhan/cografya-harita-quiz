@@ -15,6 +15,7 @@ const COGRAFYA_DATA = {
       lat: 39.70,
       lng: 44.30,
       region: "Doğu Anadolu",
+      city: "Ağrı / Iğdır",
       kpssNot: "Türkiye'nin en yüksek dağıdır (5.137 m). Zirvesinde güncel takke buzulu bulunur. Sönmüş volkandır."
     },
     {
@@ -25,6 +26,7 @@ const COGRAFYA_DATA = {
       lat: 39.63,
       lng: 44.40,
       region: "Doğu Anadolu",
+      city: "Ağrı / Iğdır",
       kpssNot: "Büyük Ağrı'nın güneydoğusunda yer alan volkanik konidir."
     },
     {
@@ -35,6 +37,7 @@ const COGRAFYA_DATA = {
       lat: 39.35,
       lng: 43.87,
       region: "Doğu Anadolu",
+      city: "Ağrı - Van",
       kpssNot: "Kraterinden halen gaz ve su buharı çıkışları görülen genç volkandır."
     },
     {
@@ -45,6 +48,7 @@ const COGRAFYA_DATA = {
       lat: 38.93,
       lng: 42.82,
       region: "Doğu Anadolu",
+      city: "Bitlis - Van",
       kpssNot: "Van Gölü'nün kuzeyinde yer alır. Türkiye'nin 3. yüksek zirvesidir. Buzul kalıntıları vardır."
     },
     {
@@ -55,6 +59,7 @@ const COGRAFYA_DATA = {
       lat: 38.62,
       lng: 42.23,
       region: "Doğu Anadolu",
+      city: "Bitlis (Tatvan)",
       kpssNot: "En son 1441'de faaliyete geçen en genç volkanımızdır. Kalderasında Nemrut Krater Gölü bulunur. (Adıyaman'daki heykelli dağla karıştırma!)"
     },
     {
@@ -65,6 +70,7 @@ const COGRAFYA_DATA = {
       lat: 38.53,
       lng: 35.45,
       region: "İç Anadolu",
+      city: "Kayseri",
       kpssNot: "İç Anadolu'nun en yüksek dağı (3.917 m). Kapadokya tüflerinin oluşmasında baş aktördür. Kış turizmi gelişmiştir."
     },
     {
@@ -75,6 +81,7 @@ const COGRAFYA_DATA = {
       lat: 38.13,
       lng: 34.17,
       region: "İç Anadolu",
+      city: "Aksaray - Niğde",
       kpssNot: "Aksaray-Niğde sınırında yer alan çift tepeli stratovolkandır."
     },
     {
@@ -85,6 +92,7 @@ const COGRAFYA_DATA = {
       lat: 38.07,
       lng: 34.62,
       region: "İç Anadolu",
+      city: "Niğde",
       kpssNot: "Niğde sınırlarında, Hasan Dağı ile Erciyes arasında uzanan volkanik kütledir."
     },
     {
@@ -95,6 +103,7 @@ const COGRAFYA_DATA = {
       lat: 37.80,
       lng: 33.48,
       region: "İç Anadolu",
+      city: "Konya",
       kpssNot: "Konya Ovası'nın doğusunda yer alan sönmüş volkanik dağ."
     },
     {
@@ -105,6 +114,7 @@ const COGRAFYA_DATA = {
       lat: 37.40,
       lng: 33.15,
       region: "İç Anadolu",
+      city: "Karaman",
       kpssNot: "Karaman'ın kuzeyinde yükselen volkanik dağdır."
     },
     {
@@ -115,6 +125,7 @@ const COGRAFYA_DATA = {
       lat: 37.67,
       lng: 39.83,
       region: "Güneydoğu Anadolu",
+      city: "Diyarbakır - Şanlıurfa",
       kpssNot: "Lavları çok akıcı olduğu için geniş alana yayılan, Türkiye'nin tek 'Kalkan Biçimli' volkanıdır. Diyarbakır-Şanlıurfa arasındadır."
     },
     {
@@ -125,6 +136,7 @@ const COGRAFYA_DATA = {
       lat: 38.58,
       lng: 28.52,
       region: "Ege",
+      city: "Manisa (Kula)",
       kpssNot: "Türkiye'nin en genç volkanik arazisidir. 'Yanık Ülke (Katakekaumene)' olarak bilinir. Türkiye'nin ilk UNESCO Jeoparkıdır."
     },
 
@@ -143,6 +155,7 @@ const COGRAFYA_DATA = {
       lng: 26.85,
       type: "Kırık Dağ (Horst)",
       region: "Ege / Marmara",
+      city: "Balıkesir - Çanakkale",
       kpssNot: "Edremit Körfezi kuzeyindedir. Yüksek oksijen oranı ve milli parkı ile bilinir. Kırık dağdır."
     },
     {
@@ -159,6 +172,7 @@ const COGRAFYA_DATA = {
       lng: 27.05,
       type: "Kırık Dağ (Horst)",
       region: "Ege",
+      city: "Balıkesir - İzmir",
       kpssNot: "Bakırçay Grabeni'nin kuzeyinde yer alan horst dağdır."
     },
     {
@@ -175,6 +189,7 @@ const COGRAFYA_DATA = {
       lng: 27.30,
       type: "Kırık Dağ (Horst)",
       region: "Ege",
+      city: "İzmir - Manisa",
       kpssNot: "Bakırçay ile Gediz grabenleri arasında yükselen horst dağıdır."
     },
     {
@@ -191,6 +206,7 @@ const COGRAFYA_DATA = {
       lng: 28.10,
       type: "Kırık Dağ (Horst)",
       region: "Ege",
+      city: "İzmir - Manisa",
       kpssNot: "Gediz ile Küçük Menderes grabenleri arasında uzanır. Kış turizmi yapılır."
     },
     {
@@ -223,6 +239,7 @@ const COGRAFYA_DATA = {
       lng: 28.20,
       type: "Kırık / Engebeli Dağ",
       region: "Ege",
+      city: "Muğla",
       kpssNot: "Ege'de kıyıya PARALEL uzanan tek dağ grubudur. Bu yüzden bol yamaç yağışı alır, nüfusu ve ulaşımı seyrektir."
     },
     {
@@ -257,6 +274,7 @@ const COGRAFYA_DATA = {
       lng: 41.16,
       type: "Kıvrım Dağı",
       region: "Karadeniz",
+      city: "Rize - Artvin",
       kpssNot: "Kuzey Anadolu Dağları'nın en yüksek bölümüdür (3.932 m). Zirvelerinde buzul (sirk) gölleri ve aktüel buzullar vardır."
     },
     {
@@ -273,6 +291,7 @@ const COGRAFYA_DATA = {
       lng: 36.60,
       type: "Kıvrım Dağı",
       region: "Karadeniz",
+      city: "Samsun - Ordu",
       kpssNot: "Yükseltisi azdır ve kıyıdan geride başlar. Bu sayede Samsun'un hinterlandı geniştir ve Bafra-Çarşamba deltaları oluşmuştur."
     },
     {
@@ -289,6 +308,7 @@ const COGRAFYA_DATA = {
       lng: 33.70,
       type: "Kıvrım Dağı",
       region: "Karadeniz",
+      city: "Kastamonu - Bartın",
       kpssNot: "Batı Karadeniz'de kıyıya paraleldir. Bakır yatakları (Kastamonu-Küre) ve zengin ormanlarıyla bilinir."
     },
     {
@@ -305,6 +325,7 @@ const COGRAFYA_DATA = {
       lng: 33.73,
       type: "Kıvrım Dağı",
       region: "Karadeniz",
+      city: "Kastamonu - Çankırı",
       kpssNot: "Batı Karadeniz iç kuşağındadır. Milli park ve kış turizmi alanıdır. Üzerinde Ilgaz Geçidi bulunur."
     },
     {
@@ -369,6 +390,7 @@ const COGRAFYA_DATA = {
       lng: 34.60,
       type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz",
+      city: "Mersin - Niğde",
       kpssNot: "Orta Toroslar'dadır. Karstik şekiller ve buzul izleri taşır. Sadece burada yaşayan endemik Toros Kurbağası bulunur."
     },
     {
@@ -385,6 +407,7 @@ const COGRAFYA_DATA = {
       lng: 35.15,
       type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz",
+      city: "Adana - Niğde - Kayseri",
       kpssNot: "Torosların en yüksek kısmıdır (Demirkazık Zirvesi). Dağcılık ve karstik kanyonlarıyla (Kapuzbaşı) ünlüdür."
     },
     {
@@ -401,6 +424,7 @@ const COGRAFYA_DATA = {
       lng: 30.30,
       type: "Kıvrım Dağı (Batı Toroslar)",
       region: "Akdeniz",
+      city: "Antalya",
       kpssNot: "Antalya Körfezi'nin batısında yükselir. Saklıkent kayak merkezi buradadır."
     },
     {
@@ -417,6 +441,7 @@ const COGRAFYA_DATA = {
       lng: 32.20,
       type: "Kıvrım Dağı (Batı Toroslar)",
       region: "Akdeniz",
+      city: "Antalya - Konya",
       kpssNot: "Antalya-Konya sınırında Batı Toroslar kuşağında yer alır."
     },
     {
@@ -433,6 +458,7 @@ const COGRAFYA_DATA = {
       lng: 36.30,
       type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz / İç Anadolu",
+      city: "Adana - Kayseri",
       kpssNot: "Seyhan Nehri kolları tarafından yarılmış Orta Toros kütlesidir."
     },
     {
@@ -449,6 +475,7 @@ const COGRAFYA_DATA = {
       lng: 36.70,
       type: "Kıvrım Dağı (Orta Toroslar)",
       region: "Akdeniz / Doğu Anadolu",
+      city: "Kahramanmaraş - Kayseri",
       kpssNot: "Kahramanmaraş-Kayseri sınırında uzanan Toros uzantısıdır."
     },
     {
@@ -475,6 +502,7 @@ const COGRAFYA_DATA = {
       lng: 29.22,
       type: "Derinlik Volkanizması (Batolit)",
       region: "Marmara",
+      city: "Bursa",
       kpssNot: "İç püskürük (batolit) yapılıdır. Marmara'nın en yüksek dağıdır. Sirk gölleri ve kış turizmi ile ünlüdür."
     }
   ],
@@ -489,6 +517,7 @@ const COGRAFYA_DATA = {
       lat: 36.85,
       lng: 35.50,
       region: "Akdeniz",
+      city: "Adana - Mersin",
       kpssNot: "Seyhan ve Ceyhan nehirlerinin oluşturduğu TÜRKİYE'NİN EN BÜYÜK DELTA OVASIDIR. Sanayi bitkileri ve yılda birden fazla ürün alınır."
     },
     {
@@ -499,6 +528,7 @@ const COGRAFYA_DATA = {
       lat: 41.56,
       lng: 35.90,
       region: "Karadeniz",
+      city: "Samsun (Bafra)",
       kpssNot: "Kızılırmak nehrinin Karadeniz'e döküldüğü yerde oluşturduğu delta ovasıdır."
     },
     {
@@ -509,6 +539,7 @@ const COGRAFYA_DATA = {
       lat: 41.20,
       lng: 36.75,
       region: "Karadeniz",
+      city: "Samsun (Çarşamba)",
       kpssNot: "Yeşilırmak nehrinin Karadeniz'e döküldüğü yerde oluşturduğu delta ovasıdır."
     },
     {
@@ -519,6 +550,7 @@ const COGRAFYA_DATA = {
       lat: 36.35,
       lng: 33.95,
       region: "Akdeniz",
+      city: "Mersin (Silifke)",
       kpssNot: "Göksu Nehri'nin Akdeniz'e döküldüğü yerde oluşturduğu delta ovasıdır."
     },
     {
@@ -529,6 +561,7 @@ const COGRAFYA_DATA = {
       lat: 38.60,
       lng: 27.00,
       region: "Ege",
+      city: "İzmir (Menemen)",
       kpssNot: "Gediz Nehri'nin İzmir Körfezi girişinde oluşturduğu deltadır (İzmir Kuş Cenneti buradadır)."
     },
     {
@@ -539,6 +572,7 @@ const COGRAFYA_DATA = {
       lat: 37.55,
       lng: 27.30,
       region: "Ege",
+      city: "Aydın (Didim)",
       kpssNot: "Büyük Menderes Nehri'nin taşıdığı alüvyonlarla oluşturduğu delta ovasıdır (Eski Milet limanını doldurmuştur)."
     },
     {
@@ -549,6 +583,7 @@ const COGRAFYA_DATA = {
       lat: 37.95,
       lng: 27.35,
       region: "Ege",
+      city: "İzmir (Selçuk)",
       kpssNot: "Küçük Menderes Nehri'nin oluşturduğu deltadır (Efes antik liman kentini karada bırakmıştır)."
     },
     {
@@ -559,6 +594,7 @@ const COGRAFYA_DATA = {
       lat: 39.05,
       lng: 26.90,
       region: "Ege",
+      city: "İzmir (Dikili)",
       kpssNot: "Bakırçay Nehri'nin Ege Denizi kıyısında oluşturduğu küçük deltadır."
     },
 
@@ -571,6 +607,7 @@ const COGRAFYA_DATA = {
       lat: 37.31,
       lng: 29.77,
       region: "Akdeniz (Göller Yöresi)",
+      city: "Burdur (Tefenni)",
       kpssNot: "Burdur'da yer alan karstik polye ovasıdır (TAKKEM kuralının 'T' harfi)."
     },
     {
@@ -581,6 +618,7 @@ const COGRAFYA_DATA = {
       lat: 37.42,
       lng: 29.35,
       region: "Ege / Akdeniz",
+      city: "Denizli (Acıpayam)",
       kpssNot: "Denizli sınırlarında yer alan karstik polye ovasıdır (TAKKEM kuralının 'A' harfi)."
     },
     {
@@ -591,6 +629,7 @@ const COGRAFYA_DATA = {
       lat: 37.05,
       lng: 30.19,
       region: "Akdeniz",
+      city: "Antalya (Korkuteli)",
       kpssNot: "Antalya'nın kuzeybatısında yer alan karstik polye ovasıdır (TAKKEM kuralının ilk 'K' harfi)."
     },
     {
@@ -601,6 +640,7 @@ const COGRAFYA_DATA = {
       lat: 37.50,
       lng: 30.40,
       region: "Akdeniz",
+      city: "Burdur (Kestel)",
       kpssNot: "Burdur sınırlarında yer alan karstik polye ovasıdır (TAKKEM kuralının ikinci 'K' harfi)."
     },
     {
@@ -611,6 +651,7 @@ const COGRAFYA_DATA = {
       lat: 36.73,
       lng: 29.91,
       region: "Akdeniz",
+      city: "Antalya (Elmalı)",
       kpssNot: "Antalya'da Teke Yarımadası içinde yer alan yüksek karstik polye ovasıdır (TAKKEM kuralının 'E' harfi)."
     },
     {
@@ -621,6 +662,7 @@ const COGRAFYA_DATA = {
       lat: 37.21,
       lng: 28.36,
       region: "Ege",
+      city: "Muğla (Menteşe)",
       kpssNot: "Menteşe Yöresi'nde kireçtaşlarının erimesiyle oluşmuş karstik polye ovasıdır (TAKKEM kuralının 'M' harfi)."
     },
 
@@ -633,6 +675,7 @@ const COGRAFYA_DATA = {
       lat: 37.87,
       lng: 32.50,
       region: "İç Anadolu",
+      city: "Konya",
       kpssNot: "TÜRKİYE'NİN EN BÜYÜK İÇ OVASI ve tahıl ambarıdır. Eski göl tabanı üzerinde gelişmiştir. KOP projesiyle sulanmaktadır."
     },
     {
@@ -643,6 +686,7 @@ const COGRAFYA_DATA = {
       lat: 36.86,
       lng: 39.02,
       region: "Güneydoğu Anadolu",
+      city: "Şanlıurfa (Harran)",
       kpssNot: "GAP ile Atatürk Barajı'ndan Şanlıurfa Tünelleri aracılığıyla sulanan, pamuk üretim merkezimizdir."
     },
     {
@@ -653,6 +697,7 @@ const COGRAFYA_DATA = {
       lat: 39.92,
       lng: 44.04,
       region: "Doğu Anadolu",
+      city: "Iğdır",
       kpssNot: "Çevresine göre alçakta (graben) kaldığı için MİKROKLİMA iklim görülür; Doğu Anadolu'da pamuk yetişen tek yerdir."
     },
     {
@@ -663,6 +708,7 @@ const COGRAFYA_DATA = {
       lat: 36.35,
       lng: 36.30,
       region: "Akdeniz",
+      city: "Hatay (Antakya)",
       kpssNot: "Asi Nehri'nin suladığı, Amanos Dağları ile platolar arasında yer alan verimli graben ovasıdır."
     },
     {
@@ -673,6 +719,7 @@ const COGRAFYA_DATA = {
       lat: 38.35,
       lng: 38.30,
       region: "Doğu Anadolu",
+      city: "Malatya",
       kpssNot: "Doğu Anadolu Fayı kuşağında verimli bir çöküntü ovasıdır. Dünyaca ünlü kayısı üretim sahasıdır."
     },
     {
@@ -683,6 +730,7 @@ const COGRAFYA_DATA = {
       lat: 40.70,
       lng: 36.80,
       region: "Karadeniz",
+      city: "Tokat (Erbaa-Niksar)",
       kpssNot: "Kuzey Anadolu Fay Hattı (Kelkit Oluğu) üzerindeki verimli çöküntü ovalarıdır."
     },
     {
@@ -693,6 +741,7 @@ const COGRAFYA_DATA = {
       lat: 40.84,
       lng: 31.15,
       region: "Karadeniz",
+      city: "Düzce",
       kpssNot: "KAF hattında yer alan, fındık ve mısır tarımı yapılan zengin alüvyal çöküntü ovasıdır."
     },
     {
@@ -703,6 +752,7 @@ const COGRAFYA_DATA = {
       lat: 40.77,
       lng: 30.40,
       region: "Marmara",
+      city: "Sakarya (Adapazarı)",
       kpssNot: "Sakarya Nehri'nin taşıdığı alüvyonlarla kaplı, KAF üzerinde yer alan sanayi ve tarım ovasıdır."
     },
     {
@@ -713,6 +763,7 @@ const COGRAFYA_DATA = {
       lat: 40.20,
       lng: 29.05,
       region: "Marmara",
+      city: "Bursa",
       kpssNot: "Uludağ'ın kuzey eteğinde yer alan, sanayi ve meyve/sebze tarımının yoğun olduğu ovadır."
     },
 
@@ -725,6 +776,7 @@ const COGRAFYA_DATA = {
       lat: 38.39,
       lng: 35.49,
       region: "İç Anadolu",
+      city: "Kayseri (Develi)",
       kpssNot: "Erciyes Dağı'ndan çıkan volkanik lav ve tüflerin çöküntü alanını doldurmasıyla oluşan tipik volkanik ovadır (Sultan Sazlığı buradadır)."
     },
     {
@@ -735,6 +787,7 @@ const COGRAFYA_DATA = {
       lat: 38.73,
       lng: 35.48,
       region: "İç Anadolu",
+      city: "Kayseri",
       kpssNot: "Erciyes Volkanı'nın kuzey eteklerinde volkanik tüf ve alüvyonlarla kaplı volkanik kökenli iç ovadır."
     },
     {
@@ -745,6 +798,7 @@ const COGRAFYA_DATA = {
       lat: 39.14,
       lng: 43.91,
       region: "Doğu Anadolu",
+      city: "Van (Çaldıran)",
       kpssNot: "Tendürek Yanardağı'ndan püsküren bazaltik lavların çanağı doldurmasıyla oluşan volkanik ovadır. Türkiye'nin en soğuk yerlerinden biridir."
     },
     {
@@ -755,6 +809,7 @@ const COGRAFYA_DATA = {
       lat: 38.98,
       lng: 43.76,
       region: "Doğu Anadolu",
+      city: "Van (Muradiye)",
       kpssNot: "Süphan ve Tendürek volkanizması lavları arasında oluşmuş volkanik tabanlı ovadır."
     }
   ],
@@ -769,6 +824,7 @@ const COGRAFYA_DATA = {
       lat: 40.50,
       lng: 42.00,
       region: "Doğu Anadolu",
+      city: "Erzurum - Kars",
       kpssNot: "TÜRKİYE'NİN EN YÜKSEK PLATOSUDUR. Yaz yağışları, gür çayırlar ve Çernezyom (kara toprak) sayesinde BÜYÜKBAŞ MERA hayvancılığı yapılır."
     },
     {
@@ -779,6 +835,7 @@ const COGRAFYA_DATA = {
       lat: 41.10,
       lng: 42.70,
       region: "Doğu Anadolu",
+      city: "Ardahan",
       kpssNot: "Kura Nehri tarafından yarılan, volkanik lav örtüsü ile kaplı yüksek platodur."
     },
 
@@ -791,6 +848,7 @@ const COGRAFYA_DATA = {
       lat: 36.70,
       lng: 29.80,
       region: "Akdeniz",
+      city: "Antalya - Muğla",
       kpssNot: "Kireçtaşı (kalker) yapılıdır. Suyu tabana sızdırdığı için çorak ve engebelidir. Nüfus seyrektir, KIL KEÇİSİ yetiştirilir."
     },
     {
@@ -801,6 +859,7 @@ const COGRAFYA_DATA = {
       lat: 36.50,
       lng: 32.80,
       region: "Akdeniz",
+      city: "Mersin - Karaman - Antalya",
       kpssNot: "Göksu Nehri kanyonlarıyla yarılmıştır. Karstik yapı nedeniyle tarım zordur, nüfus seyrektir, KIL KEÇİSİ yaygındır."
     },
 
@@ -813,6 +872,7 @@ const COGRAFYA_DATA = {
       lat: 41.00,
       lng: 29.40,
       region: "Marmara",
+      city: "İstanbul - Kocaeli",
       kpssNot: "TÜRKİYE'NİN EN ALÇAK PLATOSUDUR. Aşınarak deniz seviyesine yaklaşmıştır. Nüfus, sanayi, ticaret ve ulaşım yoğunluğu en fazladır."
     },
     {
@@ -835,6 +895,7 @@ const COGRAFYA_DATA = {
       lat: 39.40,
       lng: 32.50,
       region: "İç Anadolu",
+      city: "Ankara (Haymana)",
       kpssNot: "Ankara güneyindedir. Bozkır bitki örtüsü nedeniyle TİFTİK KEÇİSİ (Ankara Keçisi) ve küçükbaş hayvancılık yaygındır."
     },
     {
@@ -845,6 +906,7 @@ const COGRAFYA_DATA = {
       lat: 38.65,
       lng: 32.90,
       region: "İç Anadolu",
+      city: "Konya (Cihanbeyli)",
       kpssNot: "Tuz Gölü'nün batısındadır. Geniş düzlüklerinde makineli TAHIL (buğday/arpa) tarımı yapılır."
     },
     {
@@ -855,6 +917,7 @@ const COGRAFYA_DATA = {
       lat: 38.15,
       lng: 33.50,
       region: "İç Anadolu",
+      city: "Konya - Aksaray",
       kpssNot: "Kızören gibi çok sayıda yer altı mağarası tavanının çökmesiyle oluşan dev OBRUKLAR barındırır."
     },
     {
@@ -865,6 +928,7 @@ const COGRAFYA_DATA = {
       lat: 39.80,
       lng: 35.30,
       region: "İç Anadolu",
+      city: "Yozgat",
       kpssNot: "Kızılırmak Yayı içinde (Yozgat çevresi) yer alan en geniş İç Anadolu platosudur. Küçükbaş hayvancılık ve tahıl yaygındır."
     },
     {
@@ -875,6 +939,7 @@ const COGRAFYA_DATA = {
       lat: 39.20,
       lng: 36.40,
       region: "İç Anadolu / Sivas",
+      city: "Sivas - Kayseri",
       kpssNot: "Sivas-Kayseri arasında yüksek düzlüktür. At ve koyun yetiştiriciliği ile bilinir."
     },
     {
@@ -885,6 +950,7 @@ const COGRAFYA_DATA = {
       lat: 39.20,
       lng: 30.70,
       region: "Ege / İç Batı Anadolu",
+      city: "Eskişehir - Afyonkarahisar",
       kpssNot: "Eskişehir-Afyon arasında Frig vadisi kalıntılarını da içeren aşınmış platodur."
     },
     {
@@ -895,6 +961,7 @@ const COGRAFYA_DATA = {
       lat: 37.05,
       lng: 37.35,
       region: "Güneydoğu Anadolu",
+      city: "Gaziantep",
       kpssNot: "Antep fıstığı, zeytin ve bağcılığın yapıldığı, Fırat kolları ile parçalanmış platodur."
     },
     {
@@ -905,6 +972,7 @@ const COGRAFYA_DATA = {
       lat: 37.15,
       lng: 38.80,
       region: "Güneydoğu Anadolu",
+      city: "Şanlıurfa",
       kpssNot: "Güneydoğu'da tarım ve küçükbaş hayvancılığın yoğun olduğu geniş tabaka düzlüğüdür."
     }
   ],
@@ -929,6 +997,7 @@ const COGRAFYA_DATA = {
       lng: 34.80,
       type: "Akarsu",
       region: "Karadeniz / İç Anadolu",
+      city: "Sivas - Kayseri - Samsun",
       kpssNot: "SINIRLARIMIZ İÇİNDE DOĞUP SINIRLARIMIZ İÇİNDE DENİZE DÖKÜLEN EN UZUN NEHRİMİZDİR (1.355 km). Bafra Deltası'nı oluşturur."
     },
     {
@@ -946,6 +1015,7 @@ const COGRAFYA_DATA = {
       lng: 36.40,
       type: "Akarsu",
       region: "Karadeniz",
+      city: "Sivas - Tokat - Samsun",
       kpssNot: "Kuzey Anadolu dağlarını yararak Karadeniz'e dökülür ve Çarşamba Deltası'nı oluşturur."
     },
     {
@@ -965,6 +1035,7 @@ const COGRAFYA_DATA = {
       lng: 30.80,
       type: "Akarsu",
       region: "Marmara / İç Anadolu",
+      city: "Eskişehir - Ankara - Sakarya",
       kpssNot: "Dört farklı coğrafi bölgeden (İç Anadolu, Ege, Marmara, Karadeniz) geçen tek akarsumuzdur."
     },
     {
@@ -983,6 +1054,7 @@ const COGRAFYA_DATA = {
       lng: 41.30,
       type: "Akarsu",
       region: "Karadeniz / Doğu Anadolu",
+      city: "Bayburt - Erzurum - Artvin",
       kpssNot: "Akış hızı ve debisi çok yüksektir. Rafting sporuna çok uygundur. Gürcistan (Batum) üzerinden Karadeniz'e dökülür. Deriner ve Yusufeli barajları buradadır."
     },
     {
@@ -1002,6 +1074,7 @@ const COGRAFYA_DATA = {
       lng: 38.40,
       type: "Akarsu (Sınır Aşan)",
       region: "Doğu & Güneydoğu Anadolu",
+      city: "Erzincan - Elazığ - Şanlıurfa",
       kpssNot: "TÜRKİYE'NİN EN FAZLA SU TAŞIYAN ve HİDROELEKTRİK POTANSİYELİ EN YÜKSEK NEHRİDİR. Karasu ve Murat kollarından oluşur, Basra Körfezi'ne dökülür."
     },
     {
@@ -1020,6 +1093,7 @@ const COGRAFYA_DATA = {
       lng: 40.80,
       type: "Akarsu (Sınır Aşan)",
       region: "Güneydoğu Anadolu",
+      city: "Diyarbakır - Batman - Mardin",
       kpssNot: "Hazar Gölü yakınlarından doğar, Ilısu (Veysel Eroğlu) barajı üzerindedir. Fırat ile Irak'ta birleşip Şattülarap adını alır."
     },
     {
@@ -1038,6 +1112,7 @@ const COGRAFYA_DATA = {
       lng: 43.20,
       type: "Akarsu (Kapalı Havza)",
       region: "Doğu Anadolu",
+      city: "Erzurum - Kars - Iğdır",
       kpssNot: "Ermenistan, Azerbaycan ve İran sınırını oluşturur; Kura ile birleşerek HAZAR KAPALI HAVZASI'na dökülür."
     },
     {
@@ -1055,6 +1130,7 @@ const COGRAFYA_DATA = {
       lng: 26.40,
       type: "Akarsu",
       region: "Marmara",
+      city: "Edirne",
       kpssNot: "Bulgaristan'dan doğar, Türkiye-Yunanistan sınırını çizer, Ege Denizi'ne dökülür (Ergene en büyük koludur, pirinç/çeltik tarımı yaygındır)."
     },
     {
@@ -1072,6 +1148,7 @@ const COGRAFYA_DATA = {
       lng: 27.80,
       type: "Akarsu",
       region: "Ege",
+      city: "Kütahya - Manisa - İzmir",
       kpssNot: "Ege grabenleri boyunca menderesler çizerek akar ve Menemen Deltası'nı oluşturur."
     },
     {
@@ -1090,6 +1167,7 @@ const COGRAFYA_DATA = {
       lng: 28.50,
       type: "Akarsu",
       region: "Ege",
+      city: "Afyon - Denizli - Aydın",
       kpssNot: "Ege'nin en uzun akarsuyudur. İsmini dünyaya 'menderes (kıvrım)' coğrafi terimi olarak vermiştir."
     },
     {
@@ -1106,6 +1184,7 @@ const COGRAFYA_DATA = {
       lng: 36.15,
       type: "Akarsu (Ters Akan)",
       region: "Akdeniz",
+      city: "Hatay (Antakya)",
       kpssNot: "Lübnan'dan doğup Suriye'den geçerek Türkiye'ye girer. Güneyden kuzeye 'ters' aktığı için Asi adını almıştır."
     },
     {
@@ -1123,6 +1202,7 @@ const COGRAFYA_DATA = {
       lng: 33.50,
       type: "Akarsu",
       region: "Akdeniz",
+      city: "Konya - Karaman - Mersin",
       kpssNot: "Taşeli Platosu'nu derin kanyonlarla yararak Silifke Deltası'nı oluşturan akarsumuzdur."
     },
     {
@@ -1139,6 +1219,7 @@ const COGRAFYA_DATA = {
       lng: 31.52,
       type: "Akarsu (Karstik)",
       region: "Akdeniz",
+      city: "Antalya (Manavgat)",
       kpssNot: "Karstik (voklüz) gür kaynaklarla beslendiği için AKIMI YIL BOYUNCA EN DÜZENLİ akarsularımızdandır."
     },
 
@@ -1152,6 +1233,7 @@ const COGRAFYA_DATA = {
       lat: 38.75,
       lng: 33.30,
       region: "İç Anadolu",
+      city: "Konya - Aksaray - Ankara",
       kpssNot: "Türkiye'nin 2. büyük gölüdür; yazın buharlaşmayla alanı en çok değişen göldür. Türkiye tuz ihtiyacının %40'tan fazlasını karşılar (Kapalı Havza)."
     },
     {
@@ -1162,6 +1244,7 @@ const COGRAFYA_DATA = {
       lat: 40.43,
       lng: 29.50,
       region: "Marmara (Bursa)",
+      city: "Bursa (İznik)",
       kpssNot: "Marmara Bölgesi'nin en büyük doğal tatlı su gölüdür. Gideğeni (Karsak Deresi) olduğu için suları tatlıdır; bazilika batığıyla ünlüdür."
     },
     {
@@ -1172,6 +1255,7 @@ const COGRAFYA_DATA = {
       lat: 40.71,
       lng: 30.26,
       region: "Marmara (Sakarya-Kocaeli)",
+      city: "Sakarya - Kocaeli",
       kpssNot: "Kuzey Anadolu Fay Hattı (KAF) çöküntü oluğunda yer alan, içme ve sanayi suyu sağlayan önemli tektonik tatlı su gölüdür."
     },
     {
@@ -1182,6 +1266,7 @@ const COGRAFYA_DATA = {
       lat: 40.20,
       lng: 27.96,
       region: "Marmara (Balıkesir)",
+      city: "Balıkesir (Bandırma)",
       kpssNot: "Kuş Cenneti Milli Parkı ve RAMSAR alanıdır. Göçmen kuşların en önemli konaklama sahalarındandır. Suları tatlıdır."
     },
     {
@@ -1192,6 +1277,7 @@ const COGRAFYA_DATA = {
       lat: 40.18,
       lng: 28.60,
       region: "Marmara (Bursa)",
+      city: "Bursa (Nilüfer)",
       kpssNot: "Ramsar koruma alanıdır. Gölyazı adası ve Avrupa Leylek Köyü (Eskikaraağaç) buradadır. Sığ ve tatlı bir tektonik göldür."
     },
     {
@@ -1202,6 +1288,7 @@ const COGRAFYA_DATA = {
       lat: 37.75,
       lng: 30.18,
       region: "Akdeniz (Göller Yöresi)",
+      city: "Burdur",
       kpssNot: "Gideğeni olmadığı için suları ACI ve TUZLUDUR. Dikkuyruk ördeklerinin kışlama sahasıdır. Ramsar alanıdır."
     },
     {
@@ -1212,6 +1299,7 @@ const COGRAFYA_DATA = {
       lat: 38.49,
       lng: 39.41,
       region: "Doğu Anadolu (Elazığ)",
+      city: "Elazığ (Sivrice)",
       kpssNot: "Doğu Anadolu Fay Hattı üzerindedir. Dicle Nehri bu gölün yakınlarından doğar. İçinde su altı batık şehir kalıntıları yer alır."
     },
     {
@@ -1222,6 +1310,7 @@ const COGRAFYA_DATA = {
       lat: 38.58,
       lng: 31.42,
       region: "İç Anadolu (Konya-Afyon)",
+      city: "Konya - Afyonkarahisar",
       kpssNot: "Nasreddin Hoca'nın 'Ya tutarsa' diyerek maya çaldığı tarihi göldür. İklim değişikliği ve aşırı sulama nedeniyle kuruma tehdidi altındadır."
     },
     {
@@ -1232,6 +1321,7 @@ const COGRAFYA_DATA = {
       lat: 38.62,
       lng: 31.18,
       region: "İç Anadolu (Afyonkarahisar)",
+      city: "Afyonkarahisar (Bolvadin)",
       kpssNot: "Üzerinde 'Kopak' adı verilen yüzen sazlık adacıklarıyla ünlü, biyolojik çeşitliliği zengin sığ tektonik göldür."
     },
     {
@@ -1242,6 +1332,7 @@ const COGRAFYA_DATA = {
       lat: 39.20,
       lng: 34.38,
       region: "İç Anadolu (Kırşehir)",
+      city: "Kırşehir (Mucur)",
       kpssNot: "Ramsar koruma alanı olan tuzlu göldür. Flamingo ve turnaların İç Anadolu'daki en önemli üreme/durak noktalarındandır."
     },
 
@@ -1254,6 +1345,7 @@ const COGRAFYA_DATA = {
       lat: 37.75,
       lng: 31.50,
       region: "Akdeniz (Göller Yöresi)",
+      city: "Konya - Isparta",
       kpssNot: "TÜRKİYE'NİN EN BÜYÜK TATLI SU GÖLÜDÜR (Gideğeni Çarşamba Çayı ile Konya Ovası'nı sular). Milli park statüsündedir."
     },
     {
@@ -1264,6 +1356,7 @@ const COGRAFYA_DATA = {
       lat: 38.05,
       lng: 30.85,
       region: "Akdeniz (Göller Yöresi)",
+      city: "Isparta (Eğirdir)",
       kpssNot: "Türkiye'nin 2. büyük tatlı su gölüdür. Kovada Kanalı ile Kovada Gölü'ne ve HES santrallerine tatlı su aktarır."
     },
     {
@@ -1274,6 +1367,7 @@ const COGRAFYA_DATA = {
       lat: 37.55,
       lng: 29.68,
       region: "Akdeniz (Burdur/Yeşilova)",
+      city: "Burdur (Yeşilova)",
       kpssNot: "Türkiye'nin en derin göllerindendir (184 m). Beyaz hidromanyezit kumulları Mars kayaç yapısıyla benzerlik gösterir (Türkiye'nin Maldivleri)."
     },
     {
@@ -1284,6 +1378,7 @@ const COGRAFYA_DATA = {
       lat: 37.64,
       lng: 30.87,
       region: "Akdeniz (Isparta)",
+      city: "Isparta (Eğirdir)",
       kpssNot: "Eğirdir Gölü'nün fazla sularının aktığı karstik milli park gölüdür; çevresi zengin flora ve yaban hayatına sahiptir."
     },
     {
@@ -1294,6 +1389,7 @@ const COGRAFYA_DATA = {
       lat: 36.59,
       lng: 29.93,
       region: "Akdeniz (Antalya/Elmalı)",
+      city: "Antalya (Elmalı)",
       kpssNot: "Elmalı polyesi tabanında karstik düdenlerle beslenen göldür; kurutulduktan sonra iklim bozulunca yeniden su tutulmuştur."
     },
     {
@@ -1304,6 +1400,7 @@ const COGRAFYA_DATA = {
       lat: 38.17,
       lng: 33.18,
       region: "İç Anadolu (Konya)",
+      city: "Konya (Karatay)",
       kpssNot: "Türkiye'nin en tipik kireçtaşı karstik obruk gölüdür. 180 metre derinliğindeki dikey çanakta su birikmiştir; Ramsar alanıdır."
     },
 
@@ -1316,6 +1413,7 @@ const COGRAFYA_DATA = {
       lat: 38.62,
       lng: 42.24,
       region: "Doğu Anadolu (Bitlis)",
+      city: "Bitlis (Tatvan)",
       kpssNot: "Nemrut Yanardağı'nın patlamasıyla oluşan çanakta gelişen, DÜNYANIN 2. BÜYÜK KALDERA GÖLÜDÜR. Ramsar ve EDEN ödüllü doğa harikasıdır."
     },
     {
@@ -1326,6 +1424,7 @@ const COGRAFYA_DATA = {
       lat: 37.69,
       lng: 33.64,
       region: "İç Anadolu (Konya/Karapınar)",
+      city: "Konya (Karapınar)",
       kpssNot: "Gaz patlaması sonucu oluşan çanak ve ortasındaki volkan konisiyle 'Dünyanın Nazar Boncuğu' olarak anılan Ramsar maar gölüdür."
     },
     {
@@ -1336,6 +1435,7 @@ const COGRAFYA_DATA = {
       lat: 37.73,
       lng: 30.49,
       region: "Akdeniz (Isparta)",
+      city: "Isparta",
       kpssNot: "Genç volkanik patlama krateri içinde yer alan tabiat parkı gölüdür; suları tatlıdır."
     },
 
@@ -1348,6 +1448,7 @@ const COGRAFYA_DATA = {
       lat: 38.60,
       lng: 42.90,
       region: "Doğu Anadolu",
+      city: "Van - Bitlis",
       kpssNot: "TÜRKİYE'NİN EN BÜYÜK GÖLÜDÜR (Nemrut lavları önünü kesmiştir). Suları SODALI ve TUZLUDUR. İnci kefali yaşar. Van-Tatvan feribot hattı bulunur."
     },
     {
@@ -1358,6 +1459,7 @@ const COGRAFYA_DATA = {
       lat: 41.05,
       lng: 43.25,
       region: "Doğu Anadolu (Ardahan-Kars)",
+      city: "Ardahan - Kars",
       kpssNot: "Lav akıntısının vadiyi tıkamasıyla oluşan yüksek rakımlı göldür. Kışın 1 metreye varan buz tutar; atlı kızak ve Eskimo usulü balıkçılık yapılır."
     },
     {
@@ -1368,6 +1470,7 @@ const COGRAFYA_DATA = {
       lat: 38.64,
       lng: 43.58,
       region: "Doğu Anadolu (Van)",
+      city: "Van (İpekyolu)",
       kpssNot: "Van Gölü'nün doğusunda yer alan volkanik set gölüdür; suları sodalıdır ve flamingoların önemli göç konaklama merkezidir."
     },
     {
@@ -1378,6 +1481,7 @@ const COGRAFYA_DATA = {
       lat: 38.85,
       lng: 42.27,
       region: "Doğu Anadolu (Bitlis/Ahlat)",
+      city: "Bitlis (Ahlat)",
       kpssNot: "Nemrut ve Süphan lavlarının önünü kapatmasıyla oluşan, kışın buz tutan tatlı su volkanik set gölüdür."
     },
     {
@@ -1388,6 +1492,7 @@ const COGRAFYA_DATA = {
       lat: 39.75,
       lng: 43.57,
       region: "Doğu Anadolu (Ağrı/Taşlıçay)",
+      city: "Ağrı (Taşlıçay)",
       kpssNot: "Türkiye'nin en yüksek rakımlı tatlı su göllerindendir (2.250 m). Kırmızı benekli alabalığı ile ünlüdür."
     },
     {
@@ -1398,6 +1503,7 @@ const COGRAFYA_DATA = {
       lat: 39.02,
       lng: 42.31,
       region: "Doğu Anadolu (Muş/Bulanık)",
+      city: "Muş (Bulanık)",
       kpssNot: "Volkanik lavların Şeyh Deresi vadisini tıkamasıyla oluşan sığ volkanik set gölüdür."
     },
 
@@ -1410,6 +1516,7 @@ const COGRAFYA_DATA = {
       lat: 40.60,
       lng: 31.28,
       region: "Karadeniz (Bolu)",
+      city: "Bolu (Merkez)",
       kpssNot: "Heyelan kütlesinin vadi önünü kapatmasıyla oluşan Türkiye'nin en ünlü heyelan set gölü ve milli parkıdır."
     },
     {
@@ -1420,6 +1527,7 @@ const COGRAFYA_DATA = {
       lat: 40.94,
       lng: 31.74,
       region: "Karadeniz (Bolu)",
+      city: "Bolu (Mengen)",
       kpssNot: "Birden çok heyelanın vadiyi basamaklı kapatmasıyla oluşan 7 gölden (Büyükgöl, Seringöl, Deringöl, Nazlıgöl vb.) meydana gelir."
     },
     {
@@ -1430,6 +1538,7 @@ const COGRAFYA_DATA = {
       lat: 40.65,
       lng: 41.65,
       region: "Doğu Anadolu (Erzurum/Uzundere)",
+      city: "Erzurum (Uzundere)",
       kpssNot: "Kemerlidağ'dan kopan heyelan kütlesinin Tortum Çayı vadisini kapatmasıyla oluşmuştur; taşan suları ünlü Tortum Şelalesi'ni oluşturur."
     },
     {
@@ -1440,6 +1549,7 @@ const COGRAFYA_DATA = {
       lat: 40.98,
       lng: 39.62,
       region: "Karadeniz (Trabzon/Akçaabat)",
+      city: "Trabzon (Akçaabat)",
       kpssNot: "1950 yılında meydana gelen büyük bir heyelanın Sera Deresi önünü birkaç günde kapatmasıyla gözler önünde oluşmuş tipik heyelan set gölüdür."
     },
     {
@@ -1450,6 +1560,7 @@ const COGRAFYA_DATA = {
       lat: 41.38,
       lng: 41.85,
       region: "Karadeniz (Artvin/Borçka)",
+      city: "Artvin (Borçka)",
       kpssNot: "Klaskur Yaylası'ndan gelen heyelanın dere yatağını kapatmasıyla oluşan tabiat parkı ve biyosfer rezerv alanıdır."
     },
     {
@@ -1460,6 +1571,7 @@ const COGRAFYA_DATA = {
       lat: 40.47,
       lng: 37.26,
       region: "Karadeniz (Tokat/Reşadiye)",
+      city: "Tokat (Reşadiye)",
       kpssNot: "Kelkit Havzası'nda bir heyelanın dere vadisini kapatmasıyla oluşmuş doğa harikası heyelan set gölüdür."
     },
 
@@ -1472,6 +1584,7 @@ const COGRAFYA_DATA = {
       lat: 41.33,
       lng: 28.58,
       region: "Marmara (İstanbul)",
+      city: "İstanbul (Çatalca/Arnavutköy)",
       kpssNot: "Karadeniz kıyısındaki koyun dalga biriktirmesi (kıyı kordonu) ile kapanması sonucu oluşan klasik LAGÜN gölüdür; İstanbul'un ana içme suyudur."
     },
     {
@@ -1482,6 +1595,7 @@ const COGRAFYA_DATA = {
       lat: 41.06,
       lng: 28.55,
       region: "Marmara (İstanbul)",
+      city: "İstanbul (Büyükçekmece)",
       kpssNot: "Marmara Denizi kıyısında koy önünün kıyı kordonuyla kapatılmasıyla oluşmuş tipik lagün gölüdür (Mimar Sinan Köprüsü buradadır)."
     },
     {
@@ -1492,6 +1606,7 @@ const COGRAFYA_DATA = {
       lat: 40.99,
       lng: 28.76,
       region: "Marmara (İstanbul)",
+      city: "İstanbul (Küçükçekmece)",
       kpssNot: "Marmara kıyısında denizle bağlantısı daralan lagün gölüdür; kıyısında Türkiye'nin en eski yerleşimlerinden Yarımburgaz Mağarası bulunur."
     },
     {
@@ -1502,6 +1617,7 @@ const COGRAFYA_DATA = {
       lat: 36.63,
       lng: 35.25,
       region: "Akdeniz (Adana/Çukurova)",
+      city: "Adana (Karataş)",
       kpssNot: "Seyhan ve Ceyhan deltası üzerinde TÜRKİYE'NİN EN BÜYÜK LAGÜN GÖLÜDÜR. Caretta Caretta ve yeşil deniz kaplumbağalarının ana üreme Ramsar sahasıdır."
     },
 
@@ -1514,6 +1630,7 @@ const COGRAFYA_DATA = {
       lat: 36.90,
       lng: 28.65,
       region: "Ege (Muğla)",
+      city: "Muğla (Köyceğiz)",
       kpssNot: "Namnam Çayı alüvyonlarının körfez önünü kapatmasıyla oluşmuştur. Dalyan kanalı üzerinden Akdeniz'e (İztuzu Plajı) bağlanır (Tatlı-tuzlu su karışımı)."
     },
     {
@@ -1524,6 +1641,7 @@ const COGRAFYA_DATA = {
       lat: 37.50,
       lng: 27.42,
       region: "Ege (Aydın-Muğla)",
+      city: "Aydın - Muğla",
       kpssNot: "Büyük Menderes Nehri'nin taşıdığı alüvyonların eski Latmos Körfezi önünü kapatmasıyla denizden koparak göle dönüşmüştür."
     },
     {
@@ -1534,6 +1652,7 @@ const COGRAFYA_DATA = {
       lat: 39.77,
       lng: 32.79,
       region: "İç Anadolu (Ankara)",
+      city: "Ankara (Gölbaşı)",
       kpssNot: "Yan derelerin getirdiği alüvyonların Mogan Deresi vadisini kapatmasıyla oluşmuş rekreasyon ve göçmen kuş gölüdür."
     },
     {
@@ -1544,6 +1663,7 @@ const COGRAFYA_DATA = {
       lat: 39.82,
       lng: 32.83,
       region: "İç Anadolu (Ankara)",
+      city: "Ankara (Çankaya/ODTÜ)",
       kpssNot: "Mogan Gölü'nün gideğeni ile beslenen, ODTÜ arazisi içinde yer alan tipik bir alüvyal set gölüdür."
     },
     {
@@ -1554,6 +1674,7 @@ const COGRAFYA_DATA = {
       lat: 38.61,
       lng: 28.02,
       region: "Ege (Manisa/Gölmarmara)",
+      city: "Manisa (Gölmarmara)",
       kpssNot: "Gediz grabeninde alüvyonların çöküntü alanını kapatmasıyla oluşan önemli sulak alan ve balıkçılık gölüdür."
     },
 
@@ -1566,6 +1687,7 @@ const COGRAFYA_DATA = {
       lat: 40.83,
       lng: 41.16,
       region: "Karadeniz (Rize-Artvin)",
+      city: "Rize - Artvin",
       kpssNot: "Kaçkar Dağları'nın zirvesinde (3.370 m) buzul aşındırması sonucu oluşan çanakta gelişen TÜRKİYE'NİN EN DERİN BUZUL (SİRK) GÖLÜDÜR."
     },
     {
@@ -1576,6 +1698,7 @@ const COGRAFYA_DATA = {
       lat: 40.11,
       lng: 29.17,
       region: "Marmara (Bursa/Uludağ)",
+      city: "Bursa (Uludağ)",
       kpssNot: "Batı Anadolu'da kuaterner buzullaşmasının izlerini taşıyan Uludağ zirve platosundaki sirk göllerindendir (Kilimli, Karagöl ile birlikte)."
     }
   ],
@@ -1590,6 +1713,7 @@ const COGRAFYA_DATA = {
       lat: 37.25,
       lng: 34.79,
       region: "Akdeniz / Orta Toroslar",
+      city: "Adana - Mersin (Pozantı)",
       kpssNot: "Çukurova'yı (Adana/Mersin) İç Anadolu'ya (Niğde/Pozantı) bağlayan, tarihten bu yana en işlek Toros geçididir."
     },
     {
@@ -1600,6 +1724,7 @@ const COGRAFYA_DATA = {
       lat: 36.49,
       lng: 36.20,
       region: "Akdeniz / Amanos Dağları",
+      city: "Hatay (İskenderun)",
       kpssNot: "Nur (Amanos) Dağları üzerinden İskenderun Limanı ve kıyısını Antakya/Amik Ovası ve Suriye'ye bağlar."
     },
     {
@@ -1610,6 +1735,7 @@ const COGRAFYA_DATA = {
       lat: 36.92,
       lng: 33.26,
       region: "Akdeniz / Orta Toroslar",
+      city: "Mersin - Karaman (Mut)",
       kpssNot: "Silifke ve Mersin kıyılarını Karaman üzerinden İç Anadolu'ya bağlar."
     },
     {
@@ -1620,6 +1746,7 @@ const COGRAFYA_DATA = {
       lat: 37.15,
       lng: 30.58,
       region: "Akdeniz / Batı Toroslar",
+      city: "Antalya - Burdur",
       kpssNot: "Antalya'yı Göller Yöresi'ne (Burdur/Isparta) bağlayan karstik boğaz geçididir."
     },
 
@@ -1632,6 +1759,7 @@ const COGRAFYA_DATA = {
       lat: 40.64,
       lng: 39.43,
       region: "Karadeniz",
+      city: "Trabzon - Gümüşhane",
       kpssNot: "Tarihi İpek Yolu güzergahında Trabzon Limanı'nı Gümüşhane ve Doğu Anadolu'ya bağlar. Yeni Zigana Tüneli Avrupa'nın en uzun tünellerindendir."
     },
     {
@@ -1642,6 +1770,7 @@ const COGRAFYA_DATA = {
       lat: 40.04,
       lng: 40.51,
       region: "Doğu Karadeniz / Doğu Anadolu",
+      city: "Bayburt - Erzurum",
       kpssNot: "Bayburt'u Erzurum'a ve Doğu Anadolu'ya bağlayan yüksek dağ geçididir."
     },
     {
@@ -1652,6 +1781,7 @@ const COGRAFYA_DATA = {
       lat: 40.62,
       lng: 40.79,
       region: "Karadeniz / Doğu Anadolu",
+      city: "Rize - Erzurum (İkizdere)",
       kpssNot: "Rize (İkizdere) ile Erzurum (İspir) arasındadır. Ovit Tüneli ile kışın kapanan yol yıl boyu açık hale getirilmiştir."
     },
     {
@@ -1662,6 +1792,7 @@ const COGRAFYA_DATA = {
       lat: 41.07,
       lng: 33.74,
       region: "Karadeniz / İç Anadolu",
+      city: "Kastamonu - Çankırı",
       kpssNot: "Kastamonu ile Çankırı/Ankara arasındaki Ilgaz Dağları'nı aşan geçittir."
     },
     {
@@ -1672,6 +1803,7 @@ const COGRAFYA_DATA = {
       lat: 41.80,
       lng: 33.72,
       region: "Karadeniz",
+      city: "Kastamonu (İnebolu)",
       kpssNot: "Küre Dağları'nı aşarak İnebolu Limanı'nı Kastamonu'ya bağlar (Milli Mücadele İstiklal Yolu)."
     },
     {
@@ -1700,6 +1832,7 @@ const COGRAFYA_DATA = {
       lng: 29.05,
       type: "Deniz Boğazı (Ria Kıyı / Su Yolu)",
       region: "Marmara (İstanbul)",
+      city: "İstanbul",
       kpssNot: "Karadeniz ile Marmara'yı bağlayan dünyaca ünlü ria tipi su yoludur. Karadeniz'den Marmara'ya üst akıntı, Marmara'dan Karadeniz'e alt akıntı gerçekleşir."
     },
     {
@@ -1716,6 +1849,7 @@ const COGRAFYA_DATA = {
       lng: 26.40,
       type: "Deniz Boğazı (Ria Kıyı / Su Yolu)",
       region: "Marmara / Ege",
+      city: "Çanakkale",
       kpssNot: "Marmara Denizi ile Ege Denizi'ni bağlayan tarihi ve stratejik ria tipi boğazdır. En dar yeri Nara Burnu'dur."
     }
   ],
@@ -1736,6 +1870,7 @@ const COGRAFYA_DATA = {
       lng: 35.90,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Karadeniz",
+      city: "Samsun (Bafra)",
       questionText: "🌊 Kızılırmak Nehri'nin Karadeniz'e döküldüğü yerde oluşturduğu delta ovası hangisidir?",
       kpssNot: "Kızılırmak ➡️ Bafra Ovası (Samsun). Türkiye'nin en uzun nehri Bafra Deltası'nı besler."
     },
@@ -1753,6 +1888,7 @@ const COGRAFYA_DATA = {
       lng: 36.75,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Karadeniz",
+      city: "Samsun (Çarşamba)",
       questionText: "🌊 Yeşilırmak Nehri'nin Karadeniz'e dökülürken oluşturduğu delta ovası hangisidir?",
       kpssNot: "Yeşilırmak ➡️ Çarşamba Ovası (Samsun). Çarşamba Ovası geniş alüvyon birikimidir."
     },
@@ -1766,6 +1902,7 @@ const COGRAFYA_DATA = {
       lng: 35.50,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Akdeniz",
+      city: "Adana - Mersin",
       questionText: "🌊 Seyhan ve Ceyhan nehirlerinin Akdeniz'e döküldüğü yerde oluşturduğu Türkiye'nin en büyük deltası hangisidir?",
       kpssNot: "Seyhan ve Ceyhan ➡️ Çukurova Deltası (Adana/Mersin). Türkiye'nin en büyük kıyı deltasıdır."
     },
@@ -1783,6 +1920,7 @@ const COGRAFYA_DATA = {
       lng: 33.95,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Akdeniz",
+      city: "Mersin (Silifke)",
       questionText: "🌊 Göksu Nehri'nin Akdeniz kıyısında oluşturduğu verimli delta ovası hangisidir?",
       kpssNot: "Göksu ➡️ Silifke Deltası (Mersin). Akdeniz'in ikinci büyük deltasıdır."
     },
@@ -1800,6 +1938,7 @@ const COGRAFYA_DATA = {
       lng: 26.90,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Ege",
+      city: "İzmir (Menemen)",
       questionText: "🌊 Gediz Nehri'nin İzmir Körfezi girişinde oluşturduğu delta ovası hangisidir?",
       kpssNot: "Gediz ➡️ Menemen Deltası (İzmir). İzmir Kuş Cenneti bu deltada yer alır."
     },
@@ -1817,6 +1956,7 @@ const COGRAFYA_DATA = {
       lng: 27.25,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Ege",
+      city: "Aydın (Didim)",
       questionText: "🌊 Büyük Menderes Nehri'nin Ege Denizi'ne döküldüğü yerde oluşturduğu delta ovası hangisidir?",
       kpssNot: "Büyük Menderes ➡️ Balat Deltası (Aydın). Antik Milet şehri alüvyon dolmasıyla denizden içeride kalmıştır."
     },
@@ -1830,6 +1970,7 @@ const COGRAFYA_DATA = {
       lng: 27.30,
       type: "Akarsu ➡️ Delta Eşleştirmesi",
       region: "Ege",
+      city: "İzmir (Selçuk)",
       questionText: "🌊 Küçük Menderes Nehri'nin oluşturduğu ve Efes Antik Kenti'nin denizle bağını kesen delta hangisidir?",
       kpssNot: "Küçük Menderes ➡️ Selçuk Deltası (İzmir). Efes liman kentini alüvyonlarla içeride bırakmıştır."
     },
@@ -1847,6 +1988,7 @@ const COGRAFYA_DATA = {
       lng: 36.20,
       type: "Dağ ➡️ Geçit Eşleştirmesi",
       region: "Akdeniz",
+      city: "Hatay (İskenderun)",
       questionText: "🏔️ Nur (Amanos) Dağları'nı aşarak İskenderun Limanı'nı Amik Ovası'na bağlayan geçit hangisidir?",
       kpssNot: "Nur Dağları ➡️ Belen Geçidi. Ege dışındaki tek horst dağı üzerindeki kritik boğazdır."
     },
@@ -1864,6 +2006,7 @@ const COGRAFYA_DATA = {
       lng: 34.79,
       type: "Dağ ➡️ Geçit Eşleştirmesi",
       region: "Akdeniz",
+      city: "Adana - Mersin",
       questionText: "🏔️ Orta Toroslar (Bolkar Dağları) üzerinden Çukurova'yı İç Anadolu'ya bağlayan en işlek geçit hangisidir?",
       kpssNot: "Orta Toroslar ➡️ Gülek Boğazı (Adana-Pozantı-Niğde yolu)."
     },
@@ -1877,6 +2020,7 @@ const COGRAFYA_DATA = {
       lng: 39.43,
       type: "Dağ ➡️ Geçit Eşleştirmesi",
       region: "Karadeniz",
+      city: "Trabzon - Gümüşhane",
       questionText: "🏔️ Doğu Karadeniz Dağları'nı aşarak Trabzon Limanı'nı Gümüşhane/Erzurum'a bağlayan tarihi geçit hangisidir?",
       kpssNot: "Kuzey Anadolu Dağları ➡️ Zigana Geçidi (Tarihi İpek Yolu liman kapısı)."
     },
@@ -1894,6 +2038,7 @@ const COGRAFYA_DATA = {
       lng: 40.79,
       type: "Dağ ➡️ Geçit Eşleştirmesi",
       region: "Karadeniz",
+      city: "Rize - Erzurum",
       questionText: "🏔️ Kaçkar Dağları'nı aşarak Rize (İkizdere) ile Erzurum (İspir) arasını bağlayan yüksek dağ geçidi hangisidir?",
       kpssNot: "Kaçkar Dağları ➡️ Ovit Geçidi / Tüneli."
     },
@@ -1911,6 +2056,7 @@ const COGRAFYA_DATA = {
       lng: 33.72,
       type: "Dağ ➡️ Geçit Eşleştirmesi",
       region: "Karadeniz",
+      city: "Kastamonu",
       questionText: "🏔️ Küre Dağları'nı aşarak İnebolu Limanı'nı Kastamonu ve Ankara'ya bağlayan İstiklal Yolu geçidi hangisidir?",
       kpssNot: "Küre Dağları ➡️ Ecevit Geçidi (İstiklal Yolu)."
     },
@@ -1941,6 +2087,7 @@ const COGRAFYA_DATA = {
       lng: 34.83,
       type: "Volkanizma ➡️ Yer Şekli",
       region: "İç Anadolu",
+      city: "Nevşehir - Kayseri",
       questionText: "🌋 Erciyes ve Hasan Dağı'ndan çıkan volkanik tüf ve lavların akarsu/rüzgarla aşınmasıyla oluşan turistik alan hangisidir?",
       kpssNot: "Erciyes ve Hasan Dağı Tüfleri ➡️ Kapadokya Peri Bacaları (Nevşehir/Ürgüp/Göreme)."
     },
@@ -1967,6 +2114,7 @@ const COGRAFYA_DATA = {
       lng: 33.64,
       type: "Volkanik Patlama (Maar) ➡️ Göl Oluşumu",
       region: "İç Anadolu",
+      city: "Konya (Karapınar)",
       questionText: "🌋 Konya Karapınar'da gaz patlaması (maar) sonucu oluşan ve 'Dünyanın Nazar Boncuğu' olarak anılan göl hangisidir?",
       kpssNot: "Volkanik Gaz Patlaması ➡️ Meke Maarı (Konya)."
     }
