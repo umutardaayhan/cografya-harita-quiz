@@ -88,6 +88,44 @@
                 <small>Kronometreli KPSS tam sınav provası</small>
               </div>
             </button>
+
+            <div class="games-dropdown-divider"><span>📐 MUTLAK (MATEMATİKSEL) KONUM</span></div>
+
+            <button id="btn-mk-sun" class="game-mode-option-btn">
+              <span>☀️</span>
+              <div>
+                <strong>Güneş Açısı & Gölge Boyu</strong>
+                <small>Tarihe göre ışını en dik alan ili bul</small>
+              </div>
+            </button>
+            <button id="btn-mk-temp" class="game-mode-option-btn">
+              <span>🌡️</span>
+              <div>
+                <strong>İndirgenmiş Sıcaklık Dedektifi</strong>
+                <small>Rakım farkını sıcaklıktan ayıkla</small>
+              </div>
+            </button>
+            <button id="btn-mk-daynight" class="game-mode-option-btn">
+              <span>🌓</span>
+              <div>
+                <strong>Gece-Gündüz Süre Avcısı</strong>
+                <small>İlleri gündüz süresine göre sırala</small>
+              </div>
+            </button>
+            <button id="btn-mk-coord" class="game-mode-option-btn">
+              <span>🎯</span>
+              <div>
+                <strong>Koordinat Avcısı</strong>
+                <small>Paralel-meridyen ızgarasında uç noktaları bul</small>
+              </div>
+            </button>
+            <button id="btn-mk-duel" class="game-mode-option-btn">
+              <span>🏃</span>
+              <div>
+                <strong>İki Şehir Kapışması (5sn)</strong>
+                <small>Yerel saat, gündüz, gölge: hızlı seç!</small>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -257,6 +295,33 @@
         <div class="match-board-container">
           <div class="match-col left-col" id="match-left-cards"></div>
           <div class="match-col right-col" id="match-right-cards"></div>
+        </div>
+      </div>
+
+      <!-- 📐 Mutlak Konum Modları Ortak HUD Bölümü (5 mod da bunu kullanır) -->
+      <div id="mk-hud" class="mk-hud" style="display: none;">
+        <div class="mk-header">
+          <span class="exam-stat-chip count">📐 <span id="mk-mode-title">Mutlak Konum</span></span>
+          <span class="exam-stat-chip count">Tur: <span id="mk-round">1</span>/<span id="mk-maxround">8</span></span>
+          <span class="exam-stat-chip score">🏆 <span id="mk-score">0</span></span>
+          <span class="speedrun-stat-chip streak" id="mk-streak-chip" style="display: none;">🔥 <span id="mk-streak">0</span></span>
+          <span class="speedrun-stat-chip timer" id="mk-timer-chip" style="display: none;">⏱️ <span id="mk-timer">5</span>s</span>
+          <button id="mk-abort-btn" class="exam-abort-chip" title="Moddan Çık">✕ Çık</button>
+        </div>
+
+        <div class="mk-prompt-box">
+          <span class="mk-badge" id="mk-badge">☀️ 21 Haziran</span>
+          <h2 class="question-title" id="mk-prompt">Soru yükleniyor…</h2>
+          <div class="mk-hint" id="mk-hint"></div>
+        </div>
+
+        <div class="mk-options" id="mk-options"></div>
+
+        <div class="mk-feedback" id="mk-feedback" style="display: none;">
+          <div class="mk-feedback-title" id="mk-feedback-title"></div>
+          <div class="mk-feedback-rows" id="mk-feedback-rows"></div>
+          <div class="mk-feedback-note" id="mk-feedback-note"></div>
+          <button id="mk-next-btn" class="modal-btn primary" style="width: 100%; margin-top: 8px;">Sonraki Tur → (Boşluk)</button>
         </div>
       </div>
 
@@ -536,6 +601,26 @@
     </div>
   </div>
 
+  <!-- 📐 Mutlak Konum Modları Ortak Sonuç Modalı -->
+  <div id="mk-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card mk-modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy" id="mk-res-badge">🏆</div>
+        <h3 id="mk-res-title">Tamamlandı!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;" id="mk-res-subtitle">Mutlak Konum Karnen:</p>
+      </div>
+
+      <div class="speedrun-stats-grid" id="mk-res-stats"></div>
+
+      <div id="mk-res-rounds" class="geoguessr-round-list"></div>
+
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="mk-close-btn" class="modal-btn secondary">Kapat</button>
+        <button id="mk-restart-btn" class="modal-btn primary">🔁 Yeniden Oyna</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ⚡ Şimşek Turu Sonuç Modalı -->
   <div id="speedrun-modal" class="modal-overlay" style="display: none;">
     <div class="modal-card speedrun-modal-card">
@@ -608,10 +693,12 @@
 
   <!-- Uygulama Scriptleri -->
   <script src="data/cografya_data.js"></script>
+  <script src="data/mutlak_konum_data.js"></script>
   <script src="js/custom_draw.js"></script>
   <script src="js/geoguessr.js"></script>
   <script src="js/conqueror.js"></script>
   <script src="js/match_game.js"></script>
+  <script src="js/mutlak_konum.js"></script>
   <script src="js/map.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/app.js"></script>

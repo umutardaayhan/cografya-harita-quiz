@@ -746,6 +746,285 @@ body {
   75% { transform: translateX(4px); }
 }
 
+/* ============================================================
+   📐 MUTLAK (MATEMATİKSEL) KONUM MODLARI
+   5 mod tek bir HUD paylaşır: baslik + secenekler + geri bildirim
+   ============================================================ */
+.games-dropdown-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 2px 2px;
+  padding-top: 8px;
+  border-top: 1px solid var(--bg-card-border);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #7dd3fc;
+}
+
+.games-dropdown-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(125, 211, 252, 0.45), transparent);
+}
+
+.mk-hud {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mk-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mk-prompt-box {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px dashed rgba(56, 189, 248, 0.4);
+  padding: 10px 14px;
+}
+
+.mk-badge {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7dd3fc;
+}
+
+.mk-prompt-box .question-title {
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.mk-hint {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.mk-hint:empty {
+  display: none;
+}
+
+/* Secenek kartlari */
+.mk-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 6px;
+}
+
+.mk-options:empty {
+  display: none;
+}
+
+.mk-option-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--bg-card-border);
+  color: var(--text-main);
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 44px;
+}
+
+.mk-option-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.mk-option-btn:disabled {
+  cursor: default;
+}
+
+.mk-option-key {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--bg-card-border);
+  color: #cbd5e1;
+}
+
+.mk-option-body {
+  min-width: 0;
+}
+
+.mk-option-name {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mk-option-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.mk-option-btn.correct {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
+}
+
+.mk-option-btn.correct .mk-option-key {
+  background: #10b981;
+  border-color: #10b981;
+  color: #06281f;
+}
+
+.mk-option-btn.wrong {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+}
+
+.mk-option-btn.wrong .mk-option-key {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #2a0707;
+}
+
+.mk-option-btn.dim {
+  opacity: 0.45;
+}
+
+.mk-option-btn.picked {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+}
+
+.mk-option-btn.picked .mk-option-key {
+  background: #38bdf8;
+  border-color: #38bdf8;
+  color: #05243a;
+}
+
+/* Geri bildirim paneli */
+.mk-feedback {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--bg-card-border);
+  padding: 10px 12px;
+  animation: fadeIn 0.2s ease;
+}
+
+.mk-feedback.ok {
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.mk-feedback.bad {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.mk-feedback-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.mk-feedback.ok .mk-feedback-title { color: #4ade80; }
+.mk-feedback.bad .mk-feedback-title { color: #f87171; }
+
+.mk-feedback-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.mk-feedback-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 2px solid transparent;
+  font-size: 0.78rem;
+}
+
+.mk-feedback-row.highlight {
+  background: rgba(16, 185, 129, 0.14);
+  border-left-color: #10b981;
+}
+
+.mk-feedback-row .mk-row-val {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: #cbd5e1;
+  font-variant-numeric: tabular-nums;
+}
+
+.mk-feedback-note {
+  margin-top: 8px;
+  padding: 7px 9px;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid var(--accent-gold);
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+}
+
+.mk-feedback-note:empty {
+  display: none;
+}
+
+/* Koordinat avcisi: harita uzerindeki paralel/meridyen etiketleri */
+.mk-grid-label {
+  background: transparent !important;
+  border: none !important;
+}
+
+.mk-grid-label span {
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 3px;
+  color: #7dd3fc;
+  font-size: 0.62rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mk-modal-card {
+  max-width: 560px;
+}
+
+/* Sure kritik seviyeye dusunce yanip sonsun */
+#mk-timer-chip.critical {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #fca5a5;
+  animation: pulse-critical 0.7s ease-in-out infinite;
+}
+
+@keyframes pulse-critical {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+
 .tool-btn.danger:hover {
   background: rgba(239, 68, 68, 0.2);
 }

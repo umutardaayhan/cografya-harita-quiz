@@ -97,6 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const conquerorGame = new ConquerorGame(geoMap);
   const matchGame = new MatchGame(geoMap);
 
+  // 📐 Mutlak (Matematiksel) Konum Motorları - hepsi aynı HUD'u paylaşır
+  const mkGames = {
+    sun:      new SunShadowGame(geoMap),
+    temp:     new TempDetectiveGame(geoMap),
+    daynight: new DayNightOrderGame(geoMap),
+    coord:    new CoordinateHunterGame(geoMap),
+    duel:     new CityDuelGame(geoMap)
+  };
+
   // 🎮 Oyun Modları Menüsü DOM Elemanları
   const gamesMenuBtn = document.getElementById('games-menu-btn');
   const gamesDropdown = document.getElementById('games-dropdown');
@@ -186,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uygulama Durumu
   let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing', 'geoguessr', 'conqueror', 'match'
   let matchBoardLocked = false; // Eşleşme/hata animasyonu oynarken tıklamaları kilitler
+  let activeMkKey = null;       // Aktif mutlak konum modu ('sun','temp','daynight','coord','duel')
   let activeCategory = 'daglar';
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
@@ -941,6 +951,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (geoguessrHud) geoguessrHud.style.display = 'none';
     if (conquerorHud) conquerorHud.style.display = 'none';
     if (matchHud) matchHud.style.display = 'none';
+    const mkHudEl = document.getElementById('mk-hud');
+    if (mkHudEl) mkHudEl.style.display = 'none';
     if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
     if (examStatsBlock) examStatsBlock.style.display = 'none';
     if (normalStatsBlock) normalStatsBlock.style.display = 'flex';
@@ -962,11 +974,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function isGameModeActive() {
-    return currentMode === 'geoguessr' || currentMode === 'conqueror' || currentMode === 'match';
+    return currentMode === 'geoguessr' || currentMode === 'conqueror' ||
+           currentMode === 'match' || currentMode.indexOf('mk_') === 0;
   }
 
   function hideGameModals() {
-    [geoguessrModal, conquerorModal, matchModal].forEach(m => {
+    [geoguessrModal, conquerorModal, matchModal, document.getElementById('mk-modal')].forEach(m => {
       if (m) m.style.display = 'none';
     });
   }
@@ -989,9 +1002,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Eskiden modlar arasi geciste eski motorun timer'i ve harita tiklama
   // dinleyicisi arkada calismaya devam ediyordu.
   function exitAllGameModes() {
-    const labelsRestored = geoGuessrGame.exit();
+    let labelsRestored = geoGuessrGame.exit();
     conquerorGame.exit();
     matchGame.exit();
+
+    // Mutlak konum motorlari (koordinat avcisi dilsiz harita override'i yapar)
+    Object.keys(mkGames).forEach(key => {
+      if (mkGames[key].exit() === true) labelsRestored = true;
+    });
+    activeMkKey = null;
 
     matchBoardLocked = false;
     geoQuiz.clearCustomPool();
@@ -1310,6 +1329,226 @@ document.addEventListener('DOMContentLoaded', () => {
       startMatchMode();
     });
   }
+
+  // ============================================================
+  // 📐 MUTLAK (MATEMATİKSEL) KONUM MODLARI - ORTAK DENETLEYİCİ
+  // 5 motor da aynı "view" nesnesini döndürür, tek render burada.
+  // ============================================================
+  const mkHud = document.getElementById('mk-hud');
+  const mkModeTitle = document.getElementById('mk-mode-title');
+  const mkRoundEl = document.getElementById('mk-round');
+  const mkMaxRoundEl = document.getElementById('mk-maxround');
+  const mkScoreEl = document.getElementById('mk-score');
+  const mkStreakChip = document.getElementById('mk-streak-chip');
+  const mkStreakEl = document.getElementById('mk-streak');
+  const mkTimerChip = document.getElementById('mk-timer-chip');
+  const mkTimerEl = document.getElementById('mk-timer');
+  const mkBadgeEl = document.getElementById('mk-badge');
+  const mkPromptEl = document.getElementById('mk-prompt');
+  const mkHintEl = document.getElementById('mk-hint');
+  const mkOptionsEl = document.getElementById('mk-options');
+  const mkFeedbackEl = document.getElementById('mk-feedback');
+  const mkFeedbackTitle = document.getElementById('mk-feedback-title');
+  const mkFeedbackRows = document.getElementById('mk-feedback-rows');
+  const mkFeedbackNote = document.getElementById('mk-feedback-note');
+  const mkNextBtn = document.getElementById('mk-next-btn');
+  const mkAbortBtn = document.getElementById('mk-abort-btn');
+  const mkModal = document.getElementById('mk-modal');
+  const mkResBadge = document.getElementById('mk-res-badge');
+  const mkResTitle = document.getElementById('mk-res-title');
+  const mkResSubtitle = document.getElementById('mk-res-subtitle');
+  const mkResStats = document.getElementById('mk-res-stats');
+  const mkResRounds = document.getElementById('mk-res-rounds');
+  const mkCloseBtn = document.getElementById('mk-close-btn');
+  const mkRestartBtn = document.getElementById('mk-restart-btn');
+
+  const MK_OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  function mkActiveGame() {
+    return activeMkKey ? mkGames[activeMkKey] : null;
+  }
+
+  function mkIsFeedbackOpen() {
+    return !!mkFeedbackEl && mkFeedbackEl.style.display === 'block';
+  }
+
+  function mkUpdateTimer(seconds) {
+    if (mkTimerEl) mkTimerEl.textContent = seconds;
+    if (mkTimerChip) mkTimerChip.classList.toggle('critical', seconds <= 2);
+  }
+
+  function startMutlakKonumMode(key) {
+    if (!mkGames[key]) return;
+
+    prepareGameMode('mk_' + key);
+    activeMkKey = key;
+
+    // Standart test arayüzünü tamamen kapat
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
+    if (standardQuizBody) standardQuizBody.style.display = 'none';
+    if (subCategoriesBar) subCategoriesBar.style.display = 'none';
+    if (mkHud) mkHud.style.display = 'flex';
+
+    const game = mkGames[key];
+    game.onTick = (secondsLeft) => mkUpdateTimer(secondsLeft);
+    game.onTimeout = (view) => mkRender(view);
+
+    mkRender(game.start());
+
+    // Koordinat avcısı dilsiz haritayı zorluyor, buton durumu senkron kalsın
+    if (key === 'coord') updateLabelsBtnUI();
+  }
+
+  function mkRender(view) {
+    if (!view) return;
+
+    if (view.finished) {
+      mkShowResults(view.summary);
+      return;
+    }
+
+    if (mkModeTitle) mkModeTitle.textContent = view.title;
+    if (mkRoundEl) mkRoundEl.textContent = view.round;
+    if (mkMaxRoundEl) mkMaxRoundEl.textContent = view.maxRounds;
+    if (mkScoreEl) mkScoreEl.textContent = view.score;
+
+    if (mkStreakChip) {
+      const hasStreak = typeof view.streak === 'number';
+      mkStreakChip.style.display = hasStreak ? 'inline-flex' : 'none';
+      if (hasStreak && mkStreakEl) mkStreakEl.textContent = view.streak;
+    }
+
+    if (mkTimerChip) {
+      const hasTimer = typeof view.timer === 'number';
+      mkTimerChip.style.display = hasTimer ? 'inline-flex' : 'none';
+      if (hasTimer) mkUpdateTimer(view.timer);
+    }
+
+    if (mkBadgeEl) mkBadgeEl.textContent = view.badge || '';
+    if (mkPromptEl) mkPromptEl.innerHTML = view.prompt || '';
+    if (mkHintEl) mkHintEl.innerHTML = view.hint || '';
+
+    // Seçenek kartları (koordinat avcısında yoktur, harita tıklanır)
+    if (mkOptionsEl) {
+      mkOptionsEl.innerHTML = '';
+      const locked = !!view.feedback;
+      (view.options || []).forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'mk-option-btn' + (opt.state ? ' ' + opt.state : '');
+        btn.dataset.id = opt.id;
+        // Siralama modunda secilmis kart tekrar tiklanamasin (sessizce yok sayiliyordu)
+        btn.disabled = locked || opt.state === 'picked';
+
+        const keyLabel = opt.order ? opt.order : (MK_OPTION_LETTERS[index] || (index + 1));
+        btn.innerHTML = `
+          <span class="mk-option-key">${keyLabel}</span>
+          <span class="mk-option-body">
+            <span class="mk-option-name">${opt.label}</span>
+            <span class="mk-option-sub">${opt.sub || ''}</span>
+          </span>
+        `;
+        btn.addEventListener('click', () => mkSelect(opt.id));
+        mkOptionsEl.appendChild(btn);
+      });
+    }
+
+    // Geri bildirim paneli
+    if (mkFeedbackEl) {
+      if (view.feedback) {
+        const fb = view.feedback;
+        mkFeedbackEl.style.display = 'block';
+        mkFeedbackEl.className = 'mk-feedback ' + (fb.ok ? 'ok' : 'bad');
+        if (mkFeedbackTitle) mkFeedbackTitle.textContent = fb.title || '';
+        if (mkFeedbackRows) {
+          mkFeedbackRows.innerHTML = (fb.rows || []).map(r => `
+            <div class="mk-feedback-row ${r.highlight ? 'highlight' : ''}">
+              <span>${r.label}</span>
+              <span class="mk-row-val">${r.value}</span>
+            </div>
+          `).join('');
+        }
+        if (mkFeedbackNote) mkFeedbackNote.textContent = fb.note || '';
+        if (mkNextBtn) {
+          mkNextBtn.textContent = (view.round >= view.maxRounds)
+            ? 'Sonuçları Gör → (Boşluk)'
+            : 'Sonraki Tur → (Boşluk)';
+        }
+      } else {
+        mkFeedbackEl.style.display = 'none';
+      }
+    }
+  }
+
+  function mkSelect(optionId) {
+    const game = mkActiveGame();
+    if (!game || typeof game.select !== 'function') return;
+    mkRender(game.select(optionId));
+  }
+
+  function mkNext() {
+    const game = mkActiveGame();
+    if (!game) return;
+    mkRender(game.next());
+  }
+
+  function mkShowResults(summary) {
+    if (!summary || !mkModal) return;
+
+    if (mkResBadge) mkResBadge.textContent = summary.badge;
+    if (mkResTitle) mkResTitle.textContent = summary.title;
+    if (mkResSubtitle) mkResSubtitle.textContent = summary.subtitle;
+
+    if (mkResStats) {
+      mkResStats.innerHTML = summary.stats.map(st => `
+        <div class="speedrun-stat-box ${st.cls === 'record' ? 'best' : ''}">
+          <span class="speedrun-stat-val ${st.cls}">${st.val}</span>
+          <span class="speedrun-stat-lbl">${st.label}</span>
+        </div>
+      `).join('');
+    }
+
+    if (mkResRounds) {
+      mkResRounds.innerHTML = (summary.rows || []).map(r => `
+        <div class="geoguessr-round-row">
+          <span>${r.left}</span>
+          <span style="color: ${r.ok ? '#4ade80' : '#f87171'}; font-weight: 800;">
+            ${r.ok ? '✓' : '✗'} ${r.right}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    mkModal.style.display = 'flex';
+  }
+
+  if (mkNextBtn) mkNextBtn.addEventListener('click', mkNext);
+  if (mkAbortBtn) mkAbortBtn.addEventListener('click', returnToQuizMode);
+
+  if (mkCloseBtn) {
+    mkCloseBtn.addEventListener('click', () => {
+      if (mkModal) mkModal.style.display = 'none';
+      returnToQuizMode();
+    });
+  }
+
+  if (mkRestartBtn) {
+    mkRestartBtn.addEventListener('click', () => {
+      const key = activeMkKey; // startMutlakKonumMode içindeki temizlik bunu sıfırlar
+      if (mkModal) mkModal.style.display = 'none';
+      if (key) startMutlakKonumMode(key);
+    });
+  }
+
+  Object.entries({
+    'btn-mk-sun': 'sun',
+    'btn-mk-temp': 'temp',
+    'btn-mk-daynight': 'daynight',
+    'btn-mk-coord': 'coord',
+    'btn-mk-duel': 'duel'
+  }).forEach(([btnId, key]) => {
+    const btn = document.getElementById(btnId);
+    if (btn) btn.addEventListener('click', () => startMutlakKonumMode(key));
+  });
   formatToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const isVisible = formatDropdown.style.display === 'flex';
@@ -1757,6 +1996,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Harita Tıklama Dinleyicisi (Kör Atış / GeoGuessr Modu İçin)
   geoMap.map.on('click', (e) => {
+    // 🎯 Koordinat Avcısı: paralel-meridyen ızgarasında hedefi tıklama
+    if (activeMkKey === 'coord' && mkGames.coord.isActive) {
+      mkRender(mkGames.coord.handleMapClick(e.latlng.lat, e.latlng.lng));
+      return;
+    }
+
     if (geoGuessrGame.isActive) {
       const res = geoGuessrGame.handleMapClick(e.latlng.lat, e.latlng.lng);
       if (res) {
@@ -1785,6 +2030,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if ((e.key === ' ' || e.key === 'Enter') && geoGuessrGame.isActive && geoGuessrGame.hasGuessedThisRound) {
       e.preventDefault();
       if (geoguessrNextBtn) geoguessrNextBtn.click();
+      return;
+    }
+
+    // 📐 Mutlak Konum modları: Boşluk/Enter ile ilerle, A-F veya 1-6 ile şık seç
+    if (activeMkKey) {
+      if (e.key === ' ' || e.key === 'Enter') {
+        if (mkIsFeedbackOpen()) {
+          e.preventDefault();
+          mkNext();
+        }
+        return;
+      }
+      if (!mkIsFeedbackOpen() && mkOptionsEl) {
+        const pressed = e.key.toUpperCase();
+        let idx = -1;
+        if (/^[1-6]$/.test(pressed)) idx = parseInt(pressed, 10) - 1;
+        else if (MK_OPTION_LETTERS.indexOf(pressed) >= 0) idx = MK_OPTION_LETTERS.indexOf(pressed);
+
+        const buttons = mkOptionsEl.querySelectorAll('.mk-option-btn');
+        if (idx >= 0 && idx < buttons.length) {
+          e.preventDefault();
+          buttons[idx].click();
+        }
+      }
       return;
     }
 
