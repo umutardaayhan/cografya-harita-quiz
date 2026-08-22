@@ -308,12 +308,34 @@
     </div>
   </div>
 
-  <!-- ⚡ Şimşek Turu (Speedrun) HUD Sayacı -->
+  <!-- ⚡ Şimşek Turu (Speedrun) Ultra-Estetik HUD Sayacı -->
   <div id="speedrun-hud" class="speedrun-hud" style="display: none;">
-    <div class="speedrun-hud-badge">⚡ ŞİMŞEK TURU</div>
-    <div class="speedrun-hud-timer">⏱️ <span id="speedrun-time-left">60</span>s</div>
-    <div class="speedrun-hud-score">Puan: <span id="speedrun-score">0</span></div>
-    <button id="speedrun-abort-btn" class="speedrun-abort-btn" title="Turu Bitir">✕ Çık</button>
+    <div class="speedrun-hud-pill">
+      <div class="speedrun-bolt-wrapper">
+        <span class="speedrun-bolt-icon">⚡</span>
+      </div>
+      
+      <div class="speedrun-info-block">
+        <span class="speedrun-hud-label">ŞİMŞEK TURU</span>
+        <div class="speedrun-score-box">
+          <span class="speedrun-score-title">PUAN</span>
+          <span id="speedrun-score" class="speedrun-score-number">0</span>
+        </div>
+      </div>
+
+      <div class="speedrun-timer-dial" id="speedrun-timer-dial">
+        <svg class="timer-svg" viewBox="0 0 36 36">
+          <path class="timer-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path id="speedrun-progress-circle" class="timer-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        </svg>
+        <div class="timer-digit-wrapper">
+          <span id="speedrun-time-left" class="timer-digits">60</span>
+          <span class="timer-unit">sn</span>
+        </div>
+      </div>
+
+      <button id="speedrun-abort-btn" class="speedrun-abort-btn" title="Şimşek Turundan Çık">✕</button>
+    </div>
   </div>
 
   <!-- ⚡ Şimşek Turu Sonuç Modalı -->

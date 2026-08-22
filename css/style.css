@@ -579,7 +579,6 @@ body {
   position: absolute;
   right: 20px;
   bottom: 20px;
-  width: 540px;
   max-width: calc(100vw - 40px);
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
@@ -1644,80 +1643,216 @@ body {
 
 /* --- ⚡ ŞİMŞEK TURU (SPEEDRUN - 60S) STİLLERİ --- */
 .nav-btn.speedrun-btn {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2));
-  border-color: rgba(234, 179, 8, 0.5);
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.18), rgba(249, 115, 22, 0.22));
+  border: 1px solid rgba(234, 179, 8, 0.55);
   color: #fef08a;
+  box-shadow: 0 2px 10px rgba(234, 179, 8, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-btn.speedrun-btn:hover {
   background: linear-gradient(135deg, rgba(234, 179, 8, 0.35), rgba(249, 115, 22, 0.35));
   border-color: #facc15;
-  box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(250, 204, 21, 0.45);
 }
 
 .nav-btn.speedrun-btn.active {
   background: linear-gradient(135deg, #eab308, #ea580c);
   color: #000000;
   font-weight: 800;
-  box-shadow: 0 0 15px rgba(234, 179, 8, 0.7);
+  border-color: #fef08a;
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.85);
 }
 
+/* Fütüristik Cam & Neon Sayaç Kapsülü (HUD Pill) */
 .speedrun-hud {
   position: absolute;
-  top: 96px;
+  top: 92px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1500;
+  animation: hudDropIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes hudDropIn {
+  from { opacity: 0; transform: translate(-50%, -20px) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.speedrun-hud-pill {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: rgba(15, 23, 42, 0.92);
-  border: 2px solid #eab308;
-  backdrop-filter: blur(12px);
-  padding: 8px 18px;
-  border-radius: 30px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(234, 179, 8, 0.4);
-  animation: fadeIn 0.3s ease;
+  gap: 14px;
+  background: rgba(11, 15, 25, 0.88);
+  border: 1.5px solid rgba(250, 204, 21, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 6px 14px 6px 8px;
+  border-radius: 40px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 25px rgba(234, 179, 8, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
 
-.speedrun-hud-badge {
-  font-size: 0.72rem;
-  font-weight: 800;
-  background: #eab308;
+/* Şimşek Neon Kapsülü */
+.speedrun-bolt-wrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #facc15, #ea580c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.75);
+  animation: boltPulse 1.6s ease-in-out infinite alternate;
+}
+
+.speedrun-bolt-icon {
+  font-size: 1.25rem;
   color: #000000;
-  padding: 2px 8px;
-  border-radius: 12px;
-  letter-spacing: 0.05em;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.4));
 }
 
-.speedrun-hud-timer {
+@keyframes boltPulse {
+  0% { transform: scale(1); box-shadow: 0 0 10px rgba(250, 204, 21, 0.6); }
+  100% { transform: scale(1.08); box-shadow: 0 0 20px rgba(250, 204, 21, 0.95); }
+}
+
+/* Bilgi & Skor Bloğu */
+.speedrun-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.speedrun-hud-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fbbf24;
+  text-transform: uppercase;
+}
+
+.speedrun-score-box {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.speedrun-score-title {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.speedrun-score-number {
   font-size: 1.15rem;
   font-weight: 900;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+}
+
+/* Dairesel SVG Kronometre Kadranı */
+.speedrun-timer-dial {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 3.2;
+}
+
+.timer-progress {
+  fill: none;
+  stroke: #facc15;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s linear, stroke 0.3s ease;
+  filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.8));
+}
+
+.timer-digit-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.timer-digits {
+  font-size: 0.98rem;
+  font-weight: 900;
   color: #fef08a;
-  min-width: 60px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 
-.speedrun-hud-score {
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #60a5fa;
-}
-
-.speedrun-abort-btn {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
+.timer-unit {
+  font-size: 0.55rem;
+  color: var(--text-muted);
   font-weight: 700;
+  margin-left: 1px;
+}
+
+/* Kritik Son 10 Saniye Alarmı */
+.speedrun-hud-pill.critical {
+  border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(239, 68, 68, 0.5);
+  animation: criticalVibe 0.5s ease infinite alternate;
+}
+
+.speedrun-hud-pill.critical .timer-progress {
+  stroke: #ef4444 !important;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.9));
+}
+
+.speedrun-hud-pill.critical .timer-digits {
+  color: #f87171 !important;
+}
+
+@keyframes criticalVibe {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
+
+/* Çıkış Butonu */
+.speedrun-abort-btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-left: 2px;
 }
 
 .speedrun-abort-btn:hover {
-  background: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
   color: #ffffff;
+  transform: rotate(90deg);
 }
 
 .speedrun-modal-card {

@@ -171,3 +171,13 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:09
+⚠️ Sorun/İhtiyaç: Şimşek Turu (Speedrun) sayacının görsel olarak daha modern, fütüristik, estetik ve yarış heyecanını hissettiren bir tasarıma kavuşturulması ihtiyacı.
+🎯 İşlem Özeti: index.html ve css/style.css dosyalarındaki speedrun-hud bileşeni glassmorphism (yarı saydam cam), dairesel SVG geri sayım ilerleme halkası (Circular Progress Ring), nabız atan neon şimşek kapsülü, tabular fontlu skor paneli ve son 10 saniye için alarm titreşimiyle ultra-estetik hale getirildi; js/app.js içinde SVG stroke-dasharray animasyonu bağlandı.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - css/style.css
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

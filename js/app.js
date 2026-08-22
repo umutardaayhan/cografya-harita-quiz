@@ -453,6 +453,11 @@ document.addEventListener('DOMContentLoaded', () => {
     speedrunTimeLeft.textContent = speedrunSeconds;
     speedrunScoreText.textContent = speedrunScore;
 
+    const speedrunHudPill = document.querySelector('.speedrun-hud-pill');
+    const speedrunProgressCircle = document.getElementById('speedrun-progress-circle');
+    if (speedrunHudPill) speedrunHudPill.classList.remove('critical');
+    if (speedrunProgressCircle) speedrunProgressCircle.setAttribute('stroke-dasharray', '100, 100');
+
     // Şıkları 4 şıkka sabitle
     geoQuiz.setOptionCount(4);
     optCountBtns.forEach(b => b.classList.toggle('active', b.dataset.count === '4'));
@@ -462,10 +467,15 @@ document.addEventListener('DOMContentLoaded', () => {
       speedrunSeconds--;
       speedrunTimeLeft.textContent = speedrunSeconds;
 
+      const progressPercent = Math.max(0, (speedrunSeconds / 60) * 100);
+      if (speedrunProgressCircle) {
+        speedrunProgressCircle.setAttribute('stroke-dasharray', `${progressPercent.toFixed(1)}, 100`);
+      }
+
       if (speedrunSeconds <= 10) {
-        speedrunTimeLeft.style.color = '#ef4444';
+        if (speedrunHudPill) speedrunHudPill.classList.add('critical');
       } else {
-        speedrunTimeLeft.style.color = '#fef08a';
+        if (speedrunHudPill) speedrunHudPill.classList.remove('critical');
       }
 
       if (speedrunSeconds <= 0) {
@@ -480,6 +490,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (speedrunInterval) clearInterval(speedrunInterval);
     speedrunInterval = null;
     isSpeedrunActive = false;
+
+    const speedrunHudPill = document.querySelector('.speedrun-hud-pill');
+    if (speedrunHudPill) speedrunHudPill.classList.remove('critical');
 
     speedrunBtn.classList.remove('active');
     speedrunHud.style.display = 'none';
