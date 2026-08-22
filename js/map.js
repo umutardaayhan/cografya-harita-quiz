@@ -331,8 +331,8 @@ class GeographyMap {
     this.clearQuestionHighlight();
     if (!options || options.length === 0) return;
 
-    const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
-    const letters = ['A', 'B', 'C', 'D', 'E'];
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     const boundsCoords = [];
 
     options.forEach((opt, index) => {

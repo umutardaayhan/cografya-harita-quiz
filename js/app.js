@@ -312,8 +312,26 @@ document.addEventListener('DOMContentLoaded', () => {
     questionTitle.innerHTML = qData.questionText;
 
     // Zorluk rozeti
-    const diffNames = { 1: '1 (Kolay)', 2: '2 (Orta-Kolay)', 3: '3 (Orta)', 4: '4 (Zor)', 5: '5 (Uzman/Yakın)' };
+    const diffNames = { 
+      1: '1 (Kolay)', 
+      2: '2 (Orta-Kolay)', 
+      3: '3 (Orta)', 
+      4: '4 (Zor)', 
+      5: '5 (Uzman)', 
+      6: '6 🌋 Celal Şengör' 
+    };
     questionDifficultyBadge.textContent = `⚡ Seviye ${diffNames[qData.difficultyLevel] || qData.difficultyLevel}`;
+    if (qData.difficultyLevel === 6) {
+      questionDifficultyBadge.style.background = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+      questionDifficultyBadge.style.color = '#ffffff';
+      questionDifficultyBadge.style.border = '1px solid #fca5a5';
+      questionDifficultyBadge.style.fontWeight = '800';
+    } else {
+      questionDifficultyBadge.style.background = '';
+      questionDifficultyBadge.style.color = '';
+      questionDifficultyBadge.style.border = '';
+      questionDifficultyBadge.style.fontWeight = '';
+    }
 
     // Adaptif hata ve ustalık rozetleri
     if (qData.isProblematic) {
@@ -331,11 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Şıkları render et ve harita işaretçilerini kur
     optionsGrid.innerHTML = '';
-    const optionLetters = ['A', 'B', 'C', 'D', 'E'];
-    const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
+    const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 
     if (qData.actualFormat === 'find_on_map') {
-      // YENİ ÖSYM HARİTADA BUL MODU (I-V çoklu harita pini)
+      // YENİ ÖSYM HARİTADA BUL MODU (I-VIII çoklu harita pini)
       geoMap.showMultipleChoiceLocations(qData.options, (selectedId) => {
         handleAnswer(selectedId);
       });
@@ -346,12 +364,12 @@ document.addEventListener('DOMContentLoaded', () => {
         optBtn.dataset.id = opt.id;
         optBtn.dataset.index = index;
 
-        const letter = optionLetters[index];
-        const roman = romanNumerals[index];
+        const letter = optionLetters[index] || `${index + 1}`;
+        const roman = romanNumerals[index] || `${index + 1}`;
 
         optBtn.innerHTML = `
           <span class="option-key">${letter}</span>
-          <span class="option-name"><strong>${roman}. Konum</strong> (${letter} İşaretçisi)</span>
+          <span class="option-name"><strong>${roman}. Konum</strong> (${letter} Pini)</span>
         `;
         optBtn.addEventListener('click', () => handleAnswer(opt.id));
         optionsGrid.appendChild(optBtn);
@@ -366,11 +384,16 @@ document.addEventListener('DOMContentLoaded', () => {
         optBtn.dataset.id = opt.id;
         optBtn.dataset.index = index;
 
-        const keyLabel = geoQuiz.getOptionCount() === 5 ? optionLetters[index] : (index + 1);
+        const keyLabel = optionLetters[index] || (index + 1);
+
+        // Celal Şengör seviyesinde tür bilgisini de şıkta göster
+        const typeInfo = (qData.difficultyLevel === 6 && opt.type) 
+          ? `<span style="font-size:0.75rem; color:#94a3b8; margin-left:4px;">(${opt.type})</span>` 
+          : '';
 
         optBtn.innerHTML = `
           <span class="option-key">${keyLabel}</span>
-          <span class="option-name">${opt.name}</span>
+          <span class="option-name">${opt.name}${typeInfo}</span>
         `;
         optBtn.addEventListener('click', () => handleAnswer(opt.id));
         optionsGrid.appendChild(optBtn);

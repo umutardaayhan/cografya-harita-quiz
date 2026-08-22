@@ -191,3 +191,15 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:22
+⚠️ Sorun/İhtiyaç: Cevabı aynı olan bir sorunun arka arkaya iki kere sorulmasının engellenmesi, şık sayısının 6 ve 8'e çıkarılabilmesi ve tüm Türkiye yer şekillerinin en yakın komşu olarak çeldiriciye girdiği ultra zorlu 'Celal Şengör' seviyesi ihtiyacı.
+🎯 İşlem Özeti: GeographyQuiz sınıfına lastQuestionId koruması eklenerek havuzda eleman varken ardışık aynı soru gelişi engellendi; şık sayısı seçicisi 6 ve 8 şıkka genişletilip haritada bul modu I-VIII rozetleriyle donatıldı; tüm kategorilerin (Dağ, Ova, Plato, Akarsu, Göl, Geçit) mesafe matrisine dahil edildiği 6. Seviye 'Celal Şengör Modu' entegre edildi.
+📁 Etkilenen Kapsam: 
+  - js/quiz.js
+  - js/map.js
+  - js/app.js
+  - index.html
+  - css/style.css
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

@@ -17,6 +17,7 @@ class GeographyQuiz {
     this.wrongPool = [];
     
     this.currentQuestion = null;
+    this.lastQuestionId = null;
     this.currentOptions = [];
     this.isAnswered = false;
     this.optionCount = 4; // 2, 3, 4, 5
@@ -223,7 +224,13 @@ class GeographyQuiz {
     const totalCandidates = withDistance.length;
     let selected = [];
 
-    if (this.difficultyLevel === 5) {
+    if (this.difficultyLevel === 6) {
+      // 🌋 6. Seviye: Celal Şengör Modu (En yakın Türkiye geneli dip dibe komşular)
+      const sliceSize = Math.max(count, Math.min(count + 2, totalCandidates));
+      const nearestSlice = withDistance.slice(0, sliceSize);
+      selected = nearestSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    }
+    else if (this.difficultyLevel === 5) {
       const sliceSize = Math.max(count, Math.min(count + 2, totalCandidates));
       const nearestSlice = withDistance.slice(0, sliceSize);
       selected = nearestSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
@@ -271,8 +278,18 @@ class GeographyQuiz {
       }
     }
 
-    const selectedQuestion = this.getWeightedRandomItem(this.remainingPool);
+    // 🛡️ ARKA ARKAYA AYNI SORUNUN GELMESİNİ ENGELLEME
+    let candidateSelectionPool = this.remainingPool;
+    if (candidateSelectionPool.length > 1 && this.lastQuestionId) {
+      const withoutLast = candidateSelectionPool.filter(i => i.id !== this.lastQuestionId);
+      if (withoutLast.length > 0) {
+        candidateSelectionPool = withoutLast;
+      }
+    }
+
+    const selectedQuestion = this.getWeightedRandomItem(candidateSelectionPool);
     this.currentQuestion = selectedQuestion;
+    this.lastQuestionId = selectedQuestion.id;
     this.remainingPool = this.remainingPool.filter(i => i.id !== selectedQuestion.id);
     this.isAnswered = false;
 
@@ -287,17 +304,30 @@ class GeographyQuiz {
     const isMastered = itemAnalytics.streak >= 3;
 
     const targetDistractorCount = this.optionCount - 1;
-    let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+    let candidatePool = [];
 
-    if (candidatePool.length < targetDistractorCount) {
+    if (this.difficultyLevel === 6) {
+      // 🌋 CELAL ŞENGÖR SEVİYESİ: Tüm kategorilerden (Dağlar, Ovalar, Platolar, Akarsular, Göller, Boğazlar) en yakın yer şekilleri
       const allGlobalItems = [];
       Object.keys(COGRAFYA_DATA).forEach(cat => {
         allGlobalItems.push(...COGRAFYA_DATA[cat]);
       });
-      const additionalOthers = allGlobalItems.filter(
-        item => item.id !== this.currentQuestion.id && !candidatePool.some(o => o.id === item.id)
-      );
-      candidatePool = [...candidatePool, ...additionalOthers];
+      if (this.customDrawManager && this.customDrawManager.drawings) {
+        allGlobalItems.push(...this.customDrawManager.drawings);
+      }
+      candidatePool = allGlobalItems.filter(item => item.id !== this.currentQuestion.id);
+    } else {
+      candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+      if (candidatePool.length < targetDistractorCount) {
+        const allGlobalItems = [];
+        Object.keys(COGRAFYA_DATA).forEach(cat => {
+          allGlobalItems.push(...COGRAFYA_DATA[cat]);
+        });
+        const additionalOthers = allGlobalItems.filter(
+          item => item.id !== this.currentQuestion.id && !candidatePool.some(o => o.id === item.id)
+        );
+        candidatePool = [...candidatePool, ...additionalOthers];
+      }
     }
 
     const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, targetDistractorCount);
