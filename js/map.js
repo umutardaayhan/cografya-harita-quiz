@@ -87,9 +87,13 @@ class GeographyMap {
     return saved !== null ? JSON.parse(saved) : true;
   }
 
-  setLabelsEnabled(enabled) {
+  // persist=false: gecici (oyun modu) override -- kullanicinin kayitli tercihi korunur,
+  // sekme oyun ortasinda kapansa bile ayar bozulmaz.
+  setLabelsEnabled(enabled, persist = true) {
     this.labelsEnabled = enabled;
-    localStorage.setItem('kpss_cografya_labels_enabled', JSON.stringify(enabled));
+    if (persist) {
+      localStorage.setItem('kpss_cografya_labels_enabled', JSON.stringify(enabled));
+    }
     if (this.map) {
       if (!enabled) {
         document.body.classList.add('map-no-labels');

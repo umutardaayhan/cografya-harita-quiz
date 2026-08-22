@@ -1104,6 +1104,35 @@ body.focus-mode .focus-exit-float-btn {
   transition: all 0.25s ease;
 }
 
+/* Panel gövdesi ve standart test bloğu daima dikey akışta kalmalı.
+   (Taban kural yokken JS'in display:flex ataması satır yönüne düşüp
+   soru başlığı ile şıkları yan yana diziyordu.) */
+.quiz-panel-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.standard-quiz-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Oyun modu aktifken kategori / format / mod araçları kilitlenir:
+   bunlara basmak oyunu sessizce Keşif Moduna düşürüyordu. */
+body.game-mode-active .categories-container,
+body.game-mode-active .sub-categories-bar,
+body.game-mode-active .quiz-format-selector,
+body.game-mode-active #mode-toggle-btn,
+body.game-mode-active #draw-mode-btn {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(0.6);
+}
+
 /* İstatistik ve Şimşek Turu Çubuğu */
 .stats-bar {
   display: flex;

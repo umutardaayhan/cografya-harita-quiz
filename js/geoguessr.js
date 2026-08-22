@@ -13,6 +13,7 @@ class GeoGuessrGame {
     this.currentTarget = null;
     this.guessLayerGroup = L.layerGroup();
     this.hasGuessedThisRound = false;
+    this.prevLabelsEnabled = null; // Oyun öncesi "Dilsiz Harita" ayarı (çıkışta geri yüklenir)
 
     if (this.geoMap && this.geoMap.map) {
       this.guessLayerGroup.addTo(this.geoMap.map);
@@ -52,7 +53,13 @@ class GeoGuessrGame {
 
     this.guessLayerGroup.clearLayers();
     this.geoMap.clearAll();
-    this.geoMap.setLabelsEnabled(false);
+
+    // Kullanıcının kendi etiket tercihini sakla; oyun bitince aynen geri verilecek
+    if (this.prevLabelsEnabled === null) {
+      this.prevLabelsEnabled = this.geoMap.labelsEnabled;
+    }
+    this.geoMap.setLabelsEnabled(false, false);
+
     this.geoMap.resetView();
     return this.nextRound();
   }
@@ -61,6 +68,8 @@ class GeoGuessrGame {
     this.hasGuessedThisRound = false;
     this.guessLayerGroup.clearLayers();
     this.geoMap.clearAll();
+    // Önceki turun cevabına uçmuş kamerayı Türkiye geneline geri al
+    this.geoMap.resetView();
 
     const allCategories = ['daglar', 'ovalar', 'platolar', 'su_kaynaklari', 'gecitler'];
     const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
@@ -192,9 +201,19 @@ class GeoGuessrGame {
     };
   }
 
+  // Oyun öncesi "Dilsiz Harita" tercihini geri yükler.
+  // true dönerse çağıran taraf buton arayüzünü tazelemelidir.
+  restoreLabels() {
+    if (this.prevLabelsEnabled === null) return false;
+    this.geoMap.setLabelsEnabled(this.prevLabelsEnabled, false);
+    this.prevLabelsEnabled = null;
+    return true;
+  }
+
   exit() {
     this.isActive = false;
     this.guessLayerGroup.clearLayers();
     this.geoMap.clearAll();
+    return this.restoreLabels();
   }
 }

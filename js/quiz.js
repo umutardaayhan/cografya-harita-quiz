@@ -12,6 +12,7 @@ class GeographyQuiz {
     this.categoryKey = categoryKey;
     this.customDrawManager = customDrawManager;
     this.activeSubType = 'all'; // 'all', 'volkanik', 'kirik', 'delta', vb.
+    this.customPool = null; // Oyun modlarının (ör. Harita Fatihi) kategori dışı global havuzu
     this.items = [];
     this.remainingPool = [];
     this.wrongPool = [];
@@ -142,7 +143,42 @@ class GeographyQuiz {
     return this.activeSubType;
   }
 
+  // Oyun modlari icin kategori/alt tur filtresini by-pass eden global havuz.
+  // preserveState=true: ekranda duran soruyu, cevaplanma durumunu ve
+  // tekrar-koruma hafizasini bozmadan yalnizca havuzu daraltir.
+  setCustomPool(items, preserveState = false) {
+    const recent = this.recentQuestionIds.slice();
+    const wasAnswered = this.isAnswered;
+    const activeQuestion = this.currentQuestion;
+
+    this.customPool = (items && items.length) ? [...items] : null;
+    this.reloadCategoryItems();
+
+    if (preserveState) {
+      this.recentQuestionIds = recent;
+      this.isAnswered = wasAnswered;
+      this.currentQuestion = activeQuestion;
+    } else {
+      this.currentQuestion = null;
+      this.recentQuestionIds = [];
+      this.isAnswered = false;
+    }
+  }
+
+  clearCustomPool() {
+    if (!this.customPool) return;
+    this.setCustomPool(null);
+  }
+
   reloadCategoryItems() {
+    if (this.customPool) {
+      this.items = [...this.customPool];
+      this.remainingPool = [...this.items];
+      this.wrongPool = [];
+      this.recentQuestionIds = [];
+      return;
+    }
+
     let source = [];
     if (this.categoryKey === 'ozel_cizimler') {
       source = this.customDrawManager ? this.customDrawManager.getQuizItems() : [];
@@ -444,6 +480,7 @@ class GeographyQuiz {
 
     return {
       isCorrect,
+      currentQuestion: this.currentQuestion,
       correctId: this.currentQuestion.id,
       selectedId,
       kpssNot: this.currentQuestion.kpssNot,

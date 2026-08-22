@@ -9,8 +9,11 @@ class MatchGame {
     this.score = 0;
     this.combo = 1;
     this.timeLeft = 60;
+    this.elapsedSeconds = 0;
     this.timerInterval = null;
-    this.pairs = [];
+    this.leftCards = [];
+    this.rightCards = [];
+    this.lastBoardIds = [];
     this.selectedLeft = null;
     this.selectedRight = null;
   }
@@ -20,6 +23,8 @@ class MatchGame {
     this.score = 0;
     this.combo = 1;
     this.timeLeft = 60;
+    this.elapsedSeconds = 0;
+    this.lastBoardIds = [];
     this.selectedLeft = null;
     this.selectedRight = null;
     this.geoMap.clearAll();
@@ -31,14 +36,24 @@ class MatchGame {
   }
 
   generateBoard() {
-    const rawPairs = (COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) ? COGRAFYA_DATA.iliskili_cografya.slice(0) : [];
-    rawPairs.sort(() => 0.5 - Math.random());
-    const selected = rawPairs.slice(0, 6);
+    const all = (COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) ? COGRAFYA_DATA.iliskili_cografya.slice(0) : [];
+
+    // Yeni tahtada bir önceki turun kartlarını tekrar etme (havuz yetiyorsa)
+    let pool = all.filter(p => !this.lastBoardIds.includes(p.id));
+    if (pool.length < 6) pool = all;
+
+    pool.sort(() => 0.5 - Math.random());
+    const selected = pool.slice(0, 6);
+    this.lastBoardIds = selected.map(p => p.id);
 
     this.leftCards = selected.map(p => ({
       id: p.id,
       text: p.matchSource || p.name,
       type: 'source',
+      category: p.category,
+      itemType: p.type,
+      shapeType: p.shapeType,
+      coordinates: p.coordinates,
       lat: p.lat,
       lng: p.lng
     })).sort(() => 0.5 - Math.random());
@@ -58,10 +73,17 @@ class MatchGame {
         clearInterval(this.timerInterval);
         return;
       }
+
       this.timeLeft--;
+      this.elapsedSeconds++;
+
       if (this.timeLeft <= 0) {
+        this.timeLeft = 0;
+        if (this.onTick) this.onTick(0);
         this.finish();
+        return;
       }
+
       if (this.onTick) this.onTick(this.timeLeft);
     }, 1000);
   }
@@ -72,8 +94,16 @@ class MatchGame {
     if (type === 'source') {
       this.selectedLeft = cardId;
       const card = this.leftCards.find(c => c.id === cardId);
-      if (card && card.lat && card.lng) {
-        this.geoMap.highlightQuestionShape(card);
+      if (card && typeof card.lat === 'number' && typeof card.lng === 'number') {
+        this.geoMap.highlightQuestionShape({
+          name: card.text,
+          category: card.category,
+          type: card.itemType,
+          shapeType: card.shapeType,
+          coordinates: card.coordinates,
+          lat: card.lat,
+          lng: card.lng
+        });
       }
     } else {
       this.selectedRight = cardId;
@@ -81,6 +111,7 @@ class MatchGame {
 
     if (this.selectedLeft && this.selectedRight) {
       const isMatch = this.selectedLeft === this.selectedRight;
+
       if (isMatch) {
         const points = 100 * this.combo;
         this.score += points;
@@ -107,20 +138,20 @@ class MatchGame {
           isCleared: isCleared,
           boardState: this.getBoardState()
         };
-      } else {
-        this.combo = 1;
-        const failedLeft = this.selectedLeft;
-        const failedRight = this.selectedRight;
-        this.selectedLeft = null;
-        this.selectedRight = null;
-
-        return {
-          status: 'mismatch',
-          failedLeft: failedLeft,
-          failedRight: failedRight,
-          boardState: this.getBoardState()
-        };
       }
+
+      this.combo = 1;
+      const failedLeft = this.selectedLeft;
+      const failedRight = this.selectedRight;
+      this.selectedLeft = null;
+      this.selectedRight = null;
+
+      return {
+        status: 'mismatch',
+        failedLeft: failedLeft,
+        failedRight: failedRight,
+        boardState: this.getBoardState()
+      };
     }
 
     return { status: 'selected', boardState: this.getBoardState() };
@@ -139,12 +170,16 @@ class MatchGame {
   }
 
   finish() {
+    if (!this.isActive) return;
     this.isActive = false;
     clearInterval(this.timerInterval);
+    this.timerInterval = null;
+
     if (this.onFinish) {
       this.onFinish({
         score: this.score,
-        timeSpent: 60 - Math.max(0, this.timeLeft)
+        // Kazanılan +4sn bonuslar dahil, sahada gerçekten geçirilen süre
+        timeSpent: this.elapsedSeconds
       });
     }
   }
@@ -152,6 +187,9 @@ class MatchGame {
   exit() {
     this.isActive = false;
     clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    this.selectedLeft = null;
+    this.selectedRight = null;
     this.geoMap.clearAll();
   }
 }

@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Uygulama Durumu
   let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing', 'geoguessr', 'conqueror', 'match'
+  let matchBoardLocked = false; // Eşleşme/hata animasyonu oynarken tıklamaları kilitler
   let activeCategory = 'daglar';
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
@@ -274,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function switchSubType(subTypeId) {
+    if (isGameModeActive()) return; // Oyun modunda alt tür değişimi devre dışı
     geoQuiz.setSubType(subTypeId);
 
     document.querySelectorAll('.sub-type-btn').forEach(btn => {
@@ -288,6 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function switchCategory(categoryKey) {
+    // Oyun modunda kategori değişimi, oyunu sessizce Keşif Moduna düşürüyordu
+    if (isGameModeActive()) return;
+
     if (categoryKey === 'ozel_cizimler' && customDrawManager.drawings.length === 0) {
       if (confirm('Henüz kayıtlı özel bir çiziminiz yok! Harita editöründen yeni şekil eklemek veya NotebookLM çıktısını yapıştırmak ister misiniz?')) {
         openManageModal();
@@ -316,7 +321,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- MOD GEÇİŞLERİ ---
+  // Test <-> Keşif modu arasında doğrudan geçiş (eskiden çağrılan ama hiç
+  // tanımlanmamış olan setMode bu fonksiyondu; ReferenceError atıyordu).
+  function setMode(targetMode) {
+    if (currentMode === targetMode) return;
+    if (currentMode === 'drawing') closeDrawingToolbar();
+
+    if (targetMode === 'explore') {
+      currentMode = 'explore';
+      modeToggleBtn.innerHTML = `<span>🎯</span> <span>Test Moduna Geç</span>`;
+      loadExploreMode();
+    } else {
+      currentMode = 'quiz';
+      modeToggleBtn.innerHTML = `<span>🧭</span> <span>Keşif Modu</span>`;
+      loadNextQuestion();
+    }
+  }
+
   function toggleMode() {
+    if (isGameModeActive()) return; // Oyun modundayken Keşif Moduna geçilemez
+
     if (currentMode === 'drawing') {
       closeDrawingToolbar();
     }
@@ -386,7 +410,12 @@ document.addEventListener('DOMContentLoaded', () => {
       catIcon = catObj ? catObj.icon : '📍';
     }
 
-    qData.categoryBadgeText = `${catIcon} ${catName} - [${qData.questionTypeTitle}]`;
+    if (currentMode === 'conqueror') {
+      // Fetih modunda sorular global havuzdan gelir, tek kategori rozeti yanıltıcı olur
+      qData.categoryBadgeText = `⚔️ TÜRKİYE FATİHİ - [${qData.questionTypeTitle}]`;
+    } else {
+      qData.categoryBadgeText = `${catIcon} ${catName} - [${qData.questionTypeTitle}]`;
+    }
     renderQuestion(qData);
   }
 
@@ -515,9 +544,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ⚔️ Harita Fatihi Modu Kontrolü
-    if (result.isCorrect && conquerorGame.isActive && result.currentQuestion) {
+    if (result.isCorrect && conquerorGame.isActive) {
       const conqStatus = conquerorGame.recordConquest(result.currentQuestion);
       updateConquerorUI(conqStatus);
+
+      // Sonraki sorulari hedefi dolmamis bolgelere odakla (aktif soru korunur)
+      if (conqStatus && !conqStatus.isVictory) {
+        geoQuiz.setCustomPool(conquerorGame.getPendingPool(), true);
+      }
     }
 
     // Harita üzerindeki çoklu pinleri renklendir
@@ -591,9 +625,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 📝 GENEL DENEME SINAVI (18 SORU & KRONOMETRE) MOTORU ---
   function startExam() {
-    if (isSpeedrunActive) endSpeedrun();
+    closeGamesDropdown();
+    exitAllGameModes();
     if (currentMode === 'drawing') closeDrawingToolbar();
     if (currentMode === 'explore') setMode('quiz');
+
+    // Oyun modundan geliniyorsa standart test arayüzünü geri getir
+    currentMode = 'quiz';
+    syncModeToggleLabel();
+    document.body.classList.remove('game-mode-active');
+    hideAllGameHuds();
+    renderSubCategories();
 
     isExamActive = true;
     examSeconds = 0;
@@ -685,7 +727,8 @@ document.addEventListener('DOMContentLoaded', () => {
     nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
   }
 
-  function endExam() {
+  function endExam(showModal = true) {
+    if (!isExamActive && !examInterval) return;
     if (examInterval) clearInterval(examInterval);
     examInterval = null;
     isExamActive = false;
@@ -707,18 +750,20 @@ document.addEventListener('DOMContentLoaded', () => {
     examResNet.textContent = netFormatted;
     examResTime.textContent = `${mins}:${secs}`;
 
-    examModal.style.display = 'flex';
+    // Oyun modu geçişinde sessizce kapatılırken sonuç modalı açılmamalı
+    if (showModal) examModal.style.display = 'flex';
   }
 
   examModeBtn.addEventListener('click', () => {
     if (isExamActive) {
+      closeGamesDropdown();
       endExam();
     } else {
       startExam();
     }
   });
 
-  examAbortBtn.addEventListener('click', endExam);
+  examAbortBtn.addEventListener('click', () => endExam());
   examRestartBtn.addEventListener('click', () => {
     examModal.style.display = 'none';
     startExam();
@@ -730,9 +775,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- ⚡ ŞİMŞEK TURU (SPEEDRUN) MOTORU ---
   function startSpeedrun() {
-    if (isExamActive) endExam();
+    closeGamesDropdown();
+    exitAllGameModes();
     if (currentMode === 'drawing') closeDrawingToolbar();
     if (currentMode === 'explore') setMode('quiz');
+
+    // Oyun modundan geliniyorsa standart test arayüzünü geri getir
+    currentMode = 'quiz';
+    syncModeToggleLabel();
+    document.body.classList.remove('game-mode-active');
+    hideAllGameHuds();
+    renderSubCategories();
 
     isSpeedrunActive = true;
     speedrunSeconds = 60;
@@ -774,7 +827,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNextQuestion();
   }
 
-  function endSpeedrun() {
+  function endSpeedrun(showModal = true) {
+    if (!isSpeedrunActive && !speedrunInterval) return;
     if (speedrunInterval) clearInterval(speedrunInterval);
     speedrunInterval = null;
     isSpeedrunActive = false;
@@ -796,18 +850,20 @@ document.addEventListener('DOMContentLoaded', () => {
     speedrunResStreak.textContent = speedrunStats.bestStreak;
     speedrunResBest.textContent = newBest;
 
-    speedrunModal.style.display = 'flex';
+    // Oyun modu geçişinde sessizce kapatılırken sonuç modalı açılmamalı
+    if (showModal) speedrunModal.style.display = 'flex';
   }
 
   speedrunBtn.addEventListener('click', () => {
     if (isSpeedrunActive) {
+      closeGamesDropdown();
       endSpeedrun();
     } else {
       startSpeedrun();
     }
   });
 
-  speedrunAbortBtn.addEventListener('click', endSpeedrun);
+  speedrunAbortBtn.addEventListener('click', () => endSpeedrun());
   speedrunRestartBtn.addEventListener('click', () => {
     speedrunModal.style.display = 'none';
     startSpeedrun();
@@ -877,7 +933,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideAllGameHuds() {
     if (quizPanel) quizPanel.classList.remove('minimized');
     const inner = document.getElementById('quiz-panel-inner');
-    if (inner) inner.style.display = 'flex';
+    // Sabit 'flex' atamasi stylesheet'teki dikey akisi eziyordu; CSS'e birakiyoruz.
+    if (inner) inner.style.display = '';
     const collBar = document.getElementById('quiz-collapsed-bar');
     if (collBar) collBar.style.display = 'none';
 
@@ -886,16 +943,90 @@ document.addEventListener('DOMContentLoaded', () => {
     if (matchHud) matchHud.style.display = 'none';
     if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
     if (examStatsBlock) examStatsBlock.style.display = 'none';
-    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'flex';
-    if (standardQuizBody) standardQuizBody.style.display = 'flex';
+    if (normalStatsBlock) normalStatsBlock.style.display = 'flex';
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = '';
+    if (standardQuizBody) standardQuizBody.style.display = '';
     if (exploreBanner) exploreBanner.style.display = 'none';
+  }
+
+  function closeGamesDropdown() {
+    if (gamesDropdown) gamesDropdown.style.display = 'none';
+  }
+
+  // Kesif modundayken oyuna girilip cikilinca buton "Test Moduna Gec" yazili kaliyordu
+  function syncModeToggleLabel() {
+    if (!modeToggleBtn) return;
+    modeToggleBtn.innerHTML = (currentMode === 'explore')
+      ? `<span>🎯</span> <span>Test Moduna Geç</span>`
+      : `<span>🧭</span> <span>Keşif Modu</span>`;
+  }
+
+  function isGameModeActive() {
+    return currentMode === 'geoguessr' || currentMode === 'conqueror' || currentMode === 'match';
+  }
+
+  function hideGameModals() {
+    [geoguessrModal, conquerorModal, matchModal].forEach(m => {
+      if (m) m.style.display = 'none';
+    });
+  }
+
+  // Fetih modu tum Turkiye'yi kapsar: sorular tek kategoriden degil global havuzdan gelir.
+  function buildGlobalQuizPool() {
+    const pool = [];
+    Object.keys(COGRAFYA_DATA).forEach(cat => {
+      // Iliskili eslestirme kartlarinin kendi soru formati var, fetihte kullanilmaz
+      if (cat === 'iliskili_cografya') return;
+      pool.push(...COGRAFYA_DATA[cat]);
+    });
+    if (customDrawManager && customDrawManager.drawings) {
+      pool.push(...customDrawManager.drawings);
+    }
+    return pool.filter(i => i && typeof i.lat === 'number' && typeof i.lng === 'number');
+  }
+
+  // Calisan HER oyun motorunu ve zamanlayiciyi kapatan tek giris noktasi.
+  // Eskiden modlar arasi geciste eski motorun timer'i ve harita tiklama
+  // dinleyicisi arkada calismaya devam ediyordu.
+  function exitAllGameModes() {
+    const labelsRestored = geoGuessrGame.exit();
+    conquerorGame.exit();
+    matchGame.exit();
+
+    matchBoardLocked = false;
+    geoQuiz.clearCustomPool();
+
+    endSpeedrun(false);
+    endExam(false);
+
+    hideGameModals();
+    if (labelsRestored) updateLabelsBtnUI();
+  }
+
+  // Oyun modundan normal test moduna donus
+  function returnToQuizMode() {
+    exitAllGameModes();
+    currentMode = 'quiz';
+    syncModeToggleLabel();
+    document.body.classList.remove('game-mode-active');
+    hideAllGameHuds();
+    renderSubCategories();
+    loadNextQuestion();
+  }
+
+  // Bir oyun modu baslatilmadan onceki ortak hazirlik
+  function prepareGameMode(modeName) {
+    closeGamesDropdown();
+    exitAllGameModes();
+    if (currentMode === 'drawing') closeDrawingToolbar();
+    currentMode = modeName;
+    document.body.classList.add('game-mode-active');
+    hideAllGameHuds();
   }
 
   // --- 🎯 1. KÖR ATIŞ (GEOGUESSR) MODU ---
   function startGeoGuessrMode() {
-    if (gamesDropdown) gamesDropdown.style.display = 'none';
-    currentMode = 'geoguessr';
-    hideAllGameHuds();
+    prepareGameMode('geoguessr');
 
     // Standart test arayüzünü ve çubuklarını tamamen kapat
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
@@ -906,6 +1037,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
 
     const roundData = geoGuessrGame.start();
+    updateLabelsBtnUI(); // Oyun dilsiz haritayi zorluyor, buton durumu senkron kalsin
     updateGeoGuessrUI(roundData);
   }
 
@@ -934,13 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (geoguessrAbortBtn) {
-    geoguessrAbortBtn.addEventListener('click', () => {
-      geoGuessrGame.exit();
-      currentMode = 'quiz';
-      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
-      hideAllGameHuds();
-      loadNextQuestion();
-    });
+    geoguessrAbortBtn.addEventListener('click', returnToQuizMode);
   }
 
   function showGeoGuessrResults(summary) {
@@ -967,10 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (geoguessrCloseBtn) {
     geoguessrCloseBtn.addEventListener('click', () => {
       if (geoguessrModal) geoguessrModal.style.display = 'none';
-      currentMode = 'quiz';
-      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
-      hideAllGameHuds();
-      loadNextQuestion();
+      returnToQuizMode();
     });
   }
 
@@ -983,16 +1106,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- ⚔️ 2. HARİTA FATİHİ (CONQUEROR) MODU ---
   function startConquerorMode() {
-    if (gamesDropdown) gamesDropdown.style.display = 'none';
-    currentMode = 'conqueror';
-    hideAllGameHuds();
+    prepareGameMode('conqueror');
 
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
     if (conquerorHud) conquerorHud.style.display = 'flex';
-    if (standardQuizBody) standardQuizBody.style.display = 'flex';
-    if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
+    if (standardQuizBody) standardQuizBody.style.display = '';
+    if (subCategoriesBar) subCategoriesBar.style.display = 'none';
 
-    const status = conquerorGame.start();
+    // Havuzu hem quiz motoruna hem de fetih motoruna ver:
+    // hedefler bu havuza gore kuruldugu icin %100 daima ulasilabilir olur.
+    const pool = buildGlobalQuizPool();
+    geoQuiz.setCustomPool(pool);
+
+    const status = conquerorGame.start(pool);
     updateConquerorUI(status);
     loadNextQuestion();
   }
@@ -1016,8 +1142,10 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
     }
 
-    if (status.isVictory && conquerorModal) {
-      if (conquerorResPercent) conquerorResPercent.textContent = `%100`;
+    // Sadece zafere ilk ulasildiginda ac; "Haritayi Incele" ile kapatilinca
+    // her dogru cevapta tekrar acilmasin.
+    if (status.isNewVictory && conquerorModal) {
+      if (conquerorResPercent) conquerorResPercent.textContent = `%${status.overallPercent}`;
       if (conquerorResCount) conquerorResCount.textContent = status.totalConquered;
       conquerorModal.style.display = 'flex';
     }
@@ -1026,12 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnConquerorMode) btnConquerorMode.addEventListener('click', startConquerorMode);
 
   if (conquerorAbortBtn) {
-    conquerorAbortBtn.addEventListener('click', () => {
-      conquerorGame.exit();
-      currentMode = 'quiz';
-      hideAllGameHuds();
-      loadNextQuestion();
-    });
+    conquerorAbortBtn.addEventListener('click', returnToQuizMode);
   }
 
   if (conquerorCloseBtn) {
@@ -1049,9 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 🧩 3. ŞEKİL YAPBOZU (MATCH & BLAST) MODU ---
   function startMatchMode() {
-    if (gamesDropdown) gamesDropdown.style.display = 'none';
-    currentMode = 'match';
-    hideAllGameHuds();
+    prepareGameMode('match');
 
     // Standart test arayüzünü ve çubuklarını tamamen kapat
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
@@ -1060,11 +1181,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (matchHud) matchHud.style.display = 'flex';
 
+    matchBoardLocked = false;
+
     matchGame.onTick = (timeLeft) => {
       if (matchTimerVal) matchTimerVal.textContent = timeLeft;
     };
 
     matchGame.onFinish = (result) => {
+      matchBoardLocked = false;
       if (matchResScore) matchResScore.textContent = result.score;
       if (matchResTime) matchResTime.textContent = `${result.timeSpent}s`;
       if (matchModal) matchModal.style.display = 'flex';
@@ -1080,59 +1204,103 @@ document.addEventListener('DOMContentLoaded', () => {
     if (matchScoreVal) matchScoreVal.textContent = boardState.score;
     if (matchComboVal) matchComboVal.textContent = boardState.combo;
 
+    const buildCard = (card, side, icon, isSelected) => {
+      const btn = document.createElement('button');
+      btn.className = `match-card ${isSelected ? 'selected' : ''}`;
+      btn.dataset.id = card.id;
+      btn.textContent = `${icon} ${card.text}`;
+      btn.addEventListener('click', () => {
+        if (matchBoardLocked) return; // Animasyon oynarken tiklamalari yut
+        const res = matchGame.selectCard(card.id, side);
+        handleMatchInteraction(res);
+      });
+      return btn;
+    };
+
     if (matchLeftCards) {
       matchLeftCards.innerHTML = '';
       boardState.leftCards.forEach(card => {
-        const btn = document.createElement('button');
-        btn.className = `match-card ${boardState.selectedLeft === card.id ? 'selected' : ''}`;
-        btn.textContent = `📍 ${card.text}`;
-        btn.addEventListener('click', () => {
-          const res = matchGame.selectCard(card.id, 'source');
-          handleMatchInteraction(res);
-        });
-        matchLeftCards.appendChild(btn);
+        matchLeftCards.appendChild(
+          buildCard(card, 'source', '📍', boardState.selectedLeft === card.id)
+        );
       });
     }
 
     if (matchRightCards) {
       matchRightCards.innerHTML = '';
       boardState.rightCards.forEach(card => {
-        const btn = document.createElement('button');
-        btn.className = `match-card ${boardState.selectedRight === card.id ? 'selected' : ''}`;
-        btn.textContent = `🎯 ${card.text}`;
-        btn.addEventListener('click', () => {
-          const res = matchGame.selectCard(card.id, 'target');
-          handleMatchInteraction(res);
-        });
-        matchRightCards.appendChild(btn);
+        matchRightCards.appendChild(
+          buildCard(card, 'target', '🎯', boardState.selectedRight === card.id)
+        );
       });
     }
   }
 
+  // Ekranda duran kartlara gecici bir sinif basar (.matched / .error).
+  // CSS'te bu animasyonlar tanimliydi ama hicbir yerden uygulanmiyordu.
+  function flashMatchCards(leftId, rightId, cls, durationMs, done) {
+    const nodes = [];
+    if (leftId && matchLeftCards) {
+      const n = matchLeftCards.querySelector(`.match-card[data-id="${leftId}"]`);
+      if (n) nodes.push(n);
+    }
+    if (rightId && matchRightCards) {
+      const n = matchRightCards.querySelector(`.match-card[data-id="${rightId}"]`);
+      if (n) nodes.push(n);
+    }
+
+    if (nodes.length === 0) {
+      done();
+      return;
+    }
+
+    matchBoardLocked = true;
+    nodes.forEach(n => {
+      n.classList.remove('selected');
+      n.classList.add(cls);
+    });
+
+    setTimeout(() => {
+      matchBoardLocked = false;
+      done();
+    }, durationMs);
+  }
+
   function handleMatchInteraction(res) {
     if (!res) return;
+
+    // Skor / kombo / sure her durumda aninda guncellensin
+    if (matchScoreVal) matchScoreVal.textContent = res.boardState.score;
+    if (matchComboVal) matchComboVal.textContent = res.boardState.combo;
+    if (matchTimerVal) matchTimerVal.textContent = res.boardState.timeLeft;
+
+    if (res.status === 'match') {
+      flashMatchCards(res.matchedId, res.matchedId, 'matched', 300, () => {
+        if (matchGame.isActive) renderMatchBoard(matchGame.getBoardState());
+      });
+      return;
+    }
+
+    if (res.status === 'mismatch') {
+      flashMatchCards(res.failedLeft, res.failedRight, 'error', 350, () => {
+        if (matchGame.isActive) renderMatchBoard(matchGame.getBoardState());
+      });
+      return;
+    }
+
     renderMatchBoard(res.boardState);
   }
 
   if (btnMatchMode) btnMatchMode.addEventListener('click', startMatchMode);
 
   if (matchAbortBtn) {
-    matchAbortBtn.addEventListener('click', () => {
-      matchGame.exit();
-      currentMode = 'quiz';
-      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
-      hideAllGameHuds();
-      loadNextQuestion();
-    });
+    matchAbortBtn.addEventListener('click', returnToQuizMode);
   }
 
   if (matchCloseBtn) {
     matchCloseBtn.addEventListener('click', () => {
       if (matchModal) matchModal.style.display = 'none';
-      currentMode = 'quiz';
-      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
-      hideAllGameHuds();
-      loadNextQuestion();
+      returnToQuizMode();
     });
   }
 
@@ -1602,7 +1770,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ, ESC İLE ODAKTAN ÇIKIŞ) ---
   document.addEventListener('keydown', (e) => {
-    if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex' || examModal.style.display === 'flex' || geoguessrModal.style.display === 'flex' || matchModal.style.display === 'flex') return;
+    // Herhangi bir modal aciksa tuslar arkadaki siklara gitmemeli.
+    // (Eskiden conqueror ve speedrun modallari bu listede yoktu.)
+    const anyModalOpen = Array.from(document.querySelectorAll('.modal-overlay'))
+      .some(m => m.style.display === 'flex');
+    if (anyModalOpen) return;
 
     if (e.key === 'Escape' && isFocusMode) {
       toggleFocusMode(false);
