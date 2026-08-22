@@ -43,6 +43,10 @@
           </div>
         </div>
 
+        <button id="focus-mode-btn" class="nav-btn focus-btn" title="Haritayı Tam Ekran Gör (Sadece Soru ve Harita)">
+          <span>🔍</span> <span>Odak Modu</span>
+        </button>
+
         <button id="exam-mode-btn" class="nav-btn exam-btn" title="18 Soruluk KPSS Coğrafya Deneme Sınavı">
           <span>📝</span> <span>Genel Deneme (18 Soru)</span>
         </button>
@@ -106,133 +110,145 @@
   <div id="map"></div>
 
   <!-- Sol Alt Harita & Quiz Araçları (Kompakt 2 Satırlı Blok) -->
-  <div class="map-controls-left">
-    <div class="map-controls-row">
-      <!-- Harita Katmanı Seçici Menüsü -->
-      <div class="layer-selector-container">
-        <button id="map-layer-btn" class="tool-btn" title="Harita Görünümünü Değiştir">
-          <span>🗺️</span> <span id="map-layer-label">Sade / Renkli</span>
-        </button>
-        <div id="layer-dropdown" class="layer-dropdown" style="display: none;">
-          <button class="layer-option-btn active" data-layer="voyager">🗺️ Sade / Renkli</button>
-          <button class="layer-option-btn" data-layer="topo">⛰️ Fiziki / Topografik</button>
-          <button class="layer-option-btn" data-layer="satellite">🛰️ Gerçek Uydu</button>
-          <button class="layer-option-btn" data-layer="dark">🌙 Gece / Karanlık</button>
-          <button class="layer-option-btn" data-layer="terrain">🏔️ Kabartı / Arazi</button>
+  <div id="map-controls-left" class="map-controls-left">
+    <button id="controls-toggle-btn" class="panel-minimize-btn left-controls-min-btn" title="Kontrolleri Küçült / Aç"><span>◀</span></button>
+    <div class="controls-inner-wrapper" id="controls-inner-wrapper">
+      <div class="map-controls-row">
+        <!-- Harita Katmanı Seçici Menüsü -->
+        <div class="layer-selector-container">
+          <button id="map-layer-btn" class="tool-btn" title="Harita Görünümünü Değiştir">
+            <span>🗺️</span> <span id="map-layer-label">Sade / Renkli</span>
+          </button>
+          <div id="layer-dropdown" class="layer-dropdown" style="display: none;">
+            <button class="layer-option-btn active" data-layer="voyager">🗺️ Sade / Renkli</button>
+            <button class="layer-option-btn" data-layer="topo">⛰️ Fiziki / Topografik</button>
+            <button class="layer-option-btn" data-layer="satellite">🛰️ Gerçek Uydu</button>
+            <button class="layer-option-btn" data-layer="dark">🌙 Gece / Karanlık</button>
+            <button class="layer-option-btn" data-layer="terrain">🏔️ Kabartı / Arazi</button>
+          </div>
         </div>
+
+        <!-- Otomatik Yakınlaştırma (Auto-Zoom) Aç/Kapa Butonu -->
+        <button id="auto-zoom-btn" class="tool-btn active" title="Sorularda Haritanın Otomatik Yakınlaşmasını Açar/Kapatır">
+          <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak</span>
+        </button>
+
+        <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
+          <span>🎯</span> <span>Merkezle</span>
+        </button>
       </div>
 
-      <!-- Otomatik Yakınlaştırma (Auto-Zoom) Aç/Kapa Butonu -->
-      <button id="auto-zoom-btn" class="tool-btn active" title="Sorularda Haritanın Otomatik Yakınlaşmasını Açar/Kapatır">
-        <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak</span>
-      </button>
+      <div class="map-controls-row">
+        <!-- Coğrafi Mesafe Zorluk Seçici (1-5 Kademe) -->
+        <div class="difficulty-selector" title="Zorluk Seviyesi (Şıklar Arası Coğrafi Yakınlık Mesafesi)">
+          <span class="selector-label">⚡ Zorluk:</span>
+          <button class="diff-btn" data-level="1" title="1. Seviye: Kolay (Uzak Bölgeler)">1</button>
+          <button class="diff-btn" data-level="2" title="2. Seviye: Orta-Kolay">2</button>
+          <button class="diff-btn" data-level="3" title="3. Seviye: Orta">3</button>
+          <button class="diff-btn" data-level="4" title="4. Seviye: Zor (Aynı Yöre)">4</button>
+          <button class="diff-btn active" data-level="5" title="5. Seviye: Uzman / ÖSYM Eleme (En Yakın Komşular)">5 (Uzman)</button>
+        </div>
 
-      <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
-        <span>🎯</span> <span>Merkezle</span>
-      </button>
-    </div>
-
-    <div class="map-controls-row">
-      <!-- Coğrafi Mesafe Zorluk Seçici (1-5 Kademe) -->
-      <div class="difficulty-selector" title="Zorluk Seviyesi (Şıklar Arası Coğrafi Yakınlık Mesafesi)">
-        <span class="selector-label">⚡ Zorluk:</span>
-        <button class="diff-btn" data-level="1" title="1. Seviye: Kolay (Uzak Bölgeler)">1</button>
-        <button class="diff-btn" data-level="2" title="2. Seviye: Orta-Kolay">2</button>
-        <button class="diff-btn" data-level="3" title="3. Seviye: Orta">3</button>
-        <button class="diff-btn" data-level="4" title="4. Seviye: Zor (Aynı Yöre)">4</button>
-        <button class="diff-btn active" data-level="5" title="5. Seviye: Uzman / ÖSYM Eleme (En Yakın Komşular)">5 (Uzman)</button>
-      </div>
-
-      <!-- Dinamik Şık Sayısı Seçici (2, 3, 4, 5, 6, 8, Celal Şengör / Tümü) -->
-      <div class="options-count-selector" title="Testteki Şık Sayısını Seçin">
-        <span class="selector-label">Şık:</span>
-        <button class="opt-count-btn" data-count="2">2</button>
-        <button class="opt-count-btn" data-count="3">3</button>
-        <button class="opt-count-btn active" data-count="4">4</button>
-        <button class="opt-count-btn" data-count="5">5</button>
-        <button class="opt-count-btn" data-count="6">6</button>
-        <button class="opt-count-btn" data-count="8">8</button>
-        <button class="opt-count-btn celal-opt-btn" data-count="all" title="🌋 Celal Şengör Modu: Bu kategorideki TÜM yer şekillerini şıklara döker!">🌋 Celal Şengör (Tümü)</button>
+        <!-- Dinamik Şık Sayısı Seçici (2, 3, 4, 5, 6, 8, Celal Şengör / Tümü) -->
+        <div class="options-count-selector" title="Testteki Şık Sayısını Seçin">
+          <span class="selector-label">Şık:</span>
+          <button class="opt-count-btn" data-count="2">2</button>
+          <button class="opt-count-btn" data-count="3">3</button>
+          <button class="opt-count-btn active" data-count="4">4</button>
+          <button class="opt-count-btn" data-count="5">5</button>
+          <button class="opt-count-btn" data-count="6">6</button>
+          <button class="opt-count-btn" data-count="8">8</button>
+          <button class="opt-count-btn celal-opt-btn" data-count="all" title="🌋 Celal Şengör Modu: Bu kategorideki TÜM yer şekillerini şıklara döker!">🌋 Celal Şengör (Tümü)</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Sağ Alt Quiz / Soru Paneli (Kompakt Basık Düzen) -->
   <main id="quiz-panel" class="quiz-panel">
-    <!-- İstatistik, Deneme ve Şimşek Turu Barı -->
-    <div class="stats-bar">
-      <!-- 📝 Genel Deneme Sınavı Bölümü (Sadece Deneme Modunda Görünür) -->
-      <div id="exam-stats-block" class="exam-stats-block" style="display: none;">
-        <span class="exam-stat-chip count">📝 Soru: <span id="exam-q-index">1</span>/18</span>
-        <span class="exam-stat-chip stopwatch">⏱️ <span id="exam-time">00:00</span></span>
-        <span class="exam-stat-chip score">✓ <span id="exam-correct">0</span> ✗ <span id="exam-wrong">0</span></span>
-        <button id="exam-abort-btn" class="exam-abort-chip" title="Denemeyi Bitir">✕ Çık</button>
-      </div>
-
-      <!-- Şimşek Turu Bölümü (Yalnızca Speedrun Aktifken Görünür) -->
-      <div id="speedrun-stats-block" class="speedrun-stats-block" style="display: none;">
-        <span class="speedrun-stat-chip timer">⚡ <span id="speedrun-time-left">60</span>s</span>
-        <span class="speedrun-stat-chip score">Puan: <span id="speedrun-score">0</span></span>
-        <button id="speedrun-abort-btn" class="speedrun-abort-chip" title="Şimşek Turunu Bitir">✕ Çık</button>
-      </div>
-
-      <!-- Normal Çalışma İstatistikleri -->
-      <div id="normal-stats-block" class="normal-stats-block">
-        <div class="stat-item correct" title="Doğru Sayısı">
-          <span class="stat-icon">✓</span> <span id="stat-correct">0</span>
+    <button id="quiz-minimize-btn" class="panel-minimize-btn quiz-min-btn" title="Soru Panelini Küçült / Aç"><span>▾</span></button>
+    <div id="quiz-panel-inner" class="quiz-panel-inner">
+      <!-- İstatistik, Deneme ve Şimşek Turu Barı -->
+      <div class="stats-bar">
+        <!-- 📝 Genel Deneme Sınavı Bölümü (Sadece Deneme Modunda Görünür) -->
+        <div id="exam-stats-block" class="exam-stats-block" style="display: none;">
+          <span class="exam-stat-chip count">📝 Soru: <span id="exam-q-index">1</span>/18</span>
+          <span class="exam-stat-chip stopwatch">⏱️ <span id="exam-time">00:00</span></span>
+          <span class="exam-stat-chip score">✓ <span id="exam-correct">0</span> ✗ <span id="exam-wrong">0</span></span>
+          <button id="exam-abort-btn" class="exam-abort-chip" title="Denemeyi Bitir">✕ Çık</button>
         </div>
-        <div class="stat-item wrong" title="Yanlış Sayısı">
-          <span class="stat-icon">✗</span> <span id="stat-wrong">0</span>
+
+        <!-- Şimşek Turu Bölümü (Yalnızca Speedrun Aktifken Görünür) -->
+        <div id="speedrun-stats-block" class="speedrun-stats-block" style="display: none;">
+          <span class="speedrun-stat-chip timer">⚡ <span id="speedrun-time-left">60</span>s</span>
+          <span class="speedrun-stat-chip score">Puan: <span id="speedrun-score">0</span></span>
+          <button id="speedrun-abort-btn" class="speedrun-abort-chip" title="Şimşek Turunu Bitir">✕ Çık</button>
         </div>
-        <div class="stat-item streak" title="Seri Doğru">
-          <span id="stat-streak">0</span>
+
+        <!-- Normal Çalışma İstatistikleri -->
+        <div id="normal-stats-block" class="normal-stats-block">
+          <div class="stat-item correct" title="Doğru Sayısı">
+            <span class="stat-icon">✓</span> <span id="stat-correct">0</span>
+          </div>
+          <div class="stat-item wrong" title="Yanlış Sayısı">
+            <span class="stat-icon">✗</span> <span id="stat-wrong">0</span>
+          </div>
+          <div class="stat-item streak" title="Seri Doğru">
+            <span id="stat-streak">0</span>
+          </div>
+          <div class="stat-item rate" title="Genel Başarı Oranı">
+            <span class="stat-label">Başarı:</span> <span id="stat-rate">%0</span>
+          </div>
+          <button id="reset-stats-btn" class="reset-stats-btn" title="Çalışma İstatistiklerini Sıfırla">
+            <span>🔄</span> <span>Sıfırla</span>
+          </button>
         </div>
-        <div class="stat-item rate" title="Genel Başarı Oranı">
-          <span class="stat-label">Başarı:</span> <span id="stat-rate">%0</span>
+      </div>
+
+      <!-- Keşif Modu Bilgisi -->
+      <div id="explore-banner" class="explore-banner"></div>
+
+      <!-- Soru Başlığı ve Rozetler -->
+      <div class="question-header">
+        <div class="question-badge-container">
+          <span id="question-badge" class="question-badge">🏔️ DAĞLAR</span>
+          <span id="question-difficulty-badge" class="difficulty-badge">⚡ Seviye 5</span>
+          <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
+            ⚠️ Sık Yanıldığın Soru
+          </span>
+          <span id="question-mastered-badge" class="mastered-badge" style="display: none;" title="Bu yer şeklini çok iyi bildiğiniz için hafıza tazelemek amacıyla nadiren soruluyor.">
+            🎓 Ustalaşılan Soru
+          </span>
         </div>
-        <button id="reset-stats-btn" class="reset-stats-btn" title="Çalışma İstatistiklerini Sıfırla">
-          <span>🔄</span> <span>Sıfırla</span>
-        </button>
+        <h2 id="question-title" class="question-title">📍 Erciyes Dağı (Volkanik Dağ)</h2>
       </div>
-    </div>
 
-    <!-- Keşif Modu Bilgisi -->
-    <div id="explore-banner" class="explore-banner"></div>
-
-    <!-- Soru Başlığı ve Rozetler -->
-    <div class="question-header">
-      <div class="question-badge-container">
-        <span id="question-badge" class="question-badge">🏔️ DAĞLAR</span>
-        <span id="question-difficulty-badge" class="difficulty-badge">⚡ Seviye 5</span>
-        <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
-          ⚠️ Sık Yanıldığın Soru
-        </span>
-        <span id="question-mastered-badge" class="mastered-badge" style="display: none;" title="Bu yer şeklini çok iyi bildiğiniz için hafıza tazelemek amacıyla nadiren soruluyor.">
-          🎓 Ustalaşılan Soru
-        </span>
+      <!-- Dinamik Seçenek Şıklar Listesi -->
+      <div id="options-grid" class="options-grid">
+        <!-- JS ile dinamik butonlar (1-5 arası) -->
       </div>
-      <h2 id="question-title" class="question-title">📍 Erciyes Dağı (Volkanik Dağ)</h2>
-    </div>
 
-    <!-- Dinamik Seçenek Şıklar Listesi -->
-    <div id="options-grid" class="options-grid">
-      <!-- JS ile dinamik butonlar (1-5 arası) -->
-    </div>
-
-    <!-- KPSS Hap Bilgi Kutusu -->
-    <div id="kpss-info-card" class="kpss-info-card">
-      <div class="kpss-info-header">
-        <span id="kpss-info-title">Erciyes Dağı</span>
-        <span id="kpss-info-type" class="kpss-badge">Volkanik Dağ (İç Anadolu)</span>
+      <!-- KPSS Hap Bilgi Kutusu -->
+      <div id="kpss-info-card" class="kpss-info-card">
+        <div class="kpss-info-header">
+          <span id="kpss-info-title">Erciyes Dağı</span>
+          <span id="kpss-info-type" class="kpss-badge">Volkanik Dağ (İç Anadolu)</span>
+        </div>
+        <p id="kpss-info-text"></p>
       </div>
-      <p id="kpss-info-text"></p>
-    </div>
 
-    <!-- Sonraki Soru Butonu -->
-    <button id="next-btn" class="next-btn">
-      Sonraki Soru → (Boşluk / Enter)
-    </button>
+      <!-- Sonraki Soru Butonu -->
+      <button id="next-btn" class="next-btn">
+        Sonraki Soru → (Boşluk / Enter)
+      </button>
+    </div>
   </main>
+
+  <!-- Odak Modu Çıkış Butonu (Floating) -->
+  <button id="focus-exit-btn" class="focus-exit-float-btn" style="display: none;" title="Odak Modundan Çık (ESC)">
+    <span>🎯 Odaktan Çık</span>
+    <span class="kbd-badge">ESC</span>
+  </button>
 
   <!-- Çizim Kaydetme Modalı -->
   <div id="draw-modal" class="modal-overlay" style="display: none;">

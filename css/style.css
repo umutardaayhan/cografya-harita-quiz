@@ -595,6 +595,181 @@ body {
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
+/* --- PANEL KÜÇÜLTME / BÜYÜTME BUTONLARI --- */
+.panel-minimize-btn {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--bg-card-border);
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panel-minimize-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.left-controls-min-btn {
+  top: -12px;
+  right: -10px;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.quiz-min-btn {
+  top: 8px;
+  right: 8px;
+}
+
+/* Küçültülmüş (Minimized) Panel Durumları */
+.map-controls-left {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.map-controls-left.minimized {
+  max-width: 44px;
+  max-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.map-controls-left.minimized .controls-inner-wrapper {
+  display: none !important;
+}
+
+.map-controls-left.minimized .left-controls-min-btn {
+  position: static;
+  width: 36px;
+  height: 36px;
+  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  box-shadow: var(--shadow);
+}
+
+.quiz-panel.minimized {
+  padding: 8px 14px;
+  max-width: 220px;
+  cursor: pointer;
+}
+
+.quiz-panel.minimized .quiz-panel-inner {
+  display: none !important;
+}
+
+.quiz-panel.minimized::before {
+  content: "📊 Soru Paneli (Gizlendi)";
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: block;
+  padding-right: 20px;
+}
+
+/* --- 🎯 ODAK MODU (FOCUS / ZEN MODE) --- */
+.nav-btn.focus-btn {
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+}
+
+.nav-btn.focus-btn:hover {
+  background: rgba(139, 92, 246, 0.28);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.35);
+}
+
+body.focus-mode .top-nav-wrapper {
+  transform: translate(-50%, -130%);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.focus-mode .map-controls-left {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.focus-mode .stats-bar {
+  display: none !important;
+}
+
+body.focus-mode .explore-banner {
+  display: none !important;
+}
+
+body.focus-mode .quiz-panel {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  max-width: 480px;
+  padding: 10px 14px;
+}
+
+body.focus-mode .quiz-panel .question-title {
+  font-size: 1.05rem;
+}
+
+body.focus-mode .focus-exit-float-btn {
+  display: flex !important;
+}
+
+/* Yüzen Odaktan Çık Butonu */
+.focus-exit-float-btn {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  color: #e9d5ff;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.25s ease;
+}
+
+.focus-exit-float-btn:hover {
+  background: rgba(139, 92, 246, 0.3);
+  color: #ffffff;
+  transform: translateX(-50%) scale(1.04);
+}
+
+.focus-exit-float-btn .kbd-badge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 /* --- SAĞ ALT QUIZ PANELİ (GENİŞLETİLMİŞ & BASIK KOMPAKT DÜZEN) --- */
 .quiz-panel {
   position: absolute;

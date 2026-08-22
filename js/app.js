@@ -1157,9 +1157,60 @@ document.addEventListener('DOMContentLoaded', () => {
     geoMap.resetView();
   });
 
-  // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ) ---
+  // --- 🎯 ODAK MODU (FOCUS / ZEN MODE) & PANEL KÜÇÜLTME ---
+  const focusModeBtn = document.getElementById('focus-mode-btn');
+  const focusExitBtn = document.getElementById('focus-exit-btn');
+  const quizMinimizeBtn = document.getElementById('quiz-minimize-btn');
+  const controlsToggleBtn = document.getElementById('controls-toggle-btn');
+  const mapControlsLeft = document.getElementById('map-controls-left');
+
+  let isFocusMode = false;
+
+  function toggleFocusMode(enable) {
+    isFocusMode = typeof enable === 'boolean' ? enable : !isFocusMode;
+    if (isFocusMode) {
+      document.body.classList.add('focus-mode');
+      focusModeBtn.classList.add('active');
+    } else {
+      document.body.classList.remove('focus-mode');
+      focusModeBtn.classList.remove('active');
+    }
+  }
+
+  if (focusModeBtn) focusModeBtn.addEventListener('click', () => toggleFocusMode());
+  if (focusExitBtn) focusExitBtn.addEventListener('click', () => toggleFocusMode(false));
+
+  if (quizMinimizeBtn) {
+    quizMinimizeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      quizPanel.classList.toggle('minimized');
+      quizMinimizeBtn.querySelector('span').textContent = quizPanel.classList.contains('minimized') ? '▴' : '▾';
+    });
+  }
+
+  quizPanel.addEventListener('click', (e) => {
+    if (quizPanel.classList.contains('minimized') && (e.target === quizPanel || e.target.classList.contains('panel-minimize-btn'))) {
+      quizPanel.classList.remove('minimized');
+      if (quizMinimizeBtn) quizMinimizeBtn.querySelector('span').textContent = '▾';
+    }
+  });
+
+  if (controlsToggleBtn && mapControlsLeft) {
+    controlsToggleBtn.addEventListener('click', () => {
+      mapControlsLeft.classList.toggle('minimized');
+      controlsToggleBtn.querySelector('span').textContent = mapControlsLeft.classList.contains('minimized') ? '▶' : '◀';
+    });
+  }
+
+  // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ, ESC İLE ODAKTAN ÇIKIŞ) ---
   document.addEventListener('keydown', (e) => {
     if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex' || examModal.style.display === 'flex') return;
+
+    if (e.key === 'Escape' && isFocusMode) {
+      toggleFocusMode(false);
+      return;
+    }
+
     if (currentMode !== 'quiz') return;
 
     const key = e.key.toUpperCase();

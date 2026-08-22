@@ -293,3 +293,13 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:20
+⚠️ Sorun/İhtiyaç: Haritayı daha geniş ve ferah görebilmek için panelleri simge durumuna küçültme butonları ile çevre kalabalığını tamamen gizleyen 'Focus (Odak) Modu' ihtiyacı.
+🎯 İşlem Özeti: Sol alt kontrol paneline ve sağ alt quiz paneline tek tıkla simge durumuna geçiren küçültme/büyütme butonları eklendi; üst menüye 'Odak Modu' butonu ve ESC kısayollu yüzen çıkış butonu entegre edildi; Odak modunda tüm araç çubukları gizlenerek ekranın tamamen harita ve kompakt soru alanına odaklanması sağlandı.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - css/style.css
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
