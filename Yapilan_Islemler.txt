@@ -74,3 +74,13 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 17:39
+⚠️ Sorun/İhtiyaç: map-controls-left ile quiz panelinin üst üste binmesi ve Keşif Modundan Test Moduna geçildiğinde haritadaki keşif noktalarının silinmeyip ekranda kalması hatası.
+🎯 İşlem Özeti: map-controls-left 2 satırlı dikey-yatay kompakt düzene alındı; GeographyMap.clearQuestionHighlight metoduna exploreLayerGroup.clearLayers() entegre edilerek keşif modundan test moduna geçildiğinde tüm keşif noktalarının anında silinmesi sağlandı.
+📁 Etkilenen Kapsam: 
+  - js/map.js
+  - css/style.css
+  - index.html
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

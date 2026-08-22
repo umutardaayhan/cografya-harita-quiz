@@ -297,6 +297,7 @@ class GeographyMap {
       this.currentShapeLayer = null;
     }
     this.multiChoiceLayerGroup.clearLayers();
+    this.exploreLayerGroup.clearLayers(); // Keşif modundan test moduna geçince keşif noktalarını temizle
   }
 
   highlightQuestionLocation(lat, lng) {
