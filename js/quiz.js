@@ -326,8 +326,26 @@ class GeographyQuiz {
     const isMastered = itemAnalytics.streak >= 3;
 
     if (this.optionCount === 'all') {
-      // 🌋 CELAL ŞENGÖR MODU: Bu kategorideki (veya alt türdeki) TÜM yer şekilleri şıklara aktarılır!
-      this.currentOptions = [...this.items].sort(() => 0.5 - Math.random());
+      if (this.currentActualFormat === 'find_on_map') {
+        // 🌋 CELAL ŞENGÖR HARİTADA BUL: Bu kategorideki TÜM yer şekilleri haritada yer alır!
+        this.currentOptions = [...this.items].sort(() => 0.5 - Math.random());
+      } else {
+        // 🌋 CELAL ŞENGÖR KONUMDAN İSİM BUL: Tam 10 adet zorlu şık üretilir!
+        let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+        if (candidatePool.length < 9) {
+          const allGlobalItems = [];
+          Object.keys(COGRAFYA_DATA).forEach(cat => {
+            allGlobalItems.push(...COGRAFYA_DATA[cat]);
+          });
+          const additionalOthers = allGlobalItems.filter(
+            item => item.id !== this.currentQuestion.id && !candidatePool.some(o => o.id === item.id)
+          );
+          candidatePool = [...candidatePool, ...additionalOthers];
+        }
+
+        const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, 9);
+        this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
+      }
     } else {
       const targetDistractorCount = parseInt(this.optionCount, 10) - 1;
       let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);

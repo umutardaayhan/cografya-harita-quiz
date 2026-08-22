@@ -251,3 +251,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 19:48
+⚠️ Sorun/İhtiyaç: 'Konumdan İsim Bul' (identify) formatında Celal Şengör modu açıldığında butonların kaybolması hatasının düzeltilmesi ve bu formatta tam 10 adet zorlu şıkkın panelde listelenmesi ihtiyacı.
+🎯 İşlem Özeti: renderQuestion fonksiyonundaki format ayrımı düzeltildi; Celal Şengör modu 'Haritada Bul' modundayken haritadan doğrudan seçime devam ederken, 'Konumdan İsim Bul' modunda soru paneline 10 adet şık (A-J) ve kompakt ızgara yerleştirildi; klavye kısayolları 1-0 ve A-J aralığına genişletildi.
+📁 Etkilenen Kapsam: 
+  - js/quiz.js
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

@@ -368,14 +368,14 @@ document.addEventListener('DOMContentLoaded', () => {
     optionsGrid.innerHTML = '';
     const isCelalAll = geoQuiz.getOptionCount() === 'all';
 
-    if (isCelalAll || qData.actualFormat === 'find_on_map') {
+    if (qData.actualFormat === 'find_on_map') {
       // YENİ ÖSYM HARİTADA BUL MODU (I-VIII çoklu harita pini veya Celal Şengör tüm harita noktaları)
       geoMap.showMultipleChoiceLocations(qData.options, (selectedId) => {
         handleAnswer(selectedId);
       });
 
       if (isCelalAll) {
-        // 🌋 CELAL ŞENGÖR: Panelde şık butonu kalabalığı YOK, doğrudan harita üzerinden tıklanır!
+        // 🌋 CELAL ŞENGÖR HARİTADA BUL: Panelde şık butonu kalabalığı YOK, doğrudan harita üzerinden tıklanır!
         optionsGrid.innerHTML = `
           <div style="grid-column: 1/-1; padding: 12px 14px; background: rgba(239, 68, 68, 0.12); border: 1.5px dashed rgba(239, 68, 68, 0.4); border-radius: 8px; font-size: 0.86rem; color: #fca5a5; text-align: center; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <span>🌋</span>
@@ -383,8 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
       } else {
-        const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+        const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
         qData.options.forEach((opt, index) => {
           const optBtn = document.createElement('button');
@@ -404,9 +404,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     } else {
-      // KLASİK MOD (Haritada tek konum parlar, isim seçilir)
+      // KONUMDAN İSİM BUL MODU (Haritada tek konum parlar, 10 şık / seçili şıklar listelenir)
       geoMap.highlightQuestionShape(qData.question);
-      const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+      if (qData.options.length > 5 || isCelalAll) {
+        optionsGrid.classList.add('celal-all-grid');
+      } else {
+        optionsGrid.classList.remove('celal-all-grid');
+      }
+
+      const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
       qData.options.forEach((opt, index) => {
         const optBtn = document.createElement('button');
@@ -1155,19 +1162,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentMode !== 'quiz') return;
 
     const key = e.key.toUpperCase();
-    const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8'];
-    const letterKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+    const letterKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
     let selectedIndex = -1;
 
-    if (numKeys.includes(key)) {
+    if (key === '0') {
+      selectedIndex = 9;
+    } else if (numKeys.includes(key)) {
       selectedIndex = parseInt(key, 10) - 1;
     } else if (letterKeys.includes(key)) {
       selectedIndex = letterKeys.indexOf(key);
     }
 
-    if (selectedIndex >= 0 && selectedIndex < geoQuiz.getOptionCount() && !geoQuiz.isAnswered) {
-      const optionButtons = optionsGrid.querySelectorAll('.option-btn');
+    const optionButtons = optionsGrid.querySelectorAll('.option-btn');
+    if (selectedIndex >= 0 && selectedIndex < optionButtons.length && !geoQuiz.isAnswered) {
       if (optionButtons[selectedIndex]) {
         optionButtons[selectedIndex].click();
       }
