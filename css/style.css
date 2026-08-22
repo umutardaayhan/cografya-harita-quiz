@@ -1930,6 +1930,22 @@ body.game-mode-active #draw-mode-btn {
   border-top-color: #ef4444;
 }
 
+/* Siralama modunda secilmis pin: panel kartiyla ayni mavi vurgu */
+.choice-pin-container.picked-pin .choice-pin-badge {
+  background: #0c4a6e;
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+}
+
+.choice-pin-container.picked-pin .choice-pin-letter {
+  background: #38bdf8;
+  color: #05243a;
+}
+
+.choice-pin-container.picked-pin .choice-pin-point {
+  border-top-color: #38bdf8;
+}
+
 .choice-pin-container.dimmed-pin {
   opacity: 0.3;
   transform: scale(0.9);

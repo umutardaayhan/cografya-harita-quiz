@@ -451,6 +451,30 @@ class GeographyMap {
     });
   }
 
+  /**
+   * Sik pinlerini panel butonlariyla AYNI duruma getirir.
+   * states: { <id>: { state: 'correct'|'wrong'|'dim'|'picked'|'', order: <n>|null } }
+   * Boylece harita ve panel tek kaynaktan beslenir, ikisi ayrisamaz.
+   */
+  applyChoicePinStates(states) {
+    if (!states) return;
+    document.querySelectorAll('.choice-pin-container').forEach(pin => {
+      pin.classList.remove('correct-pin', 'wrong-pin', 'dimmed-pin', 'picked-pin');
+
+      const info = states[pin.dataset.id];
+      if (!info) return;
+
+      if (info.state === 'correct') pin.classList.add('correct-pin');
+      else if (info.state === 'wrong') pin.classList.add('wrong-pin');
+      else if (info.state === 'dim') pin.classList.add('dimmed-pin');
+      else if (info.state === 'picked') pin.classList.add('picked-pin');
+
+      // Siralama modunda pin uzerinde harf yerine secim sirasi gorunsun
+      const letterEl = pin.querySelector('.choice-pin-letter');
+      if (letterEl && info.order) letterEl.textContent = info.order;
+    });
+  }
+
   clearQuestionHighlight() {
     if (this.currentMarker) {
       this.map.removeLayer(this.currentMarker);

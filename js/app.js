@@ -1399,6 +1399,8 @@ document.addEventListener('DOMContentLoaded', () => {
       optionCount: geoQuiz.getOptionCount(),
       difficulty: geoQuiz.getDifficultyLevel()
     });
+    // Haritadaki sik pinine tiklamak da cevap verir (standart testteki gibi)
+    game.onPinSelect = (cityId) => mkSelect(cityId);
     game.onTick = (secondsLeft) => mkUpdateTimer(secondsLeft);
     game.onTimeout = (view) => mkRender(view);
 
@@ -1439,6 +1441,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mkHintEl) mkHintEl.innerHTML = view.hint || '';
 
     // Seçenek kartları (koordinat avcısında yoktur, harita tıklanır)
+    // Ayni durumlar harita pinlerine de yansitilir; panel ve harita ayrisamaz.
+    const pinStates = {};
+    (view.options || []).forEach(opt => {
+      pinStates[opt.id] = { state: opt.state || '', order: opt.order || null };
+    });
+    if (view.options && view.options.length) geoMap.applyChoicePinStates(pinStates);
+
     if (mkOptionsEl) {
       mkOptionsEl.innerHTML = '';
       const locked = !!view.feedback;

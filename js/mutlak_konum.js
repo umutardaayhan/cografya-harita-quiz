@@ -253,9 +253,15 @@ class MutlakKonumGameBase {
     this.answered = false;
   }
 
-  /** Şehirleri haritada A-B-C-D pinleri olarak gösterir */
+  /**
+   * Şehirleri haritada A-B-C-D pinleri olarak gösterir.
+   * Pinler tıklanabilir: cevap panelden de haritadan da verilebilir
+   * (standart "Haritada Bul" testiyle aynı davranış).
+   */
   showPins(cities) {
-    this.geoMap.showMultipleChoiceLocations(cities, null);
+    this.geoMap.showMultipleChoiceLocations(cities, (cityId) => {
+      if (this.onPinSelect) this.onPinSelect(cityId);
+    });
   }
 
   baseView(extra) {
@@ -374,7 +380,7 @@ class SunShadowGame extends MutlakKonumGameBase {
     return this.baseView({
       badge: `${dateInfo.icon} ${dateInfo.label} · ${dateInfo.note}`,
       prompt: criterion.text,
-      hint: `Öğle vakti güneş açısı = 90° − |enlem − ${dateInfo.decl}°| · Enlemi dönenceye yakın olan ışığı daha dik alır.` +
+      hint: `Öğle vakti güneş açısı = 90° − |enlem − ${dateInfo.decl}°| · Enlemi dönenceye yakın olan ışığı daha dik alır. <em>Haritadaki pine de tıklayabilirsin.</em>` +
             (this.difficulty >= 4 ? ` <em>En yakın iki şık arasında yalnızca ${closestGap.toFixed(2)}° var.</em>` : ''),
       options: cities.map(c => ({ id: c.id, label: c.name, sub: `${c.lat.toFixed(2)}° K` })),
       mapPins: cities
@@ -398,8 +404,6 @@ class SunShadowGame extends MutlakKonumGameBase {
       right: winnerName,
       ok
     });
-
-    this.geoMap.highlightMultiChoiceAnswer(correctId, cityId);
 
     return this.baseView({
       badge: `${dateInfo.icon} ${dateInfo.label}`,
@@ -463,7 +467,7 @@ class TempDetectiveGame extends MutlakKonumGameBase {
       cities = MK.shuffle([low[0], ...high]);
       correctId = low[0].id;
       prompt = 'Hangi ilin ölçülen sıcaklığı <strong>indirgeme gerektirmez</strong>; yani sıcaklığı neredeyse yalnızca <strong>ENLEM</strong> ile açıklanır?';
-      hint = 'İndirgenmiş sıcaklık, yükseltinin etkisini silmek için hesaplanır. Rakımı deniz seviyesine yakın illerde gerçek ve indirgenmiş sıcaklık neredeyse aynıdır.';
+      hint = 'İndirgenmiş sıcaklık, yükseltinin etkisini silmek için hesaplanır. Rakımı deniz seviyesine yakın illerde gerçek ve indirgenmiş sıcaklık neredeyse aynıdır. <em>Haritadaki pine de tıklayabilirsin.</em>';
     } else {
       cities = MK.pickBySpread(TR_CITIES, this.optionCount, c => c.alt, this.difficulty, MK.FLOOR.alt);
       const sorted = cities.slice().sort((a, b) => b.alt - a.alt);
@@ -474,7 +478,7 @@ class TempDetectiveGame extends MutlakKonumGameBase {
       prompt = kind === 'max'
         ? 'Gerçek sıcaklık ile indirgenmiş sıcaklık arasındaki fark <strong>EN FAZLA</strong> olan il hangisidir?'
         : 'Gerçek sıcaklık ile indirgenmiş sıcaklık arasındaki fark <strong>EN AZ</strong> olan il hangisidir?';
-      hint = 'Her 100 metrede sıcaklık 0,5 °C değişir. Fark = (rakım ÷ 100) × 0,5 °C · Rakım yükseldikçe fark büyür.' +
+      hint = 'Her 100 metrede sıcaklık 0,5 °C değişir. Fark = (rakım ÷ 100) × 0,5 °C · Rakım yükseldikçe fark büyür. <em>Haritadaki pine de tıklayabilirsin.</em>' +
              (this.difficulty >= 4 ? ` <em>En yakın iki şık arasında yalnızca ${closest} m var.</em>` : '');
     }
 
@@ -506,8 +510,6 @@ class TempDetectiveGame extends MutlakKonumGameBase {
       right: winner.name,
       ok
     });
-
-    this.geoMap.highlightMultiChoiceAnswer(correctId, cityId);
 
     const example = MK.reducedTempDiff(winner.alt);
     const note = kind === 'coastal'
@@ -600,7 +602,7 @@ class DayNightOrderGame extends MutlakKonumGameBase {
     return this.baseView({
       badge: `${dateInfo.icon} ${dateInfo.label} · Sıralama`,
       prompt: task.text,
-      hint: `${dateInfo.label}'da Kuzey Yarım Küre'de kuzeye gidildikçe gündüz ${dateInfo.decl > 0 ? 'UZAR' : 'KISALIR'}. ${this.optionCount} şehri istenen sıraya göre tek tek tıkla.` +
+      hint: `${dateInfo.label}'da Kuzey Yarım Küre'de kuzeye gidildikçe gündüz ${dateInfo.decl > 0 ? 'UZAR' : 'KISALIR'}. ${this.optionCount} şehri istenen sıraya göre tek tek tıkla — panelden ya da doğrudan haritadaki pinlerden.` +
             (this.difficulty >= 4 && Number.isFinite(tightest) ? ` <em>En yakın iki şehir arasında yalnızca ${tightest.toFixed(0)} dakika var.</em>` : ''),
       options: cities.map(c => ({ id: c.id, label: c.name, sub: `${c.lat.toFixed(2)}° K` })),
       mapPins: cities,
@@ -1026,7 +1028,7 @@ class CityDuelGame extends MutlakKonumGameBase {
     return this.baseView({
       badge: `🏃 ${this.roundSeconds} saniyen var!`,
       prompt: this.optionCount === 2 ? q.two : q.many,
-      hint: 'Süre dolarsa tur yanlış sayılır. Hızlı cevap daha çok puan getirir.',
+      hint: 'Süre dolarsa tur yanlış sayılır. Hızlı cevap daha çok puan getirir. <em>Haritadaki pine de tıklayabilirsin.</em>',
       options: cities.map(c => ({ id: c.id, label: c.name, sub: c.region })),
       mapPins: cities,
       timer: this.roundSeconds,
@@ -1077,8 +1079,6 @@ class CityDuelGame extends MutlakKonumGameBase {
       right: timedOut ? 'süre doldu' : (ok ? `+${earned} puan` : 'yanlış'),
       ok
     });
-
-    this.geoMap.highlightMultiChoiceAnswer(correctId, cityId || '');
 
     return this.baseView({
       badge: timedOut ? '⌛ Süre doldu!' : (ok ? '✓ Doğru!' : '✗ Yanlış'),
