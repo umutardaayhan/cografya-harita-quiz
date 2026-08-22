@@ -214,3 +214,14 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:36
+⚠️ Sorun/İhtiyaç: Celal Şengör modunun sadece 'Haritada Bul' formatında çalışıp paneldeki şıkları kaldırarak doğrudan haritadan seçim yaptırması ve 18 soruluk, kategorisiz rastgele dağılımlı, yukarı sayan kronometreli KPSS 'Genel Deneme Modu' ihtiyacı.
+🎯 İşlem Özeti: Celal Şengör modu seçildiğinde soru panelindeki butonlar gizlenip sadece harita üzerinden tıklama ile cevaplama kurgulandı; üst menüye '📝 Genel Deneme (18 Soru)' modu, stats-bar içine 00:00'dan yukarı sayan kronometre ve soru sayacı (1/18), tur bitiminde ise Net (D - Y/4), Toplam Süre ve başarı karne modalı (exam-modal) entegre edildi.
+📁 Etkilenen Kapsam: 
+  - index.html
+  - css/style.css
+  - js/app.js
+  - js/quiz.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

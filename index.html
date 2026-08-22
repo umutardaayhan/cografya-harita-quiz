@@ -43,6 +43,10 @@
           </div>
         </div>
 
+        <button id="exam-mode-btn" class="nav-btn exam-btn" title="18 Soruluk KPSS Coğrafya Deneme Sınavı">
+          <span>📝</span> <span>Genel Deneme (18 Soru)</span>
+        </button>
+
         <button id="speedrun-btn" class="nav-btn speedrun-btn" title="60 Saniyede En Çok Yer Şeklini Bil!">
           <span>⚡</span> <span>Şimşek Turu (60s)</span>
         </button>
@@ -155,8 +159,16 @@
 
   <!-- Sağ Alt Quiz / Soru Paneli (Kompakt Basık Düzen) -->
   <main id="quiz-panel" class="quiz-panel">
-    <!-- İstatistik ve Şimşek Turu Barı -->
+    <!-- İstatistik, Deneme ve Şimşek Turu Barı -->
     <div class="stats-bar">
+      <!-- 📝 Genel Deneme Sınavı Bölümü (Sadece Deneme Modunda Görünür) -->
+      <div id="exam-stats-block" class="exam-stats-block" style="display: none;">
+        <span class="exam-stat-chip count">📝 Soru: <span id="exam-q-index">1</span>/18</span>
+        <span class="exam-stat-chip stopwatch">⏱️ <span id="exam-time">00:00</span></span>
+        <span class="exam-stat-chip score">✓ <span id="exam-correct">0</span> ✗ <span id="exam-wrong">0</span></span>
+        <button id="exam-abort-btn" class="exam-abort-chip" title="Denemeyi Bitir">✕ Çık</button>
+      </div>
+
       <!-- Şimşek Turu Bölümü (Yalnızca Speedrun Aktifken Görünür) -->
       <div id="speedrun-stats-block" class="speedrun-stats-block" style="display: none;">
         <span class="speedrun-stat-chip timer">⚡ <span id="speedrun-time-left">60</span>s</span>
@@ -354,6 +366,41 @@
       <div class="modal-footer" style="margin-top: 10px;">
         <button id="speedrun-close-modal-btn" class="modal-btn secondary">Kapat</button>
         <button id="speedrun-restart-btn" class="modal-btn primary">⚡ Yeniden Başlat (60s)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📝 Genel Deneme Sonuç Modalı -->
+  <div id="exam-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card exam-modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy">🎯</div>
+        <h3>KPSS Genel Deneme Tamamlandı!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">18 Soruluk Coğrafya Deneme Karneniz:</p>
+      </div>
+
+      <div class="speedrun-stats-grid">
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val correct" id="exam-res-correct">0</span>
+          <span class="speedrun-stat-lbl">✓ Doğru</span>
+        </div>
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val wrong" id="exam-res-wrong">0</span>
+          <span class="speedrun-stat-lbl">✗ Yanlış</span>
+        </div>
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val streak" id="exam-res-net">0.00</span>
+          <span class="speedrun-stat-lbl">📊 Net (D - Y/4)</span>
+        </div>
+        <div class="speedrun-stat-box best">
+          <span class="speedrun-stat-val record" id="exam-res-time">00:00</span>
+          <span class="speedrun-stat-lbl">⏱️ Toplam Süre</span>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: 10px;">
+        <button id="exam-close-modal-btn" class="modal-btn secondary">Kapat</button>
+        <button id="exam-restart-btn" class="modal-btn primary">📝 Yeni Deneme Başlat</button>
       </div>
     </div>
   </div>

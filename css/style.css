@@ -685,6 +685,62 @@ body {
   color: #fca5a5;
 }
 
+/* 📝 Genel Deneme Sınavı İstatistik Barı Bloğu */
+.exam-stats-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.exam-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.exam-stat-chip.count {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #d8b4fe;
+}
+
+.exam-stat-chip.stopwatch {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+  min-width: 78px;
+}
+
+.exam-stat-chip.score {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bg-card-border);
+  color: #f1f5f9;
+}
+
+.exam-abort-chip {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.exam-abort-chip:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+}
+
 /* Şimşek Turu (Speedrun) İstatistik Barı Bloğu */
 .speedrun-stats-block {
   display: flex;
@@ -1758,6 +1814,30 @@ body {
   .form-row {
     grid-template-columns: 1fr;
   }
+
+/* --- 📝 GENEL DENEME SINAVI (18 SORU) STİLLERİ --- */
+.nav-btn.exam-btn {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(99, 102, 241, 0.22));
+  border: 1px solid rgba(168, 85, 247, 0.55);
+  color: #e9d5ff;
+  box-shadow: 0 2px 10px rgba(168, 85, 247, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-btn.exam-btn:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(99, 102, 241, 0.35));
+  border-color: #c084fc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(192, 132, 252, 0.45);
+}
+
+.nav-btn.exam-btn.active {
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  color: #ffffff;
+  font-weight: 800;
+  border-color: #f3e8ff;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.85);
+}
 
 /* --- ⚡ ŞİMŞEK TURU (SPEEDRUN - 60S) STİLLERİ --- */
 .nav-btn.speedrun-btn {

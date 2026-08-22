@@ -107,6 +107,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const speedrunRestartBtn = document.getElementById('speedrun-restart-btn');
   const speedrunCloseModalBtn = document.getElementById('speedrun-close-modal-btn');
 
+  // 📝 Genel Deneme Sınavı (18 Soru) DOM Elemanları
+  const examModeBtn = document.getElementById('exam-mode-btn');
+  const examStatsBlock = document.getElementById('exam-stats-block');
+  const examQIndex = document.getElementById('exam-q-index');
+  const examTimeText = document.getElementById('exam-time');
+  const examCorrectText = document.getElementById('exam-correct');
+  const examWrongText = document.getElementById('exam-wrong');
+  const examAbortBtn = document.getElementById('exam-abort-btn');
+  const examModal = document.getElementById('exam-modal');
+  const examResCorrect = document.getElementById('exam-res-correct');
+  const examResWrong = document.getElementById('exam-res-wrong');
+  const examResNet = document.getElementById('exam-res-net');
+  const examResTime = document.getElementById('exam-res-time');
+  const examRestartBtn = document.getElementById('exam-restart-btn');
+  const examCloseModalBtn = document.getElementById('exam-close-modal-btn');
+
   // Uygulama Durumu
   let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing'
   let activeCategory = 'daglar';
@@ -119,6 +135,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let speedrunSeconds = 60;
   let speedrunScore = 0;
   let speedrunStats = { correct: 0, wrong: 0, bestStreak: 0, currentStreak: 0 };
+
+  // 📝 Genel Deneme Sınavı Durum Değişkenleri
+  let isExamActive = false;
+  let examInterval = null;
+  let examSeconds = 0;
+  let examCurrentIndex = 0;
+  let examQuestions = [];
+  let examStats = { correct: 0, wrong: 0 };
 
   const subCategoriesBar = document.getElementById('sub-categories-bar');
 
@@ -337,39 +361,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Şıkları render et ve harita işaretçilerini kur
     optionsGrid.innerHTML = '';
-    if (qData.options.length > 8 || geoQuiz.getOptionCount() === 'all') {
-      optionsGrid.classList.add('celal-all-grid');
-    } else {
-      optionsGrid.classList.remove('celal-all-grid');
-    }
-    const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+    const isCelalAll = geoQuiz.getOptionCount() === 'all';
 
-    if (qData.actualFormat === 'find_on_map') {
-      // YENİ ÖSYM HARİTADA BUL MODU (I-VIII çoklu harita pini)
+    if (isCelalAll || qData.actualFormat === 'find_on_map') {
+      // YENİ ÖSYM HARİTADA BUL MODU (I-VIII çoklu harita pini veya Celal Şengör tüm harita noktaları)
       geoMap.showMultipleChoiceLocations(qData.options, (selectedId) => {
         handleAnswer(selectedId);
       });
 
-      qData.options.forEach((opt, index) => {
-        const optBtn = document.createElement('button');
-        optBtn.className = 'option-btn';
-        optBtn.dataset.id = opt.id;
-        optBtn.dataset.index = index;
-
-        const letter = optionLetters[index] || `${index + 1}`;
-        const roman = romanNumerals[index] || `${index + 1}`;
-
-        optBtn.innerHTML = `
-          <span class="option-key">${letter}</span>
-          <span class="option-name"><strong>${roman}. Konum</strong> (${letter} Pini)</span>
+      if (isCelalAll) {
+        // 🌋 CELAL ŞENGÖR: Panelde şık butonu kalabalığı YOK, doğrudan harita üzerinden tıklanır!
+        optionsGrid.innerHTML = `
+          <div style="grid-column: 1/-1; padding: 12px 14px; background: rgba(239, 68, 68, 0.12); border: 1.5px dashed rgba(239, 68, 68, 0.4); border-radius: 8px; font-size: 0.86rem; color: #fca5a5; text-align: center; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>🌋</span>
+            <span><strong>Celal Şengör Modu:</strong> Harita üzerindeki noktalardan doğru olanı seçin!</span>
+          </div>
         `;
-        optBtn.addEventListener('click', () => handleAnswer(opt.id));
-        optionsGrid.appendChild(optBtn);
-      });
+      } else {
+        const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+
+        qData.options.forEach((opt, index) => {
+          const optBtn = document.createElement('button');
+          optBtn.className = 'option-btn';
+          optBtn.dataset.id = opt.id;
+          optBtn.dataset.index = index;
+
+          const letter = optionLetters[index] || `${index + 1}`;
+          const roman = romanNumerals[index] || `${index + 1}`;
+
+          optBtn.innerHTML = `
+            <span class="option-key">${letter}</span>
+            <span class="option-name"><strong>${roman}. Konum</strong> (${letter} Pini)</span>
+          `;
+          optBtn.addEventListener('click', () => handleAnswer(opt.id));
+          optionsGrid.appendChild(optBtn);
+        });
+      }
     } else {
       // KLASİK MOD (Haritada tek konum parlar, isim seçilir)
       geoMap.highlightQuestionShape(qData.question);
+      const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
       qData.options.forEach((opt, index) => {
         const optBtn = document.createElement('button');
@@ -379,14 +411,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const keyLabel = optionLetters[index] || (index + 1);
 
-        // Celal Şengör seviyesinde tür bilgisini de şıkta göster
-        const typeInfo = (qData.difficultyLevel === 6 && opt.type) 
-          ? `<span style="font-size:0.75rem; color:#94a3b8; margin-left:4px;">(${opt.type})</span>` 
-          : '';
-
         optBtn.innerHTML = `
           <span class="option-key">${keyLabel}</span>
-          <span class="option-name">${opt.name}${typeInfo}</span>
+          <span class="option-name">${opt.name}</span>
         `;
         optBtn.addEventListener('click', () => handleAnswer(opt.id));
         optionsGrid.appendChild(optBtn);
@@ -419,8 +446,26 @@ document.addEventListener('DOMContentLoaded', () => {
       geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
     }
 
-    // Şimşek Turu (Speedrun) Aktifse
-    if (isSpeedrunActive) {
+    // Genel Deneme Sınavı Aktifse
+    if (isExamActive) {
+      if (result.isCorrect) {
+        examStats.correct++;
+      } else {
+        examStats.wrong++;
+      }
+      examCorrectText.textContent = examStats.correct;
+      examWrongText.textContent = examStats.wrong;
+
+      kpssInfoCard.style.display = 'block';
+      kpssInfoTitle.textContent = result.name;
+      kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
+      kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+
+      nextBtn.style.display = 'block';
+      nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
+      nextBtn.focus();
+    } else if (isSpeedrunActive) {
+      // Şimşek Turu (Speedrun) Aktifse
       if (result.isCorrect) {
         speedrunStats.correct++;
         speedrunStats.currentStreak++;
@@ -449,14 +494,143 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Sonraki Soru butonunu aç
       nextBtn.style.display = 'block';
+      nextBtn.textContent = 'Sonraki Soru ➡️';
       nextBtn.focus();
     }
 
     updateStatsUI();
   }
 
+  // --- 📝 GENEL DENEME SINAVI (18 SORU & KRONOMETRE) MOTORU ---
+  function startExam() {
+    if (isSpeedrunActive) endSpeedrun();
+    if (currentMode === 'drawing') closeDrawingToolbar();
+    if (currentMode === 'explore') setMode('quiz');
+
+    isExamActive = true;
+    examSeconds = 0;
+    examCurrentIndex = 0;
+    examStats = { correct: 0, wrong: 0 };
+
+    examModeBtn.classList.add('active');
+
+    // Stats barını Deneme moduna geçir
+    if (normalStatsBlock) normalStatsBlock.style.display = 'none';
+    if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
+    if (examStatsBlock) examStatsBlock.style.display = 'flex';
+
+    examQIndex.textContent = '1';
+    examTimeText.textContent = '00:00';
+    examCorrectText.textContent = '0';
+    examWrongText.textContent = '0';
+
+    // Tüm kategorilerden (Dağ, Ova, Plato, Su Kaynakları, Geçitler) rastgele 18 adet soru topla
+    const allGlobal = [];
+    Object.keys(COGRAFYA_DATA).forEach(cat => {
+      allGlobal.push(...COGRAFYA_DATA[cat]);
+    });
+    if (customDrawManager && customDrawManager.drawings) {
+      allGlobal.push(...customDrawManager.drawings);
+    }
+
+    // Karıştır ve 18 soru seç
+    examQuestions = [...allGlobal].sort(() => 0.5 - Math.random()).slice(0, 18);
+
+    if (examInterval) clearInterval(examInterval);
+    examInterval = setInterval(() => {
+      examSeconds++;
+      const mins = Math.floor(examSeconds / 60).toString().padStart(2, '0');
+      const secs = (examSeconds % 60).toString().padStart(2, '0');
+      examTimeText.textContent = `${mins}:${secs}`;
+    }, 1000);
+
+    loadExamQuestion();
+  }
+
+  function loadExamQuestion() {
+    if (examCurrentIndex >= examQuestions.length) {
+      endExam();
+      return;
+    }
+
+    examQIndex.textContent = (examCurrentIndex + 1).toString();
+    const qItem = examQuestions[examCurrentIndex];
+    geoQuiz.currentQuestion = qItem;
+    geoQuiz.isAnswered = false;
+
+    // 4 şık üret
+    const allGlobal = [];
+    Object.keys(COGRAFYA_DATA).forEach(cat => {
+      allGlobal.push(...COGRAFYA_DATA[cat]);
+    });
+    const candidatePool = allGlobal.filter(i => i.id !== qItem.id);
+    const distractors = geoQuiz.selectDistractorsByProximity(qItem, candidatePool, 3);
+    const options = [qItem, ...distractors].sort(() => 0.5 - Math.random());
+    geoQuiz.currentOptions = options;
+
+    renderQuestion({
+      question: qItem,
+      options: options,
+      questionText: `📍 <span style="color: #c084fc; font-weight:800;">${qItem.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${qItem.type})</span>`,
+      questionTypeTitle: `DENEME [${examCurrentIndex + 1}/18]`,
+      actualFormat: 'find_on_map',
+      isProblematic: false,
+      isMastered: false,
+      wrongCount: 0,
+      correctCount: 0,
+      streak: 0,
+      difficultyLevel: geoQuiz.getDifficultyLevel()
+    });
+
+    nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
+  }
+
+  function endExam() {
+    if (examInterval) clearInterval(examInterval);
+    examInterval = null;
+    isExamActive = false;
+
+    examModeBtn.classList.remove('active');
+
+    // Stats barını normale döndür
+    if (examStatsBlock) examStatsBlock.style.display = 'none';
+    if (normalStatsBlock) normalStatsBlock.style.display = 'flex';
+
+    // Net Hesabı (Doğru - Yanlış / 4)
+    const rawNet = examStats.correct - (examStats.wrong / 4);
+    const netFormatted = Math.max(0, rawNet).toFixed(2);
+    const mins = Math.floor(examSeconds / 60).toString().padStart(2, '0');
+    const secs = (examSeconds % 60).toString().padStart(2, '0');
+
+    examResCorrect.textContent = examStats.correct;
+    examResWrong.textContent = examStats.wrong;
+    examResNet.textContent = netFormatted;
+    examResTime.textContent = `${mins}:${secs}`;
+
+    examModal.style.display = 'flex';
+  }
+
+  examModeBtn.addEventListener('click', () => {
+    if (isExamActive) {
+      endExam();
+    } else {
+      startExam();
+    }
+  });
+
+  examAbortBtn.addEventListener('click', endExam);
+  examRestartBtn.addEventListener('click', () => {
+    examModal.style.display = 'none';
+    startExam();
+  });
+  examCloseModalBtn.addEventListener('click', () => {
+    examModal.style.display = 'none';
+    loadNextQuestion();
+  });
+
   // --- ⚡ ŞİMŞEK TURU (SPEEDRUN) MOTORU ---
   function startSpeedrun() {
+    if (isExamActive) endExam();
     if (currentMode === 'drawing') closeDrawingToolbar();
     if (currentMode === 'explore') setMode('quiz');
 
@@ -928,7 +1102,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- GENEL HARİTA BUTONLARI ---
   modeToggleBtn.addEventListener('click', toggleMode);
-  nextBtn.addEventListener('click', loadNextQuestion);
+  nextBtn.addEventListener('click', () => {
+    if (isExamActive) {
+      examCurrentIndex++;
+      loadExamQuestion();
+    } else {
+      loadNextQuestion();
+    }
+  });
 
   resetViewBtn.addEventListener('click', () => {
     geoMap.resetView();
@@ -936,12 +1117,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ) ---
   document.addEventListener('keydown', (e) => {
-    if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex') return;
+    if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex' || examModal.style.display === 'flex') return;
     if (currentMode !== 'quiz') return;
 
     const key = e.key.toUpperCase();
-    const numKeys = ['1', '2', '3', '4', '5'];
-    const letterKeys = ['A', 'B', 'C', 'D', 'E'];
+    const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8'];
+    const letterKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
     let selectedIndex = -1;
 
@@ -960,7 +1141,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if ((e.key === ' ' || e.key === 'Enter') && geoQuiz.isAnswered) {
       e.preventDefault();
-      loadNextQuestion();
+      if (isExamActive) {
+        examCurrentIndex++;
+        loadExamQuestion();
+      } else {
+        loadNextQuestion();
+      }
     }
   });
 
