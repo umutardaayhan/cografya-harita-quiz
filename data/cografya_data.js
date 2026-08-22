@@ -742,14 +742,24 @@ const COGRAFYA_DATA = {
   ],
 
   su_kaynaklari: [
-    // --- AKARSULAR ---
+    // --- AKARSULAR (GERÇEK AKIŞ VE ÇİZGİ GEOMETRİSİ) ---
     {
       id: "nehir_kizilirmak",
       name: "Kızılırmak",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [39.85, 38.30],
+        [39.05, 36.10],
+        [38.75, 34.80],
+        [39.80, 33.50],
+        [40.60, 34.00],
+        [41.20, 35.30],
+        [41.73, 35.95]
+      ],
+      lat: 40.00,
+      lng: 34.80,
       type: "Akarsu",
-      lat: 39.90,
-      lng: 35.80,
       region: "Karadeniz / İç Anadolu",
       kpssNot: "SINIRLARIMIZ İÇİNDE DOĞUP SINIRLARIMIZ İÇİNDE DENİZE DÖKÜLEN EN UZUN NEHRİMİZDİR (1.355 km). Bafra Deltası'nı oluşturur."
     },
@@ -757,9 +767,16 @@ const COGRAFYA_DATA = {
       id: "nehir_yesilirmak",
       name: "Yeşilırmak",
       category: "su_kaynaklari",
-      type: "Akarsu",
+      shapeType: "polyline",
+      coordinates: [
+        [39.90, 37.80],
+        [40.35, 36.55],
+        [40.65, 35.83],
+        [41.38, 36.75]
+      ],
       lat: 40.65,
-      lng: 35.83,
+      lng: 36.40,
+      type: "Akarsu",
       region: "Karadeniz",
       kpssNot: "Kuzey Anadolu dağlarını yararak Karadeniz'e dökülür ve Çarşamba Deltası'nı oluşturur."
     },
@@ -767,9 +784,18 @@ const COGRAFYA_DATA = {
       id: "nehir_sakarya",
       name: "Sakarya Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [39.10, 31.00],
+        [39.60, 31.80],
+        [40.05, 31.20],
+        [40.45, 30.15],
+        [40.80, 30.45],
+        [41.20, 30.65]
+      ],
+      lat: 40.20,
+      lng: 30.80,
       type: "Akarsu",
-      lat: 40.40,
-      lng: 30.50,
       region: "Marmara / İç Anadolu",
       kpssNot: "Dört farklı coğrafi bölgeden (İç Anadolu, Ege, Marmara, Karadeniz) geçen tek akarsumuzdur."
     },
@@ -777,9 +803,17 @@ const COGRAFYA_DATA = {
       id: "nehir_coruh",
       name: "Çoruh Nehri",
       category: "su_kaynaklari",
-      type: "Akarsu",
+      shapeType: "polyline",
+      coordinates: [
+        [40.20, 40.20],
+        [40.48, 40.95],
+        [40.82, 41.80],
+        [41.20, 41.70],
+        [41.60, 41.58]
+      ],
       lat: 40.80,
-      lng: 41.80,
+      lng: 41.30,
+      type: "Akarsu",
       region: "Karadeniz / Doğu Anadolu",
       kpssNot: "Akış hızı ve debisi çok yüksektir. Rafting sporuna çok uygundur. Gürcistan (Batum) üzerinden Karadeniz'e dökülür. Deriner ve Yusufeli barajları buradadır."
     },
@@ -787,9 +821,18 @@ const COGRAFYA_DATA = {
       id: "nehir_firat",
       name: "Fırat Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [39.75, 39.50],
+        [38.80, 38.75],
+        [38.35, 38.45],
+        [37.75, 38.15],
+        [37.05, 38.00],
+        [36.85, 38.01]
+      ],
+      lat: 38.10,
+      lng: 38.40,
       type: "Akarsu (Sınır Aşan)",
-      lat: 38.00,
-      lng: 38.80,
       region: "Doğu & Güneydoğu Anadolu",
       kpssNot: "TÜRKİYE'NİN EN FAZLA SU TAŞIYAN ve HİDROELEKTRİK POTANSİYELİ EN YÜKSEK NEHRİDİR. Karasu ve Murat kollarından oluşur, Basra Körfezi'ne dökülür."
     },
@@ -797,9 +840,17 @@ const COGRAFYA_DATA = {
       id: "nehir_dicle",
       name: "Dicle Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [38.45, 39.40],
+        [37.90, 40.25],
+        [37.70, 41.10],
+        [37.55, 41.45],
+        [37.33, 42.20]
+      ],
+      lat: 37.80,
+      lng: 40.80,
       type: "Akarsu (Sınır Aşan)",
-      lat: 37.90,
-      lng: 40.50,
       region: "Güneydoğu Anadolu",
       kpssNot: "Hazar Gölü yakınlarından doğar, Ilısu (Veysel Eroğlu) barajı üzerindedir. Fırat ile Irak'ta birleşip Şattülarap adını alır."
     },
@@ -807,9 +858,17 @@ const COGRAFYA_DATA = {
       id: "nehir_aras",
       name: "Aras Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [39.45, 41.20],
+        [39.95, 42.50],
+        [40.05, 43.50],
+        [39.90, 44.40],
+        [39.40, 44.85]
+      ],
+      lat: 39.90,
+      lng: 43.20,
       type: "Akarsu (Kapalı Havza)",
-      lat: 40.00,
-      lng: 43.50,
       region: "Doğu Anadolu",
       kpssNot: "Ermenistan, Azerbaycan ve İran sınırını oluşturur; Kura ile birleşerek HAZAR KAPALI HAVZASI'na dökülür."
     },
@@ -817,9 +876,16 @@ const COGRAFYA_DATA = {
       id: "nehir_meric",
       name: "Meriç Nehri",
       category: "su_kaynaklari",
-      type: "Akarsu",
+      shapeType: "polyline",
+      coordinates: [
+        [41.75, 26.55],
+        [41.35, 26.60],
+        [40.95, 26.35],
+        [40.73, 26.05]
+      ],
       lat: 41.20,
-      lng: 26.50,
+      lng: 26.40,
+      type: "Akarsu",
       region: "Marmara",
       kpssNot: "Bulgaristan'dan doğar, Türkiye-Yunanistan sınırını çizer, Ege Denizi'ne dökülür (Ergene en büyük koludur, pirinç/çeltik tarımı yaygındır)."
     },
@@ -827,9 +893,16 @@ const COGRAFYA_DATA = {
       id: "nehir_gediz",
       name: "Gediz Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [38.95, 29.60],
+        [38.60, 28.50],
+        [38.60, 27.40],
+        [38.58, 26.85]
+      ],
+      lat: 38.65,
+      lng: 27.80,
       type: "Akarsu",
-      lat: 38.60,
-      lng: 27.50,
       region: "Ege",
       kpssNot: "Ege grabenleri boyunca menderesler çizerek akar ve Menemen Deltası'nı oluşturur."
     },
@@ -837,9 +910,17 @@ const COGRAFYA_DATA = {
       id: "nehir_buyuk_menderes",
       name: "Büyük Menderes",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [38.10, 30.15],
+        [38.05, 29.10],
+        [37.85, 28.30],
+        [37.75, 27.60],
+        [37.55, 27.20]
+      ],
+      lat: 37.80,
+      lng: 28.50,
       type: "Akarsu",
-      lat: 37.85,
-      lng: 28.00,
       region: "Ege",
       kpssNot: "Ege'nin en uzun akarsuyudur. İsmini dünyaya 'menderes (kıvrım)' coğrafi terimi olarak vermiştir."
     },
@@ -847,9 +928,15 @@ const COGRAFYA_DATA = {
       id: "nehir_asi",
       name: "Asi Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [35.90, 36.35],
+        [36.20, 36.15],
+        [36.10, 35.95]
+      ],
+      lat: 36.10,
+      lng: 36.15,
       type: "Akarsu (Ters Akan)",
-      lat: 36.15,
-      lng: 36.10,
       region: "Akdeniz",
       kpssNot: "Lübnan'dan doğup Suriye'den geçerek Türkiye'ye girer. Güneyden kuzeye 'ters' aktığı için Asi adını almıştır."
     },
@@ -857,9 +944,16 @@ const COGRAFYA_DATA = {
       id: "nehir_goksu",
       name: "Göksu Nehri",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [37.05, 32.70],
+        [36.75, 33.40],
+        [36.50, 33.80],
+        [36.30, 33.95]
+      ],
+      lat: 36.65,
+      lng: 33.50,
       type: "Akarsu",
-      lat: 36.60,
-      lng: 33.80,
       region: "Akdeniz",
       kpssNot: "Taşeli Platosu'nu derin kanyonlarla yararak Silifke Deltası'nı oluşturan akarsumuzdur."
     },
@@ -867,9 +961,15 @@ const COGRAFYA_DATA = {
       id: "nehir_manavgat",
       name: "Manavgat Çayı",
       category: "su_kaynaklari",
+      shapeType: "polyline",
+      coordinates: [
+        [37.30, 31.60],
+        [36.95, 31.50],
+        [36.78, 31.45]
+      ],
+      lat: 37.00,
+      lng: 31.52,
       type: "Akarsu (Karstik)",
-      lat: 36.85,
-      lng: 31.45,
       region: "Akdeniz",
       kpssNot: "Karstik (voklüz) gür kaynaklarla beslendiği için AKIMI YIL BOYUNCA EN DÜZENLİ akarsularımızdandır."
     },

@@ -84,3 +84,11 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 17:41
+⚠️ Sorun/İhtiyaç: Gömme (yerleşik) testteki akarsuların da JSON şemasında ve çizim editöründe olduğu gibi gerçek akış rotalarıyla birer çizgi (polyline) olarak görüntülenmesi ihtiyacı.
+🎯 İşlem Özeti: data/cografya_data.js altındaki tüm yerleşik akarsular (Kızılırmak, Yeşilırmak, Sakarya, Çoruh, Fırat, Dicle, Aras, Meriç, Gediz, Büyük Menderes, Asi, Göksu, Manavgat) shapeType: 'polyline' ve kaynak-ağız arası gerçek rota koordinat dizileriyle (coordinates: [[lat, lng], ...]) donatıldı.
+📁 Etkilenen Kapsam: 
+  - data/cografya_data.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
