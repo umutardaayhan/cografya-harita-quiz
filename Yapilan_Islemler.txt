@@ -92,3 +92,11 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 17:42
+⚠️ Sorun/İhtiyaç: Uzun yer şekli isimlerinde (örneğin 'Çatalca - Kocaeli Platosu', 'Küre (İsfendiyar) Dağları') cevap butonlarından metin taşması sorunu.
+🎯 İşlem Özeti: css/style.css dosyasında .options-grid minimum sütun genişliği 220px'e çıkarıldı; .option-btn ve .option-name için min-width: 0, word-break: break-word ve white-space: normal taşma koruma kuralları tanımlandı.
+📁 Etkilenen Kapsam: 
+  - css/style.css
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
