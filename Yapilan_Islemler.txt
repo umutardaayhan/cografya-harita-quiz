@@ -136,3 +136,14 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 17:56
+⚠️ Sorun/İhtiyaç: Ovalar, platolar, geçitler için de dağlar gibi özel 3D/kabartma şekiller belirlenmesi ve 'Geçitler & Boğazlar' kategorisinde eksik olan stratejik Türk Boğazlarının (İstanbul Boğazı ve Çanakkale Boğazı) eklenmesi ihtiyacı.
+🎯 İşlem Özeti: Ovalar için yeşil-sarı alüvyal ova rozeti (.plain-badge), platolar için falezli 3D Masa Dağı (.plateau-mesa), dağ geçitleri için kapı rozeti (.pass-badge), boğazlar için ria su kanalı rozeti (.strait-badge) tasarlandı; data/cografya_data.js dosyasına İstanbul Boğazı (Bosphorus) ve Çanakkale Boğazı (Dardanelles) rota koordinatlarıyla eklenip SUB_TYPES.gecitler altına 'Boğazlar & Su Yolları' filtresi tanımlandı.
+📁 Etkilenen Kapsam: 
+  - data/cografya_data.js
+  - js/map.js
+  - css/style.css
+  - docs/OZEL_HARITA_VE_ADAPTIF_MOTOR.md
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

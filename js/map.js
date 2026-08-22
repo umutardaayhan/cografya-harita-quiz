@@ -160,6 +160,101 @@ class GeographyMap {
     });
   }
 
+  // 🌾 3D Ova & Alüvyal Vadi Kabartma İkonu
+  createPlainIcon(item) {
+    let typeClass = '';
+    const typeStr = (item.type || '').toLowerCase();
+    if (typeStr.includes('delta')) typeClass = 'delta';
+    else if (typeStr.includes('tektonik')) typeClass = 'tectonic';
+    else if (typeStr.includes('karstik') || typeStr.includes('polye')) typeClass = 'karstic';
+
+    return L.divIcon({
+      className: 'plain-3d-icon',
+      html: `
+        <div class="plain-badge ${typeClass}" title="${item.name}">
+          <span>🌾</span>
+        </div>
+      `,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+  }
+
+  // ⛰️ 3D Masa Dağı (Tabaka Düzlüğü / Plato) İkonu
+  createPlateauIcon(item) {
+    let typeClass = '';
+    const typeStr = (item.type || '').toLowerCase();
+    if (typeStr.includes('volkanik') || typeStr.includes('lav')) typeClass = 'volcanic';
+    else if (typeStr.includes('karstik')) typeClass = 'karstic';
+    else if (typeStr.includes('aşınım') || typeStr.includes('peneplen')) typeClass = 'peneplain';
+
+    return L.divIcon({
+      className: 'plateau-3d-icon',
+      html: `
+        <div class="plateau-mesa ${typeClass}" title="${item.name}">
+          <div class="mesa-top"></div>
+          <div class="mesa-cliff"></div>
+        </div>
+      `,
+      iconSize: [32, 24],
+      iconAnchor: [16, 16]
+    });
+  }
+
+  // 🚪 Dağ Geçidi & 🌉 Deniz Boğazı İkonu
+  createPassOrStraitIcon(item) {
+    const isStrait = (item.type || '').toLowerCase().includes('deniz boğazı') || (item.type || '').toLowerCase().includes('su yolu');
+    if (isStrait) {
+      return L.divIcon({
+        className: 'strait-3d-icon',
+        html: `
+          <div class="strait-badge" title="${item.name}">
+            <span>🌉</span>
+          </div>
+        `,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+    }
+
+    return L.divIcon({
+      className: 'pass-3d-icon',
+      html: `
+        <div class="pass-badge" title="${item.name}">
+          <span>🚪</span>
+        </div>
+      `,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+  }
+
+  // Öğe kategorisine göre en uygun özel ikonu döndür
+  getCustomCategoryIcon(item) {
+    const cat = item.category || '';
+    const typeStr = (item.type || '').toLowerCase();
+
+    if (cat === 'daglar' || typeStr.includes('dağ')) {
+      return this.createMountainPrismIcon(item);
+    }
+    if (cat === 'ovalar' || typeStr.includes('ova') || typeStr.includes('delta')) {
+      return this.createPlainIcon(item);
+    }
+    if (cat === 'platolar' || typeStr.includes('plato')) {
+      return this.createPlateauIcon(item);
+    }
+    if (cat === 'gecitler' || typeStr.includes('geçit') || typeStr.includes('boğaz')) {
+      return this.createPassOrStraitIcon(item);
+    }
+
+    return L.divIcon({
+      className: 'pulse-marker-icon',
+      html: '<div class="pulse-circle"></div>',
+      iconSize: [26, 26],
+      iconAnchor: [13, 13]
+    });
+  }
+
   // --- KLASİK MOD: TEK SORU VURGULAMA MOTORU ---
   highlightQuestionShape(questionItem) {
     this.clearQuestionHighlight();
@@ -167,22 +262,12 @@ class GeographyMap {
 
     const shapeType = questionItem.shapeType || 'point';
     const isMountain = questionItem.category === 'daglar' || (questionItem.type || '').toLowerCase().includes('dağ');
+    const isStrait = (questionItem.type || '').toLowerCase().includes('deniz boğazı');
 
     if (shapeType === 'point' || !questionItem.coordinates || !Array.isArray(questionItem.coordinates[0])) {
       const lat = questionItem.lat;
       const lng = questionItem.lng;
-
-      let icon = null;
-      if (isMountain) {
-        icon = this.createMountainPrismIcon(questionItem);
-      } else {
-        icon = L.divIcon({
-          className: 'pulse-marker-icon',
-          html: '<div class="pulse-circle"></div>',
-          iconSize: [26, 26],
-          iconAnchor: [13, 13]
-        });
-      }
+      const icon = this.getCustomCategoryIcon(questionItem);
 
       this.currentMarker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
 
@@ -195,22 +280,28 @@ class GeographyMap {
     } else if (shapeType === 'polyline') {
       const coords = questionItem.coordinates;
       
-      const polyColor = isMountain ? '#f59e0b' : '#ef4444';
-      const polyClass = isMountain ? 'mountain-range-polyline' : 'animated-pulse-polyline';
+      let polyColor = '#ef4444';
+      let polyClass = 'animated-pulse-polyline';
+      if (isMountain) {
+        polyColor = '#f59e0b';
+        polyClass = 'mountain-range-polyline';
+      } else if (isStrait) {
+        polyColor = '#0284c7';
+      }
 
       this.currentShapeLayer = L.polyline(coords, {
         color: polyColor,
-        weight: isMountain ? 7 : 6,
+        weight: isMountain ? 7 : (isStrait ? 8 : 6),
         opacity: 0.9,
         className: polyClass,
         lineCap: 'round',
         lineJoin: 'round'
       }).addTo(this.map);
 
-      // Sıra dağın tepe noktasına 3D Dağ Prizması koy
-      if (isMountain && questionItem.lat && questionItem.lng) {
-        const prismIcon = this.createMountainPrismIcon(questionItem);
-        this.currentMarker = L.marker([questionItem.lat, questionItem.lng], { icon: prismIcon }).addTo(this.map);
+      // Tepe / Merkez noktasına özel kategori ikonu koy
+      if (questionItem.lat && questionItem.lng) {
+        const centerIcon = this.getCustomCategoryIcon(questionItem);
+        this.currentMarker = L.marker([questionItem.lat, questionItem.lng], { icon: centerIcon }).addTo(this.map);
       }
 
       if (this.autoZoomEnabled) {
@@ -507,50 +598,44 @@ class GeographyMap {
       const color = item.color || defaultColor;
       const shapeType = item.shapeType || 'point';
       const isMountain = item.category === 'daglar' || (item.type || '').toLowerCase().includes('dağ');
+      const isStrait = (item.type || '').toLowerCase().includes('deniz boğazı');
+
+      const customIcon = this.getCustomCategoryIcon(item);
 
       if (shapeType === 'point' || !item.coordinates || !Array.isArray(item.coordinates[0])) {
-        let markerIcon = null;
-        if (isMountain) {
-          markerIcon = this.createMountainPrismIcon(item);
-        } else {
-          markerIcon = L.divIcon({
-            className: 'explore-point-marker',
-            html: `<div class="explore-point-icon" style="background-color: ${color};"></div>`,
-            iconSize: [14, 14],
-            iconAnchor: [7, 7]
-          });
-        }
-
-        const marker = L.marker([item.lat, item.lng], { icon: markerIcon });
+        const marker = L.marker([item.lat, item.lng], { icon: customIcon });
         const popupContent = `
-          <div class="popup-title">${isMountain ? '🏔️ ' : ''}${item.name}</div>
+          <div class="popup-title">${item.name}</div>
           <div class="popup-type">${item.type} (${item.region || ''})</div>
           <div class="popup-text">${item.kpssNot || ''}</div>
         `;
         marker.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(marker);
       } else if (shapeType === 'polyline') {
-        const polyColor = isMountain ? '#d97706' : color;
+        let polyColor = color;
+        if (isMountain) polyColor = '#d97706';
+        else if (isStrait) polyColor = '#0284c7';
+        else if (item.category === 'su_kaynaklari') polyColor = '#2563eb';
+
         const line = L.polyline(item.coordinates, {
           color: polyColor,
-          weight: isMountain ? 5 : 4,
+          weight: isMountain ? 5 : (isStrait ? 6 : 4),
           opacity: 0.9,
           dashArray: isMountain ? '8, 4' : null
         });
         const popupContent = `
-          <div class="popup-title">${isMountain ? '🏔️ ' : ''}${item.name}</div>
-          <div class="popup-type">${item.type} (${item.region || 'Sıradağ / Hat'})</div>
+          <div class="popup-title">${item.name}</div>
+          <div class="popup-type">${item.type} (${item.region || 'Hat/Güzergah'})</div>
           <div class="popup-text">${item.kpssNot || ''}</div>
         `;
         line.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(line);
 
-        // Sıra dağın tepe noktasına da 3D Prizma koy
-        if (isMountain && item.lat && item.lng) {
-          const mountainIcon = this.createMountainPrismIcon(item);
-          const peakMarker = L.marker([item.lat, item.lng], { icon: mountainIcon });
-          peakMarker.bindPopup(popupContent, { maxWidth: 280 });
-          this.exploreLayerGroup.addLayer(peakMarker);
+        // Tepe veya merkez noktasına da rozet ikonunu koy
+        if (item.lat && item.lng) {
+          const centerMarker = L.marker([item.lat, item.lng], { icon: customIcon });
+          centerMarker.bindPopup(popupContent, { maxWidth: 280 });
+          this.exploreLayerGroup.addLayer(centerMarker);
         }
       } else if (shapeType === 'polygon') {
         const polygon = L.polygon(item.coordinates, {
@@ -566,6 +651,12 @@ class GeographyMap {
         `;
         polygon.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(polygon);
+
+        if (item.lat && item.lng) {
+          const centerMarker = L.marker([item.lat, item.lng], { icon: customIcon });
+          centerMarker.bindPopup(popupContent, { maxWidth: 280 });
+          this.exploreLayerGroup.addLayer(centerMarker);
+        }
       }
     });
 

@@ -1346,6 +1346,40 @@ const COGRAFYA_DATA = {
       lng: 31.35,
       region: "Karadeniz / Marmara",
       kpssNot: "İstanbul ile Ankara arasındaki en kritik dağ geçişidir. Bolu Dağı Tüneli ile ulaşım kolaylaşmıştır."
+    },
+
+    // --- STRATEJİK DENİZ BOĞAZLARI ---
+    {
+      id: "bogaz_istanbul",
+      name: "İstanbul Boğazı (Bosphorus)",
+      category: "gecitler",
+      shapeType: "polyline",
+      coordinates: [
+        [41.24, 29.13],
+        [41.13, 29.07],
+        [41.02, 29.00]
+      ],
+      lat: 41.12,
+      lng: 29.05,
+      type: "Deniz Boğazı (Ria Kıyı / Su Yolu)",
+      region: "Marmara (İstanbul)",
+      kpssNot: "Karadeniz ile Marmara'yı bağlayan dünyaca ünlü ria tipi su yoludur. Karadeniz'den Marmara'ya üst akıntı, Marmara'dan Karadeniz'e alt akıntı gerçekleşir."
+    },
+    {
+      id: "bogaz_canakkale",
+      name: "Çanakkale Boğazı (Dardanelles)",
+      category: "gecitler",
+      shapeType: "polyline",
+      coordinates: [
+        [40.40, 26.68],
+        [40.18, 26.40],
+        [40.03, 26.20]
+      ],
+      lat: 40.15,
+      lng: 26.40,
+      type: "Deniz Boğazı (Ria Kıyı / Su Yolu)",
+      region: "Marmara / Ege",
+      kpssNot: "Marmara Denizi ile Ege Denizi'ni bağlayan tarihi ve stratejik ria tipi boğazdır. En dar yeri Nara Burnu'dur."
     }
   ]
 };
@@ -1386,9 +1420,10 @@ const SUB_TYPES = {
     { id: "goller", label: "Göller", icon: "🏞️", filter: (item) => (item.type || "").toLowerCase().includes("göl") }
   ],
   gecitler: [
-    { id: "all", label: "Tüm Geçitler", icon: "🚪" },
-    { id: "karadeniz", label: "Karadeniz Geçitleri", icon: "🌲", filter: (item) => (item.region || "").toLowerCase().includes("karadeniz") },
-    { id: "akdeniz", label: "Akdeniz Geçitleri", icon: "☀️", filter: (item) => (item.region || "").toLowerCase().includes("akdeniz") }
+    { id: "all", label: "Tüm Geçit & Boğazlar", icon: "🚪" },
+    { id: "karadeniz", label: "Karadeniz Geçitleri", icon: "🌲", filter: (item) => (item.region || "").toLowerCase().includes("karadeniz") && !(item.type || "").toLowerCase().includes("deniz boğazı") },
+    { id: "akdeniz", label: "Akdeniz Geçitleri", icon: "☀️", filter: (item) => (item.region || "").toLowerCase().includes("akdeniz") },
+    { id: "bogazlar", label: "Deniz Boğazları", icon: "🌉", filter: (item) => (item.type || "").toLowerCase().includes("deniz boğazı") || (item.type || "").toLowerCase().includes("su yolu") }
   ],
   ozel_cizimler: [
     { id: "all", label: "Tüm Çizimlerim", icon: "🎨" },
