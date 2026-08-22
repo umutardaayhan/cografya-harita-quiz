@@ -260,3 +260,11 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 20:13
+⚠️ Sorun/İhtiyaç: KPSS sınavı için göl sayısının yetersiz olması ve müfredatta çıkan tüm göl oluşum türlerini (Tektonik, Karstik, Volkanik/Set, Heyelan Set, Kıyı Set/Lagün, Alüvyal Set, Buzul/Sirk) kapsayacak en az 25 göllük zengin bir havuz ihtiyacı.
+🎯 İşlem Özeti: data/cografya_data.js içindeki göl sayısı 14'ten tam 35 adede çıkarıldı; Nemrut Kalderası, Manyas, Sapanca, Burdur, Hazar, Borçka Karagöl, Sera, Akyatan Lagünü, Büyükçekmece, Küçükçekmece, Mogan, Eymir, Balık Gölü, Erçek, Nazik, Kaçkar Deniz Gölü ve Uludağ Aynalıgöl gibi tüm kritik KPSS gölleri eklendi; SUB_TYPES.su_kaynaklari altına 7 farklı göl oluşum filtre butonu entegre edildi.
+📁 Etkilenen Kapsam: 
+  - data/cografya_data.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

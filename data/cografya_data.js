@@ -1142,17 +1142,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Karstik (voklüz) gür kaynaklarla beslendiği için AKIMI YIL BOYUNCA EN DÜZENLİ akarsularımızdandır."
     },
 
-    // --- GÖLLER ---
-    {
-      id: "gol_van",
-      name: "Van Gölü",
-      category: "su_kaynaklari",
-      type: "Volkanik Set / Tektonik Göl",
-      lat: 38.60,
-      lng: 42.90,
-      region: "Doğu Anadolu",
-      kpssNot: "TÜRKİYE'NİN EN BÜYÜK GÖLÜDÜR (Karma oluşumlu: Nemrut lavları önünü kapatmıştır). Suları SODALIDIR. İnci kefali yaşar. Tatvan-Van arası feribotla demiryolu bağlantısı vardır."
-    },
+    // --- GÖLLER (KPSS TÜM OLUŞUM TİPLERİ) ---
+    // 1. TEKTONİK GÖLLER
     {
       id: "gol_tuz",
       name: "Tuz Gölü",
@@ -1161,27 +1152,7 @@ const COGRAFYA_DATA = {
       lat: 38.75,
       lng: 33.30,
       region: "İç Anadolu",
-      kpssNot: "Türkiye'nin 2. büyük gölüdür ancak yazın buharlaşmayla alanı en çok küçülen göldür. Türkiye tuz ihtiyacının büyük kısmını karşılar."
-    },
-    {
-      id: "gol_beysehir",
-      name: "Beyşehir Gölü",
-      category: "su_kaynaklari",
-      type: "Tektonik - Karstik Göl",
-      lat: 37.75,
-      lng: 31.50,
-      region: "Akdeniz (Göller Yöresi)",
-      kpssNot: "TÜRKİYE'NİN EN BÜYÜK TATLI SU GÖLÜDÜR. Gideğeni (Çarşamba Çayı) olduğu için suları tatlıdır. Milli parktır."
-    },
-    {
-      id: "gol_egirdir",
-      name: "Eğirdir Gölü",
-      category: "su_kaynaklari",
-      type: "Tektonik - Karstik Göl",
-      lat: 38.05,
-      lng: 30.85,
-      region: "Akdeniz (Göller Yöresi)",
-      kpssNot: "Türkiye'nin 2. büyük tatlı su gölüdür. Kovada Kanalı ile Kovada Gölü'ne ve hidroelektrik santraline su verir."
+      kpssNot: "Türkiye'nin 2. büyük gölüdür; yazın buharlaşmayla alanı en çok değişen göldür. Türkiye tuz ihtiyacının %40'tan fazlasını karşılar (Kapalı Havza)."
     },
     {
       id: "gol_iznik",
@@ -1190,8 +1161,110 @@ const COGRAFYA_DATA = {
       type: "Tektonik Göl",
       lat: 40.43,
       lng: 29.50,
-      region: "Marmara",
-      kpssNot: "Marmara Bölgesi'nin en büyük doğal gölüdür. Suları tatlıdır."
+      region: "Marmara (Bursa)",
+      kpssNot: "Marmara Bölgesi'nin en büyük doğal tatlı su gölüdür. Gideğeni (Karsak Deresi) olduğu için suları tatlıdır; bazilika batığıyla ünlüdür."
+    },
+    {
+      id: "gol_sapanca",
+      name: "Sapanca Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl",
+      lat: 40.71,
+      lng: 30.26,
+      region: "Marmara (Sakarya-Kocaeli)",
+      kpssNot: "Kuzey Anadolu Fay Hattı (KAF) çöküntü oluğunda yer alan, içme ve sanayi suyu sağlayan önemli tektonik tatlı su gölüdür."
+    },
+    {
+      id: "gol_manyas",
+      name: "Manyas (Kuş) Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl (Ramsar)",
+      lat: 40.20,
+      lng: 27.96,
+      region: "Marmara (Balıkesir)",
+      kpssNot: "Kuş Cenneti Milli Parkı ve RAMSAR alanıdır. Göçmen kuşların en önemli konaklama sahalarındandır. Suları tatlıdır."
+    },
+    {
+      id: "gol_uluabat",
+      name: "Uluabat (Apolyont) Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl (Ramsar)",
+      lat: 40.18,
+      lng: 28.60,
+      region: "Marmara (Bursa)",
+      kpssNot: "Ramsar koruma alanıdır. Gölyazı adası ve Avrupa Leylek Köyü (Eskikaraağaç) buradadır. Sığ ve tatlı bir tektonik göldür."
+    },
+    {
+      id: "gol_burdur",
+      name: "Burdur Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl (Kapalı Havza)",
+      lat: 37.75,
+      lng: 30.18,
+      region: "Akdeniz (Göller Yöresi)",
+      kpssNot: "Gideğeni olmadığı için suları ACI ve TUZLUDUR. Dikkuyruk ördeklerinin kışlama sahasıdır. Ramsar alanıdır."
+    },
+    {
+      id: "gol_hazar",
+      name: "Hazar Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl",
+      lat: 38.49,
+      lng: 39.41,
+      region: "Doğu Anadolu (Elazığ)",
+      kpssNot: "Doğu Anadolu Fay Hattı üzerindedir. Dicle Nehri bu gölün yakınlarından doğar. İçinde su altı batık şehir kalıntıları yer alır."
+    },
+    {
+      id: "gol_aksehir",
+      name: "Akşehir Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl (Kapalı Havza)",
+      lat: 38.58,
+      lng: 31.42,
+      region: "İç Anadolu (Konya-Afyon)",
+      kpssNot: "Nasreddin Hoca'nın 'Ya tutarsa' diyerek maya çaldığı tarihi göldür. İklim değişikliği ve aşırı sulama nedeniyle kuruma tehdidi altındadır."
+    },
+    {
+      id: "gol_eber",
+      name: "Eber Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl",
+      lat: 38.62,
+      lng: 31.18,
+      region: "İç Anadolu (Afyonkarahisar)",
+      kpssNot: "Üzerinde 'Kopak' adı verilen yüzen sazlık adacıklarıyla ünlü, biyolojik çeşitliliği zengin sığ tektonik göldür."
+    },
+    {
+      id: "gol_seyfe",
+      name: "Seyfe Gölü",
+      category: "su_kaynaklari",
+      type: "Tektonik Göl (Ramsar)",
+      lat: 39.20,
+      lng: 34.38,
+      region: "İç Anadolu (Kırşehir)",
+      kpssNot: "Ramsar koruma alanı olan tuzlu göldür. Flamingo ve turnaların İç Anadolu'daki en önemli üreme/durak noktalarındandır."
+    },
+
+    // 2. KARMA VE KARSTİK GÖLLER
+    {
+      id: "gol_beysehir",
+      name: "Beyşehir Gölü",
+      category: "su_kaynaklari",
+      type: "Karma Oluşumlu (Tektonik - Karstik)",
+      lat: 37.75,
+      lng: 31.50,
+      region: "Akdeniz (Göller Yöresi)",
+      kpssNot: "TÜRKİYE'NİN EN BÜYÜK TATLI SU GÖLÜDÜR (Gideğeni Çarşamba Çayı ile Konya Ovası'nı sular). Milli park statüsündedir."
+    },
+    {
+      id: "gol_egirdir",
+      name: "Eğirdir Gölü",
+      category: "su_kaynaklari",
+      type: "Karma Oluşumlu (Tektonik - Karstik)",
+      lat: 38.05,
+      lng: 30.85,
+      region: "Akdeniz (Göller Yöresi)",
+      kpssNot: "Türkiye'nin 2. büyük tatlı su gölüdür. Kovada Kanalı ile Kovada Gölü'ne ve HES santrallerine tatlı su aktarır."
     },
     {
       id: "gol_salda",
@@ -1200,58 +1273,50 @@ const COGRAFYA_DATA = {
       type: "Karstik Göl",
       lat: 37.55,
       lng: 29.68,
-      region: "Akdeniz (Burdur)",
-      kpssNot: "Türkiye'nin Maldivleri olarak anılır. Magnezyum zengini beyaz kumulları Mars kayaç yapısıyla benzerlik gösterir."
+      region: "Akdeniz (Burdur/Yeşilova)",
+      kpssNot: "Türkiye'nin en derin göllerindendir (184 m). Beyaz hidromanyezit kumulları Mars kayaç yapısıyla benzerlik gösterir (Türkiye'nin Maldivleri)."
     },
     {
-      id: "gol_cildir",
-      name: "Çıldır Gölü",
+      id: "gol_kovada",
+      name: "Kovada Gölü",
       category: "su_kaynaklari",
-      type: "Volkanik Set Gölü",
-      lat: 41.05,
-      lng: 43.25,
-      region: "Doğu Anadolu (Ardahan-Kars)",
-      kpssNot: "Kışın yüzeyi tamamen donar; atlı kızak ve buz altı balıkçılığı (eski usul) ile ünlüdür."
+      type: "Karstik Göl (Milli Park)",
+      lat: 37.64,
+      lng: 30.87,
+      region: "Akdeniz (Isparta)",
+      kpssNot: "Eğirdir Gölü'nün fazla sularının aktığı karstik milli park gölüdür; çevresi zengin flora ve yaban hayatına sahiptir."
     },
     {
-      id: "gol_terkos",
-      name: "Terkos (Durusu) Gölü",
+      id: "gol_avlan",
+      name: "Avlan Gölü",
       category: "su_kaynaklari",
-      type: "Kıyı Set Gölü (Lagün)",
-      lat: 41.33,
-      lng: 28.58,
-      region: "Marmara (İstanbul)",
-      kpssNot: "Dalga biriktirmesiyle koy önünün kapanması sonucu oluşan klasik KIYI SET (LAGÜN) gölü örneğidir. İstanbul'un önemli su kaynağıdır."
+      type: "Karstik Göl (Polye)",
+      lat: 36.59,
+      lng: 29.93,
+      region: "Akdeniz (Antalya/Elmalı)",
+      kpssNot: "Elmalı polyesi tabanında karstik düdenlerle beslenen göldür; kurutulduktan sonra iklim bozulunca yeniden su tutulmuştur."
     },
     {
-      id: "gol_abant",
-      name: "Abant Gölü",
+      id: "gol_kizoren",
+      name: "Kızören Obruk Gölü",
       category: "su_kaynaklari",
-      type: "Heyelan Set Gölü",
-      lat: 40.60,
-      lng: 31.28,
-      region: "Karadeniz (Bolu)",
-      kpssNot: "Heyelan sonucu vadi önünün kapanmasıyla oluşan turistik heyelan set gölüdür."
+      type: "Karstik Obruk Gölü (Ramsar)",
+      lat: 38.17,
+      lng: 33.18,
+      region: "İç Anadolu (Konya)",
+      kpssNot: "Türkiye'nin en tipik kireçtaşı karstik obruk gölüdür. 180 metre derinliğindeki dikey çanakta su birikmiştir; Ramsar alanıdır."
     },
+
+    // 3. VOLKANİK GÖLLER (KRATER / KALDERA / MAAR)
     {
-      id: "gol_yedigoller",
-      name: "Yedigöller",
+      id: "gol_nemrut",
+      name: "Nemrut Kaldera Gölü",
       category: "su_kaynaklari",
-      type: "Heyelan Set Gölleri",
-      lat: 40.94,
-      lng: 31.74,
-      region: "Karadeniz (Bolu)",
-      kpssNot: "Birden çok heyelanın vadiyi basamaklı kapatmasıyla oluşan 7 gölden (Büyükgöl, Seringöl vb.) oluşan milli parktır."
-    },
-    {
-      id: "gol_tortum",
-      name: "Tortum Gölü",
-      category: "su_kaynaklari",
-      type: "Heyelan Set Gölü",
-      lat: 40.65,
-      lng: 41.65,
-      region: "Doğu Anadolu (Erzurum)",
-      kpssNot: "Kheyelan set gölüdür; gölün taşan suları Tortum Şelalesi'ni oluşturur."
+      type: "Volkanik Kaldera Gölü (Ramsar)",
+      lat: 38.62,
+      lng: 42.24,
+      region: "Doğu Anadolu (Bitlis)",
+      kpssNot: "Nemrut Yanardağı'nın patlamasıyla oluşan çanakta gelişen, DÜNYANIN 2. BÜYÜK KALDERA GÖLÜDÜR. Ramsar ve EDEN ödüllü doğa harikasıdır."
     },
     {
       id: "gol_meke",
@@ -1261,8 +1326,186 @@ const COGRAFYA_DATA = {
       lat: 37.69,
       lng: 33.64,
       region: "İç Anadolu (Konya/Karapınar)",
-      kpssNot: "Gaz patlaması sonucu oluşan çanakta gelişen, 'Dünyanın Nazar Boncuğu' olarak bilinen maar gölüdür."
+      kpssNot: "Gaz patlaması sonucu oluşan çanak ve ortasındaki volkan konisiyle 'Dünyanın Nazar Boncuğu' olarak anılan Ramsar maar gölüdür."
     },
+    {
+      id: "gol_golcuk_isparta",
+      name: "Gölcük Krater Gölü (Isparta)",
+      category: "su_kaynaklari",
+      type: "Volkanik Maar / Krater Gölü",
+      lat: 37.73,
+      lng: 30.49,
+      region: "Akdeniz (Isparta)",
+      kpssNot: "Genç volkanik patlama krateri içinde yer alan tabiat parkı gölüdür; suları tatlıdır."
+    },
+
+    // 4. VOLKANİK SET GÖLLERİ (VAN GÖLÜ HAVZASI VE DOĞU ANADOLU)
+    {
+      id: "gol_van",
+      name: "Van Gölü",
+      category: "su_kaynaklari",
+      type: "Volkanik Set / Tektonik (Karma)",
+      lat: 38.60,
+      lng: 42.90,
+      region: "Doğu Anadolu",
+      kpssNot: "TÜRKİYE'NİN EN BÜYÜK GÖLÜDÜR (Nemrut lavları önünü kesmiştir). Suları SODALI ve TUZLUDUR. İnci kefali yaşar. Van-Tatvan feribot hattı bulunur."
+    },
+    {
+      id: "gol_cildir",
+      name: "Çıldır Gölü",
+      category: "su_kaynaklari",
+      type: "Volkanik Set Gölü",
+      lat: 41.05,
+      lng: 43.25,
+      region: "Doğu Anadolu (Ardahan-Kars)",
+      kpssNot: "Lav akıntısının vadiyi tıkamasıyla oluşan yüksek rakımlı göldür. Kışın 1 metreye varan buz tutar; atlı kızak ve Eskimo usulü balıkçılık yapılır."
+    },
+    {
+      id: "gol_ercek",
+      name: "Erçek Gölü",
+      category: "su_kaynaklari",
+      type: "Volkanik Set Gölü",
+      lat: 38.64,
+      lng: 43.58,
+      region: "Doğu Anadolu (Van)",
+      kpssNot: "Van Gölü'nün doğusunda yer alan volkanik set gölüdür; suları sodalıdır ve flamingoların önemli göç konaklama merkezidir."
+    },
+    {
+      id: "gol_nazik",
+      name: "Nazik Gölü",
+      category: "su_kaynaklari",
+      type: "Volkanik Set Gölü",
+      lat: 38.85,
+      lng: 42.27,
+      region: "Doğu Anadolu (Bitlis/Ahlat)",
+      kpssNot: "Nemrut ve Süphan lavlarının önünü kapatmasıyla oluşan, kışın buz tutan tatlı su volkanik set gölüdür."
+    },
+    {
+      id: "gol_balik",
+      name: "Balık Gölü",
+      category: "su_kaynaklari",
+      type: "Volkanik Set Gölü",
+      lat: 39.75,
+      lng: 43.57,
+      region: "Doğu Anadolu (Ağrı/Taşlıçay)",
+      kpssNot: "Türkiye'nin en yüksek rakımlı tatlı su göllerindendir (2.250 m). Kırmızı benekli alabalığı ile ünlüdür."
+    },
+    {
+      id: "gol_hacli",
+      name: "Haçlı (Bulanık) Gölü",
+      category: "su_kaynaklari",
+      type: "Volkanik Set Gölü",
+      lat: 39.02,
+      lng: 42.31,
+      region: "Doğu Anadolu (Muş/Bulanık)",
+      kpssNot: "Volkanik lavların Şeyh Deresi vadisini tıkamasıyla oluşan sığ volkanik set gölüdür."
+    },
+
+    // 5. HEYELAN SET GÖLLERİ (KARADENİZ VE DOĞU ANADOLU)
+    {
+      id: "gol_abant",
+      name: "Abant Gölü",
+      category: "su_kaynaklari",
+      type: "Heyelan Set Gölü",
+      lat: 40.60,
+      lng: 31.28,
+      region: "Karadeniz (Bolu)",
+      kpssNot: "Heyelan kütlesinin vadi önünü kapatmasıyla oluşan Türkiye'nin en ünlü heyelan set gölü ve milli parkıdır."
+    },
+    {
+      id: "gol_yedigoller",
+      name: "Yedigöller",
+      category: "su_kaynaklari",
+      type: "Heyelan Set Gölleri",
+      lat: 40.94,
+      lng: 31.74,
+      region: "Karadeniz (Bolu)",
+      kpssNot: "Birden çok heyelanın vadiyi basamaklı kapatmasıyla oluşan 7 gölden (Büyükgöl, Seringöl, Deringöl, Nazlıgöl vb.) meydana gelir."
+    },
+    {
+      id: "gol_tortum",
+      name: "Tortum Gölü",
+      category: "su_kaynaklari",
+      type: "Heyelan Set Gölü",
+      lat: 40.65,
+      lng: 41.65,
+      region: "Doğu Anadolu (Erzurum/Uzundere)",
+      kpssNot: "Kemerlidağ'dan kopan heyelan kütlesinin Tortum Çayı vadisini kapatmasıyla oluşmuştur; taşan suları ünlü Tortum Şelalesi'ni oluşturur."
+    },
+    {
+      id: "gol_sera",
+      name: "Sera Gölü",
+      category: "su_kaynaklari",
+      type: "Heyelan Set Gölü",
+      lat: 40.98,
+      lng: 39.62,
+      region: "Karadeniz (Trabzon/Akçaabat)",
+      kpssNot: "1950 yılında meydana gelen büyük bir heyelanın Sera Deresi önünü birkaç günde kapatmasıyla gözler önünde oluşmuş tipik heyelan set gölüdür."
+    },
+    {
+      id: "gol_borcka_karagol",
+      name: "Borçka Karagöl",
+      category: "su_kaynaklari",
+      type: "Heyelan Set Gölü (Milli Park)",
+      lat: 41.38,
+      lng: 41.85,
+      region: "Karadeniz (Artvin/Borçka)",
+      kpssNot: "Klaskur Yaylası'ndan gelen heyelanın dere yatağını kapatmasıyla oluşan tabiat parkı ve biyosfer rezerv alanıdır."
+    },
+    {
+      id: "gol_zinav",
+      name: "Zinav Gölü",
+      category: "su_kaynaklari",
+      type: "Heyelan Set Gölü",
+      lat: 40.47,
+      lng: 37.26,
+      region: "Karadeniz (Tokat/Reşadiye)",
+      kpssNot: "Kelkit Havzası'nda bir heyelanın dere vadisini kapatmasıyla oluşmuş doğa harikası heyelan set gölüdür."
+    },
+
+    // 6. KIYI SET GÖLLERİ (LAGÜN / DENİZKULAĞI)
+    {
+      id: "gol_terkos",
+      name: "Terkos (Durusu) Gölü",
+      category: "su_kaynaklari",
+      type: "Kıyı Set Gölü (Lagün)",
+      lat: 41.33,
+      lng: 28.58,
+      region: "Marmara (İstanbul)",
+      kpssNot: "Karadeniz kıyısındaki koyun dalga biriktirmesi (kıyı kordonu) ile kapanması sonucu oluşan klasik LAGÜN gölüdür; İstanbul'un ana içme suyudur."
+    },
+    {
+      id: "gol_buyukcekmece",
+      name: "Büyükçekmece Gölü",
+      category: "su_kaynaklari",
+      type: "Kıyı Set Gölü (Lagün)",
+      lat: 41.06,
+      lng: 28.55,
+      region: "Marmara (İstanbul)",
+      kpssNot: "Marmara Denizi kıyısında koy önünün kıyı kordonuyla kapatılmasıyla oluşmuş tipik lagün gölüdür (Mimar Sinan Köprüsü buradadır)."
+    },
+    {
+      id: "gol_kucukcekmece",
+      name: "Küçükçekmece Gölü",
+      category: "su_kaynaklari",
+      type: "Kıyı Set Gölü (Lagün)",
+      lat: 40.99,
+      lng: 28.76,
+      region: "Marmara (İstanbul)",
+      kpssNot: "Marmara kıyısında denizle bağlantısı daralan lagün gölüdür; kıyısında Türkiye'nin en eski yerleşimlerinden Yarımburgaz Mağarası bulunur."
+    },
+    {
+      id: "gol_akyatan",
+      name: "Akyatan Lagünü",
+      category: "su_kaynaklari",
+      type: "Kıyı Set Gölü (Lagün / Ramsar)",
+      lat: 36.63,
+      lng: 35.25,
+      region: "Akdeniz (Adana/Çukurova)",
+      kpssNot: "Seyhan ve Ceyhan deltası üzerinde TÜRKİYE'NİN EN BÜYÜK LAGÜN GÖLÜDÜR. Caretta Caretta ve yeşil deniz kaplumbağalarının ana üreme Ramsar sahasıdır."
+    },
+
+    // 7. ALÜVYAL SET GÖLLERİ
     {
       id: "gol_koycegiz",
       name: "Köyceğiz Gölü",
@@ -1271,7 +1514,7 @@ const COGRAFYA_DATA = {
       lat: 36.90,
       lng: 28.65,
       region: "Ege (Muğla)",
-      kpssNot: "Alüvyonların koy önünü kapatmasıyla oluşan göldür; Dalyan kanalı ile İztuzu Plajı'ndan Akdeniz'e bağlanır."
+      kpssNot: "Namnam Çayı alüvyonlarının körfez önünü kapatmasıyla oluşmuştur. Dalyan kanalı üzerinden Akdeniz'e (İztuzu Plajı) bağlanır (Tatlı-tuzlu su karışımı)."
     },
     {
       id: "gol_bafa",
@@ -1281,7 +1524,59 @@ const COGRAFYA_DATA = {
       lat: 37.50,
       lng: 27.42,
       region: "Ege (Aydın-Muğla)",
-      kpssNot: "Büyük Menderes'in taşıdığı alüvyonların Latmos Körfezi önünü kapatmasıyla denizden ayrılan alüvyal set gölüdür."
+      kpssNot: "Büyük Menderes Nehri'nin taşıdığı alüvyonların eski Latmos Körfezi önünü kapatmasıyla denizden koparak göle dönüşmüştür."
+    },
+    {
+      id: "gol_mogan",
+      name: "Mogan Gölü (Gölbaşı)",
+      category: "su_kaynaklari",
+      type: "Alüvyal Set Gölü",
+      lat: 39.77,
+      lng: 32.79,
+      region: "İç Anadolu (Ankara)",
+      kpssNot: "Yan derelerin getirdiği alüvyonların Mogan Deresi vadisini kapatmasıyla oluşmuş rekreasyon ve göçmen kuş gölüdür."
+    },
+    {
+      id: "gol_eymir",
+      name: "Eymir Gölü",
+      category: "su_kaynaklari",
+      type: "Alüvyal Set Gölü",
+      lat: 39.82,
+      lng: 32.83,
+      region: "İç Anadolu (Ankara)",
+      kpssNot: "Mogan Gölü'nün gideğeni ile beslenen, ODTÜ arazisi içinde yer alan tipik bir alüvyal set gölüdür."
+    },
+    {
+      id: "gol_marmara_manisa",
+      name: "Marmara Gölü (Manisa)",
+      category: "su_kaynaklari",
+      type: "Alüvyal Set / Tektonik",
+      lat: 38.61,
+      lng: 28.02,
+      region: "Ege (Manisa/Gölmarmara)",
+      kpssNot: "Gediz grabeninde alüvyonların çöküntü alanını kapatmasıyla oluşan önemli sulak alan ve balıkçılık gölüdür."
+    },
+
+    // 8. BUZUL (SİRK) GÖLLERİ
+    {
+      id: "gol_kackar_deniz",
+      name: "Kaçkar Deniz Gölü (Buzul Sirk)",
+      category: "su_kaynaklari",
+      type: "Buzul (Sirk) Gölü",
+      lat: 40.83,
+      lng: 41.16,
+      region: "Karadeniz (Rize-Artvin)",
+      kpssNot: "Kaçkar Dağları'nın zirvesinde (3.370 m) buzul aşındırması sonucu oluşan çanakta gelişen TÜRKİYE'NİN EN DERİN BUZUL (SİRK) GÖLÜDÜR."
+    },
+    {
+      id: "gol_uludag_aynali",
+      name: "Uludağ Aynalıgöl (Buzul Sirk)",
+      category: "su_kaynaklari",
+      type: "Buzul (Sirk) Gölü",
+      lat: 40.11,
+      lng: 29.17,
+      region: "Marmara (Bursa/Uludağ)",
+      kpssNot: "Batı Anadolu'da kuaterner buzullaşmasının izlerini taşıyan Uludağ zirve platosundaki sirk göllerindendir (Kilimli, Karagöl ile birlikte)."
     }
   ],
 
@@ -1713,7 +2008,13 @@ const SUB_TYPES = {
   su_kaynaklari: [
     { id: "all", label: "Tüm Su Kaynakları", icon: "🌊" },
     { id: "akarsular", label: "Akarsular / Nehirler", icon: "〰️", filter: (item) => item.shapeType === "polyline" || (item.type || "").toLowerCase().includes("akarsu") || (item.type || "").toLowerCase().includes("çay") },
-    { id: "goller", label: "Göller", icon: "🏞️", filter: (item) => (item.type || "").toLowerCase().includes("göl") }
+    { id: "goller", label: "Tüm Göller (30+)", icon: "🏞️", filter: (item) => (item.type || "").toLowerCase().includes("göl") || (item.type || "").toLowerCase().includes("lagün") || (item.type || "").toLowerCase().includes("maar") },
+    { id: "tektonik_gol", label: "Tektonik Göller", icon: "💥", filter: (item) => (item.type || "").toLowerCase().includes("tektonik") },
+    { id: "karstik_gol", label: "Karstik Göller", icon: "💧", filter: (item) => (item.type || "").toLowerCase().includes("karstik") || (item.type || "").toLowerCase().includes("obruk") },
+    { id: "volkanik_gol", label: "Volkanik & Set Gölleri", icon: "🌋", filter: (item) => (item.type || "").toLowerCase().includes("volkanik") || (item.type || "").toLowerCase().includes("maar") || (item.type || "").toLowerCase().includes("kaldera") },
+    { id: "heyelan_gol", label: "Heyelan Set Gölleri", icon: "⛰️", filter: (item) => (item.type || "").toLowerCase().includes("heyelan") },
+    { id: "kiyi_aluvyal_gol", label: "Kıyı Set (Lagün) & Alüvyal", icon: "🏖️", filter: (item) => (item.type || "").toLowerCase().includes("kıyı") || (item.type || "").toLowerCase().includes("lagün") || (item.type || "").toLowerCase().includes("alüvyal") },
+    { id: "buzul_gol", label: "Buzul (Sirk) Gölleri", icon: "❄️", filter: (item) => (item.type || "").toLowerCase().includes("buzul") || (item.type || "").toLowerCase().includes("sirk") }
   ],
   gecitler: [
     { id: "all", label: "Tüm Geçit & Boğazlar", icon: "🚪" },
