@@ -268,3 +268,11 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 20:17
+⚠️ Sorun/İhtiyaç: sub-categories-bar divinin tek satıra sıkışması ve çok sayıda alt tür hap butonu olduğunda butonların sıkışması sorunu.
+🎯 İşlem Özeti: sub-categories-bar divi flex-wrap: wrap, dinamik çok satırlı akış, justify-content: center ve 18px yumuşak kenarlık yapısına kavuşturuldu; hap butonları ekran genişliğine göre alt alta ferahça akacak şekilde düzenlendi.
+📁 Etkilenen Kapsam: 
+  - css/style.css
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

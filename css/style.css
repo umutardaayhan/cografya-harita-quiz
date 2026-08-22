@@ -71,40 +71,41 @@ body {
   pointer-events: auto;
 }
 
-/* Alt Oluşum / Tür Filtreleme Barı (Pills) */
+/* Alt Oluşum / Tür Filtreleme Barı (Dinamik & Çok Satırlı Esnek Akış) */
 .sub-categories-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
-  background: rgba(15, 23, 42, 0.88);
+  justify-content: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.92);
   border: 1px solid var(--bg-card-border);
-  padding: 3px 8px;
-  border-radius: 9999px;
-  backdrop-filter: blur(12px);
+  padding: 6px 12px;
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
   box-shadow: var(--shadow);
-  overflow-x: auto;
-  scrollbar-width: none;
+  max-width: 95vw;
   pointer-events: auto;
   animation: fadeIn 0.2s ease;
 }
 
-.sub-categories-bar::-webkit-scrollbar {
+.sub-categories-bar:empty {
   display: none;
 }
 
 .sub-type-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  gap: 5px;
+  padding: 5px 11px;
   border-radius: 9999px;
-  border: 1px solid transparent;
-  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
