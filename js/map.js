@@ -698,4 +698,8 @@ class GeographyMap {
     this.exploreLayerGroup.clearLayers();
     this.drawingLayerGroup.clearLayers();
   }
+
+  clearAllLayers() {
+    this.clearAll();
+  }
 }

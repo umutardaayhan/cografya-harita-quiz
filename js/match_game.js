@@ -1,6 +1,5 @@
 /**
  * 🧩 Şekil Yapbozu / Eşleştir & Yok Et (Match & Blast) Oyun Motoru
- * Akarsu-Delta, Dağ-Geçit, Oluşum-Yer Şekli çiftlerini kartlar halinde eşleştirip patlatma.
  */
 
 class MatchGame {
@@ -21,17 +20,18 @@ class MatchGame {
     this.score = 0;
     this.combo = 1;
     this.timeLeft = 60;
-    this.geoMap.clearAllLayers();
+    this.selectedLeft = null;
+    this.selectedRight = null;
+    this.geoMap.clearAll();
+    this.geoMap.resetView();
 
-    // İlişkili coğrafya ve soru çiftlerinden 6 adet eşleşme destesi hazırla
     this.generateBoard();
     this.startTimer();
     return this.getBoardState();
   }
 
   generateBoard() {
-    const rawPairs = (COGRAFYA_DATA.iliskili_cografya || []).slice(0);
-    // Karıştır
+    const rawPairs = (COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) ? COGRAFYA_DATA.iliskili_cografya.slice(0) : [];
     rawPairs.sort(() => 0.5 - Math.random());
     const selected = rawPairs.slice(0, 6);
 
@@ -85,7 +85,7 @@ class MatchGame {
         const points = 100 * this.combo;
         this.score += points;
         this.combo++;
-        this.timeLeft += 4; // +4 sn bonus
+        this.timeLeft += 4;
         const matchedId = this.selectedLeft;
 
         this.leftCards = this.leftCards.filter(c => c.id !== matchedId);
@@ -95,8 +95,8 @@ class MatchGame {
 
         const isCleared = this.leftCards.length === 0;
         if (isCleared) {
-          this.score += 500; // Tahta temizleme bonusu
-          this.generateBoard(); // Yeni dalga kartlar
+          this.score += 500;
+          this.generateBoard();
         }
 
         return {
@@ -152,5 +152,6 @@ class MatchGame {
   exit() {
     this.isActive = false;
     clearInterval(this.timerInterval);
+    this.geoMap.clearAll();
   }
 }

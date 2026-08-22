@@ -874,6 +874,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function hideAllGameHuds() {
+    if (quizPanel) quizPanel.classList.remove('minimized');
+    const inner = document.getElementById('quiz-panel-inner');
+    if (inner) inner.style.display = 'flex';
+    const collBar = document.getElementById('quiz-collapsed-bar');
+    if (collBar) collBar.style.display = 'none';
+
     if (geoguessrHud) geoguessrHud.style.display = 'none';
     if (conquerorHud) conquerorHud.style.display = 'none';
     if (matchHud) matchHud.style.display = 'none';
@@ -883,6 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (optionsGrid) optionsGrid.style.display = 'grid';
     if (kpssInfoCard) kpssInfoCard.style.display = 'none';
     if (nextBtn) nextBtn.style.display = 'flex';
+    if (exploreBanner) exploreBanner.style.display = 'none';
   }
 
   // --- 🎯 1. KÖR ATIŞ (GEOGUESSR) MODU ---
@@ -895,6 +902,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (optionsGrid) optionsGrid.style.display = 'none';
     if (nextBtn) nextBtn.style.display = 'none';
     if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+    if (subCategoriesBar) subCategoriesBar.style.display = 'none';
 
     if (geoguessrHud) geoguessrHud.style.display = 'flex';
     if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
@@ -904,9 +912,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateGeoGuessrUI(roundData) {
+    if (!roundData) return;
     if (geoguessrRoundIdx) geoguessrRoundIdx.textContent = roundData.round;
     if (geoguessrScoreVal) geoguessrScoreVal.textContent = roundData.totalScore;
-    if (geoguessrTargetName) geoguessrTargetName.textContent = `📍 ${roundData.target.name} (${roundData.target.type || 'Yer Şekli'})`;
+    if (geoguessrTargetName) {
+      const typeText = roundData.target.type ? ` (${roundData.target.type})` : '';
+      geoguessrTargetName.textContent = `📍 ${roundData.target.name}${typeText}`;
+    }
     if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
   }
 
@@ -927,12 +939,14 @@ document.addEventListener('DOMContentLoaded', () => {
     geoguessrAbortBtn.addEventListener('click', () => {
       geoGuessrGame.exit();
       currentMode = 'quiz';
+      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
       hideAllGameHuds();
       loadNextQuestion();
     });
   }
 
   function showGeoGuessrResults(summary) {
+    if (!summary) return;
     if (geoguessrResBadge) geoguessrResBadge.textContent = summary.badge;
     if (geoguessrResTitle) geoguessrResTitle.textContent = summary.title;
     if (geoguessrResScore) geoguessrResScore.textContent = summary.totalScore;
@@ -956,6 +970,7 @@ document.addEventListener('DOMContentLoaded', () => {
     geoguessrCloseBtn.addEventListener('click', () => {
       if (geoguessrModal) geoguessrModal.style.display = 'none';
       currentMode = 'quiz';
+      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
       hideAllGameHuds();
       loadNextQuestion();
     });
@@ -974,7 +989,10 @@ document.addEventListener('DOMContentLoaded', () => {
     currentMode = 'conqueror';
     hideAllGameHuds();
 
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
     if (conquerorHud) conquerorHud.style.display = 'flex';
+    if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
+
     const status = conquerorGame.start();
     updateConquerorUI(status);
     loadNextQuestion();
@@ -1040,6 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (optionsGrid) optionsGrid.style.display = 'none';
     if (nextBtn) nextBtn.style.display = 'none';
     if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+    if (subCategoriesBar) subCategoriesBar.style.display = 'none';
 
     if (matchHud) matchHud.style.display = 'flex';
 
@@ -1103,6 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     matchAbortBtn.addEventListener('click', () => {
       matchGame.exit();
       currentMode = 'quiz';
+      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
       hideAllGameHuds();
       loadNextQuestion();
     });
@@ -1112,6 +1132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     matchCloseBtn.addEventListener('click', () => {
       if (matchModal) matchModal.style.display = 'none';
       currentMode = 'quiz';
+      if (subCategoriesBar) subCategoriesBar.style.display = 'flex';
       hideAllGameHuds();
       loadNextQuestion();
     });

@@ -341,3 +341,15 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 21:54
+⚠️ Sorun/İhtiyaç: Yeni oyun modlarının (GeoGuessr, Fatih, Match) başlatıldığında haritanın değişmemesi ve takılma sorunu.
+🎯 İşlem Özeti: GeographyMap sınıfına eksik olan 'clearAllLayers' fonksiyonu eklendi; GeoGuessr, Conqueror ve MatchGame motorlarının start() metodlarında katman kontrolü ve harita resetleme (geoMap.resetView()) çağrıları stabilize edildi; modlar başlatıldığında alt kategoriler barı ve soru paneli durumları (minimized/inner) otomatik optimize edildi.
+📁 Etkilenen Kapsam: 
+  - js/map.js
+  - js/geoguessr.js
+  - js/conqueror.js
+  - js/match_game.js
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

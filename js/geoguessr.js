@@ -1,7 +1,5 @@
 /**
  * 🎯 Kör Atış / Coğrafya Radarı (GeoGuessr Modu) Oyun Motoru
- * Haritada serbest tıklama ile tahmin yürütme, Haversine km mesafe hesaplama,
- * görsel mesafe çizgisi ve 5 turluk GeoGuessr puanlama sistemi.
  */
 
 class GeoGuessrGame {
@@ -35,10 +33,10 @@ class GeoGuessrGame {
 
   calculateScore(distanceKm) {
     if (distanceKm <= 20) return 1000;
-    if (distanceKm <= 50) return Math.round(1000 - (distanceKm - 20) * 8);
-    if (distanceKm <= 150) return Math.round(760 - (distanceKm - 50) * 3.6);
-    if (distanceKm <= 350) return Math.round(400 - (distanceKm - 150) * 1.5);
-    if (distanceKm <= 600) return Math.round(100 - (distanceKm - 350) * 0.4);
+    if (distanceKm <= 50) return Math.max(0, Math.round(1000 - (distanceKm - 20) * 8));
+    if (distanceKm <= 150) return Math.max(0, Math.round(760 - (distanceKm - 50) * 3.6));
+    if (distanceKm <= 350) return Math.max(0, Math.round(400 - (distanceKm - 150) * 1.5));
+    if (distanceKm <= 600) return Math.max(0, Math.round(100 - (distanceKm - 350) * 0.4));
     return 0;
   }
 
@@ -47,20 +45,26 @@ class GeoGuessrGame {
     this.currentRound = 1;
     this.totalScore = 0;
     this.roundResults = [];
+
+    if (this.geoMap && this.geoMap.map && !this.geoMap.map.hasLayer(this.guessLayerGroup)) {
+      this.guessLayerGroup.addTo(this.geoMap.map);
+    }
+
     this.guessLayerGroup.clearLayers();
-    this.geoMap.clearAllLayers();
+    this.geoMap.clearAll();
     this.geoMap.setLabelsEnabled(false);
+    this.geoMap.resetView();
     return this.nextRound();
   }
 
   nextRound() {
     this.hasGuessedThisRound = false;
     this.guessLayerGroup.clearLayers();
-    this.geoMap.clearAllLayers();
+    this.geoMap.clearAll();
 
     const allCategories = ['daglar', 'ovalar', 'platolar', 'su_kaynaklari', 'gecitler'];
     const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
-    const items = COGRAFYA_DATA[randomCat] || [];
+    const items = (COGRAFYA_DATA && COGRAFYA_DATA[randomCat]) ? COGRAFYA_DATA[randomCat] : [];
     
     const pool = items.filter(it => !this.roundResults.some(r => r.target.id === it.id));
     this.currentTarget = (pool.length > 0 ? pool : items)[Math.floor(Math.random() * (pool.length > 0 ? pool.length : items.length))];
@@ -163,7 +167,7 @@ class GeoGuessrGame {
 
   getSummary() {
     const totalKm = this.roundResults.reduce((sum, r) => sum + r.distanceKm, 0);
-    const avgKm = Math.round(totalKm / this.roundResults.length);
+    const avgKm = this.roundResults.length > 0 ? Math.round(totalKm / this.roundResults.length) : 0;
     let title = "Acemi Haritacı";
     let badge = "🧭";
 
@@ -191,5 +195,6 @@ class GeoGuessrGame {
   exit() {
     this.isActive = false;
     this.guessLayerGroup.clearLayers();
+    this.geoMap.clearAll();
   }
 }

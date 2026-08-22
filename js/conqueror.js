@@ -1,7 +1,5 @@
 /**
  * ⚔️ Harita Fatihi (Türkiye'yi Fethet / Bölge Boyama) Oyun Motoru
- * 7 Coğrafi Bölge bazında yer şekillerini doğru bildikçe fetih ilerlemesi (%0-%100),
- * fethedilen bölgelerin haritada parıldaması ve Zafer Fatihi kutlaması.
  */
 
 class ConquerorGame {
@@ -38,8 +36,14 @@ class ConquerorGame {
       "Doğu Anadolu": 0,
       "Güneydoğu Anadolu": 0
     };
+
+    if (this.geoMap && this.geoMap.map && !this.geoMap.map.hasLayer(this.conquerLayerGroup)) {
+      this.conquerLayerGroup.addTo(this.geoMap.map);
+    }
+
     this.conquerLayerGroup.clearLayers();
-    this.geoMap.clearAllLayers();
+    this.geoMap.clearAll();
+    this.geoMap.resetView();
     return this.getStatus();
   }
 
@@ -64,7 +68,6 @@ class ConquerorGame {
       this.conqueredItems.add(item.id);
       this.regionProgress[regionKey] = (this.regionProgress[regionKey] || 0) + 1;
       
-      // Haritada fetih pini bırak
       const conqueredPin = L.circleMarker([item.lat, item.lng], {
         radius: 7,
         fillColor: '#8b5cf6',
@@ -97,7 +100,7 @@ class ConquerorGame {
       });
     }
 
-    const overallPercent = Math.round((totalCurrent / totalTarget) * 100);
+    const overallPercent = totalTarget > 0 ? Math.round((totalCurrent / totalTarget) * 100) : 0;
     const isVictory = overallPercent >= 100;
 
     return {
@@ -111,5 +114,6 @@ class ConquerorGame {
   exit() {
     this.isActive = false;
     this.conquerLayerGroup.clearLayers();
+    this.geoMap.clearAll();
   }
 }
