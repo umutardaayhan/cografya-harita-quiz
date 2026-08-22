@@ -1642,8 +1642,143 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .paste-btn-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
+/* --- ⚡ ŞİMŞEK TURU (SPEEDRUN - 60S) STİLLERİ --- */
+.nav-btn.speedrun-btn {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2));
+  border-color: rgba(234, 179, 8, 0.5);
+  color: #fef08a;
+}
+
+.nav-btn.speedrun-btn:hover {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.35), rgba(249, 115, 22, 0.35));
+  border-color: #facc15;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+}
+
+.nav-btn.speedrun-btn.active {
+  background: linear-gradient(135deg, #eab308, #ea580c);
+  color: #000000;
+  font-weight: 800;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.7);
+}
+
+.speedrun-hud {
+  position: absolute;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 2px solid #eab308;
+  backdrop-filter: blur(12px);
+  padding: 8px 18px;
+  border-radius: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(234, 179, 8, 0.4);
+  animation: fadeIn 0.3s ease;
+}
+
+.speedrun-hud-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: #eab308;
+  color: #000000;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.05em;
+}
+
+.speedrun-hud-timer {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #fef08a;
+  min-width: 60px;
+}
+
+.speedrun-hud-score {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #60a5fa;
+}
+
+.speedrun-abort-btn {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.speedrun-abort-btn:hover {
+  background: rgba(239, 68, 68, 0.4);
+  color: #ffffff;
+}
+
+.speedrun-modal-card {
+  width: 420px;
+  text-align: center;
+  align-items: center;
+}
+
+.speedrun-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.speedrun-trophy {
+  font-size: 3rem;
+  animation: trophyBounce 1s infinite alternate;
+}
+
+@keyframes trophyBounce {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-8px) scale(1.1); }
+}
+
+.speedrun-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.speedrun-stat-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.speedrun-stat-box.best {
+  border-color: rgba(234, 179, 8, 0.4);
+  background: rgba(234, 179, 8, 0.08);
+}
+
+.speedrun-stat-val {
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.speedrun-stat-val.correct { color: var(--success); }
+.speedrun-stat-val.wrong { color: var(--danger); }
+.speedrun-stat-val.streak { color: var(--accent-gold); }
+.speedrun-stat-val.record { color: #facc15; }
+
+.speedrun-stat-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }

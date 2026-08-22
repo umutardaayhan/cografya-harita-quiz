@@ -92,11 +92,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const statStreak = document.getElementById('stat-streak');
   const statRate = document.getElementById('stat-rate');
 
+  // ⚡ Şimşek Turu (Speedrun) DOM Elemanları
+  const speedrunBtn = document.getElementById('speedrun-btn');
+  const speedrunHud = document.getElementById('speedrun-hud');
+  const speedrunTimeLeft = document.getElementById('speedrun-time-left');
+  const speedrunScoreText = document.getElementById('speedrun-score');
+  const speedrunAbortBtn = document.getElementById('speedrun-abort-btn');
+  const speedrunModal = document.getElementById('speedrun-modal');
+  const speedrunResCorrect = document.getElementById('speedrun-res-correct');
+  const speedrunResWrong = document.getElementById('speedrun-res-wrong');
+  const speedrunResStreak = document.getElementById('speedrun-res-streak');
+  const speedrunResBest = document.getElementById('speedrun-res-best');
+  const speedrunRestartBtn = document.getElementById('speedrun-restart-btn');
+  const speedrunCloseModalBtn = document.getElementById('speedrun-close-modal-btn');
+
   // Uygulama Durumu
   let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing'
   let activeCategory = 'daglar';
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
+
+  // ⚡ Şimşek Turu Durum Değişkenleri
+  let isSpeedrunActive = false;
+  let speedrunInterval = null;
+  let speedrunSeconds = 60;
+  let speedrunScore = 0;
+  let speedrunStats = { correct: 0, wrong: 0, bestStreak: 0, currentStreak: 0 };
 
   const subCategoriesBar = document.getElementById('sub-categories-bar');
 
@@ -381,18 +402,119 @@ document.addEventListener('DOMContentLoaded', () => {
       geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
     }
 
-    // KPSS Hap Bilgisini Göster
-    kpssInfoCard.style.display = 'block';
-    kpssInfoTitle.textContent = result.name;
-    kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
-    kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+    // Şimşek Turu (Speedrun) Aktifse
+    if (isSpeedrunActive) {
+      if (result.isCorrect) {
+        speedrunStats.correct++;
+        speedrunStats.currentStreak++;
+        if (speedrunStats.currentStreak > speedrunStats.bestStreak) {
+          speedrunStats.bestStreak = speedrunStats.currentStreak;
+        }
+        speedrunScore += 100 + (speedrunStats.currentStreak * 15);
+      } else {
+        speedrunStats.wrong++;
+        speedrunStats.currentStreak = 0;
+      }
+      speedrunScoreText.textContent = speedrunScore;
 
-    // Sonraki Soru butonunu aç
-    nextBtn.style.display = 'block';
-    nextBtn.focus();
+      // 400ms sonra bekletmeden anında sonraki soruya geç
+      setTimeout(() => {
+        if (isSpeedrunActive) {
+          loadNextQuestion();
+        }
+      }, 450);
+    } else {
+      // Normal Mod: KPSS Hap Bilgisini Göster
+      kpssInfoCard.style.display = 'block';
+      kpssInfoTitle.textContent = result.name;
+      kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
+      kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+
+      // Sonraki Soru butonunu aç
+      nextBtn.style.display = 'block';
+      nextBtn.focus();
+    }
 
     updateStatsUI();
   }
+
+  // --- ⚡ ŞİMŞEK TURU (SPEEDRUN) MOTORU ---
+  function startSpeedrun() {
+    if (currentMode === 'drawing') closeDrawingToolbar();
+    if (currentMode === 'explore') setMode('quiz');
+
+    isSpeedrunActive = true;
+    speedrunSeconds = 60;
+    speedrunScore = 0;
+    speedrunStats = { correct: 0, wrong: 0, bestStreak: 0, currentStreak: 0 };
+
+    speedrunBtn.classList.add('active');
+    speedrunHud.style.display = 'flex';
+    speedrunTimeLeft.textContent = speedrunSeconds;
+    speedrunScoreText.textContent = speedrunScore;
+
+    // Şıkları 4 şıkka sabitle
+    geoQuiz.setOptionCount(4);
+    optCountBtns.forEach(b => b.classList.toggle('active', b.dataset.count === '4'));
+
+    if (speedrunInterval) clearInterval(speedrunInterval);
+    speedrunInterval = setInterval(() => {
+      speedrunSeconds--;
+      speedrunTimeLeft.textContent = speedrunSeconds;
+
+      if (speedrunSeconds <= 10) {
+        speedrunTimeLeft.style.color = '#ef4444';
+      } else {
+        speedrunTimeLeft.style.color = '#fef08a';
+      }
+
+      if (speedrunSeconds <= 0) {
+        endSpeedrun();
+      }
+    }, 1000);
+
+    loadNextQuestion();
+  }
+
+  function endSpeedrun() {
+    if (speedrunInterval) clearInterval(speedrunInterval);
+    speedrunInterval = null;
+    isSpeedrunActive = false;
+
+    speedrunBtn.classList.remove('active');
+    speedrunHud.style.display = 'none';
+
+    // Rekor Skor Kontrolü
+    const savedBest = parseInt(localStorage.getItem('kpss_speedrun_best_score') || '0', 10);
+    const newBest = Math.max(savedBest, speedrunScore);
+    localStorage.setItem('kpss_speedrun_best_score', newBest.toString());
+
+    // Sonuç modalını doldur ve aç
+    speedrunResCorrect.textContent = speedrunStats.correct;
+    speedrunResWrong.textContent = speedrunStats.wrong;
+    speedrunResStreak.textContent = speedrunStats.bestStreak;
+    speedrunResBest.textContent = newBest;
+
+    speedrunModal.style.display = 'flex';
+  }
+
+  speedrunBtn.addEventListener('click', () => {
+    if (isSpeedrunActive) {
+      endSpeedrun();
+    } else {
+      startSpeedrun();
+    }
+  });
+
+  speedrunAbortBtn.addEventListener('click', endSpeedrun);
+  speedrunRestartBtn.addEventListener('click', () => {
+    speedrunModal.style.display = 'none';
+    startSpeedrun();
+  });
+  speedrunCloseModalBtn.addEventListener('click', () => {
+    speedrunModal.style.display = 'none';
+    loadNextQuestion();
+  });
 
   function updateStatsUI() {
     statCorrect.textContent = geoQuiz.stats.correct;

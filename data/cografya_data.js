@@ -1381,6 +1381,258 @@ const COGRAFYA_DATA = {
       region: "Marmara / Ege",
       kpssNot: "Marmara Denizi ile Ege Denizi'ni bağlayan tarihi ve stratejik ria tipi boğazdır. En dar yeri Nara Burnu'dur."
     }
+  ],
+
+  // --- 🔗 SEBEP-SONUÇ VE İLİŞKİLİ COĞRAFYA EŞLEŞTİRMELERİ ---
+  iliskili_cografya: [
+    {
+      id: "match_kizilirmak_bafra",
+      name: "Bafra Deltası",
+      matchSource: "Kızılırmak Nehri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      shapeType: "polyline",
+      coordinates: [
+        [39.80, 38.30], [39.50, 36.00], [38.70, 34.80], [39.00, 33.70], [40.00, 33.40], [41.00, 34.50], [41.56, 35.90]
+      ],
+      lat: 41.56,
+      lng: 35.90,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Karadeniz",
+      questionText: "🌊 Kızılırmak Nehri'nin Karadeniz'e döküldüğü yerde oluşturduğu delta ovası hangisidir?",
+      kpssNot: "Kızılırmak ➡️ Bafra Ovası (Samsun). Türkiye'nin en uzun nehri Bafra Deltası'nı besler."
+    },
+    {
+      id: "match_yesilirmak_carsamba",
+      name: "Çarşamba Deltası",
+      matchSource: "Yeşilırmak Nehri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      shapeType: "polyline",
+      coordinates: [
+        [39.90, 38.80], [40.15, 36.55], [40.65, 35.85], [41.20, 36.75]
+      ],
+      lat: 41.20,
+      lng: 36.75,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Karadeniz",
+      questionText: "🌊 Yeşilırmak Nehri'nin Karadeniz'e dökülürken oluşturduğu delta ovası hangisidir?",
+      kpssNot: "Yeşilırmak ➡️ Çarşamba Ovası (Samsun). Çarşamba Ovası geniş alüvyon birikimidir."
+    },
+    {
+      id: "match_seyhan_ceyhan_cukurova",
+      name: "Çukurova Deltası",
+      matchSource: "Seyhan & Ceyhan Nehirleri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      lat: 36.85,
+      lng: 35.50,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Akdeniz",
+      questionText: "🌊 Seyhan ve Ceyhan nehirlerinin Akdeniz'e döküldüğü yerde oluşturduğu Türkiye'nin en büyük deltası hangisidir?",
+      kpssNot: "Seyhan ve Ceyhan ➡️ Çukurova Deltası (Adana/Mersin). Türkiye'nin en büyük kıyı deltasıdır."
+    },
+    {
+      id: "match_goksu_silifke",
+      name: "Silifke Deltası",
+      matchSource: "Göksu Nehri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      shapeType: "polyline",
+      coordinates: [
+        [37.20, 32.10], [36.80, 32.90], [36.35, 33.95]
+      ],
+      lat: 36.35,
+      lng: 33.95,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Akdeniz",
+      questionText: "🌊 Göksu Nehri'nin Akdeniz kıyısında oluşturduğu verimli delta ovası hangisidir?",
+      kpssNot: "Göksu ➡️ Silifke Deltası (Mersin). Akdeniz'in ikinci büyük deltasıdır."
+    },
+    {
+      id: "match_gediz_menemen",
+      name: "Menemen Deltası",
+      matchSource: "Gediz Nehri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      shapeType: "polyline",
+      coordinates: [
+        [38.90, 29.50], [38.60, 28.20], [38.50, 27.20], [38.58, 26.90]
+      ],
+      lat: 38.58,
+      lng: 26.90,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Ege",
+      questionText: "🌊 Gediz Nehri'nin İzmir Körfezi girişinde oluşturduğu delta ovası hangisidir?",
+      kpssNot: "Gediz ➡️ Menemen Deltası (İzmir). İzmir Kuş Cenneti bu deltada yer alır."
+    },
+    {
+      id: "match_bmenderes_balat",
+      name: "Balat Deltası",
+      matchSource: "Büyük Menderes Nehri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      shapeType: "polyline",
+      coordinates: [
+        [38.10, 30.10], [37.85, 29.10], [37.88, 27.80], [37.55, 27.25]
+      ],
+      lat: 37.55,
+      lng: 27.25,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Ege",
+      questionText: "🌊 Büyük Menderes Nehri'nin Ege Denizi'ne döküldüğü yerde oluşturduğu delta ovası hangisidir?",
+      kpssNot: "Büyük Menderes ➡️ Balat Deltası (Aydın). Antik Milet şehri alüvyon dolmasıyla denizden içeride kalmıştır."
+    },
+    {
+      id: "match_kmenderes_selcuk",
+      name: "Selçuk Deltası",
+      matchSource: "Küçük Menderes Nehri",
+      category: "iliskili_cografya",
+      matchType: "akarsu_delta",
+      lat: 37.95,
+      lng: 27.30,
+      type: "Akarsu ➡️ Delta Eşleştirmesi",
+      region: "Ege",
+      questionText: "🌊 Küçük Menderes Nehri'nin oluşturduğu ve Efes Antik Kenti'nin denizle bağını kesen delta hangisidir?",
+      kpssNot: "Küçük Menderes ➡️ Selçuk Deltası (İzmir). Efes liman kentini alüvyonlarla içeride bırakmıştır."
+    },
+    {
+      id: "match_nur_belen",
+      name: "Belen Geçidi",
+      matchSource: "Nur (Amanos) Dağları",
+      category: "iliskili_cografya",
+      matchType: "dag_gecit",
+      shapeType: "polyline",
+      coordinates: [
+        [36.30, 36.15], [36.75, 36.30], [37.10, 36.45]
+      ],
+      lat: 36.49,
+      lng: 36.20,
+      type: "Dağ ➡️ Geçit Eşleştirmesi",
+      region: "Akdeniz",
+      questionText: "🏔️ Nur (Amanos) Dağları'nı aşarak İskenderun Limanı'nı Amik Ovası'na bağlayan geçit hangisidir?",
+      kpssNot: "Nur Dağları ➡️ Belen Geçidi. Ege dışındaki tek horst dağı üzerindeki kritik boğazdır."
+    },
+    {
+      id: "match_toros_gulek",
+      name: "Gülek Boğazı / Geçidi",
+      matchSource: "Orta Toroslar (Bolkar Dağları)",
+      category: "iliskili_cografya",
+      matchType: "dag_gecit",
+      shapeType: "polyline",
+      coordinates: [
+        [37.05, 34.20], [37.25, 34.60], [37.45, 35.00]
+      ],
+      lat: 37.25,
+      lng: 34.79,
+      type: "Dağ ➡️ Geçit Eşleştirmesi",
+      region: "Akdeniz",
+      questionText: "🏔️ Orta Toroslar (Bolkar Dağları) üzerinden Çukurova'yı İç Anadolu'ya bağlayan en işlek geçit hangisidir?",
+      kpssNot: "Orta Toroslar ➡️ Gülek Boğazı (Adana-Pozantı-Niğde yolu)."
+    },
+    {
+      id: "match_dogu_karadeniz_zigana",
+      name: "Zigana (Kalkanlı) Geçidi",
+      matchSource: "Doğu Karadeniz Dağları",
+      category: "iliskili_cografya",
+      matchType: "dag_gecit",
+      lat: 40.64,
+      lng: 39.43,
+      type: "Dağ ➡️ Geçit Eşleştirmesi",
+      region: "Karadeniz",
+      questionText: "🏔️ Doğu Karadeniz Dağları'nı aşarak Trabzon Limanı'nı Gümüşhane/Erzurum'a bağlayan tarihi geçit hangisidir?",
+      kpssNot: "Kuzey Anadolu Dağları ➡️ Zigana Geçidi (Tarihi İpek Yolu liman kapısı)."
+    },
+    {
+      id: "match_kackar_ovit",
+      name: "Ovit Geçidi / Tüneli",
+      matchSource: "Kaçkar Dağları",
+      category: "iliskili_cografya",
+      matchType: "dag_gecit",
+      shapeType: "polyline",
+      coordinates: [
+        [40.60, 40.80], [40.83, 41.16], [41.10, 41.60]
+      ],
+      lat: 40.62,
+      lng: 40.79,
+      type: "Dağ ➡️ Geçit Eşleştirmesi",
+      region: "Karadeniz",
+      questionText: "🏔️ Kaçkar Dağları'nı aşarak Rize (İkizdere) ile Erzurum (İspir) arasını bağlayan yüksek dağ geçidi hangisidir?",
+      kpssNot: "Kaçkar Dağları ➡️ Ovit Geçidi / Tüneli."
+    },
+    {
+      id: "match_kure_ecevit",
+      name: "Ecevit Geçidi",
+      matchSource: "Küre (İsfendiyar) Dağları",
+      category: "iliskili_cografya",
+      matchType: "dag_gecit",
+      shapeType: "polyline",
+      coordinates: [
+        [41.60, 33.10], [41.70, 33.70], [41.80, 34.30]
+      ],
+      lat: 41.80,
+      lng: 33.72,
+      type: "Dağ ➡️ Geçit Eşleştirmesi",
+      region: "Karadeniz",
+      questionText: "🏔️ Küre Dağları'nı aşarak İnebolu Limanı'nı Kastamonu ve Ankara'ya bağlayan İstiklal Yolu geçidi hangisidir?",
+      kpssNot: "Küre Dağları ➡️ Ecevit Geçidi (İstiklal Yolu)."
+    },
+    {
+      id: "match_ilgaz_ilgazgecit",
+      name: "Ilgaz Geçidi",
+      matchSource: "Ilgaz Dağları",
+      category: "iliskili_cografya",
+      matchType: "dag_gecit",
+      shapeType: "polyline",
+      coordinates: [
+        [40.95, 33.30], [41.08, 33.73], [41.20, 34.15]
+      ],
+      lat: 41.07,
+      lng: 33.74,
+      type: "Dağ ➡️ Geçit Eşleştirmesi",
+      region: "Karadeniz / İç Anadolu",
+      questionText: "🏔️ Ilgaz Dağları üzerinden Kastamonu ile Çankırı/Ankara arasını bağlayan geçit hangisidir?",
+      kpssNot: "Ilgaz Dağları ➡️ Ilgaz Geçidi."
+    },
+    {
+      id: "match_erciyes_kapadokya",
+      name: "Kapadokya Peri Bacaları",
+      matchSource: "Erciyes ve Hasan Dağı Volkanizması",
+      category: "iliskili_cografya",
+      matchType: "olusum_sekil",
+      lat: 38.64,
+      lng: 34.83,
+      type: "Volkanizma ➡️ Yer Şekli",
+      region: "İç Anadolu",
+      questionText: "🌋 Erciyes ve Hasan Dağı'ndan çıkan volkanik tüf ve lavların akarsu/rüzgarla aşınmasıyla oluşan turistik alan hangisidir?",
+      kpssNot: "Erciyes ve Hasan Dağı Tüfleri ➡️ Kapadokya Peri Bacaları (Nevşehir/Ürgüp/Göreme)."
+    },
+    {
+      id: "match_basyan_bafa",
+      name: "Bafa (Çamiçi) Gölü",
+      matchSource: "Büyük Menderes Alüvyonları",
+      category: "iliskili_cografya",
+      matchType: "olusum_sekil",
+      lat: 37.50,
+      lng: 27.42,
+      type: "Akarsu Biriktirmesi ➡️ Göl Oluşumu",
+      region: "Ege",
+      questionText: "🌊 Büyük Menderes'in taşıdığı alüvyonların Latmos Körfezi'nin önünü kapatmasıyla denizden ayrılan set gölü hangisidir?",
+      kpssNot: "Büyük Menderes Alüvyonları ➡️ Bafa (Çamiçi) Alüvyal Set Gölü."
+    },
+    {
+      id: "match_karapinar_meke",
+      name: "Meke Maar Gölü",
+      matchSource: "Karapınar Gaz Patlaması",
+      category: "iliskili_cografya",
+      matchType: "olusum_sekil",
+      lat: 37.69,
+      lng: 33.64,
+      type: "Volkanik Patlama (Maar) ➡️ Göl Oluşumu",
+      region: "İç Anadolu",
+      questionText: "🌋 Konya Karapınar'da gaz patlaması (maar) sonucu oluşan ve 'Dünyanın Nazar Boncuğu' olarak anılan göl hangisidir?",
+      kpssNot: "Volkanik Gaz Patlaması ➡️ Meke Maarı (Konya)."
+    }
   ]
 };
 
@@ -1390,7 +1642,8 @@ const CATEGORIES = [
   { id: "ovalar", title: "Ovalar", icon: "🌾", color: "#27ae60", count: COGRAFYA_DATA.ovalar.length },
   { id: "platolar", title: "Platolar", icon: "⛰️", color: "#d35400", count: COGRAFYA_DATA.platolar.length },
   { id: "su_kaynaklari", title: "Akarsu & Göller", icon: "🌊", color: "#2980b9", count: COGRAFYA_DATA.su_kaynaklari.length },
-  { id: "gecitler", title: "Geçitler & Boğazlar", icon: "🚪", color: "#8e44ad", count: COGRAFYA_DATA.gecitler.length }
+  { id: "gecitler", title: "Geçitler & Boğazlar", icon: "🚪", color: "#8e44ad", count: COGRAFYA_DATA.gecitler.length },
+  { id: "iliskili_cografya", title: "İlişkili Eşleştirme", icon: "🔗", color: "#ec4899", count: COGRAFYA_DATA.iliskili_cografya.length }
 ];
 
 // KPSS Oluşum ve Alt Tür Filtreleme Haritası
@@ -1424,6 +1677,12 @@ const SUB_TYPES = {
     { id: "karadeniz", label: "Karadeniz Geçitleri", icon: "🌲", filter: (item) => (item.region || "").toLowerCase().includes("karadeniz") && !(item.type || "").toLowerCase().includes("deniz boğazı") },
     { id: "akdeniz", label: "Akdeniz Geçitleri", icon: "☀️", filter: (item) => (item.region || "").toLowerCase().includes("akdeniz") },
     { id: "bogazlar", label: "Deniz Boğazları", icon: "🌉", filter: (item) => (item.type || "").toLowerCase().includes("deniz boğazı") || (item.type || "").toLowerCase().includes("su yolu") }
+  ],
+  iliskili_cografya: [
+    { id: "all", label: "Tüm Eşleştirmeler", icon: "🔗" },
+    { id: "akarsu_delta", label: "Akarsu ➡️ Delta", icon: "🏖️", filter: (item) => item.matchType === 'akarsu_delta' },
+    { id: "dag_gecit", label: "Dağ ➡️ Geçit", icon: "🚪", filter: (item) => item.matchType === 'dag_gecit' },
+    { id: "olusum_sekil", label: "Oluşum ➡️ Yer Şekli", icon: "🌋", filter: (item) => item.matchType === 'olusum_sekil' }
   ],
   ozel_cizimler: [
     { id: "all", label: "Tüm Çizimlerim", icon: "🎨" },

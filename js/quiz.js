@@ -307,7 +307,10 @@ class GeographyQuiz {
     let questionText = '';
     let questionTypeTitle = '';
 
-    if (this.currentActualFormat === 'find_on_map') {
+    if (this.currentQuestion.questionText) {
+      questionText = this.currentQuestion.questionText;
+      questionTypeTitle = 'İLİŞKİLİ EŞLEŞTİRME';
+    } else if (this.currentActualFormat === 'find_on_map') {
       // Doğrudan isim ve tip
       questionText = `📍 <span style="color: #60a5fa; font-weight:800;">${this.currentQuestion.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${this.currentQuestion.type})</span>`;
       questionTypeTitle = 'HARİTADA BUL';

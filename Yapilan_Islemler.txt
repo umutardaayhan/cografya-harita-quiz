@@ -158,3 +158,16 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:04
+⚠️ Sorun/İhtiyaç: Sınav refleksini hızlandırmak için 60 saniyelik zamana karşı hızlı soru turu (Speedrun / Time Attack) ve ezberi güçlendirmek için Sebep-Sonuç / İlişkili Coğrafya eşleştirme modu (Akarsu->Delta, Dağ->Geçit, Oluşum->Şekil) ihtiyacı.
+🎯 İşlem Özeti: data/cografya_data.js içine COGRAFYA_DATA.iliskili_cografya soru havuzu ve SUB_TYPES alt filtreleri eklendi; index.html, css/style.css ve js/app.js içine 60 saniyelik geri sayımlı Şimşek Turu HUD sayacı, rekor skor kaydı ve tur sonu istatistik modalı entegre edildi.
+📁 Etkilenen Kapsam: 
+  - data/cografya_data.js
+  - js/quiz.js
+  - js/app.js
+  - index.html
+  - css/style.css
+  - docs/OZEL_HARITA_VE_ADAPTIF_MOTOR.md
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
