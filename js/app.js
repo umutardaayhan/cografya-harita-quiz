@@ -308,12 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- QUIZ & ADAPTİF SORU MODU ---
   function loadNextQuestion() {
-    exploreBanner.style.display = 'none';
-    document.querySelector('.question-header').style.display = 'flex';
-    optionsGrid.style.display = 'flex';
-    kpssInfoCard.style.display = 'none';
-    nextBtn.style.display = 'none';
-
     const qData = geoQuiz.nextQuestion();
     if (!qData) {
       if (activeCategory === 'ozel_cizimler' && customDrawManager.drawings.length === 0) {
@@ -332,7 +326,18 @@ document.addEventListener('DOMContentLoaded', () => {
       catIcon = catObj ? catObj.icon : '📍';
     }
 
-    questionBadge.textContent = `${catIcon} ${catName} - [${qData.questionTypeTitle}]`;
+    qData.categoryBadgeText = `${catIcon} ${catName} - [${qData.questionTypeTitle}]`;
+    renderQuestion(qData);
+  }
+
+  function renderQuestion(qData) {
+    if (exploreBanner) exploreBanner.style.display = 'none';
+    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    document.querySelector('.question-header').style.display = 'flex';
+    optionsGrid.style.display = 'grid';
+
+    questionBadge.textContent = qData.categoryBadgeText || `📍 ${qData.questionTypeTitle || 'SORU'}`;
     questionTitle.innerHTML = qData.questionText;
 
     // Zorluk rozeti
@@ -450,20 +455,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isExamActive) {
       if (result.isCorrect) {
         examStats.correct++;
+        examCorrectText.textContent = examStats.correct;
+
+        // Doğru cevap verildiğinde akıcı şekilde sonraki soruya geç
+        setTimeout(() => {
+          if (isExamActive && geoQuiz.isAnswered) {
+            examCurrentIndex++;
+            loadExamQuestion();
+          }
+        }, 800);
       } else {
         examStats.wrong++;
+        examWrongText.textContent = examStats.wrong;
+
+        // Yanlış cevapta hap bilgisini göster ve butonu aç
+        kpssInfoCard.style.display = 'block';
+        kpssInfoTitle.textContent = result.name;
+        kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
+        kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+
+        nextBtn.style.display = 'block';
+        nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
+        nextBtn.focus();
       }
-      examCorrectText.textContent = examStats.correct;
-      examWrongText.textContent = examStats.wrong;
-
-      kpssInfoCard.style.display = 'block';
-      kpssInfoTitle.textContent = result.name;
-      kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
-      kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
-
-      nextBtn.style.display = 'block';
-      nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
-      nextBtn.focus();
     } else if (isSpeedrunActive) {
       // Şimşek Turu (Speedrun) Aktifse
       if (result.isCorrect) {

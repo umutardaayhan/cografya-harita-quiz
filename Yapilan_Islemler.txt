@@ -225,3 +225,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:42
+⚠️ Sorun/İhtiyaç: Genel Deneme modunda doğru cevap verildiğinde kilitlenme yaşanması sorununun giderilmesi ve KPSS için eksik olan Volkanik Ovalar (Develi, Kayseri, Çaldıran, Muradiye) veri setinin ve filtresinin eklenmesi.
+🎯 İşlem Özeti: Deneme modunda doğru cevap verildiğinde 800ms sonra akıcı şekilde sonraki soruya geçiş mekanizması kuruldu, soru yükleme başlangıcında kart ve buton sıfırlamaları eksiksiz hale getirildi. data/cografya_data.js içine KPSS volkanik ovaları (Develi, Kayseri, Çaldıran, Muradiye) eklendi ve SUB_TYPES.ovalar altına 'Volkanik Ovalar' filtresi entegre edildi.
+📁 Etkilenen Kapsam: 
+  - js/app.js
+  - data/cografya_data.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

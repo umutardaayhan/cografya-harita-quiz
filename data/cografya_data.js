@@ -714,6 +714,48 @@ const COGRAFYA_DATA = {
       lng: 29.05,
       region: "Marmara",
       kpssNot: "Uludağ'ın kuzey eteğinde yer alan, sanayi ve meyve/sebze tarımının yoğun olduğu ovadır."
+    },
+
+    // --- 🌋 VOLKANİK OVALAR / LAV DOLGULU OVALAR ---
+    {
+      id: "ova_develi",
+      name: "Develi Ovası",
+      category: "ovalar",
+      type: "Volkanik / Lav Dolgulu Ova",
+      lat: 38.39,
+      lng: 35.49,
+      region: "İç Anadolu",
+      kpssNot: "Erciyes Dağı'ndan çıkan volkanik lav ve tüflerin çöküntü alanını doldurmasıyla oluşan tipik volkanik ovadır (Sultan Sazlığı buradadır)."
+    },
+    {
+      id: "ova_kayseri",
+      name: "Kayseri Ovası",
+      category: "ovalar",
+      type: "Volkanik / Tektonik Ova",
+      lat: 38.73,
+      lng: 35.48,
+      region: "İç Anadolu",
+      kpssNot: "Erciyes Volkanı'nın kuzey eteklerinde volkanik tüf ve alüvyonlarla kaplı volkanik kökenli iç ovadır."
+    },
+    {
+      id: "ova_caldiran",
+      name: "Çaldıran Ovası",
+      category: "ovalar",
+      type: "Volkanik Ova",
+      lat: 39.14,
+      lng: 43.91,
+      region: "Doğu Anadolu",
+      kpssNot: "Tendürek Yanardağı'ndan püsküren bazaltik lavların çanağı doldurmasıyla oluşan volkanik ovadır. Türkiye'nin en soğuk yerlerinden biridir."
+    },
+    {
+      id: "ova_muradiye",
+      name: "Muradiye Ovası",
+      category: "ovalar",
+      type: "Volkanik / Alüvyal Ova",
+      lat: 38.98,
+      lng: 43.76,
+      region: "Doğu Anadolu",
+      kpssNot: "Süphan ve Tendürek volkanizması lavları arasında oluşmuş volkanik tabanlı ovadır."
     }
   ],
 
@@ -1658,7 +1700,8 @@ const SUB_TYPES = {
     { id: "all", label: "Tüm Ovalar", icon: "🌾" },
     { id: "delta", label: "Delta Ovaları (Kıyı)", icon: "🏖️", filter: (item) => (item.type || "").toLowerCase().includes("delta") },
     { id: "tektonik", label: "Tektonik / Çöküntü", icon: "💥", filter: (item) => (item.type || "").toLowerCase().includes("tektonik") },
-    { id: "karstik", label: "Karstik (Polye)", icon: "💧", filter: (item) => (item.type || "").toLowerCase().includes("karstik") || (item.type || "").toLowerCase().includes("polye") }
+    { id: "karstik", label: "Karstik (Polye)", icon: "💧", filter: (item) => (item.type || "").toLowerCase().includes("karstik") || (item.type || "").toLowerCase().includes("polye") },
+    { id: "volkanik_ova", label: "Volkanik Ovalar", icon: "🌋", filter: (item) => (item.type || "").toLowerCase().includes("volkanik") || (item.type || "").toLowerCase().includes("lav") }
   ],
   platolar: [
     { id: "all", label: "Tüm Platolar", icon: "⛰️" },
