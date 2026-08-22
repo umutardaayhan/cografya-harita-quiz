@@ -572,14 +572,26 @@ document.addEventListener('DOMContentLoaded', () => {
     geoQuiz.currentQuestion = qItem;
     geoQuiz.isAnswered = false;
 
-    // 4 şık üret
+    // Seçili şık sayısı kadar şık üret
     const allGlobal = [];
     Object.keys(COGRAFYA_DATA).forEach(cat => {
       allGlobal.push(...COGRAFYA_DATA[cat]);
     });
+    if (customDrawManager && customDrawManager.drawings) {
+      allGlobal.push(...customDrawManager.drawings);
+    }
     const candidatePool = allGlobal.filter(i => i.id !== qItem.id);
-    const distractors = geoQuiz.selectDistractorsByProximity(qItem, candidatePool, 3);
-    const options = [qItem, ...distractors].sort(() => 0.5 - Math.random());
+
+    const currentOptCount = geoQuiz.getOptionCount();
+    let options = [];
+
+    if (currentOptCount === 'all') {
+      options = [qItem, ...candidatePool].sort(() => 0.5 - Math.random());
+    } else {
+      const targetDistractors = Math.max(1, parseInt(currentOptCount, 10) - 1);
+      const distractors = geoQuiz.selectDistractorsByProximity(qItem, candidatePool, targetDistractors);
+      options = [qItem, ...distractors].sort(() => 0.5 - Math.random());
+    }
     geoQuiz.currentOptions = options;
 
     renderQuestion({
@@ -823,10 +835,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const countVal = btn.dataset.count === 'all' ? 'all' : parseInt(btn.dataset.count, 10);
       geoQuiz.setOptionCount(countVal);
       
-      if (currentMode === 'quiz') {
+      if (isExamActive) {
+        loadExamQuestion();
+      } else if (currentMode === 'quiz') {
         loadNextQuestion();
       }
     });
+  });
+
+  // Başlangıç kayıtlı şık sayısını butonlarda aktif et
+  const initialOptCount = geoQuiz.getOptionCount().toString();
+  optCountBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.count === initialOptCount);
   });
 
   // --- HARİTA KATMANLARI VE AUTO-ZOOM YÖNETİMİ ---

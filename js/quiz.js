@@ -20,7 +20,7 @@ class GeographyQuiz {
     this.lastQuestionId = null;
     this.currentOptions = [];
     this.isAnswered = false;
-    this.optionCount = 4; // 2, 3, 4, 5
+    this.optionCount = this.loadOptionCount(); // 2, 3, 4, 5, 6, 8, 'all'
     this.difficultyLevel = this.loadDifficultyLevel(); // 1, 2, 3, 4, 5
     this.quizFormat = this.loadQuizFormat(); // 'identify', 'find_on_map', 'mixed'
     this.currentActualFormat = 'identify';
@@ -109,6 +109,12 @@ class GeographyQuiz {
     return this.difficultyLevel;
   }
 
+  loadOptionCount() {
+    const saved = localStorage.getItem('kpss_cografya_option_count');
+    if (saved === 'all') return 'all';
+    return saved ? parseInt(saved, 10) : 4;
+  }
+
   setOptionCount(count) {
     if (count === 'all' || count === 'celal') {
       this.optionCount = 'all';
@@ -116,6 +122,7 @@ class GeographyQuiz {
       const parsed = parseInt(count, 10);
       this.optionCount = isNaN(parsed) ? 4 : Math.max(2, Math.min(8, parsed));
     }
+    localStorage.setItem('kpss_cografya_option_count', this.optionCount.toString());
   }
 
   getOptionCount() {

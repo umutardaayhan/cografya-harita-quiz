@@ -234,3 +234,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:55
+⚠️ Sorun/İhtiyaç: Deneme modunda kullanıcının seçtiği şık sayısının (2, 3, 4, 5, 6, 8 veya Celal Şengör) dikkate alınmayıp 4 şıkka sabitlenmesi ve şık sayısı seçiminin localStorage'da kalıcı olmaması sorunu.
+🎯 İşlem Özeti: GeographyQuiz sınıfına loadOptionCount ve localStorage desteği eklendi; Deneme modunda her soru oluşturulurken kullanıcının seçili şık sayısı (geoQuiz.getOptionCount()) kadar çeldirici üretilmesi sağlandı; sayfa açılışında seçili şık sayısı butonu hafızadan getirilerek aktif edildi.
+📁 Etkilenen Kapsam: 
+  - js/quiz.js
+  - js/app.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
