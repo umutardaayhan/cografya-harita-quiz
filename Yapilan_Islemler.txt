@@ -243,3 +243,11 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 19:31
+⚠️ Sorun/İhtiyaç: Test modunda soruların sürekli aynı 2-3 konum arasında kısır döngüye girmesi ve bir soru arayla hep aynı yer şekillerinin sorulması sorunu.
+🎯 İşlem Özeti: nextQuestion metodu içindeki havuzu her soruda sıfırlayan reloadCategoryItems çağrısı kaldırıldı ve tam bir kart destesi (deck) tüketim mekanizması kuruldu; son sorulan 6-8 sorunun hemen tekrar gelmesini kesin olarak engelleyen recentQuestionIds FIFO geçmiş kuyruğu ve dengeli ağırlıklandırma algoritması entegre edildi.
+📁 Etkilenen Kapsam: 
+  - js/quiz.js
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

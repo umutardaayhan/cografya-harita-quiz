@@ -18,6 +18,7 @@ class GeographyQuiz {
     
     this.currentQuestion = null;
     this.lastQuestionId = null;
+    this.recentQuestionIds = []; // Son sorulanların geçmiş hafızası
     this.currentOptions = [];
     this.isAnswered = false;
     this.optionCount = this.loadOptionCount(); // 2, 3, 4, 5, 6, 8, 'all'
@@ -133,6 +134,7 @@ class GeographyQuiz {
     this.activeSubType = subTypeId || 'all';
     this.reloadCategoryItems();
     this.currentQuestion = null;
+    this.recentQuestionIds = [];
     this.isAnswered = false;
   }
 
@@ -160,6 +162,7 @@ class GeographyQuiz {
     this.items = source;
     this.remainingPool = [...this.items];
     this.wrongPool = [];
+    this.recentQuestionIds = [];
   }
 
   setCategory(categoryKey) {
@@ -167,6 +170,7 @@ class GeographyQuiz {
     this.activeSubType = 'all';
     this.reloadCategoryItems();
     this.currentQuestion = null;
+    this.recentQuestionIds = [];
     this.isAnswered = false;
   }
 
@@ -183,22 +187,18 @@ class GeographyQuiz {
     return Math.round(R * c);
   }
 
-  // Ustalık Düzeyi & Hata Ağırlığı
+  // Ustalık Düzeyi & Hata Ağırlığı (Dengeli Doğal Dağılım)
   calculateItemWeight(item) {
     const itemAnalytics = this.analytics[item.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
     
     if (itemAnalytics.streak >= 4) {
-      return 0.04; // %96 oranında nadirleşir
+      return 0.4;
     }
-    if (itemAnalytics.streak === 3) {
-      return 0.12;
+    if (itemAnalytics.streak >= 2) {
+      return 0.7;
     }
-    if (itemAnalytics.streak === 2) {
-      return 0.35;
-    }
-
     if (itemAnalytics.wrongCount > 0) {
-      return 1.0 + (itemAnalytics.wrongCount * 3.2) - (itemAnalytics.streak * 0.4);
+      return 1.0 + Math.min(1.2, itemAnalytics.wrongCount * 0.3);
     }
 
     return 1.0;
@@ -276,10 +276,12 @@ class GeographyQuiz {
     return selected;
   }
 
-  // Yeni Soru Üret (Kısa, Net ve Doğrudan Başlıklar)
+  // Yeni Soru Üret (Deste Sistemi & Geçmiş Hafıza Korumalı)
   nextQuestion() {
-    this.reloadCategoryItems();
-    if (this.items.length === 0) return null;
+    if (!this.items || this.items.length === 0) {
+      this.reloadCategoryItems();
+      if (this.items.length === 0) return null;
+    }
 
     if (this.remainingPool.length === 0) {
       if (this.wrongPool.length > 0) {
@@ -290,18 +292,26 @@ class GeographyQuiz {
       }
     }
 
-    // 🛡️ ARKA ARKAYA AYNI SORUNUN GELMESİNİ ENGELLEME
-    let candidateSelectionPool = this.remainingPool;
-    if (candidateSelectionPool.length > 1 && this.lastQuestionId) {
-      const withoutLast = candidateSelectionPool.filter(i => i.id !== this.lastQuestionId);
-      if (withoutLast.length > 0) {
-        candidateSelectionPool = withoutLast;
-      }
+    // 🛡️ GEÇMİŞ SORU FİLTRESİ: Son sorulan soruların (recentQuestionIds) hemen tekrar gelmesini engelle
+    const maxRecentMemory = Math.min(Math.max(1, Math.floor(this.items.length * 0.5)), 8);
+    let candidateSelectionPool = this.remainingPool.filter(i => !this.recentQuestionIds.includes(i.id));
+
+    // Eğer kalan havuzdaki tüm elemanlar recentQuestionIds içindeyse, kalan havuzdan seç
+    if (candidateSelectionPool.length === 0) {
+      candidateSelectionPool = this.remainingPool;
     }
 
     const selectedQuestion = this.getWeightedRandomItem(candidateSelectionPool);
     this.currentQuestion = selectedQuestion;
     this.lastQuestionId = selectedQuestion.id;
+
+    // Recent listesine ekle ve FIFO sınırla
+    this.recentQuestionIds.push(selectedQuestion.id);
+    if (this.recentQuestionIds.length > maxRecentMemory) {
+      this.recentQuestionIds.shift();
+    }
+
+    // Kalan havuzdan çıkar (deste mantığıyla tükenir)
     this.remainingPool = this.remainingPool.filter(i => i.id !== selectedQuestion.id);
     this.isAnswered = false;
 
