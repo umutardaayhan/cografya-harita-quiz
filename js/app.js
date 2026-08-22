@@ -317,21 +317,9 @@ document.addEventListener('DOMContentLoaded', () => {
       2: '2 (Orta-Kolay)', 
       3: '3 (Orta)', 
       4: '4 (Zor)', 
-      5: '5 (Uzman)', 
-      6: '6 🌋 Celal Şengör' 
+      5: '5 (Uzman / Yakın)' 
     };
     questionDifficultyBadge.textContent = `⚡ Seviye ${diffNames[qData.difficultyLevel] || qData.difficultyLevel}`;
-    if (qData.difficultyLevel === 6) {
-      questionDifficultyBadge.style.background = 'linear-gradient(135deg, #ef4444, #b91c1c)';
-      questionDifficultyBadge.style.color = '#ffffff';
-      questionDifficultyBadge.style.border = '1px solid #fca5a5';
-      questionDifficultyBadge.style.fontWeight = '800';
-    } else {
-      questionDifficultyBadge.style.background = '';
-      questionDifficultyBadge.style.color = '';
-      questionDifficultyBadge.style.border = '';
-      questionDifficultyBadge.style.fontWeight = '';
-    }
 
     // Adaptif hata ve ustalık rozetleri
     if (qData.isProblematic) {
@@ -349,6 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Şıkları render et ve harita işaretçilerini kur
     optionsGrid.innerHTML = '';
+    if (qData.options.length > 8 || geoQuiz.getOptionCount() === 'all') {
+      optionsGrid.classList.add('celal-all-grid');
+    } else {
+      optionsGrid.classList.remove('celal-all-grid');
+    }
     const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 
@@ -639,8 +632,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       optCountBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const count = parseInt(btn.dataset.count, 10);
-      geoQuiz.setOptionCount(count);
+      const countVal = btn.dataset.count === 'all' ? 'all' : parseInt(btn.dataset.count, 10);
+      geoQuiz.setOptionCount(countVal);
       
       if (currentMode === 'quiz') {
         loadNextQuestion();

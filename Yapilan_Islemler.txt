@@ -203,3 +203,14 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+🕒 Tarih/Saat: 22.08.2026 - 18:32
+⚠️ Sorun/İhtiyaç: 'Celal Şengör' seçeneğinin zorluk seviyesi değil, bir şık sayısı seçeneği olarak o kategorideki TÜM yer şekillerini şıklara döken bir test modu olması ihtiyacı.
+🎯 İşlem Özeti: Zorluk seviyesi orijinal 1-5 aralığına çekildi; şık sayısı seçicisine kızıl renkli '🌋 Celal Şengör (Tümü)' butonu eklendi. GeographyQuiz sınıfında optionCount='all' seçildiğinde o kategorideki/alt türdeki tüm yer şekillerinin şıklara aktarılması sağlandı; css/style.css içine çoklu butonlar için kompakt kaydırılabilir ızgara (.celal-all-grid) entegre edildi.
+📁 Etkilenen Kapsam: 
+  - js/quiz.js
+  - js/app.js
+  - index.html
+  - css/style.css
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================

@@ -110,7 +110,12 @@ class GeographyQuiz {
   }
 
   setOptionCount(count) {
-    this.optionCount = Math.max(2, Math.min(5, count));
+    if (count === 'all' || count === 'celal') {
+      this.optionCount = 'all';
+    } else {
+      const parsed = parseInt(count, 10);
+      this.optionCount = isNaN(parsed) ? 4 : Math.max(2, Math.min(8, parsed));
+    }
   }
 
   getOptionCount() {
@@ -303,21 +308,13 @@ class GeographyQuiz {
     const isProblematic = itemAnalytics.wrongCount >= 2 && itemAnalytics.wrongCount > itemAnalytics.correctCount;
     const isMastered = itemAnalytics.streak >= 3;
 
-    const targetDistractorCount = this.optionCount - 1;
-    let candidatePool = [];
-
-    if (this.difficultyLevel === 6) {
-      // 🌋 CELAL ŞENGÖR SEVİYESİ: Tüm kategorilerden (Dağlar, Ovalar, Platolar, Akarsular, Göller, Boğazlar) en yakın yer şekilleri
-      const allGlobalItems = [];
-      Object.keys(COGRAFYA_DATA).forEach(cat => {
-        allGlobalItems.push(...COGRAFYA_DATA[cat]);
-      });
-      if (this.customDrawManager && this.customDrawManager.drawings) {
-        allGlobalItems.push(...this.customDrawManager.drawings);
-      }
-      candidatePool = allGlobalItems.filter(item => item.id !== this.currentQuestion.id);
+    if (this.optionCount === 'all') {
+      // 🌋 CELAL ŞENGÖR MODU: Bu kategorideki (veya alt türdeki) TÜM yer şekilleri şıklara aktarılır!
+      this.currentOptions = [...this.items].sort(() => 0.5 - Math.random());
     } else {
-      candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+      const targetDistractorCount = parseInt(this.optionCount, 10) - 1;
+      let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+
       if (candidatePool.length < targetDistractorCount) {
         const allGlobalItems = [];
         Object.keys(COGRAFYA_DATA).forEach(cat => {
@@ -328,10 +325,10 @@ class GeographyQuiz {
         );
         candidatePool = [...candidatePool, ...additionalOthers];
       }
-    }
 
-    const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, targetDistractorCount);
-    this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
+      const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, targetDistractorCount);
+      this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
+    }
 
     // SADE, NET VE LAF KALABALIĞINDAN ARINDIRILMIŞ SORU BAŞLIKLARI
     let questionText = '';

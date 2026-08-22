@@ -531,27 +531,6 @@ body {
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
 }
 
-.diff-btn.celal-btn {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
-  font-weight: 700;
-}
-
-.diff-btn.celal-btn:hover {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: #ef4444;
-  color: #ffffff;
-}
-
-.diff-btn.celal-btn.active {
-  background: linear-gradient(135deg, #ef4444, #991b1b);
-  color: #ffffff;
-  border-color: #fca5a5;
-  font-weight: 800;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
-}
-
 /* Dinamik Şık Sayısı Seçici */
 .options-count-selector {
   display: flex;
@@ -593,6 +572,26 @@ body {
   background: var(--primary);
   color: #ffffff;
   border-color: var(--primary);
+}
+
+.opt-count-btn.celal-opt-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-weight: 800;
+}
+
+.opt-count-btn.celal-opt-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.opt-count-btn.celal-opt-btn.active {
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  color: #ffffff;
+  border-color: #fca5a5;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
 /* --- SAĞ ALT QUIZ PANELİ (GENİŞLETİLMİŞ & BASIK KOMPAKT DÜZEN) --- */
@@ -821,6 +820,28 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 6px;
+}
+
+/* 🌋 Celal Şengör Modu: Tüm Şıklar için Kompakt & Kaydırılabilir Izgara */
+.options-grid.celal-all-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+  gap: 4px;
+}
+
+.options-grid.celal-all-grid .option-btn {
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  min-height: 32px;
+  gap: 5px;
+}
+
+.options-grid.celal-all-grid .option-key {
+  min-width: 18px;
+  height: 18px;
+  font-size: 0.65rem;
 }
 
 .option-btn {
