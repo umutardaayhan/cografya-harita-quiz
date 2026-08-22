@@ -54,6 +54,16 @@ class GeographyQuiz {
     localStorage.setItem('kpss_cografya_stats', JSON.stringify(this.stats));
   }
 
+  resetStats() {
+    this.stats = {
+      correct: 0,
+      wrong: 0,
+      streak: 0,
+      bestStreak: 0
+    };
+    this.saveStats();
+  }
+
   loadAnalytics() {
     const saved = localStorage.getItem('kpss_cografya_question_analytics');
     if (saved) {

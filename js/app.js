@@ -401,6 +401,17 @@ document.addEventListener('DOMContentLoaded', () => {
     statRate.textContent = `%${geoQuiz.getSuccessRate()}`;
   }
 
+  // İstatistik Sıfırlama Butonu
+  const resetStatsBtn = document.getElementById('reset-stats-btn');
+  if (resetStatsBtn) {
+    resetStatsBtn.addEventListener('click', () => {
+      if (confirm('📊 Çalışma istatistiklerinizi ve başarı yüzdenizi sıfırlamak istediğinize emin misiniz?')) {
+        geoQuiz.resetStats();
+        updateStatsUI();
+      }
+    });
+  }
+
   // --- ZORLUK SEVİYESİ YÖNETİMİ (1-5 KADEME) ---
   diffBtns.forEach(btn => {
     btn.addEventListener('click', () => {
