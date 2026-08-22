@@ -24,6 +24,24 @@
 
     <!-- Mod ve Araç Butonları -->
     <div class="nav-actions">
+      <!-- Soru Formatı Seçici (Klasik vs Haritada Bul I-V vs Karışık) -->
+      <div class="quiz-format-selector">
+        <button id="format-toggle-btn" class="nav-btn format-btn" title="Soru Formatını Değiştir">
+          <span>🎯</span> <span id="format-label">Haritada Bul (I-V)</span>
+        </button>
+        <div id="format-dropdown" class="format-dropdown" style="display: none;">
+          <button class="format-option-btn active" data-format="find_on_map">
+            <span>📍</span> <span>İsimden Haritada Bul (ÖSYM I-V)</span>
+          </button>
+          <button class="format-option-btn" data-format="identify">
+            <span>🔍</span> <span>Konumdan İsmi Bul (Klasik)</span>
+          </button>
+          <button class="format-option-btn" data-format="mixed">
+            <span>🎲</span> <span>Karışık Sürpriz Modu</span>
+          </button>
+        </div>
+      </div>
+
       <button id="draw-mode-btn" class="nav-btn draw-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
         <span>✏️</span> <span>Harita Editörü</span>
       </button>
@@ -131,12 +149,12 @@
     <!-- Soru Başlığı -->
     <div class="question-header">
       <div class="question-badge-container">
-        <span id="question-badge" class="question-badge">🏔️ DAĞLAR - [KONUM SORUSU]</span>
+        <span id="question-badge" class="question-badge">🏔️ DAĞLAR - [HARİTADA BUL (I-V)]</span>
         <span id="question-adaptive-badge" class="adaptive-badge" style="display: none;" title="Bu soruya geçmişte daha sık takıldığınız için adaptif tekrar algoritması tarafından getirildi.">
           ⚠️ Sık Yanıldığın Soru
         </span>
       </div>
-      <h2 id="question-title" class="question-title">Haritada işaretli yer şekli hangisidir?</h2>
+      <h2 id="question-title" class="question-title">Haritada numaralandırılmış konumlardan hangisi Erciyes Dağı'dır?</h2>
     </div>
 
     <!-- Dinamik Seçenek Şıklar Listesi -->

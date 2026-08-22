@@ -131,6 +131,66 @@ body {
   white-space: nowrap;
 }
 
+/* Soru Formatı Seçici */
+.quiz-format-selector {
+  position: relative;
+}
+
+.format-btn {
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.format-btn:hover {
+  background: rgba(59, 130, 246, 0.28);
+}
+
+.format-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 230px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  z-index: 1200;
+  animation: fadeIn 0.15s ease;
+}
+
+.format-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.format-option-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.format-option-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  font-weight: 700;
+}
+
 .draw-btn {
   border: 1px solid rgba(139, 92, 246, 0.4);
   background: rgba(139, 92, 246, 0.15);
@@ -260,7 +320,6 @@ body {
   text-align: center;
 }
 
-/* Harita Çizim İçi İmleç */
 .drawing-mode-active {
   cursor: crosshair !important;
 }
@@ -416,7 +475,7 @@ body {
   position: absolute;
   right: 24px;
   bottom: 24px;
-  width: 400px;
+  width: 410px;
   max-width: calc(100vw - 48px);
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
@@ -635,19 +694,110 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- KEŞİF MODU BİLGİ PANELİ --- */
-.explore-banner {
-  display: none;
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  font-size: 0.85rem;
-  color: #bfdbfe;
-  line-height: 1.4;
+/* --- HARİTA ÇOKLU SEÇENEK (I-V / A-E) ROZET PİNLERİ --- */
+.choice-map-icon {
+  background: transparent;
+  border: none;
 }
 
-/* --- HARİTA İŞARETÇİ VE ŞEKİL ANİMASYONLARI --- */
+.choice-pin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.choice-pin-container:hover {
+  transform: scale(1.25) translateY(-4px);
+  z-index: 10000;
+}
+
+.choice-pin-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: #1e293b;
+  border: 2px solid #3b82f6;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 10px rgba(59, 130, 246, 0.6);
+  font-weight: 800;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.choice-pin-letter {
+  background: #3b82f6;
+  color: #ffffff;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+}
+
+.choice-pin-roman {
+  color: #93c5fd;
+  font-size: 0.8rem;
+}
+
+.choice-pin-point {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #3b82f6;
+  margin-top: -1px;
+}
+
+/* Doğru - Yanlış Harita Pinleri */
+.choice-pin-container.correct-pin .choice-pin-badge {
+  background: #065f46;
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.9);
+  animation: pulseCorrectPin 1.2s infinite ease-in-out;
+}
+
+.choice-pin-container.correct-pin .choice-pin-letter {
+  background: #10b981;
+}
+
+.choice-pin-container.correct-pin .choice-pin-point {
+  border-top-color: #10b981;
+}
+
+.choice-pin-container.wrong-pin .choice-pin-badge {
+  background: #991b1b;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.9);
+  animation: shake 0.3s ease-in-out;
+}
+
+.choice-pin-container.wrong-pin .choice-pin-letter {
+  background: #ef4444;
+}
+
+.choice-pin-container.wrong-pin .choice-pin-point {
+  border-top-color: #ef4444;
+}
+
+.choice-pin-container.dimmed-pin {
+  opacity: 0.3;
+  transform: scale(0.9);
+  filter: grayscale(80%);
+}
+
+@keyframes pulseCorrectPin {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* --- HARİTA TEKİL İŞARETÇİ VE ŞEKİL ANİMASYONLARI --- */
 .pulse-marker-icon {
   display: flex;
   align-items: center;
@@ -735,6 +885,18 @@ body {
 
 .explore-point-icon:hover {
   transform: scale(1.4);
+}
+
+/* --- KEŞİF MODU BİLGİ PANELİ --- */
+.explore-banner {
+  display: none;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #bfdbfe;
+  line-height: 1.4;
 }
 
 /* --- MODAL PENCERELER --- */
@@ -837,7 +999,6 @@ body {
   gap: 12px;
 }
 
-/* Renk Paleti */
 .color-picker-palette {
   display: flex;
   gap: 10px;
@@ -899,7 +1060,6 @@ body {
   color: var(--text-main);
 }
 
-/* JSON Yapıştırma Alanı */
 .paste-import-box {
   background: rgba(255, 255, 255, 0.03);
   border: 1px dashed rgba(139, 92, 246, 0.4);

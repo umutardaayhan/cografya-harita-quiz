@@ -1,10 +1,12 @@
 /**
  * Ana Uygulama Yöneticisi (App Controller)
+ * - Çift Yönlü Soru Modları:
+ *   1. 'find_on_map': İsimden Haritada I-V / A-E Konumu Bulma (ÖSYM Formatı)
+ *   2. 'identify': Konumdan İsim Bulma (Klasik)
+ *   3. 'mixed': Karışık Sürpriz Modu
+ * - Çoklu Seçenek Harita Rozetleri ile İnteraktif Tıklama
  * - Çizim Editörü & Doğrudan JSON Yapıştırma
- * - Çoklu Harita Katmanları (Uydu, Gece, Arazi, Topografik, Sade)
- * - Açılıp Kapanabilir Otomatik Yakınlaştırma (Auto-Zoom)
- * - Dinamik Şık Sayısı Seçimi (2, 3, 4, 5 Şık)
- * - Adaptif Soru & Spaced Repetition Akışı
+ * - Çoklu Harita Katmanları & Açılıp Kapanabilir Auto-Zoom
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,6 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const drawModeBtn = document.getElementById('draw-mode-btn');
   const modeToggleBtn = document.getElementById('mode-toggle-btn');
   const resetViewBtn = document.getElementById('reset-view-btn');
+
+  // Soru Formatı Seçici Elemanları
+  const formatToggleBtn = document.getElementById('format-toggle-btn');
+  const formatLabel = document.getElementById('format-label');
+  const formatDropdown = document.getElementById('format-dropdown');
+  const formatOptionBtns = document.querySelectorAll('.format-option-btn');
 
   // Harita Katmanları & Auto-Zoom
   const mapLayerBtn = document.getElementById('map-layer-btn');
@@ -215,9 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     questionBadge.textContent = `${catIcon} ${catName} - [${qData.questionTypeTitle}]`;
-    questionTitle.textContent = qData.questionText;
+    questionTitle.innerHTML = qData.questionText;
 
-    // Adaptif hata rozeti göster/gizle
+    // Adaptif hata rozeti
     if (qData.isProblematic) {
       questionAdaptiveBadge.style.display = 'inline-block';
       questionAdaptiveBadge.textContent = `⚠️ Sık Yanıldığın Soru (${qData.wrongCount} Yanlış)`;
@@ -225,28 +233,53 @@ document.addEventListener('DOMContentLoaded', () => {
       questionAdaptiveBadge.style.display = 'none';
     }
 
-    // Haritada konuma/şekle odaklan ve parlatarak göster
-    geoMap.highlightQuestionShape(qData.question);
-
-    // Şıkları render et
+    // Şıkları render et ve harita işaretçilerini kur
     optionsGrid.innerHTML = '';
     const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
 
-    qData.options.forEach((opt, index) => {
-      const optBtn = document.createElement('button');
-      optBtn.className = 'option-btn';
-      optBtn.dataset.id = opt.id;
-      optBtn.dataset.index = index;
+    if (qData.actualFormat === 'find_on_map') {
+      // YENİ ÖSYM HARİTADA BUL MODU (I-V çoklu harita pini)
+      geoMap.showMultipleChoiceLocations(qData.options, (selectedId) => {
+        handleAnswer(selectedId);
+      });
 
-      const keyLabel = geoQuiz.getOptionCount() === 5 ? optionLetters[index] : (index + 1);
+      qData.options.forEach((opt, index) => {
+        const optBtn = document.createElement('button');
+        optBtn.className = 'option-btn';
+        optBtn.dataset.id = opt.id;
+        optBtn.dataset.index = index;
 
-      optBtn.innerHTML = `
-        <span class="option-key">${keyLabel}</span>
-        <span class="option-name">${opt.name}</span>
-      `;
-      optBtn.addEventListener('click', () => handleAnswer(opt.id));
-      optionsGrid.appendChild(optBtn);
-    });
+        const letter = optionLetters[index];
+        const roman = romanNumerals[index];
+
+        optBtn.innerHTML = `
+          <span class="option-key">${letter}</span>
+          <span class="option-name"><strong>${roman}. Konum</strong> (${letter} İşaretçisi)</span>
+        `;
+        optBtn.addEventListener('click', () => handleAnswer(opt.id));
+        optionsGrid.appendChild(optBtn);
+      });
+    } else {
+      // KLASİK MOD (Haritada tek konum parlar, isim seçilir)
+      geoMap.highlightQuestionShape(qData.question);
+
+      qData.options.forEach((opt, index) => {
+        const optBtn = document.createElement('button');
+        optBtn.className = 'option-btn';
+        optBtn.dataset.id = opt.id;
+        optBtn.dataset.index = index;
+
+        const keyLabel = geoQuiz.getOptionCount() === 5 ? optionLetters[index] : (index + 1);
+
+        optBtn.innerHTML = `
+          <span class="option-key">${keyLabel}</span>
+          <span class="option-name">${opt.name}</span>
+        `;
+        optBtn.addEventListener('click', () => handleAnswer(opt.id));
+        optionsGrid.appendChild(optBtn);
+      });
+    }
 
     updateStatsUI();
   }
@@ -269,6 +302,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Harita üzerindeki çoklu pinleri renklendir (Eğer find_on_map modundaysa)
+    if (result.actualFormat === 'find_on_map') {
+      geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
+    }
+
     // KPSS Hap Bilgisini Göster
     kpssInfoCard.style.display = 'block';
     kpssInfoTitle.textContent = result.name;
@@ -288,6 +326,54 @@ document.addEventListener('DOMContentLoaded', () => {
     statStreak.textContent = geoQuiz.stats.streak > 0 ? `🔥 ${geoQuiz.stats.streak}` : '0';
     statRate.textContent = `%${geoQuiz.getSuccessRate()}`;
   }
+
+  // --- SORU FORMATI YÖNETİMİ (KLASİK / HARİTADA BUL / KARIŞIK) ---
+  formatToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isVisible = formatDropdown.style.display === 'flex';
+    formatDropdown.style.display = isVisible ? 'none' : 'flex';
+  });
+
+  formatOptionBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const format = btn.dataset.format;
+      geoQuiz.setQuizFormat(format);
+
+      formatOptionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (format === 'find_on_map') {
+        formatLabel.textContent = 'Haritada Bul (I-V)';
+      } else if (format === 'identify') {
+        formatLabel.textContent = 'Konumdan İsim Bul';
+      } else {
+        formatLabel.textContent = 'Karışık Sürpriz Modu';
+      }
+
+      formatDropdown.style.display = 'none';
+
+      if (currentMode === 'quiz') {
+        loadNextQuestion();
+      }
+    });
+  });
+
+  // Format menüsü dışına tıklayınca kapat
+  document.addEventListener('click', (e) => {
+    if (!formatDropdown.contains(e.target) && e.target !== formatToggleBtn) {
+      formatDropdown.style.display = 'none';
+    }
+  });
+
+  // Başlangıç format etiketini ayarla
+  const initialFormat = geoQuiz.getQuizFormat();
+  formatOptionBtns.forEach(b => {
+    b.classList.toggle('active', b.dataset.format === initialFormat);
+  });
+  if (initialFormat === 'find_on_map') formatLabel.textContent = 'Haritada Bul (I-V)';
+  else if (initialFormat === 'identify') formatLabel.textContent = 'Konumdan İsim Bul';
+  else formatLabel.textContent = 'Karışık Sürpriz Modu';
 
   // --- DİNAMİK ŞIK SAYISI YÖNETİMİ ---
   optCountBtns.forEach(btn => {
@@ -330,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Auto-Zoom Aç / Kapat
   function updateAutoZoomUI() {
     if (geoMap.autoZoomEnabled) {
       autoZoomBtn.classList.add('active');
@@ -506,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
   drawManageBtn.addEventListener('click', openManageModal);
   manageModalCloseBtn.addEventListener('click', closeManageModal);
 
-  // Doğrudan JSON Yapıştırarak İçe Aktar (NotebookLM için dosyasız)
+  // Doğrudan JSON Yapıştırarak İçe Aktar
   importPastedJsonBtn.addEventListener('click', () => {
     const rawText = pasteJsonTextarea.value.trim();
     if (!rawText) {

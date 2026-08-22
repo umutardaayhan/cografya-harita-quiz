@@ -1,51 +1,41 @@
-# 🎨 Özel Harita Çizim Editörü, JSON Yapıştırma ve Adaptif Quiz Motoru Kılavuzu
+# 🎨 KPSS Harita Quiz: Çift Yönlü Test Modelleri, Çizim Editörü & Adaptif Motor Kılavuzu
 
-Bu doküman, uygulamaya eklenen serbest harita çizimi, dosyasız direkt JSON yapıştırma, çoklu harita katmanları (Uydu, Gece, Arazi, Topografik, Sade), açılıp kapanabilir otomatik yakınlaştırma (Auto-Zoom) ve dinamik şık sayısı sistemlerini açıklar.
-
----
-
-## 1. 📋 Doğrudan JSON Metni Yapıştırma (NotebookLM Uyumlu)
-
-Kullanıcıların bir dosya kaydetmesine veya seçmesine gerek kalmadan doğrudan kopyala-yapıştır ile quiz içeriği yüklemesi sağlanmıştır:
-
-1. **"✏️ Harita Editörü"** veya **"🎨 Çizimlerim"** butonuna tıklayın.
-2. Açılan araç kutusundan **"📁 Çizimlerim & İçe Aktar"** butonuna basın.
-3. NotebookLM'in ürettiği JSON dizisini üstteki kutucuğa yapıştırın ve **"🚀 Yapıştırılan JSON'u İçe Aktar"** butonuna tıklayın.
-4. Tüm coğrafi yer şekilleri ve KPSS soruları anında haritanıza işlenir ve test başlar.
+Bu doküman; uygulamada yer alan çift yönlü soru modlarını (İsimden Haritada Konum Bulma I-V & Konumdan İsim Bulma), serbest harita çizimini, doğrudan JSON yapıştırmayı ve çoklu harita katmanlarını açıklar.
 
 ---
 
-## 2. 🗺️ Yeni Harita Görünümleri (Tile Katmanları)
+## 1. 🎯 Çift Yönlü Test Formatları (Soru Tipleri)
 
-Sol alt paneldeki harita seçici menüsünden 5 farklı harita modu seçilebilir:
-- 🗺️ **Sade / Renkli (CartoDB Voyager):** Göz yormayan, modern ve net görünüm.
-- ⛰️ **Fiziki / Topografik (OpenTopoMap):** Yükselti eğrileri ve eş yükselti eğrileri içeren fiziki harita.
-- 🛰️ **Gerçek Uydu (Esri World Imagery):** Yüksek çözünürlüklü gerçek dünya uydu görüntüsü.
-- 🌙 **Gece / Karanlık (CartoDB Dark Matter):** Gece çalışma modu, yüksek kontrastlı neon vurgular.
-- 🏔️ **Kabartı / Arazi (Esri World Topo Map):** Gölgeli kabartı ve dağ sıralarını belirginleştiren arazi haritası.
+Üst menüdeki **"🎯 Soru Formatı"** seçicisinden dilediğiniz modda çalışabilirsiniz:
+
+### A. 📍 İsimden Haritada Bul (ÖSYM Tipi I-V / A-E):
+- **Nasıl Çalışır?:** Soru başlığında yer şeklinin adı ve türü verilir: *(Örn: "Haritada numaralandırılmış konumlardan hangisi **Nemrut Dağı**'dır?")*
+- Harita üzerinde seçtiğiniz şık adedi kadar (2, 3, 4 veya 5 adet) **(I, II, III, IV, V)** ve **(A, B, C, D, E)** rozetli parıldayan pinler belirir.
+- Doğrudan **haritadaki numaralara tıklayarak**, panelden veya klavyeden (`1-5` / `A-E`) cevap verebilirsiniz.
+- Doğru pin anında yeşil dalga efektiyle onaylanır, yanlış pin kırmızı yanıp söner ve KPSS bilgi kartı açılır.
+
+### B. 🔍 Konumdan İsmi Bul (Klasik Mod):
+- Haritada tek bir konum veya çizgi/alan parıldayarak gösterilir, paneldeki şıklardan ismi seçilir.
+
+### C. 🎲 Karışık Sürpriz Modu:
+- Her soruda rastgele olarak bu iki formattan biri karşınıza gelir.
 
 ---
 
-## 3. 🔍 Açılıp Kapanabilir Otomatik Yakınlaştırma (Auto-Zoom)
+## 2. 📋 Doğrudan JSON Metni Yapıştırma (NotebookLM Uyumlu)
 
-Sol alt köşede yer alan **"🔍 Otomatik Odak: Açık/Kapalı"** butonu ile:
-- **Açıkken (Varsayılan):** Her yeni soruda harita soru konumuna/şekline yumuşak animasyonla yaklaşır.
-- **Kapalıyken:** Harita sizin ayarladığınız zoom seviyesinde ve Türkiye genel görünümünde sabit kalır; sadece işaretçi veya parıldayan çizgi haritada yanar.
+1. **"✏️ Harita Editörü"** -> **"📁 Çizimlerim & İçe Aktar"** butonuna basın.
+2. NotebookLM'in ürettiği JSON dizisini üstteki kutucuğa yapıştırın ve **"🚀 Yapıştırılan JSON'u İçe Aktar"** butonuna tıklayın.
+3. Tüm coğrafi yer şekilleri ve KPSS soruları anında haritanıza işlenir.
+
+---
+
+## 3. 🗺️ Harita Katmanları ve Yakınlaştırma (Auto-Zoom)
+
+- 5 Katman: 🗺️ **Sade / Renkli**, ⛰️ **Fiziki / Topografik**, 🛰️ **Gerçek Uydu**, 🌙 **Gece / Karanlık**, 🏔️ **Kabartı / Arazi**.
+- **🔍 Otomatik Odak (Auto-Zoom):** Açıp kapatarak haritanın sabit Türkiye görünümünde kalmasını veya her soruda otomatik odaklanmasını ayarlayabilirsiniz.
 
 ---
 
 ## 4. 🧠 Hata Ağırlıklı Adaptif Soru Motoru (Spaced Repetition)
-
-Quiz motoru, öğrencinin soru çözme geçmişini analiz eder:
-$$W = \max\left(0.3, \, 1.0 + (\text{wrongCount} \times 2.5) - (\text{streak} \times 0.6)\right)$$
-- En çok yanlış yapılan sorular Rulet Tekerleği algoritması ile daha sık karşınıza gelir.
-- Bu sorular ekrana geldiğinde `⚠️ Sık Yanıldığın Soru (X Yanlış)` rozeti yanıp söner.
-
----
-
-## 5. 🔢 Dinamik Şık Sayısı (2, 3, 4, 5 Şık / ÖSYM Modu)
-- **2 Şık:** Hızlı 50/50 ezber modu.
-- **3 Şık:** Hızlı tekrar.
-- **4 Şık:** Standart pratik.
-- **5 Şık:** Gerçek **ÖSYM KPSS A-B-C-D-E** sınav simülasyonu.
-- Klavyeden `1-5` ve `A-E` tuşları desteklenir.
+- En çok takıldığınız sorular Rulet Tekerleği algoritması ile daha sık gelir ve `⚠️ Sık Yanıldığın Soru` rozetiyle uyarır.

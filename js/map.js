@@ -1,6 +1,7 @@
 /**
  * Leaflet Harita Yönetimi ve Geometrik Çizim Motoru
  * Desteklenen geometriler: Nokta (Point), Çizgi/Hat (Polyline), Alan/Çokgen (Polygon)
+ * Desteklenen Quiz Modları: Tek Konum Vurgulama & Çoklu Seçenek (I, II, III, IV, V / A, B, C, D, E) Harita İşaretçileri
  */
 
 class GeographyMap {
@@ -9,6 +10,7 @@ class GeographyMap {
     this.map = null;
     this.currentMarker = null;
     this.currentShapeLayer = null;
+    this.multiChoiceLayerGroup = L.layerGroup();
     this.exploreLayerGroup = L.layerGroup();
     this.drawingLayerGroup = L.layerGroup();
     
@@ -95,8 +97,8 @@ class GeographyMap {
       zoom: 6.4,
       minZoom: 5,
       maxBounds: [
-        [34.0, 24.0], // Güneybatı sınırları
-        [43.5, 46.0]  // Kuzeydoğu sınırları
+        [34.0, 24.0],
+        [43.5, 46.0]
       ],
       maxBoundsViscosity: 0.8,
       zoomControl: false
@@ -105,12 +107,13 @@ class GeographyMap {
     // Varsayılan katmanı ekle
     this.layers[this.activeLayerKey].layer.addTo(this.map);
     this.exploreLayerGroup.addTo(this.map);
+    this.multiChoiceLayerGroup.addTo(this.map);
     this.drawingLayerGroup.addTo(this.map);
 
     // Zoom kontrolünü sağ üste al
     L.control.zoom({ position: 'topright' }).addTo(this.map);
 
-    // Harita tıklama ve fare hareketi olayları (Çizim modu için)
+    // Harita tıklama ve fare hareketi olayları
     this.map.on('click', (e) => this.handleMapClick(e));
     this.map.on('mousemove', (e) => this.handleMouseMove(e));
     this.map.on('dblclick', (e) => {
@@ -121,7 +124,6 @@ class GeographyMap {
     });
   }
 
-  // Harita Katmanını Değiştir (Döngüsel veya Anahtar ile)
   setLayer(layerKey) {
     if (!this.layers[layerKey]) return;
 
@@ -134,23 +136,14 @@ class GeographyMap {
     return this.layers[layerKey].name;
   }
 
-  cycleNextLayer() {
-    const keys = Object.keys(this.layers);
-    const currentIndex = keys.indexOf(this.activeLayerKey);
-    const nextKey = keys[(currentIndex + 1) % keys.length];
-    return { key: nextKey, name: this.setLayer(nextKey) };
-  }
-
-  // --- SORU VURGULAMA MOTORU (AUTO-ZOOM KONTROLLÜ) ---
+  // --- KLASİK MOD: TEK SORU VURGULAMA MOTORU ---
   highlightQuestionShape(questionItem) {
     this.clearQuestionHighlight();
-
     if (!questionItem) return;
 
     const shapeType = questionItem.shapeType || 'point';
 
     if (shapeType === 'point' || !questionItem.coordinates || !Array.isArray(questionItem.coordinates[0])) {
-      // Nokta Sorusu
       const lat = questionItem.lat;
       const lng = questionItem.lng;
 
@@ -163,7 +156,6 @@ class GeographyMap {
 
       this.currentMarker = L.marker([lat, lng], { icon: pulseIcon }).addTo(this.map);
 
-      // Yalnızca otomatik yakınlaştırma açıksa odaklan
       if (this.autoZoomEnabled) {
         this.map.flyTo([lat, lng], Math.max(this.map.getZoom(), 7.2), {
           duration: 0.8,
@@ -171,7 +163,6 @@ class GeographyMap {
         });
       }
     } else if (shapeType === 'polyline') {
-      // Çizgi / Akarsu / Hat Sorusu
       const coords = questionItem.coordinates;
       
       this.currentShapeLayer = L.polyline(coords, {
@@ -188,7 +179,6 @@ class GeographyMap {
         this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
       }
     } else if (shapeType === 'polygon') {
-      // Geometrik Alan / Bölge / Havza Sorusu
       const coords = questionItem.coordinates;
 
       this.currentShapeLayer = L.polygon(coords, {
@@ -206,6 +196,97 @@ class GeographyMap {
     }
   }
 
+  // --- YENİ MOD: ÇOKLU SEÇENEK (I-V / A-E) HARİTA ROZETLERİ ---
+  showMultipleChoiceLocations(options, onSelectOption) {
+    this.clearQuestionHighlight();
+    if (!options || options.length === 0) return;
+
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
+    const letters = ['A', 'B', 'C', 'D', 'E'];
+    const boundsCoords = [];
+
+    options.forEach((opt, index) => {
+      const letter = letters[index] || `${index + 1}`;
+      const roman = romanNumerals[index] || `${index + 1}`;
+      const lat = opt.lat;
+      const lng = opt.lng;
+      boundsCoords.push([lat, lng]);
+
+      const shapeType = opt.shapeType || 'point';
+
+      // Çokgen veya Çizgi ise hafifçe göster
+      if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
+        const polyline = L.polyline(opt.coordinates, {
+          color: '#3b82f6',
+          weight: 4,
+          opacity: 0.7,
+          dashArray: '4, 4'
+        }).addTo(this.multiChoiceLayerGroup);
+        
+        polyline.on('click', () => {
+          if (onSelectOption) onSelectOption(opt.id);
+        });
+      } else if (shapeType === 'polygon' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
+        const polygon = L.polygon(opt.coordinates, {
+          color: '#3b82f6',
+          weight: 2,
+          fillColor: '#3b82f6',
+          fillOpacity: 0.2
+        }).addTo(this.multiChoiceLayerGroup);
+
+        polygon.on('click', () => {
+          if (onSelectOption) onSelectOption(opt.id);
+        });
+      }
+
+      // Harfli ve Roma rakamlı şık pini
+      const badgeHtml = `
+        <div class="choice-pin-container" data-id="${opt.id}">
+          <div class="choice-pin-badge">
+            <span class="choice-pin-letter">${letter}</span>
+            <span class="choice-pin-roman">${roman}</span>
+          </div>
+          <div class="choice-pin-point"></div>
+        </div>
+      `;
+
+      const choiceIcon = L.divIcon({
+        className: 'choice-map-icon',
+        html: badgeHtml,
+        iconSize: [36, 44],
+        iconAnchor: [18, 44]
+      });
+
+      const marker = L.marker([lat, lng], { icon: choiceIcon }).addTo(this.multiChoiceLayerGroup);
+      marker.on('click', () => {
+        if (onSelectOption) onSelectOption(opt.id);
+      });
+    });
+
+    // Haritayı tüm seçenekleri kapsayacak şekilde kadrajla
+    if (this.autoZoomEnabled && boundsCoords.length > 0) {
+      const bounds = L.latLngBounds(boundsCoords);
+      this.map.flyToBounds(bounds.pad(0.35), { duration: 0.8 });
+    }
+  }
+
+  // Çoklu Seçenek Cevap Renklendirmesi
+  highlightMultiChoiceAnswer(correctId, selectedId) {
+    const pins = document.querySelectorAll('.choice-pin-container');
+    pins.forEach(pin => {
+      const id = pin.dataset.id;
+      pin.classList.remove('correct-pin', 'wrong-pin', 'dimmed-pin');
+
+      if (id === correctId) {
+        pin.classList.add('correct-pin');
+      } else if (id === selectedId && selectedId !== correctId) {
+        pin.classList.add('wrong-pin');
+      } else {
+        pin.classList.add('dimmed-pin');
+      }
+    });
+  }
+
   clearQuestionHighlight() {
     if (this.currentMarker) {
       this.map.removeLayer(this.currentMarker);
@@ -215,20 +296,18 @@ class GeographyMap {
       this.map.removeLayer(this.currentShapeLayer);
       this.currentShapeLayer = null;
     }
+    this.multiChoiceLayerGroup.clearLayers();
   }
 
-  // Eski fonksiyonla uyumluluk (Nokta)
   highlightQuestionLocation(lat, lng) {
     this.highlightQuestionShape({ shapeType: 'point', lat, lng });
   }
 
-  // Tüm Türkiye'yi görecek şekilde haritayı sıfırla
   resetView() {
     this.map.flyTo([39.0, 35.3], 6.4, { duration: 0.8 });
   }
 
   // --- ÇİZİM MODU (DRAWING ENGINE) ---
-
   startDrawing(shapeType, onComplete) {
     this.cancelDrawing();
     this.isDrawing = true;

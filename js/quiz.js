@@ -2,7 +2,10 @@
  * KPSS Coğrafya Quiz ve Adaptif Soru Motoru
  * - Akıllı Hata Ağırlıklı Soru Seçimi (Smart Repetition)
  * - Dinamik Şık Sayısı (2, 3, 4, 5 Şık)
- * - Nokta, Çizgi ve Poligon Çoklu Geometri Desteği
+ * - Çift Yönlü Test Modları:
+ *   1. 'identify': Haritada Tek Yer Gösterir -> İsmini Sorar.
+ *   2. 'find_on_map': İsmi Söyler -> Haritada I, II, III, IV, V'ten Doğru Olanı İster (ÖSYM Formatı).
+ *   3. 'mixed': Karışık Sürpriz Modu.
  */
 
 class GeographyQuiz {
@@ -17,6 +20,8 @@ class GeographyQuiz {
     this.currentOptions = [];
     this.isAnswered = false;
     this.optionCount = 4; // Varsayılan 4 şık (2, 3, 4, 5 seçilebilir)
+    this.quizFormat = this.loadQuizFormat(); // 'identify', 'find_on_map', 'mixed'
+    this.currentActualFormat = 'identify';
 
     // Genel Test İstatistikleri
     this.stats = this.loadStats();
@@ -57,11 +62,25 @@ class GeographyQuiz {
         // Hata durumunda varsayılan
       }
     }
-    return {}; // { [questionId]: { wrongCount: 0, correctCount: 0, streak: 0, lastSeen: timestamp } }
+    return {};
   }
 
   saveAnalytics() {
     localStorage.setItem('kpss_cografya_question_analytics', JSON.stringify(this.analytics));
+  }
+
+  loadQuizFormat() {
+    const saved = localStorage.getItem('kpss_cografya_quiz_format');
+    return saved || 'find_on_map'; // Varsayılan olarak heyecan verici yeni ÖSYM modunu açalım
+  }
+
+  setQuizFormat(format) {
+    this.quizFormat = format;
+    localStorage.setItem('kpss_cografya_quiz_format', format);
+  }
+
+  getQuizFormat() {
+    return this.quizFormat;
   }
 
   setOptionCount(count) {
@@ -92,16 +111,10 @@ class GeographyQuiz {
   // --- ADAPTİF AĞIRLIK HESAPLAMA (SPACED REPETITION) ---
   calculateItemWeight(item) {
     const itemAnalytics = this.analytics[item.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
-    
-    // Temel taban ağırlık = 1.0
-    // Her yanlış cevap ağırlığı 2.5 puan artırır (daha sık gelmesini sağlar)
-    // Ardışık doğru cevaplar ağırlığı 0.6 puan düşürür
     let weight = 1.0 + (itemAnalytics.wrongCount * 2.5) - (itemAnalytics.streak * 0.6);
-    
-    return Math.max(0.3, weight); // Minimum 0.3 ağırlık
+    return Math.max(0.3, weight);
   }
 
-  // Rulet Tekerleği Algoritması (Weighted Random Selection)
   getWeightedRandomItem(pool) {
     if (pool.length === 0) return null;
     if (pool.length === 1) return pool[0];
@@ -125,7 +138,6 @@ class GeographyQuiz {
     this.reloadCategoryItems();
     if (this.items.length === 0) return null;
 
-    // Havuz boşaldıysa sıfırla
     if (this.remainingPool.length === 0) {
       if (this.wrongPool.length > 0) {
         this.remainingPool = [...this.wrongPool];
@@ -135,25 +147,26 @@ class GeographyQuiz {
       }
     }
 
-    // Adaptif ağırlıklı seçim ile soruyu belirle
     const selectedQuestion = this.getWeightedRandomItem(this.remainingPool);
     this.currentQuestion = selectedQuestion;
-    
-    // Seçilen soruyu aktif havuzdan çıkar
     this.remainingPool = this.remainingPool.filter(i => i.id !== selectedQuestion.id);
     this.isAnswered = false;
 
-    // Soru analitik durumu (Sık Yanıldığım Rozeti için)
+    // Soru formatını belirle (identify, find_on_map veya mixed)
+    if (this.quizFormat === 'mixed') {
+      this.currentActualFormat = Math.random() > 0.5 ? 'find_on_map' : 'identify';
+    } else {
+      this.currentActualFormat = this.quizFormat;
+    }
+
+    // Soru analitik durumu
     const itemAnalytics = this.analytics[selectedQuestion.id] || { wrongCount: 0, correctCount: 0 };
     const isProblematic = itemAnalytics.wrongCount >= 2 && itemAnalytics.wrongCount > itemAnalytics.correctCount;
 
-    // Dinamik Şık Üretimi (optionCount kadar)
+    // Dinamik Çeldiriciler
     const targetDistractorCount = this.optionCount - 1;
-
-    // Çeldiricileri önce aynı kategoriden seç
     let otherItems = this.items.filter(item => item.id !== this.currentQuestion.id);
 
-    // Eğer aynı kategoride yeterli soru yoksa, diğer tüm genel kategorilerden çeldirici takviyesi yap
     if (otherItems.length < targetDistractorCount) {
       const allGlobalItems = [];
       Object.keys(COGRAFYA_DATA).forEach(cat => {
@@ -168,22 +181,36 @@ class GeographyQuiz {
     const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
     const distractors = shuffledOthers.slice(0, Math.min(targetDistractorCount, shuffledOthers.length));
 
-    // Doğru cevapla çeldiricileri karıştır
+    // Doğru cevapla çeldiricileri harmanla
     this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
 
-    // Şekil tipine göre dinamik başlık ve soru metni
-    let questionText = 'Haritada işaretli konum hangisidir?';
-    let questionTypeTitle = 'YER ŞEKLİ';
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
+    const letters = ['A', 'B', 'C', 'D', 'E'];
 
-    if (this.currentQuestion.shapeType === 'polyline') {
-      questionText = 'Haritada işaretli hat / akarsu / sıra hangisidir?';
-      questionTypeTitle = 'HAT / AKARSU SORUSU';
-    } else if (this.currentQuestion.shapeType === 'polygon') {
-      questionText = 'Haritada taranmış alan / bölge / plato hangisidir?';
-      questionTypeTitle = 'ALAN / BÖLGE SORUSU';
+    // Soru formatına göre metin ve başlık oluşturma
+    let questionText = '';
+    let questionTypeTitle = '';
+
+    if (this.currentActualFormat === 'find_on_map') {
+      // YENİ ÖSYM TEST MODELİ (İsim verilir -> Haritada I-V arasından doğru konum istenir)
+      let shapeLabel = 'yer şekli';
+      if (this.currentQuestion.shapeType === 'polyline') shapeLabel = 'akarsu/hat';
+      if (this.currentQuestion.shapeType === 'polygon') shapeLabel = 'alan/bölge';
+
+      questionText = `Haritada numaralandırılmış konumlardan hangisi <strong style="color: #60a5fa; text-decoration: underline;">${this.currentQuestion.name}</strong> (${this.currentQuestion.type}) konumudur?`;
+      questionTypeTitle = 'HARİTADA BUL (I-V)';
     } else {
-      questionText = 'Haritada işaretli yer şekli / nokta hangisidir?';
-      questionTypeTitle = 'KONUM SORUSU';
+      // KLASİK MOD (Haritada konum gösterilir -> İsmi sorulur)
+      if (this.currentQuestion.shapeType === 'polyline') {
+        questionText = 'Haritada işaretli hat / akarsu / sıra hangisidir?';
+        questionTypeTitle = 'HAT / AKARSU SORUSU';
+      } else if (this.currentQuestion.shapeType === 'polygon') {
+        questionText = 'Haritada taranmış alan / bölge / plato hangisidir?';
+        questionTypeTitle = 'ALAN / BÖLGE SORUSU';
+      } else {
+        questionText = 'Haritada işaretli yer şekli / nokta hangisidir?';
+        questionTypeTitle = 'KONUM SORUSU';
+      }
     }
 
     return {
@@ -191,6 +218,7 @@ class GeographyQuiz {
       options: this.currentOptions,
       questionText,
       questionTypeTitle,
+      actualFormat: this.currentActualFormat,
       isProblematic,
       wrongCount: itemAnalytics.wrongCount,
       correctCount: itemAnalytics.correctCount
@@ -205,7 +233,6 @@ class GeographyQuiz {
     const isCorrect = selectedId === this.currentQuestion.id;
     const qId = this.currentQuestion.id;
 
-    // Soru bazlı analitik kaydı
     if (!this.analytics[qId]) {
       this.analytics[qId] = { wrongCount: 0, correctCount: 0, streak: 0, lastSeen: Date.now() };
     }
@@ -228,7 +255,6 @@ class GeographyQuiz {
       this.analytics[qId].streak = 0;
       this.analytics[qId].lastSeen = Date.now();
 
-      // Yanlış havuzuna ekle
       if (!this.wrongPool.some(i => i.id === this.currentQuestion.id)) {
         this.wrongPool.push(this.currentQuestion);
       }
@@ -246,6 +272,7 @@ class GeographyQuiz {
       region: this.currentQuestion.region,
       name: this.currentQuestion.name,
       shapeType: this.currentQuestion.shapeType || 'point',
+      actualFormat: this.currentActualFormat,
       stats: this.stats,
       questionAnalytics: this.analytics[qId]
     };
@@ -255,15 +282,5 @@ class GeographyQuiz {
     const total = this.stats.correct + this.stats.wrong;
     if (total === 0) return 0;
     return Math.round((this.stats.correct / total) * 100);
-  }
-
-  // En çok yanlış yapılan soruların özet listesi
-  getTopWeakPoints(limit = 5) {
-    const entries = Object.entries(this.analytics)
-      .map(([id, data]) => ({ id, ...data }))
-      .filter(item => item.wrongCount > 0)
-      .sort((a, b) => b.wrongCount - a.wrongCount);
-
-    return entries.slice(0, limit);
   }
 }
