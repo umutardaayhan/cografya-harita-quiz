@@ -47,13 +47,49 @@
           <span>🔍</span> <span>Odak Modu</span>
         </button>
 
-        <button id="exam-mode-btn" class="nav-btn exam-btn" title="18 Soruluk KPSS Coğrafya Deneme Sınavı">
-          <span>📝</span> <span>Genel Deneme (18 Soru)</span>
-        </button>
-
-        <button id="speedrun-btn" class="nav-btn speedrun-btn" title="60 Saniyede En Çok Yer Şeklini Bil!">
-          <span>⚡</span> <span>Şimşek Turu (60s)</span>
-        </button>
+        <!-- 🎮 Eğlenceli Oyun Modları Seçici Menüsü -->
+        <div class="game-modes-selector">
+          <button id="games-menu-btn" class="nav-btn games-btn" title="Eğlenceli Oyun Modları">
+            <span>🎮</span> <span>Oyun Modları ▾</span>
+          </button>
+          <div id="games-dropdown" class="games-dropdown" style="display: none;">
+            <button id="btn-geoguessr-mode" class="game-mode-option-btn">
+              <span>🎯</span>
+              <div>
+                <strong>Kör Atış (GeoGuessr)</strong>
+                <small>Dilsiz haritaya pin at, km mesafeni ölç!</small>
+              </div>
+            </button>
+            <button id="btn-conqueror-mode" class="game-mode-option-btn">
+              <span>⚔️</span>
+              <div>
+                <strong>Harita Fatihi</strong>
+                <small>Doğru cevaplarla 7 bölgeyi fethet & boya!</small>
+              </div>
+            </button>
+            <button id="btn-match-mode" class="game-mode-option-btn">
+              <span>🧩</span>
+              <div>
+                <strong>Şekil Yapbozu (Match)</strong>
+                <small>Akarsu-Delta & Dağ-Geçit kartlarını patlat!</small>
+              </div>
+            </button>
+            <button id="speedrun-btn" class="game-mode-option-btn">
+              <span>⚡</span>
+              <div>
+                <strong>Şimşek Turu (60s)</strong>
+                <small>Zamana karşı en yüksek skoru yap!</small>
+              </div>
+            </button>
+            <button id="exam-mode-btn" class="game-mode-option-btn">
+              <span>📝</span>
+              <div>
+                <strong>Genel Deneme (18 Soru)</strong>
+                <small>Kronometreli KPSS tam sınav provası</small>
+              </div>
+            </button>
+          </div>
+        </div>
 
         <button id="draw-mode-btn" class="nav-btn draw-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
           <span>✏️</span> <span>Harita Editörü</span>
@@ -178,8 +214,54 @@
     </div>
 
     <div id="quiz-panel-inner" class="quiz-panel-inner">
+      <!-- 🎯 Kör Atış (GeoGuessr) HUD Bölümü -->
+      <div id="geoguessr-hud" class="geoguessr-hud" style="display: none;">
+        <div class="geoguessr-header">
+          <span class="exam-stat-chip count">🎯 Tur: <span id="geoguessr-round-idx">1</span>/5</span>
+          <span class="exam-stat-chip score">🏆 Skor: <span id="geoguessr-score-val">0</span></span>
+          <button id="geoguessr-abort-btn" class="exam-abort-chip" title="Kör Atışı Bitir">✕ Çık</button>
+        </div>
+        <div class="geoguessr-target-box">
+          <span class="geoguessr-target-label">Dilsiz Haritada Tahmin Et ve Tıkla:</span>
+          <h2 id="geoguessr-target-name" class="question-title">📍 Ağrı Dağı</h2>
+        </div>
+        <div id="geoguessr-feedback-box" class="geoguessr-feedback-box" style="display: none;">
+          <div class="geoguessr-feedback-main">
+            <span id="geoguessr-dist-badge" class="geoguessr-badge">0 km</span>
+            <span id="geoguessr-pts-badge" class="geoguessr-badge points">+0 Puan</span>
+          </div>
+          <button id="geoguessr-next-btn" class="modal-btn primary" style="width: 100%; margin-top: 8px;">Sonraki Tur → (Boşluk)</button>
+        </div>
+      </div>
+
+      <!-- ⚔️ Harita Fatihi HUD Bölümü -->
+      <div id="conqueror-hud" class="conqueror-hud" style="display: none;">
+        <div class="conqueror-header">
+          <span class="exam-stat-chip score">⚔️ Fetih: <span id="conqueror-percent-val">%0</span></span>
+          <span class="exam-stat-chip count">📍 <span id="conqueror-count-val">0</span> Şekil</span>
+          <button id="conqueror-abort-btn" class="exam-abort-chip" title="Fetihten Çık">✕ Çık</button>
+        </div>
+        <div id="conqueror-regions-grid" class="conqueror-regions-grid">
+          <!-- JS ile 7 bölge barı -->
+        </div>
+      </div>
+
+      <!-- 🧩 Şekil Yapbozu (Match) HUD Bölümü -->
+      <div id="match-hud" class="match-hud" style="display: none;">
+        <div class="match-header">
+          <span class="speedrun-stat-chip timer">⏱️ <span id="match-timer-val">60</span>s</span>
+          <span class="speedrun-stat-chip score">🏆 <span id="match-score-val">0</span></span>
+          <span class="speedrun-stat-chip streak">🔥 x<span id="match-combo-val">1</span></span>
+          <button id="match-abort-btn" class="exam-abort-chip" title="Oyundan Çık">✕ Çık</button>
+        </div>
+        <div class="match-board-container">
+          <div class="match-col left-col" id="match-left-cards"></div>
+          <div class="match-col right-col" id="match-right-cards"></div>
+        </div>
+      </div>
+
       <!-- İstatistik, Deneme ve Şimşek Turu Barı -->
-      <div class="stats-bar">
+      <div id="quiz-default-stats-bar" class="stats-bar">
         <!-- 📝 Genel Deneme Sınavı Bölümü (Sadece Deneme Modunda Görünür) -->
         <div id="exam-stats-block" class="exam-stats-block" style="display: none;">
           <span class="exam-stat-chip count">📝 Soru: <span id="exam-q-index">1</span>/18</span>
@@ -366,6 +448,91 @@
 
 
 
+  <!-- 🎯 Kör Atış (GeoGuessr) Sonuç Modalı -->
+  <div id="geoguessr-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card geoguessr-modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy" id="geoguessr-res-badge">🎯</div>
+        <h3 id="geoguessr-res-title">Kör Atış Tamamlandı!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">5 Turluk Coğrafya Radarı Karneniz:</p>
+      </div>
+
+      <div class="speedrun-stats-grid">
+        <div class="speedrun-stat-box best">
+          <span class="speedrun-stat-val record" id="geoguessr-res-score">0</span>
+          <span class="speedrun-stat-lbl">🏆 Toplam Skor (Maks 5000)</span>
+        </div>
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val streak" id="geoguessr-res-avgkm">0 km</span>
+          <span class="speedrun-stat-lbl">📏 Ortalama Sapma</span>
+        </div>
+      </div>
+
+      <div id="geoguessr-round-list" class="geoguessr-round-list">
+        <!-- JS ile 5 turun detayları -->
+      </div>
+
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="geoguessr-close-btn" class="modal-btn secondary">Kapat</button>
+        <button id="geoguessr-restart-btn" class="modal-btn primary">🎯 Yeniden Oyna</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⚔️ Harita Fatihi Zafer Modalı -->
+  <div id="conqueror-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card conqueror-modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy">👑</div>
+        <h3>TÜRKİYE FATİHİ!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Tüm coğrafi bölgelerin yer şekillerini fethedip haritayı boyadınız!</p>
+      </div>
+
+      <div class="speedrun-stats-grid">
+        <div class="speedrun-stat-box best">
+          <span class="speedrun-stat-val record" id="conqueror-res-percent">%100</span>
+          <span class="speedrun-stat-lbl">🛡️ Fetih Oranı</span>
+        </div>
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val correct" id="conqueror-res-count">0</span>
+          <span class="speedrun-stat-lbl">📍 Fethedilen Şekil</span>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="conqueror-close-btn" class="modal-btn secondary">Haritayı İncele</button>
+        <button id="conqueror-restart-btn" class="modal-btn primary">⚔️ Sıfırdan Başla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🧩 Şekil Yapbozu (Match) Oyun Modalı & Oyun Alanı -->
+  <div id="match-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card match-modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy">🧩</div>
+        <h3>Şekil Yapbozu Tamamlandı!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Hızlı eşleştirme ve kombo performansınız:</p>
+      </div>
+
+      <div class="speedrun-stats-grid">
+        <div class="speedrun-stat-box best">
+          <span class="speedrun-stat-val record" id="match-res-score">0</span>
+          <span class="speedrun-stat-lbl">👑 Toplam Puan</span>
+        </div>
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val streak" id="match-res-time">0s</span>
+          <span class="speedrun-stat-lbl">⏱️ Hayatta Kalma Süresi</span>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="match-close-btn" class="modal-btn secondary">Kapat</button>
+        <button id="match-restart-btn" class="modal-btn primary">🧩 Yeni Oyun Başlat</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ⚡ Şimşek Turu Sonuç Modalı -->
   <div id="speedrun-modal" class="modal-overlay" style="display: none;">
     <div class="modal-card speedrun-modal-card">
@@ -439,6 +606,9 @@
   <!-- Uygulama Scriptleri -->
   <script src="data/cografya_data.js"></script>
   <script src="js/custom_draw.js"></script>
+  <script src="js/geoguessr.js"></script>
+  <script src="js/conqueror.js"></script>
+  <script src="js/match_game.js"></script>
   <script src="js/map.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/app.js"></script>

@@ -92,6 +92,65 @@ document.addEventListener('DOMContentLoaded', () => {
   const statStreak = document.getElementById('stat-streak');
   const statRate = document.getElementById('stat-rate');
 
+  // 🎮 Yeni Oyun Modları Motorları
+  const geoGuessrGame = new GeoGuessrGame(geoMap);
+  const conquerorGame = new ConquerorGame(geoMap);
+  const matchGame = new MatchGame(geoMap);
+
+  // 🎮 Oyun Modları Menüsü DOM Elemanları
+  const gamesMenuBtn = document.getElementById('games-menu-btn');
+  const gamesDropdown = document.getElementById('games-dropdown');
+  const btnGeoguessrMode = document.getElementById('btn-geoguessr-mode');
+  const btnConquerorMode = document.getElementById('btn-conqueror-mode');
+  const btnMatchMode = document.getElementById('btn-match-mode');
+
+  // 🎯 Kör Atış (GeoGuessr) DOM Elemanları
+  const geoguessrHud = document.getElementById('geoguessr-hud');
+  const geoguessrRoundIdx = document.getElementById('geoguessr-round-idx');
+  const geoguessrScoreVal = document.getElementById('geoguessr-score-val');
+  const geoguessrTargetName = document.getElementById('geoguessr-target-name');
+  const geoguessrFeedbackBox = document.getElementById('geoguessr-feedback-box');
+  const geoguessrDistBadge = document.getElementById('geoguessr-dist-badge');
+  const geoguessrPtsBadge = document.getElementById('geoguessr-pts-badge');
+  const geoguessrNextBtn = document.getElementById('geoguessr-next-btn');
+  const geoguessrAbortBtn = document.getElementById('geoguessr-abort-btn');
+  const geoguessrModal = document.getElementById('geoguessr-modal');
+  const geoguessrResBadge = document.getElementById('geoguessr-res-badge');
+  const geoguessrResTitle = document.getElementById('geoguessr-res-title');
+  const geoguessrResScore = document.getElementById('geoguessr-res-score');
+  const geoguessrResAvgkm = document.getElementById('geoguessr-res-avgkm');
+  const geoguessrRoundList = document.getElementById('geoguessr-round-list');
+  const geoguessrCloseBtn = document.getElementById('geoguessr-close-btn');
+  const geoguessrRestartBtn = document.getElementById('geoguessr-restart-btn');
+
+  // ⚔️ Harita Fatihi DOM Elemanları
+  const conquerorHud = document.getElementById('conqueror-hud');
+  const conquerorPercentVal = document.getElementById('conqueror-percent-val');
+  const conquerorCountVal = document.getElementById('conqueror-count-val');
+  const conquerorRegionsGrid = document.getElementById('conqueror-regions-grid');
+  const conquerorAbortBtn = document.getElementById('conqueror-abort-btn');
+  const conquerorModal = document.getElementById('conqueror-modal');
+  const conquerorResPercent = document.getElementById('conqueror-res-percent');
+  const conquerorResCount = document.getElementById('conqueror-res-count');
+  const conquerorCloseBtn = document.getElementById('conqueror-close-btn');
+  const conquerorRestartBtn = document.getElementById('conqueror-restart-btn');
+
+  // 🧩 Şekil Yapbozu (Match) DOM Elemanları
+  const matchHud = document.getElementById('match-hud');
+  const matchTimerVal = document.getElementById('match-timer-val');
+  const matchScoreVal = document.getElementById('match-score-val');
+  const matchComboVal = document.getElementById('match-combo-val');
+  const matchLeftCards = document.getElementById('match-left-cards');
+  const matchRightCards = document.getElementById('match-right-cards');
+  const matchAbortBtn = document.getElementById('match-abort-btn');
+  const matchModal = document.getElementById('match-modal');
+  const matchResScore = document.getElementById('match-res-score');
+  const matchResTime = document.getElementById('match-res-time');
+  const matchCloseBtn = document.getElementById('match-close-btn');
+  const matchRestartBtn = document.getElementById('match-restart-btn');
+
+  const quizDefaultStatsBar = document.getElementById('quiz-default-stats-bar');
+
   // ⚡ Şimşek Turu (Speedrun) DOM Elemanları
   const speedrunBtn = document.getElementById('speedrun-btn');
   const speedrunStatsBlock = document.getElementById('speedrun-stats-block');
@@ -124,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const examCloseModalBtn = document.getElementById('exam-close-modal-btn');
 
   // Uygulama Durumu
-  let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing'
+  let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing', 'geoguessr', 'conqueror', 'match'
   let activeCategory = 'daglar';
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
@@ -453,6 +512,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.add('wrong');
       }
     });
+
+    // ⚔️ Harita Fatihi Modu Kontrolü
+    if (result.isCorrect && conquerorGame.isActive && result.currentQuestion) {
+      const conqStatus = conquerorGame.recordConquest(result.currentQuestion);
+      updateConquerorUI(conqStatus);
+    }
 
     // Harita üzerindeki çoklu pinleri renklendir
     if (result.actualFormat === 'find_on_map') {
@@ -789,7 +854,275 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.toggle('active', parseInt(btn.dataset.level, 10) === initialDiff);
   });
 
-  // --- SORU FORMATI YÖNETİMİ (KLASİK / HARİTADA BUL / KARIŞIK) ---
+  // ============================================================
+  // 🎮 YENİ EĞLENCELİ OYUN MODLARI MANTIĞI
+  // ============================================================
+
+  // Oyun Menüsü Açılır/Kapanır
+  if (gamesMenuBtn && gamesDropdown) {
+    gamesMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVis = gamesDropdown.style.display === 'flex';
+      gamesDropdown.style.display = isVis ? 'none' : 'flex';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!gamesDropdown.contains(e.target) && e.target !== gamesMenuBtn) {
+        gamesDropdown.style.display = 'none';
+      }
+    });
+  }
+
+  function hideAllGameHuds() {
+    if (geoguessrHud) geoguessrHud.style.display = 'none';
+    if (conquerorHud) conquerorHud.style.display = 'none';
+    if (matchHud) matchHud.style.display = 'none';
+    if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
+    if (examStatsBlock) examStatsBlock.style.display = 'none';
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'flex';
+    if (optionsGrid) optionsGrid.style.display = 'grid';
+    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'flex';
+  }
+
+  // --- 🎯 1. KÖR ATIŞ (GEOGUESSR) MODU ---
+  function startGeoGuessrMode() {
+    if (gamesDropdown) gamesDropdown.style.display = 'none';
+    currentMode = 'geoguessr';
+    hideAllGameHuds();
+
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
+    if (optionsGrid) optionsGrid.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+
+    if (geoguessrHud) geoguessrHud.style.display = 'flex';
+    if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
+
+    const roundData = geoGuessrGame.start();
+    updateGeoGuessrUI(roundData);
+  }
+
+  function updateGeoGuessrUI(roundData) {
+    if (geoguessrRoundIdx) geoguessrRoundIdx.textContent = roundData.round;
+    if (geoguessrScoreVal) geoguessrScoreVal.textContent = roundData.totalScore;
+    if (geoguessrTargetName) geoguessrTargetName.textContent = `📍 ${roundData.target.name} (${roundData.target.type || 'Yer Şekli'})`;
+    if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
+  }
+
+  if (btnGeoguessrMode) btnGeoguessrMode.addEventListener('click', startGeoGuessrMode);
+
+  if (geoguessrNextBtn) {
+    geoguessrNextBtn.addEventListener('click', () => {
+      const step = geoGuessrGame.proceedToNext();
+      if (step.isFinished) {
+        showGeoGuessrResults(step.summary);
+      } else {
+        updateGeoGuessrUI(step.roundData);
+      }
+    });
+  }
+
+  if (geoguessrAbortBtn) {
+    geoguessrAbortBtn.addEventListener('click', () => {
+      geoGuessrGame.exit();
+      currentMode = 'quiz';
+      hideAllGameHuds();
+      loadNextQuestion();
+    });
+  }
+
+  function showGeoGuessrResults(summary) {
+    if (geoguessrResBadge) geoguessrResBadge.textContent = summary.badge;
+    if (geoguessrResTitle) geoguessrResTitle.textContent = summary.title;
+    if (geoguessrResScore) geoguessrResScore.textContent = summary.totalScore;
+    if (geoguessrResAvgkm) geoguessrResAvgkm.textContent = `${summary.avgDistanceKm} km`;
+
+    if (geoguessrRoundList) {
+      geoguessrRoundList.innerHTML = summary.roundResults.map(r => `
+        <div class="geoguessr-round-row">
+          <span>${r.round}. ${r.target.name}</span>
+          <span style="color: ${r.distanceKm <= 50 ? '#4ade80' : r.distanceKm <= 150 ? '#fbbf24' : '#f87171'}; font-weight: 800;">
+            ${r.distanceKm} km (+${r.score} Puan)
+          </span>
+        </div>
+      `).join('');
+    }
+
+    if (geoguessrModal) geoguessrModal.style.display = 'flex';
+  }
+
+  if (geoguessrCloseBtn) {
+    geoguessrCloseBtn.addEventListener('click', () => {
+      if (geoguessrModal) geoguessrModal.style.display = 'none';
+      currentMode = 'quiz';
+      hideAllGameHuds();
+      loadNextQuestion();
+    });
+  }
+
+  if (geoguessrRestartBtn) {
+    geoguessrRestartBtn.addEventListener('click', () => {
+      if (geoguessrModal) geoguessrModal.style.display = 'none';
+      startGeoGuessrMode();
+    });
+  }
+
+  // --- ⚔️ 2. HARİTA FATİHİ (CONQUEROR) MODU ---
+  function startConquerorMode() {
+    if (gamesDropdown) gamesDropdown.style.display = 'none';
+    currentMode = 'conqueror';
+    hideAllGameHuds();
+
+    if (conquerorHud) conquerorHud.style.display = 'flex';
+    const status = conquerorGame.start();
+    updateConquerorUI(status);
+    loadNextQuestion();
+  }
+
+  function updateConquerorUI(status) {
+    if (!status) return;
+    if (conquerorPercentVal) conquerorPercentVal.textContent = `%${status.overallPercent}`;
+    if (conquerorCountVal) conquerorCountVal.textContent = status.totalConquered;
+
+    if (conquerorRegionsGrid) {
+      conquerorRegionsGrid.innerHTML = status.regionStats.map(reg => `
+        <div class="conqueror-region-item ${reg.isCompleted ? 'completed' : ''}">
+          <div class="conqueror-region-header">
+            <span>${reg.name}</span>
+            <span>${reg.current}/${reg.goal} (%${reg.percent})</span>
+          </div>
+          <div class="conqueror-bar-track">
+            <div class="conqueror-bar-fill" style="width: ${reg.percent}%;"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    if (status.isVictory && conquerorModal) {
+      if (conquerorResPercent) conquerorResPercent.textContent = `%100`;
+      if (conquerorResCount) conquerorResCount.textContent = status.totalConquered;
+      conquerorModal.style.display = 'flex';
+    }
+  }
+
+  if (btnConquerorMode) btnConquerorMode.addEventListener('click', startConquerorMode);
+
+  if (conquerorAbortBtn) {
+    conquerorAbortBtn.addEventListener('click', () => {
+      conquerorGame.exit();
+      currentMode = 'quiz';
+      hideAllGameHuds();
+      loadNextQuestion();
+    });
+  }
+
+  if (conquerorCloseBtn) {
+    conquerorCloseBtn.addEventListener('click', () => {
+      if (conquerorModal) conquerorModal.style.display = 'none';
+    });
+  }
+
+  if (conquerorRestartBtn) {
+    conquerorRestartBtn.addEventListener('click', () => {
+      if (conquerorModal) conquerorModal.style.display = 'none';
+      startConquerorMode();
+    });
+  }
+
+  // --- 🧩 3. ŞEKİL YAPBOZU (MATCH & BLAST) MODU ---
+  function startMatchMode() {
+    if (gamesDropdown) gamesDropdown.style.display = 'none';
+    currentMode = 'match';
+    hideAllGameHuds();
+
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
+    if (optionsGrid) optionsGrid.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (kpssInfoCard) kpssInfoCard.style.display = 'none';
+
+    if (matchHud) matchHud.style.display = 'flex';
+
+    matchGame.onTick = (timeLeft) => {
+      if (matchTimerVal) matchTimerVal.textContent = timeLeft;
+    };
+
+    matchGame.onFinish = (result) => {
+      if (matchResScore) matchResScore.textContent = result.score;
+      if (matchResTime) matchResTime.textContent = `${result.timeSpent}s`;
+      if (matchModal) matchModal.style.display = 'flex';
+    };
+
+    const boardState = matchGame.start();
+    renderMatchBoard(boardState);
+  }
+
+  function renderMatchBoard(boardState) {
+    if (!boardState) return;
+    if (matchTimerVal) matchTimerVal.textContent = boardState.timeLeft;
+    if (matchScoreVal) matchScoreVal.textContent = boardState.score;
+    if (matchComboVal) matchComboVal.textContent = boardState.combo;
+
+    if (matchLeftCards) {
+      matchLeftCards.innerHTML = '';
+      boardState.leftCards.forEach(card => {
+        const btn = document.createElement('button');
+        btn.className = `match-card ${boardState.selectedLeft === card.id ? 'selected' : ''}`;
+        btn.textContent = `📍 ${card.text}`;
+        btn.addEventListener('click', () => {
+          const res = matchGame.selectCard(card.id, 'source');
+          handleMatchInteraction(res);
+        });
+        matchLeftCards.appendChild(btn);
+      });
+    }
+
+    if (matchRightCards) {
+      matchRightCards.innerHTML = '';
+      boardState.rightCards.forEach(card => {
+        const btn = document.createElement('button');
+        btn.className = `match-card ${boardState.selectedRight === card.id ? 'selected' : ''}`;
+        btn.textContent = `🎯 ${card.text}`;
+        btn.addEventListener('click', () => {
+          const res = matchGame.selectCard(card.id, 'target');
+          handleMatchInteraction(res);
+        });
+        matchRightCards.appendChild(btn);
+      });
+    }
+  }
+
+  function handleMatchInteraction(res) {
+    if (!res) return;
+    renderMatchBoard(res.boardState);
+  }
+
+  if (btnMatchMode) btnMatchMode.addEventListener('click', startMatchMode);
+
+  if (matchAbortBtn) {
+    matchAbortBtn.addEventListener('click', () => {
+      matchGame.exit();
+      currentMode = 'quiz';
+      hideAllGameHuds();
+      loadNextQuestion();
+    });
+  }
+
+  if (matchCloseBtn) {
+    matchCloseBtn.addEventListener('click', () => {
+      if (matchModal) matchModal.style.display = 'none';
+      currentMode = 'quiz';
+      hideAllGameHuds();
+      loadNextQuestion();
+    });
+  }
+
+  if (matchRestartBtn) {
+    matchRestartBtn.addEventListener('click', () => {
+      if (matchModal) matchModal.style.display = 'none';
+      startMatchMode();
+    });
+  }
   formatToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const isVisible = formatDropdown.style.display === 'flex';
@@ -1235,16 +1568,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Harita Tıklama Dinleyicisi (Kör Atış / GeoGuessr Modu İçin)
+  geoMap.map.on('click', (e) => {
+    if (geoGuessrGame.isActive) {
+      const res = geoGuessrGame.handleMapClick(e.latlng.lat, e.latlng.lng);
+      if (res) {
+        if (geoguessrDistBadge) geoguessrDistBadge.textContent = `${res.distanceKm} km sapma`;
+        if (geoguessrPtsBadge) geoguessrPtsBadge.textContent = `+${res.score} Puan`;
+        if (geoguessrScoreVal) geoguessrScoreVal.textContent = geoGuessrGame.totalScore;
+        if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'block';
+      }
+    }
+  });
+
   // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ, ESC İLE ODAKTAN ÇIKIŞ) ---
   document.addEventListener('keydown', (e) => {
-    if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex' || examModal.style.display === 'flex') return;
+    if (drawModal.style.display === 'flex' || drawManageModal.style.display === 'flex' || examModal.style.display === 'flex' || geoguessrModal.style.display === 'flex' || matchModal.style.display === 'flex') return;
 
     if (e.key === 'Escape' && isFocusMode) {
       toggleFocusMode(false);
       return;
     }
 
-    if (currentMode !== 'quiz') return;
+    // Kör Atış modunda Space / Enter ile sonraki tur
+    if ((e.key === ' ' || e.key === 'Enter') && geoGuessrGame.isActive && geoGuessrGame.hasGuessedThisRound) {
+      e.preventDefault();
+      if (geoguessrNextBtn) geoguessrNextBtn.click();
+      return;
+    }
+
+    if (currentMode !== 'quiz' && currentMode !== 'conqueror') return;
 
     const key = e.key.toUpperCase();
     const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
