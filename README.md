@@ -7,7 +7,7 @@
 [![Deployed on Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat&logo=vercel&logoColor=white)](https://vercel.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-> 🌐 **Live Demo / Canlı Site:** [https://cografya-harita-quiz.vercel.app](https://cografya-harita-quiz.vercel.app) *(veya Vercel URL'niz)*
+> 🌐 **Live Demo / Canlı Site:** [https://cografya-harita-quiz.vercel.app](https://cografya-harita-quiz.vercel.app)
 
 ---
 

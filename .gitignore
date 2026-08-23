@@ -27,3 +27,7 @@ yarn-error.log*
 dist/
 build/
 .vercel
+
+# Project Logs & Notes
+Yapilan_Islemler.txt
+
