@@ -51,44 +51,16 @@
   <!-- Üst Kategori ve Mod Seçim Menüsü -->
   <header class="top-nav-wrapper">
     <nav class="top-nav">
-      <div id="categories-container" class="categories-container">
-        <!-- JS ile dinamik doldurulur -->
-      </div>
-      
-      <div class="nav-divider"></div>
-
-      <!-- Mod ve Araç Butonları -->
-      <div class="nav-actions">
-        <!-- Soru Formatı Seçici (Klasik vs Haritada Bul I-V vs Karışık) -->
-        <div class="quiz-format-selector">
-          <button id="format-toggle-btn" class="nav-btn format-btn" title="Soru Formatını Değiştir">
-            <span>🎯</span> <span id="format-label">Haritada Bul</span>
-          </button>
-          <div id="format-dropdown" class="format-dropdown" style="display: none;">
-            <button class="format-option-btn active" data-format="find_on_map">
-              <span>📍</span> <span>İsimden Haritada Bul (ÖSYM I-V)</span>
-            </button>
-            <button class="format-option-btn" data-format="identify">
-              <span>🔍</span> <span>Konumdan İsmi Bul (Klasik)</span>
-            </button>
-            <button class="format-option-btn" data-format="mixed">
-              <span>🎲</span> <span>Karışık Sürpriz Modu</span>
-            </button>
-          </div>
-        </div>
-
+      <!-- 1. SATIR: Birincil eylemler -->
+      <div class="nav-row nav-row-primary">
         <button id="back-to-plan-btn" class="nav-btn plan-nav-btn" title="Bugünün Planı Ekranına Dön">
-          <span>📅</span> <span>Bugünün Planı</span>
-        </button>
-
-        <button id="focus-mode-btn" class="nav-btn focus-btn" title="Haritayı Tam Ekran Gör (Sadece Soru ve Harita)">
-          <span>🔍</span> <span>Odak Modu</span>
+          <span>📅</span> <span>Plan</span>
         </button>
 
         <!-- 🎮 Eğlenceli Oyun Modları Seçici Menüsü -->
         <div class="game-modes-selector">
           <button id="games-menu-btn" class="nav-btn games-btn" title="Eğlenceli Oyun Modları">
-            <span>🎮</span> <span>Oyun Modları ▾</span>
+            <span>🎮</span> <span>Oyun Modları</span> <span class="nav-caret">▾</span>
           </button>
           <div id="games-dropdown" class="games-dropdown" style="display: none;">
             <button id="btn-geoguessr-mode" class="game-mode-option-btn">
@@ -132,7 +104,7 @@
             <button id="btn-mk-sun" class="game-mode-option-btn">
               <span>☀️</span>
               <div>
-                <strong>Güneş Açısı & Gölge Boyu</strong>
+                <strong>Güneş Açısı &amp; Gölge Boyu</strong>
                 <small>Tarihe göre ışını en dik alan ili bul</small>
               </div>
             </button>
@@ -167,13 +139,41 @@
           </div>
         </div>
 
-        <button id="draw-mode-btn" class="nav-btn draw-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
-          <span>✏️</span> <span>Harita Editörü</span>
-        </button>
-
-        <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Mod Değiştir">
+        <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Test / Keşif Modu Değiştir">
           <span>🧭</span> <span>Keşif Modu</span>
         </button>
+
+        <!-- ⚙️ İkincil araçlar tek menüde toplandı -->
+        <div class="tools-selector">
+          <button id="tools-menu-btn" class="nav-btn tools-btn" title="Soru Formatı, Odak Modu ve Harita Editörü">
+            <span>⚙️</span> <span>Araçlar</span> <span class="nav-caret">▾</span>
+          </button>
+          <div id="tools-dropdown" class="tools-dropdown" style="display: none;">
+            <div class="tools-section-title">🎯 Soru Formatı</div>
+            <button class="format-option-btn active" data-format="find_on_map">
+              <span>📍</span> <span>İsimden Haritada Bul (ÖSYM I-V)</span>
+            </button>
+            <button class="format-option-btn" data-format="identify">
+              <span>🔍</span> <span>Konumdan İsmi Bul (Klasik)</span>
+            </button>
+            <button class="format-option-btn" data-format="mixed">
+              <span>🎲</span> <span>Karışık Sürpriz Modu</span>
+            </button>
+
+            <div class="tools-section-title">🛠️ Araçlar</div>
+            <button id="focus-mode-btn" class="tools-row-btn" title="Haritayı Tam Ekran Gör (Sadece Soru ve Harita)">
+              <span>🔍</span> <span>Odak Modu</span>
+            </button>
+            <button id="draw-mode-btn" class="tools-row-btn" title="Kendi Nokta/Çizgi/Şekillerini Haritaya Ekle">
+              <span>✏️</span> <span>Harita Editörü</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SATIR: Konu sekmeleri (yatay kaydırılabilir) -->
+      <div id="categories-container" class="categories-container">
+        <!-- JS ile dinamik doldurulur -->
       </div>
     </nav>
 

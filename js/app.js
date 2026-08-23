@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         id: 'ozel_cizimler',
         title: `Çizimlerim (${customDrawManager.drawings.length})`,
+        short: `Çizim (${customDrawManager.drawings.length})`,
         icon: '🎨',
         color: '#8b5cf6',
         isCustom: true
@@ -242,7 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = document.createElement('button');
       btn.className = `category-btn ${cat.isCustom ? 'custom-category-btn' : ''} ${cat.id === activeCategory ? 'active' : ''}`;
       btn.dataset.category = cat.id;
-      btn.innerHTML = `<span>${cat.icon}</span> <span>${cat.title}</span>`;
+      // Sekmede kısa ad; tam ad tooltip'te (üst çubuk çok doluydu)
+      btn.title = cat.title;
+      btn.innerHTML = `<span>${cat.icon}</span> <span>${cat.short || cat.title}</span>`;
       btn.addEventListener('click', () => switchCategory(cat.id));
       categoriesContainer.appendChild(btn);
     });
@@ -961,6 +964,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       const isVis = gamesDropdown.style.display === 'flex';
       gamesDropdown.style.display = isVis ? 'none' : 'flex';
+      closeToolsDropdown();
     });
 
     document.addEventListener('click', (e) => {
@@ -993,6 +997,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeGamesDropdown() {
     if (gamesDropdown) gamesDropdown.style.display = 'none';
+  }
+
+  // ⚙️ Araçlar menüsü (soru formatı + odak modu + harita editörü)
+  const toolsMenuBtn = document.getElementById('tools-menu-btn');
+  const toolsDropdown = document.getElementById('tools-dropdown');
+
+  function closeToolsDropdown() {
+    if (toolsDropdown) toolsDropdown.style.display = 'none';
+  }
+
+  if (toolsMenuBtn && toolsDropdown) {
+    toolsMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const acik = toolsDropdown.style.display === 'flex';
+      toolsDropdown.style.display = acik ? 'none' : 'flex';
+      closeGamesDropdown();
+    });
+    document.addEventListener('click', (e) => {
+      if (!toolsDropdown.contains(e.target) && !toolsMenuBtn.contains(e.target)) {
+        closeToolsDropdown();
+      }
+    });
   }
 
   // Kesif modundayken oyuna girilip cikilinca buton "Test Moduna Gec" yazili kaliyordu
@@ -1605,11 +1631,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById(btnId);
     if (btn) btn.addEventListener('click', () => startMutlakKonumMode(key));
   });
-  formatToggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isVisible = formatDropdown.style.display === 'flex';
-    formatDropdown.style.display = isVisible ? 'none' : 'flex';
-  });
+  // Soru formatı artık Araçlar menüsünün içinde; ayrı bir açılır düğmesi yok.
+  // Eski elemanlara yapılan atıflar null olabilir, bu yüzden hepsi korumalı.
+  if (formatToggleBtn && formatDropdown) {
+    formatToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = formatDropdown.style.display === 'flex';
+      formatDropdown.style.display = isVisible ? 'none' : 'flex';
+    });
+  }
 
   formatOptionBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -1620,15 +1650,13 @@ document.addEventListener('DOMContentLoaded', () => {
       formatOptionBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      if (format === 'find_on_map') {
-        formatLabel.textContent = 'Haritada Bul (I-V)';
-      } else if (format === 'identify') {
-        formatLabel.textContent = 'Konumdan İsim Bul';
-      } else {
-        formatLabel.textContent = 'Karışık Sürpriz Modu';
+      if (formatLabel) {
+        formatLabel.textContent = format === 'find_on_map' ? 'Haritada Bul (I-V)'
+          : format === 'identify' ? 'Konumdan İsim Bul' : 'Karışık Sürpriz Modu';
       }
 
-      formatDropdown.style.display = 'none';
+      if (formatDropdown) formatDropdown.style.display = 'none';
+      closeToolsDropdown();
 
       if (currentMode === 'quiz') {
         loadNextQuestion();
@@ -1637,7 +1665,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('click', (e) => {
-    if (!formatDropdown.contains(e.target) && e.target !== formatToggleBtn) {
+    if (formatDropdown && !formatDropdown.contains(e.target) && e.target !== formatToggleBtn) {
       formatDropdown.style.display = 'none';
     }
   });
@@ -1646,9 +1674,10 @@ document.addEventListener('DOMContentLoaded', () => {
   formatOptionBtns.forEach(b => {
     b.classList.toggle('active', b.dataset.format === initialFormat);
   });
-  if (initialFormat === 'find_on_map') formatLabel.textContent = 'Haritada Bul (I-V)';
-  else if (initialFormat === 'identify') formatLabel.textContent = 'Konumdan İsim Bul';
-  else formatLabel.textContent = 'Karışık Sürpriz Modu';
+  if (formatLabel) {
+    formatLabel.textContent = initialFormat === 'find_on_map' ? 'Haritada Bul (I-V)'
+      : initialFormat === 'identify' ? 'Konumdan İsim Bul' : 'Karışık Sürpriz Modu';
+  }
 
   // --- DİNAMİK ŞIK SAYISI YÖNETİMİ ---
   optCountBtns.forEach(btn => {
@@ -1757,6 +1786,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   drawModeBtn.addEventListener('click', () => {
+    closeToolsDropdown();
     if (drawingToolbar.style.display === 'none') {
       openDrawingToolbar();
     } else {
@@ -2023,7 +2053,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (focusModeBtn) focusModeBtn.addEventListener('click', () => toggleFocusMode());
+  if (focusModeBtn) focusModeBtn.addEventListener('click', () => { closeToolsDropdown(); toggleFocusMode(); });
   if (focusExitBtn) focusExitBtn.addEventListener('click', () => toggleFocusMode(false));
 
   const quizExpandBtn = document.getElementById('quiz-expand-btn');

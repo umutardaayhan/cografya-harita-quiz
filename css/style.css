@@ -62,11 +62,12 @@ body {
   position: relative;
   z-index: 100;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;   /* 1. satir eylemler, 2. satir konu sekmeleri */
+  align-items: stretch;
+  gap: 6px;
+  max-width: 96vw;
   background: var(--bg-card);
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 0;
   border: 1px solid var(--bg-card-border);
   backdrop-filter: blur(16px);
@@ -183,6 +184,139 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* --- Üst çubuk iki satır düzeni --- */
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-row-primary {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nav-caret {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-left: -2px;
+}
+
+/* Konu sekmeleri: kaydırılabilir tek şerit, sarmıyor.
+   min-width:0 olmadan flex ögesi içeriği kadar büyüyüp sayfayı yatay taşırıyordu. */
+.top-nav .categories-container {
+  flex-wrap: nowrap;
+  min-width: 0;
+  max-width: 100%;
+  padding-top: 5px;
+  border-top: 1px solid var(--bg-card-border);
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Dar ekranda birincil satır tek sıra kalsın: etiketler gizlenir, ikonlar kalır */
+@media (max-width: 560px) {
+  .nav-row-primary { flex-wrap: nowrap; justify-content: space-between; }
+  .top-nav .nav-btn { padding: 7px 10px; }
+  .top-nav .nav-btn > span:not(:first-child):not(.nav-caret) { display: none; }
+  .top-nav .nav-btn > span:first-child { font-size: 1.05rem; }
+  .top-nav .category-btn { font-size: 0.76rem; padding: 5px 9px; }
+  .tools-dropdown { min-width: 232px; }
+}
+
+/* Sekmeler kompaktlaştırıldı (11 konu tek satıra sığsın) */
+.top-nav .category-btn {
+  padding: 5px 11px;
+  font-size: 0.8rem;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.top-nav .nav-btn {
+  padding: 6px 12px;
+  font-size: 0.83rem;
+}
+
+/* --- ⚙️ Araçlar menüsü --- */
+.tools-selector {
+  position: relative;
+}
+
+.tools-btn {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(148, 163, 184, 0.14);
+  color: #cbd5e1;
+}
+
+.tools-btn:hover {
+  background: rgba(148, 163, 184, 0.26);
+}
+
+.tools-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 262px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+  z-index: 99999;
+  animation: fadeIn 0.15s ease;
+}
+
+.tools-section-title {
+  padding: 6px 8px 3px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.tools-section-title + .format-option-btn,
+.tools-section-title + .tools-row-btn {
+  margin-top: 0;
+}
+
+.tools-row-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tools-row-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-main);
+}
+
+.tools-row-btn.active {
+  background: rgba(139, 92, 246, 0.18);
+  border-color: rgba(139, 92, 246, 0.45);
+  color: #c4b5fd;
+}
+
+/* Format seçenekleri artık Araçlar menüsünün içinde */
+.tools-dropdown .format-option-btn {
+  position: static;
+  width: 100%;
 }
 
 .nav-btn {
@@ -1922,9 +2056,8 @@ body.focus-mode .focus-exit-float-btn {
    bunlara basmak oyunu sessizce Keşif Moduna düşürüyordu. */
 body.game-mode-active .categories-container,
 body.game-mode-active .sub-categories-bar,
-body.game-mode-active .quiz-format-selector,
 body.game-mode-active #mode-toggle-btn,
-body.game-mode-active #draw-mode-btn {
+body.game-mode-active .tools-selector {
   opacity: 0.35;
   pointer-events: none;
   filter: grayscale(0.6);

@@ -2552,17 +2552,18 @@ const COGRAFYA_DATA = {
 };
 
 // Kategori başlıkları ve ikonları
+// title: tam ad (soru rozeti ve tooltip). short: üst çubuktaki sekme adı.
 const CATEGORIES = [
-  { id: "daglar", title: "Dağlar", icon: "🏔️", color: "#e67e22", count: COGRAFYA_DATA.daglar.length },
-  { id: "ovalar", title: "Ovalar", icon: "🌾", color: "#27ae60", count: COGRAFYA_DATA.ovalar.length },
-  { id: "platolar", title: "Platolar", icon: "⛰️", color: "#d35400", count: COGRAFYA_DATA.platolar.length },
-  { id: "su_kaynaklari", title: "Akarsu & Göller", icon: "🌊", color: "#2980b9", count: COGRAFYA_DATA.su_kaynaklari.length },
-  { id: "gecitler", title: "Geçitler & Boğazlar", icon: "🚪", color: "#8e44ad", count: COGRAFYA_DATA.gecitler.length },
-  { id: "iliskili_cografya", title: "İlişkili Eşleştirme", icon: "🔗", color: "#ec4899", count: COGRAFYA_DATA.iliskili_cografya.length },
-  { id: "tarim", title: "Tarım", icon: "🚜", color: "#84cc16", count: COGRAFYA_DATA.tarim.length },
-  { id: "sanayi", title: "Sanayi", icon: "🏭", color: "#64748b", count: COGRAFYA_DATA.sanayi.length },
-  { id: "iklim", title: "İklim", icon: "🌡️", color: "#f59e0b", count: COGRAFYA_DATA.iklim.length },
-  { id: "orman", title: "Orman & Bitki Örtüsü", icon: "🌲", color: "#16a34a", count: COGRAFYA_DATA.orman.length }
+  { id: "daglar", title: "Dağlar", short: "Dağ", icon: "🏔️", color: "#e67e22", count: COGRAFYA_DATA.daglar.length },
+  { id: "ovalar", title: "Ovalar", short: "Ova", icon: "🌾", color: "#27ae60", count: COGRAFYA_DATA.ovalar.length },
+  { id: "platolar", title: "Platolar", short: "Plato", icon: "⛰️", color: "#d35400", count: COGRAFYA_DATA.platolar.length },
+  { id: "su_kaynaklari", title: "Akarsu & Göller", short: "Sular", icon: "🌊", color: "#2980b9", count: COGRAFYA_DATA.su_kaynaklari.length },
+  { id: "gecitler", title: "Geçitler & Boğazlar", short: "Geçit", icon: "🚪", color: "#8e44ad", count: COGRAFYA_DATA.gecitler.length },
+  { id: "iliskili_cografya", title: "İlişkili Eşleştirme", short: "Eşleştir", icon: "🔗", color: "#ec4899", count: COGRAFYA_DATA.iliskili_cografya.length },
+  { id: "tarim", title: "Tarım", short: "Tarım", icon: "🚜", color: "#84cc16", count: COGRAFYA_DATA.tarim.length },
+  { id: "sanayi", title: "Sanayi", short: "Sanayi", icon: "🏭", color: "#64748b", count: COGRAFYA_DATA.sanayi.length },
+  { id: "iklim", title: "İklim", short: "İklim", icon: "🌡️", color: "#f59e0b", count: COGRAFYA_DATA.iklim.length },
+  { id: "orman", title: "Orman & Bitki Örtüsü", short: "Orman", icon: "🌲", color: "#16a34a", count: COGRAFYA_DATA.orman.length }
 ];
 
 // KPSS Oluşum ve Alt Tür Filtreleme Haritası
