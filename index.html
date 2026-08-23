@@ -388,6 +388,24 @@
           <div class="mk-hint" id="mk-hint"></div>
         </div>
 
+        <!-- 🖌️ Boyama araç çubuğu (yalnızca boyama fazında görünür) -->
+        <div id="mk-paint-tools" class="mk-paint-tools" style="display: none;">
+          <div class="mk-paint-group" title="Fırça boyutu">
+            <button class="mk-paint-btn brush" data-brush="kucuk" title="İnce fırça (22 km)"><span class="dot s"></span></button>
+            <button class="mk-paint-btn brush active" data-brush="orta" title="Orta fırça (45 km)"><span class="dot m"></span></button>
+            <button class="mk-paint-btn brush" data-brush="buyuk" title="Kalın fırça (78 km)"><span class="dot l"></span></button>
+          </div>
+          <div class="mk-paint-group">
+            <button id="mk-paint-erase" class="mk-paint-btn" title="Silgi (tekrar basınca fırçaya döner)">🧽</button>
+            <button id="mk-paint-undo" class="mk-paint-btn" title="Son darbeyi geri al">↩️</button>
+            <button id="mk-paint-clear" class="mk-paint-btn" title="Tümünü temizle">🧹</button>
+          </div>
+          <button id="mk-paint-questions" class="mk-paint-toggle active" title="Boyama sonrası tek tek soru sorulsun mu?">
+            <span class="tog-dot"></span><span id="mk-paint-q-label">Sorular açık</span>
+          </button>
+          <span class="mk-paint-info">🖌️ <span id="mk-paint-count">0</span> darbe</span>
+        </div>
+
         <div class="mk-options" id="mk-options"></div>
 
         <div class="mk-feedback" id="mk-feedback" style="display: none;">

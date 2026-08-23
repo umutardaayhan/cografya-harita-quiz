@@ -1132,11 +1132,108 @@ body {
   display: none;
 }
 
-/* 🖌️ Harita boyama: firca imleci ve hucre gecisi */
-.boyama-hucre { transition: fill-opacity 0.1s linear; }
-
+/* 🖌️ Harita boyama */
 #map.boyama-modu,
 #map.boyama-modu .leaflet-container { cursor: crosshair; }
+
+/* Boyanın çizildiği tuval: harita üstünde, tıklamaları geçirir */
+.boyama-tuval {
+  position: absolute;
+  inset: 0;
+  /* Leaflet pane sirasi: tile 200, overlay 400, marker 600.
+     Tuval 350'de: harita karolarinin ustunde ama cevap daireleri ve
+     isaretcilerin ALTINDA kalir, yoksa boya cevabi ortuyordu. */
+  z-index: 350;
+  pointer-events: none;
+}
+
+.mk-paint-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 8px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-md);
+}
+
+.mk-paint-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding-right: 8px;
+  border-right: 1px solid var(--bg-card-border);
+}
+
+.mk-paint-btn {
+  width: 30px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bg-card-border);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mk-paint-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+.mk-paint-btn.active {
+  background: rgba(245, 158, 11, 0.28);
+  border-color: #f59e0b;
+}
+
+.mk-paint-btn .dot {
+  display: block;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+.mk-paint-btn .dot.s { width: 6px;  height: 6px; }
+.mk-paint-btn .dot.m { width: 11px; height: 11px; }
+.mk-paint-btn .dot.l { width: 16px; height: 16px; }
+
+.mk-paint-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bg-card-border);
+  border-radius: 9999px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mk-paint-toggle .tog-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.mk-paint-toggle.active {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #7dd3fc;
+}
+
+.mk-paint-toggle.active .tog-dot { background: #38bdf8; }
+
+.mk-paint-info {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
 
 /* ============================================================
    🪟 PANEL YÖNETİCİSİ — taşıma tutamağı, kenar boyutlandırıcılar, katlama

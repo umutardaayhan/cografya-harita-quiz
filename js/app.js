@@ -992,6 +992,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (matchHud) matchHud.style.display = 'none';
     const mkHudEl = document.getElementById('mk-hud');
     if (mkHudEl) mkHudEl.style.display = 'none';
+    const paintTools = document.getElementById('mk-paint-tools');
+    if (paintTools) paintTools.style.display = 'none';
+    const mapEl2 = document.getElementById('map');
+    if (mapEl2) mapEl2.classList.remove('boyama-modu');
     if (speedrunStatsBlock) speedrunStatsBlock.style.display = 'none';
     if (examStatsBlock) examStatsBlock.style.display = 'none';
     if (normalStatsBlock) normalStatsBlock.style.display = 'flex';
@@ -1481,6 +1485,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const MK_OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
+  // 🖌️ Boyama araç çubuğu
+  const mkPaintTools = document.getElementById('mk-paint-tools');
+  const mkPaintErase = document.getElementById('mk-paint-erase');
+  const mkPaintQuestions = document.getElementById('mk-paint-questions');
+  const mkPaintQLabel = document.getElementById('mk-paint-q-label');
+
+  function boyamaOyunu() {
+    return (activeMkKey === 'boyama') ? mkGames.boyama : null;
+  }
+
+  function boyamaAraclariniTazele() {
+    const g = mkGames.boyama;
+    document.querySelectorAll('#mk-paint-tools .brush').forEach(b => {
+      b.classList.toggle('active', b.dataset.brush === g.firca.boyut);
+    });
+    if (mkPaintErase) mkPaintErase.classList.toggle('active', g.firca.silgi);
+    if (mkPaintQuestions) {
+      mkPaintQuestions.classList.toggle('active', g.sorularAcik);
+      if (mkPaintQLabel) mkPaintQLabel.textContent = g.sorularAcik ? 'Sorular açık' : 'Sadece boyama';
+    }
+  }
+
+  document.querySelectorAll('#mk-paint-tools .brush').forEach(btn => {
+    btn.addEventListener('click', () => {
+      mkGames.boyama.setFircaBoyutu(btn.dataset.brush);
+      mkGames.boyama.setSilgi(false);
+      boyamaAraclariniTazele();
+    });
+  });
+
+  if (mkPaintErase) {
+    mkPaintErase.addEventListener('click', () => {
+      mkGames.boyama.setSilgi(!mkGames.boyama.firca.silgi);
+      boyamaAraclariniTazele();
+    });
+  }
+
+  const mkPaintUndo = document.getElementById('mk-paint-undo');
+  if (mkPaintUndo) mkPaintUndo.addEventListener('click', () => { const g = boyamaOyunu(); if (g) g.geriAl(); });
+
+  const mkPaintClear = document.getElementById('mk-paint-clear');
+  if (mkPaintClear) mkPaintClear.addEventListener('click', () => { const g = boyamaOyunu(); if (g) g.temizle(); });
+
+  if (mkPaintQuestions) {
+    mkPaintQuestions.addEventListener('click', () => {
+      mkGames.boyama.setSorular(!mkGames.boyama.sorularAcik);
+      boyamaAraclariniTazele();
+    });
+  }
+
   function mkActiveGame() {
     return activeMkKey ? mkGames[activeMkKey] : null;
   }
@@ -1514,7 +1568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Haritadaki sik pinine tiklamak da cevap verir (standart testteki gibi)
     game.onPinSelect = (cityId) => mkSelect(cityId);
-    // Boyama modunda boyanan kare sayisini canli goster
+    // Boyama modunda darbe sayisini canli goster
     game.onPaintProgress = (adet) => {
       const sayac = document.getElementById('mk-paint-count');
       if (sayac) sayac.textContent = adet;
@@ -1556,11 +1610,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (mkBadgeEl) mkBadgeEl.textContent = view.badge || '';
     if (mkPromptEl) mkPromptEl.innerHTML = view.prompt || '';
-    if (mkHintEl) {
-      mkHintEl.innerHTML = (view.hint || '') +
-        (view.paintMode ? ' · <strong>Boyanan: <span id="mk-paint-count">0</span> kare</strong>' : '');
+    if (mkHintEl) mkHintEl.innerHTML = view.hint || '';
+
+    // Boyama fazında fırça araç çubuğu ve fırça imleci
+    if (mkPaintTools) {
+      mkPaintTools.style.display = view.paintMode ? 'flex' : 'none';
+      if (view.paintMode) boyamaAraclariniTazele();
     }
-    // Boyama fazinda harita imleci firca olur
     const mapEl = document.getElementById('map');
     if (mapEl) mapEl.classList.toggle('boyama-modu', !!view.paintMode);
 
