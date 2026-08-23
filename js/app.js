@@ -969,6 +969,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isVis = gamesDropdown.style.display === 'flex';
       gamesDropdown.style.display = isVis ? 'none' : 'flex';
       closeToolsDropdown();
+      if (!isVis) konumlandirMenu(gamesDropdown, gamesMenuBtn);
     });
 
     document.addEventListener('click', (e) => {
@@ -1003,6 +1004,58 @@ document.addEventListener('DOMContentLoaded', () => {
     if (gamesDropdown) gamesDropdown.style.display = 'none';
   }
 
+  /**
+   * Açılır menüyü her koşulda ekran içinde tutar.
+   *
+   * Üst çubuk taşınabilir olduğu için menünün nereye açılacağı sabit değil;
+   * çubuk sağa sürüklendiğinde tetikleyici düğmenin kendisi ekran dışında
+   * kalabiliyor. Bu yüzden menü, kapsayıcıya göre değil doğrudan GÖRÜNÜM
+   * PENCERESİNE göre konumlanır (position: fixed) ve kenarlara kırpılır.
+   */
+  function konumlandirMenu(dropdown, tetikleyici) {
+    if (!dropdown || !tetikleyici) return;
+
+    // position:fixed, DÖNÜŞTÜRÜLMÜŞ bir ata içinde görünüm penceresine değil o
+    // ataya göre konumlanır. .top-nav-wrapper'da transform var, bu yüzden menü
+    // ekran dışına taşıyordu. Çözüm: menüyü body'ye taşıyıp öyle konumlandırmak.
+    if (dropdown.parentElement !== document.body) document.body.appendChild(dropdown);
+
+    const s = dropdown.style;
+    s.position = 'fixed';
+    s.top = s.bottom = s.left = s.right = s.maxHeight = '';
+
+    const btn = tetikleyici.getBoundingClientRect();
+    const bosluk = 10;
+    const genislik = Math.min(dropdown.getBoundingClientRect().width,
+                              window.innerWidth - 2 * bosluk);
+
+    // Dikey: aşağıda sığmıyorsa ve yukarıda daha çok yer varsa yukarı aç
+    const altBosluk = window.innerHeight - btn.bottom - bosluk;
+    const ustBosluk = btn.top - bosluk;
+    let ust;
+    if (dropdown.scrollHeight > altBosluk && ustBosluk > altBosluk) {
+      s.maxHeight = `${Math.max(160, ustBosluk)}px`;
+      ust = Math.max(bosluk, btn.top - Math.min(dropdown.scrollHeight, ustBosluk) - 8);
+    } else {
+      s.maxHeight = `${Math.max(160, altBosluk)}px`;
+      ust = btn.bottom + 8;
+    }
+
+    // Yatay: düğmeyle hizala, taşarsa ekran kenarına kırp
+    let sol = btn.left;
+    if (sol + genislik > window.innerWidth - bosluk) sol = window.innerWidth - bosluk - genislik;
+    if (sol < bosluk) sol = bosluk;
+
+    s.left = `${sol}px`;
+    s.top = `${ust}px`;
+    s.width = `${genislik}px`;
+
+    // Kutu modeli farkı yüzünden kalan taşmayı geri kırp
+    const son = dropdown.getBoundingClientRect();
+    const tasma = son.bottom - (window.innerHeight - bosluk);
+    if (tasma > 0) s.maxHeight = `${Math.max(160, son.height - tasma)}px`;
+  }
+
   // ⚙️ Araçlar menüsü (soru formatı + odak modu + harita editörü)
   const toolsMenuBtn = document.getElementById('tools-menu-btn');
   const toolsDropdown = document.getElementById('tools-dropdown');
@@ -1017,6 +1070,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const acik = toolsDropdown.style.display === 'flex';
       toolsDropdown.style.display = acik ? 'none' : 'flex';
       closeGamesDropdown();
+      if (!acik) konumlandirMenu(toolsDropdown, toolsMenuBtn);
     });
     document.addEventListener('click', (e) => {
       if (!toolsDropdown.contains(e.target) && !toolsMenuBtn.contains(e.target)) {

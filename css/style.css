@@ -259,6 +259,9 @@ body {
   top: calc(100% + 8px);
   right: 0;
   min-width: 262px;
+  max-height: 70vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
   padding: 6px;
@@ -611,6 +614,11 @@ body {
   flex-direction: column;
   gap: 4px;
   min-width: 280px;
+  /* 14 girisle menu 848 piksele ulasip ekrani asiyordu; JS acilista
+     gercek bosluga gore max-height yaziyor, bu deger guvenli varsayilan. */
+  max-height: 70vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   backdrop-filter: blur(20px);
   box-shadow: var(--shadow);
   z-index: 99999;
@@ -1257,9 +1265,79 @@ body {
 .pm-panel.panel-collapsed > .pm-resizer,
 .pm-panel.minimized > .pm-resizer { display: none; }
 
-/* Boyutlandırılan panellerin içeriği taşmasın */
-.quiz-panel.pm-panel { overflow: auto; }
+/* İçerik yalnızca panel ELLE boyutlandırıldığında kaydırılır.
+   Koşulsuz overflow:auto, 3 piksellik taşmada bile kaydırma çubuğu çıkarıyordu. */
+.quiz-panel.pm-panel { overflow: visible; }
 .mistakes-panel.pm-panel { overflow: hidden; }
+.pm-panel[data-pm-resized="1"] { overflow: auto; }
+
+/* --- İnce ve sessiz kaydırma çubukları (tüm panel ve menüler) --- */
+.pm-panel,
+.pm-panel *,
+.games-dropdown,
+.tools-dropdown,
+.layer-dropdown,
+.plan-screen,
+.plan-rows,
+.mistakes-list,
+.modal-card,
+.drawings-list-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+}
+
+.pm-panel ::-webkit-scrollbar,
+.pm-panel::-webkit-scrollbar,
+.games-dropdown::-webkit-scrollbar,
+.tools-dropdown::-webkit-scrollbar,
+.layer-dropdown::-webkit-scrollbar,
+.plan-screen::-webkit-scrollbar,
+.plan-rows::-webkit-scrollbar,
+.mistakes-list::-webkit-scrollbar,
+.modal-card::-webkit-scrollbar,
+.drawings-list-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.pm-panel ::-webkit-scrollbar-track,
+.pm-panel::-webkit-scrollbar-track,
+.games-dropdown::-webkit-scrollbar-track,
+.tools-dropdown::-webkit-scrollbar-track,
+.layer-dropdown::-webkit-scrollbar-track,
+.plan-screen::-webkit-scrollbar-track,
+.plan-rows::-webkit-scrollbar-track,
+.mistakes-list::-webkit-scrollbar-track,
+.modal-card::-webkit-scrollbar-track,
+.drawings-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pm-panel ::-webkit-scrollbar-thumb,
+.pm-panel::-webkit-scrollbar-thumb,
+.games-dropdown::-webkit-scrollbar-thumb,
+.tools-dropdown::-webkit-scrollbar-thumb,
+.layer-dropdown::-webkit-scrollbar-thumb,
+.plan-screen::-webkit-scrollbar-thumb,
+.plan-rows::-webkit-scrollbar-thumb,
+.mistakes-list::-webkit-scrollbar-thumb,
+.modal-card::-webkit-scrollbar-thumb,
+.drawings-list-container::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+
+.pm-panel ::-webkit-scrollbar-thumb:hover,
+.games-dropdown::-webkit-scrollbar-thumb:hover,
+.tools-dropdown::-webkit-scrollbar-thumb:hover,
+.mistakes-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+.pm-panel ::-webkit-scrollbar-corner,
+.pm-panel::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 /* Odak modunda panel kromu görünmesin */
 body.focus-mode .pm-bar { display: none; }

@@ -209,6 +209,9 @@ class PanelManager {
       startL: r.left, startT: r.top
     };
     panel.el.classList.add('pm-resizing');
+    // Yalnizca elle boyutlandirilan panelde tasan icerik kaydirilir.
+    // Kosulsuz overflow:auto, 3 piksellik tasmada bile cirkin bir bar cikariyordu.
+    panel.el.dataset.pmResized = '1';
     this.bringToFront(panel);
   }
 
@@ -297,8 +300,8 @@ class PanelManager {
       panel.pinned = true;
       panel.el.dataset.pmPinned = '1';
     }
-    if (kayit.width) { s.width = kayit.width; s.maxWidth = 'none'; }
-    if (kayit.height) { s.height = kayit.height; s.maxHeight = 'none'; }
+    if (kayit.width) { s.width = kayit.width; s.maxWidth = 'none'; panel.el.dataset.pmResized = '1'; }
+    if (kayit.height) { s.height = kayit.height; s.maxHeight = 'none'; panel.el.dataset.pmResized = '1'; }
     if (kayit.collapsed) panel.el.classList.add(panel.cfg.collapseClass);
 
     this.clamp(panel);
@@ -320,6 +323,7 @@ class PanelManager {
     panel.el.classList.remove(panel.cfg.collapseClass);
     panel.pinned = false;
     delete panel.el.dataset.pmPinned;
+    delete panel.el.dataset.pmResized;
     delete this.layout[id];
     this.save();
   }
