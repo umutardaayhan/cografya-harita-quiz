@@ -105,7 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
     coord:    new CoordinateHunterGame(geoMap),
     duel:     new CityDuelGame(geoMap),
     // 🧬 Oluşum türü alıştırması aynı HUD sözleşmesini kullanır
-    olusum:   new FormationTypeGame(geoMap)
+    olusum:   new FormationTypeGame(geoMap),
+    // 🖌️ Harita boyama: alan boya + o sınıfın örneklerini tek tek çöz
+    boyama:   new MapPaintGame(geoMap)
   };
 
   // 🎮 Oyun Modları Menüsü DOM Elemanları
@@ -1458,6 +1460,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Haritadaki sik pinine tiklamak da cevap verir (standart testteki gibi)
     game.onPinSelect = (cityId) => mkSelect(cityId);
+    // Boyama modunda boyanan kare sayisini canli goster
+    game.onPaintProgress = (adet) => {
+      const sayac = document.getElementById('mk-paint-count');
+      if (sayac) sayac.textContent = adet;
+    };
     game.onTick = (secondsLeft) => mkUpdateTimer(secondsLeft);
     game.onTimeout = (view) => mkRender(view);
 
@@ -1495,7 +1502,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (mkBadgeEl) mkBadgeEl.textContent = view.badge || '';
     if (mkPromptEl) mkPromptEl.innerHTML = view.prompt || '';
-    if (mkHintEl) mkHintEl.innerHTML = view.hint || '';
+    if (mkHintEl) {
+      mkHintEl.innerHTML = (view.hint || '') +
+        (view.paintMode ? ' · <strong>Boyanan: <span id="mk-paint-count">0</span> kare</strong>' : '');
+    }
+    // Boyama fazinda harita imleci firca olur
+    const mapEl = document.getElementById('map');
+    if (mapEl) mapEl.classList.toggle('boyama-modu', !!view.paintMode);
 
     // Seçenek kartları (koordinat avcısında yoktur, harita tıklanır)
     // Ayni durumlar harita pinlerine de yansitilir; panel ve harita ayrisamaz.
@@ -1629,7 +1642,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'btn-mk-daynight': 'daynight',
     'btn-mk-coord': 'coord',
     'btn-mk-duel': 'duel',
-    'btn-olusum-mode': 'olusum'
+    'btn-olusum-mode': 'olusum',
+    'btn-boyama-mode': 'boyama'
   }).forEach(([btnId, key]) => {
     const btn = document.getElementById(btnId);
     if (btn) btn.addEventListener('click', () => startMutlakKonumMode(key));

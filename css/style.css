@@ -1124,6 +1124,12 @@ body {
   display: none;
 }
 
+/* 🖌️ Harita boyama: firca imleci ve hucre gecisi */
+.boyama-hucre { transition: fill-opacity 0.1s linear; }
+
+#map.boyama-modu,
+#map.boyama-modu .leaflet-container { cursor: crosshair; }
+
 /* ============================================================
    🪟 PANEL YÖNETİCİSİ — taşıma tutamağı, kenar boyutlandırıcılar, katlama
    ============================================================ */

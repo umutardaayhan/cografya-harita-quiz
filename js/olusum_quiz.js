@@ -21,6 +21,7 @@ const OLUSUM_TAKSONOMISI = {
   daglar: {
     label: 'Dağ',
     soruAdi: 'dağ',
+    cogulIn: 'dağların', cogulDan: 'dağlardan',
     siniflar: [
       { key: 'volkanik', label: 'Volkanik Dağ',        icon: '🌋', test: t => t.includes('volkanik') || t.includes('batolit') },
       { key: 'kivrim',   label: 'Kıvrım Dağı',          icon: '⛰️', test: t => t.includes('kivrim') || t.includes('masif') },
@@ -30,6 +31,7 @@ const OLUSUM_TAKSONOMISI = {
   ovalar: {
     label: 'Ova',
     soruAdi: 'ova',
+    cogulIn: 'ovaların', cogulDan: 'ovalardan',
     siniflar: [
       { key: 'delta',    label: 'Delta Ovası',          icon: '🏖️', test: t => t.includes('delta') },
       { key: 'karstik',  label: 'Karstik Ova (Polye)',  icon: '💧', test: t => t.includes('karstik') || t.includes('polye') },
@@ -40,6 +42,7 @@ const OLUSUM_TAKSONOMISI = {
   platolar: {
     label: 'Plato',
     soruAdi: 'plato',
+    cogulIn: 'platoların', cogulDan: 'platolardan',
     siniflar: [
       { key: 'tabaka',   label: 'Tabaka Düzlüğü Platosu', icon: '🥞', test: t => t.includes('tabaka') || t.includes('duzlugu') },
       { key: 'volkanik', label: 'Volkanik (Lav) Platosu', icon: '🌋', test: t => t.includes('volkanik') || t.includes('lav') },
@@ -50,6 +53,7 @@ const OLUSUM_TAKSONOMISI = {
   goller: {
     label: 'Göl',
     soruAdi: 'göl',
+    cogulIn: 'göllerin', cogulDan: 'göllerden',
     kaynak: 'su_kaynaklari',
     // Yalnızca göller; akarsular bu alıştırmanın dışında
     onFiltre: it => (it.shapeType || 'point') === 'point',
@@ -286,7 +290,7 @@ class FormationTypeGame extends MutlakKonumGameBase {
 
     return this.baseView({
       badge: `🧬 ${grup.label} · Farklı Olanı Bul`,
-      prompt: `Aşağıdaki ${grup.soruAdi}lardan hangisi <strong>diğerlerinden farklı oluşumludur</strong>?`,
+      prompt: `Aşağıdaki ${grup.cogulDan} hangisi <strong>diğerlerinden farklı oluşumludur</strong>?`,
       hint: 'Diğerlerinin ortak oluşum türünü bul, dışarıda kalanı işaretle.',
       options: secenekler.map(it => ({ id: it.id, label: it.name, sub: it.region || '' })),
       mapPins: secenekler
@@ -342,7 +346,7 @@ class FormationTypeGame extends MutlakKonumGameBase {
       };
     });
     const not = c.bicim === 'farkli_olan'
-      ? `Diğer ${c.secenekler.length - 1} ${grup.soruAdi} ${c.cogunlukSinif.label.toLowerCase()} sınıfındayken ${dogruItem.name} ${c.farkliSinif.label.toLowerCase()} sınıfındadır. ${dogruItem.kpssNot || ''}`
+      ? `Diğer ${c.secenekler.length - 1} ${grup.label.toLowerCase()} ${c.cogunlukSinif.label.toLowerCase()} sınıfındayken ${dogruItem.name} ${c.farkliSinif.label.toLowerCase()} sınıfındadır. ${dogruItem.kpssNot || ''}`
       : (dogruItem.kpssNot || '');
 
     this.history.push({
@@ -354,7 +358,7 @@ class FormationTypeGame extends MutlakKonumGameBase {
     return this.baseView({
       badge: c.bicim === 'farkli_olan' ? `🧬 ${grup.label} · Farklı Olanı Bul` : `🧬 ${grup.label} · Örnek Bul`,
       prompt: c.bicim === 'farkli_olan'
-        ? `Aşağıdaki ${grup.soruAdi}lardan hangisi <strong>diğerlerinden farklı oluşumludur</strong>?`
+        ? `Aşağıdaki ${grup.cogulDan} hangisi <strong>diğerlerinden farklı oluşumludur</strong>?`
         : `Aşağıdakilerden hangisi <strong>${trUpper(c.dogruSinif.label)}</strong>'dür?`,
       options: c.secenekler.map(it => ({
         id: it.id,
