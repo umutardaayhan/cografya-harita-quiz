@@ -362,3 +362,20 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+=========================================
+🕒 Tarih/Saat: 23.08.2026 - 17:28
+⚠️ Sorun/İhtiyaç: Projenin Vercel üzerinde tek tıkla canlıya alınması, GitHub profilinde yayınlanması, kurumsal standartta çift dilli (TR/EN) README, Vercel yapılandırması ve repo ismi belirlenmesi.
+🎯 İşlem Özeti: 
+  - Vercel statik yönlendirme, güvenlik ve statik dosya önbellekleme başlıklarını içeren vercel.json oluşturuldu.
+  - Git repository'si için gereksiz işletim sistemi ve editör dosyalarını dışlayan .gitignore ve açık kaynak MIT LICENSE dosyası oluşturuldu.
+  - Umut Arda Ayhan portfolyo standartlarına uygun, çift dilli (Türkçe & İngilizce), zengin rozetler, özellik listesi, mimari, klavye kısayolları ve gelecek yol haritasını içeren README.md inşa edildi.
+  - docs/ klasörüne Vercel dağıtım ve GitHub yayınlama rehberi (DEPLOY_VE_YAYINLAMA.md) eklendi.
+📁 Etkilenen Kapsam: 
+  - vercel.json
+  - .gitignore
+  - LICENSE
+  - README.md
+  - docs/DEPLOY_VE_YAYINLAMA.md
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
+=========================================
