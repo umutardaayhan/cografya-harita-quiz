@@ -109,17 +109,37 @@ class MapPaintGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   // TUVAL
   // ---------------------------------------------------------------
+  /**
+   * Tuval, Leaflet'in KENDİ pane sistemine özel bir pane olarak eklenir.
+   *
+   * Önce doğrudan harita konteynerine ekleniyordu; ancak tilePane (200) ve
+   * overlayPane (400) .leaflet-map-pane'in (400) İÇİNDEDİR. Konteynerin
+   * doğrudan çocuğu olan bir tuval, z-index 350 ile map-pane'in tamamının
+   * altında kalıyor ve karolar tarafından örtülüyordu; boya yalnızca harita
+   * katmanı değiştirilip karolar bir an kaybolduğunda görünüyordu.
+   * Kendi pane'imizde 350, tilePane ile overlayPane arasına doğru oturur.
+   */
   _initCanvas() {
-    const kap = this.geoMap.map.getContainer();
+    const map = this.geoMap.map;
+
+    if (!map.getPane('boyamaPane')) {
+      map.createPane('boyamaPane');
+      const pane = map.getPane('boyamaPane');
+      pane.style.zIndex = 350;          // karoların üstü, cevap katmanının altı
+      pane.style.pointerEvents = 'none';
+    }
+
     const c = document.createElement('canvas');
     c.className = 'boyama-tuval';
-    kap.appendChild(c);
+    map.getPane('boyamaPane').appendChild(c);
     this.canvas = c;
     this.ctx = c.getContext('2d');
 
     this._boyutlandir();
     this._redraw = this._redraw.bind(this);
-    this.geoMap.map.on('move zoom moveend zoomend resize viewreset', this._redraw);
+    // Pan sırasında 'move', zoom bitiminde 'zoomend' yeterli: zoom animasyonu
+    // boyunca map-pane'in CSS dönüşümü tuvali de birlikte ölçeklendirir.
+    map.on('move moveend zoomend viewreset resize', this._redraw);
     window.addEventListener('resize', () => { this._boyutlandir(); this._redraw(); });
   }
 
@@ -150,8 +170,13 @@ class MapPaintGame extends MutlakKonumGameBase {
     const kap = map.getContainer();
     if (this.canvas.style.width !== `${kap.clientWidth}px`) this._boyutlandir();
 
+    // Tuval map-pane'in içinde olduğu için harita kaydırıldıkça birlikte
+    // ötelenir; her karede görünüm penceresinin sol üstüne geri hizalanır.
+    L.DomUtil.setPosition(this.canvas, map.containerPointToLayerPoint([0, 0]));
+
     this.ctx.clearRect(0, 0, kap.clientWidth, kap.clientHeight);
     if (!this.aktif()) return;
+    if (map._animatingZoom) return;   // zoom animasyonunu CSS dönüşümü taşır
 
     const tum = this.aktifDarbe ? this.darbeler.concat([this.aktifDarbe]) : this.darbeler;
     tum.forEach(d => {

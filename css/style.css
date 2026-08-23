@@ -1136,14 +1136,12 @@ body {
 #map.boyama-modu,
 #map.boyama-modu .leaflet-container { cursor: crosshair; }
 
-/* Boyanın çizildiği tuval: harita üstünde, tıklamaları geçirir */
+/* Boyanın çizildiği tuval. Kendi Leaflet pane'i içinde durur
+   (z-index'i pane yönetir: karoların üstü, cevap katmanının altı). */
 .boyama-tuval {
   position: absolute;
-  inset: 0;
-  /* Leaflet pane sirasi: tile 200, overlay 400, marker 600.
-     Tuval 350'de: harita karolarinin ustunde ama cevap daireleri ve
-     isaretcilerin ALTINDA kalir, yoksa boya cevabi ortuyordu. */
-  z-index: 350;
+  left: 0;
+  top: 0;
   pointer-events: none;
 }
 
