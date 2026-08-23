@@ -379,3 +379,12 @@
   - Yapilan_Islemler.txt
 🔄 Geri Dönüş: git checkout ile önceki commit'e dönülebilir.
 =========================================
+=========================================
+🕒 Tarih/Saat: 23.08.2026 - 17:30
+⚠️ Sorun/İhtiyaç: Projenin 'cografya-harita-quiz' GitHub reposuna uzaktan bağlanması ve main dalının push edilmesi.
+🎯 İşlem Özeti: Git remote adresi 'https://github.com/umutardaayhan/cografya-harita-quiz.git' olarak tanımlandı, ana dal 'main' olarak adlandırıldı ve tüm proje geçmişiyle birlikte GitHub'a başarıyla push edildi.
+📁 Etkilenen Kapsam: 
+  - Git Remote / Origin Main
+  - Yapilan_Islemler.txt
+🔄 Geri Dönüş: git push origin --delete main veya git remote remove origin
+=========================================
