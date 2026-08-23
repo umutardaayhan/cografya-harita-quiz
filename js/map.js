@@ -302,6 +302,16 @@ class GeographyMap {
     });
   }
 
+  // 🚜🏭🌡️🌲 Yeni konu kategorileri icin emoji rozeti
+  createTopicBadgeIcon(item, emoji, cssClass) {
+    return L.divIcon({
+      className: 'topic-3d-icon',
+      html: `<div class="topic-badge ${cssClass}" title="${item.name}"><span>${emoji}</span></div>`,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+  }
+
   // Öğe kategorisine göre en uygun özel ikonu döndür
   getCustomCategoryIcon(item) {
     const cat = item.category || '';
@@ -319,6 +329,10 @@ class GeographyMap {
     if (cat === 'gecitler' || typeStr.includes('geçit') || typeStr.includes('boğaz')) {
       return this.createPassOrStraitIcon(item);
     }
+    if (cat === 'tarim')  return this.createTopicBadgeIcon(item, '🚜', 'tarim');
+    if (cat === 'sanayi') return this.createTopicBadgeIcon(item, '🏭', 'sanayi');
+    if (cat === 'iklim')  return this.createTopicBadgeIcon(item, '🌡️', 'iklim');
+    if (cat === 'orman')  return this.createTopicBadgeIcon(item, '🌲', 'orman');
 
     return L.divIcon({
       className: 'pulse-marker-icon',
