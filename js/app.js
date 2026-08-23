@@ -103,7 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     temp:     new TempDetectiveGame(geoMap),
     daynight: new DayNightOrderGame(geoMap),
     coord:    new CoordinateHunterGame(geoMap),
-    duel:     new CityDuelGame(geoMap)
+    duel:     new CityDuelGame(geoMap),
+    // 🧬 Oluşum türü alıştırması aynı HUD sözleşmesini kullanır
+    olusum:   new FormationTypeGame(geoMap)
   };
 
   // 🎮 Oyun Modları Menüsü DOM Elemanları
@@ -1626,7 +1628,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'btn-mk-temp': 'temp',
     'btn-mk-daynight': 'daynight',
     'btn-mk-coord': 'coord',
-    'btn-mk-duel': 'duel'
+    'btn-mk-duel': 'duel',
+    'btn-olusum-mode': 'olusum'
   }).forEach(([btnId, key]) => {
     const btn = document.getElementById(btnId);
     if (btn) btn.addEventListener('click', () => startMutlakKonumMode(key));

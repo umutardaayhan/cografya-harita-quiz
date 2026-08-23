@@ -21,6 +21,14 @@ function trLower(str) {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
+/**
+ * Türkçe-güvenli BÜYÜK harf. JS'in toUpperCase'i "i" harfini "I" yapar,
+ * oysa Türkçede "İ" olmalıdır ("volkanik" -> "VOLKANİK", "VOLKANIK" değil).
+ */
+function trUpper(str) {
+  return String(str || '').replace(/i/g, 'İ').replace(/ı/g, 'I').toUpperCase();
+}
+
 const COGRAFYA_DATA = {
   daglar: [
     // --- VOLKANİK DAĞLAR ---
