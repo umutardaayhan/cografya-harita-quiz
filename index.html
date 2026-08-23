@@ -14,6 +14,40 @@
 </head>
 <body>
 
+  <!-- 📅 BUGÜNÜN PLANI — Açılış Çalışma Ekranı -->
+  <div id="plan-screen" class="plan-screen">
+    <div class="plan-card">
+      <div class="plan-head">
+        <div>
+          <span class="plan-eyebrow" id="plan-date">Bugün</span>
+          <h1 class="plan-title">Bugünkü Çalışma</h1>
+        </div>
+        <div class="plan-head-badge" id="plan-total-badge">0 soru</div>
+      </div>
+
+      <div id="plan-resume-bar" class="plan-resume-bar" style="display: none;">
+        <span id="plan-resume-text">Yarım kalan oturumun var.</span>
+        <div class="plan-resume-actions">
+          <button id="plan-resume-btn" class="plan-btn primary small">▶ Devam Et</button>
+          <button id="plan-regen-btn" class="plan-btn ghost small">🔄 Yeni Paket</button>
+        </div>
+      </div>
+
+      <div class="plan-phases" id="plan-phases"></div>
+
+      <div class="plan-rows" id="plan-rows"></div>
+
+      <div class="plan-missing" id="plan-missing" style="display: none;"></div>
+
+      <div class="plan-actions">
+        <button id="plan-start-btn" class="plan-btn primary">▶ Çalışmaya Başla</button>
+        <button id="plan-mistakes-btn" class="plan-btn danger">🔴 Yanlışlarım <span id="plan-mistakes-count" class="plan-btn-count">0</span></button>
+        <button id="plan-review-btn" class="plan-btn violet">🔁 Genel Tekrar</button>
+        <button id="plan-free-btn" class="plan-btn ghost">🗺️ Serbest Mod</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Üst Kategori ve Mod Seçim Menüsü -->
   <header class="top-nav-wrapper">
     <nav class="top-nav">
@@ -42,6 +76,10 @@
             </button>
           </div>
         </div>
+
+        <button id="back-to-plan-btn" class="nav-btn plan-nav-btn" title="Bugünün Planı Ekranına Dön">
+          <span>📅</span> <span>Bugünün Planı</span>
+        </button>
 
         <button id="focus-mode-btn" class="nav-btn focus-btn" title="Haritayı Tam Ekran Gör (Sadece Soru ve Harita)">
           <span>🔍</span> <span>Odak Modu</span>
@@ -295,6 +333,20 @@
         <div class="match-board-container">
           <div class="match-col left-col" id="match-left-cards"></div>
           <div class="match-col right-col" id="match-right-cards"></div>
+        </div>
+      </div>
+
+      <!-- 📅 Çalışma Oturumu İlerleme Çubuğu -->
+      <div id="plan-hud" class="plan-hud" style="display: none;">
+        <div class="plan-hud-top">
+          <span class="plan-phase-chip" id="plan-hud-phase">🆕 Yeni</span>
+          <span class="plan-hud-topic" id="plan-hud-topic">🏔️ Dağ</span>
+          <span class="plan-hud-count" id="plan-hud-count">1 / 100</span>
+          <span class="plan-hud-score" id="plan-hud-score">✓ 0 · ✗ 0</span>
+          <button id="plan-hud-exit" class="exam-abort-chip" title="Oturumu Duraklat ve Plana Dön">✕ Çık</button>
+        </div>
+        <div class="plan-hud-track">
+          <div class="plan-hud-fill" id="plan-hud-fill" style="width: 0%;"></div>
         </div>
       </div>
 
@@ -602,6 +654,59 @@
     </div>
   </div>
 
+  <!-- 🔴 YANLIŞLARIM — Harita Paneli -->
+  <div id="mistakes-panel" class="mistakes-panel" style="display: none;">
+    <div class="mistakes-head">
+      <h3>🔴 Yanlışlarım</h3>
+      <button id="mistakes-close-btn" class="modal-close" title="Kapat">&times;</button>
+    </div>
+    <div class="mistakes-legend">
+      <span><i class="dot kritik"></i> 3+ yanlış</span>
+      <span><i class="dot orta"></i> 2 yanlış</span>
+      <span><i class="dot hafif"></i> 1 yanlış</span>
+      <span><i class="dot iyilesen"></i> Düzeliyor</span>
+    </div>
+    <div class="mistakes-summary" id="mistakes-summary"></div>
+    <div class="mistakes-list" id="mistakes-list"></div>
+    <div class="mistakes-foot">
+      <button id="mistakes-test-btn" class="plan-btn danger">🎯 Yanlışlar Testi</button>
+      <button id="mistakes-clear-btn" class="plan-btn ghost small" title="Tüm hata geçmişini sıfırla">🗑️ Geçmişi Sıfırla</button>
+    </div>
+  </div>
+
+  <!-- 📅 Oturum Sonu Modalı -->
+  <div id="plan-result-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy" id="plan-res-badge">🎉</div>
+        <h3 id="plan-res-title">Oturum Tamamlandı!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;" id="plan-res-sub">Bugünkü paketini bitirdin.</p>
+      </div>
+
+      <div class="speedrun-stats-grid">
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val correct" id="plan-res-correct">0</span>
+          <span class="speedrun-stat-lbl">✓ Doğru</span>
+        </div>
+        <div class="speedrun-stat-box">
+          <span class="speedrun-stat-val wrong" id="plan-res-wrong">0</span>
+          <span class="speedrun-stat-lbl">✗ Yanlış</span>
+        </div>
+        <div class="speedrun-stat-box best">
+          <span class="speedrun-stat-val record" id="plan-res-rate">%0</span>
+          <span class="speedrun-stat-lbl">📊 Başarı</span>
+        </div>
+      </div>
+
+      <div id="plan-res-chain" class="plan-res-chain"></div>
+
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="plan-res-close-btn" class="modal-btn secondary">Plana Dön</button>
+        <button id="plan-res-mistakes-btn" class="modal-btn primary">🔴 Yanlışlar Testine Geç</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 📐 Mutlak Konum Modları Ortak Sonuç Modalı -->
   <div id="mk-modal" class="modal-overlay" style="display: none;">
     <div class="modal-card mk-modal-card">
@@ -700,6 +805,7 @@
   <script src="js/conqueror.js"></script>
   <script src="js/match_game.js"></script>
   <script src="js/mutlak_konum.js"></script>
+  <script src="js/study_plan.js"></script>
   <script src="js/map.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/app.js"></script>

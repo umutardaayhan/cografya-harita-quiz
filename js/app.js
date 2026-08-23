@@ -196,6 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing', 'geoguessr', 'conqueror', 'match'
   let matchBoardLocked = false; // Eşleşme/hata animasyonu oynarken tıklamaları kilitler
   let activeMkKey = null;       // Aktif mutlak konum modu ('sun','temp','daynight','coord','duel')
+
+  // 📅 Bugünün Planı
+  const studyPlan = new StudyPlanManager(geoQuiz, customDrawManager);
+  let planSessionActive = false;   // Plan oturumu sürüyor mu?
+  let mistakesLayerVisible = false;
+  const mistakesLayerGroup = L.layerGroup().addTo(geoMap.map);
   let activeCategory = 'daglar';
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
@@ -302,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function switchCategory(categoryKey) {
     // Oyun modunda kategori değişimi, oyunu sessizce Keşif Moduna düşürüyordu
     if (isGameModeActive()) return;
+    stopPlanSession();   // Plan oturumundan cikilir; ilerleme kayitli kalir
 
     if (categoryKey === 'ozel_cizimler' && customDrawManager.drawings.length === 0) {
       if (confirm('Henüz kayıtlı özel bir çiziminiz yok! Harita editöründen yeni şekil eklemek veya NotebookLM çıktısını yapıştırmak ister misiniz?')) {
@@ -350,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleMode() {
     if (isGameModeActive()) return; // Oyun modundayken Keşif Moduna geçilemez
+    stopPlanSession();
 
     if (currentMode === 'drawing') {
       closeDrawingToolbar();
@@ -567,6 +575,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Harita üzerindeki çoklu pinleri renklendir
     if (result.actualFormat === 'find_on_map') {
       geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
+    }
+
+    // 📅 Plan Oturumu Aktifse: sonucu kaydet, HUD'u tazele
+    if (planSessionActive) {
+      studyPlan.recordAnswer(result.isCorrect, result.correctId);
+      updatePlanHud();
+
+      kpssInfoCard.style.display = 'block';
+      kpssInfoTitle.textContent = result.name;
+      kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
+      kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+
+      nextBtn.style.display = 'block';
+      const kalan = studyPlan.progress();
+      nextBtn.textContent = (kalan.done + 1 >= kalan.total) ? '🏁 Oturumu Bitir' : 'Sonraki Soru ➡️';
+      nextBtn.focus();
+
+      updateStatsUI();
+      return;
     }
 
     // Genel Deneme Sınavı Aktifse
@@ -1016,6 +1043,8 @@ document.addEventListener('DOMContentLoaded', () => {
     activeMkKey = null;
 
     matchBoardLocked = false;
+    stopPlanSession();
+    hideMistakesLayer();
     geoQuiz.clearCustomPool();
 
     endSpeedrun(false);
@@ -1934,7 +1963,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- GENEL HARİTA BUTONLARI ---
   modeToggleBtn.addEventListener('click', toggleMode);
   nextBtn.addEventListener('click', () => {
-    if (isExamActive) {
+    if (planSessionActive) {
+      advancePlanSession();
+    } else if (isExamActive) {
       examCurrentIndex++;
       loadExamQuestion();
     } else {
@@ -2112,7 +2143,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if ((e.key === ' ' || e.key === 'Enter') && geoQuiz.isAnswered) {
       e.preventDefault();
-      if (isExamActive) {
+      if (planSessionActive) {
+        advancePlanSession();
+      } else if (isExamActive) {
         examCurrentIndex++;
         loadExamQuestion();
       } else {
@@ -2121,8 +2154,479 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+
+  // ============================================================
+  // 📅 BUGÜNÜN PLANI — EKRAN, OTURUM VE YANLIŞLAR HARİTASI
+  // ============================================================
+  const planScreen = document.getElementById('plan-screen');
+  const planDateEl = document.getElementById('plan-date');
+  const planTotalBadge = document.getElementById('plan-total-badge');
+  const planPhasesEl = document.getElementById('plan-phases');
+  const planRowsEl = document.getElementById('plan-rows');
+  const planMissingEl = document.getElementById('plan-missing');
+  const planResumeBar = document.getElementById('plan-resume-bar');
+  const planResumeText = document.getElementById('plan-resume-text');
+  const planMistakesCount = document.getElementById('plan-mistakes-count');
+
+  const planHud = document.getElementById('plan-hud');
+  const planHudPhase = document.getElementById('plan-hud-phase');
+  const planHudTopic = document.getElementById('plan-hud-topic');
+  const planHudCount = document.getElementById('plan-hud-count');
+  const planHudScore = document.getElementById('plan-hud-score');
+  const planHudFill = document.getElementById('plan-hud-fill');
+
+  const mistakesPanel = document.getElementById('mistakes-panel');
+  const mistakesSummaryEl = document.getElementById('mistakes-summary');
+  const mistakesListEl = document.getElementById('mistakes-list');
+
+  const planResultModal = document.getElementById('plan-result-modal');
+
+  const PHASE_META = {
+    yeni:   { icon: '🆕', label: 'Yeni' },
+    tekrar: { icon: '🔁', label: 'Tekrar' },
+    yanlis: { icon: '🔴', label: 'Yanlışlar' }
+  };
+
+  // ---------- Plan ekranı ----------
+  function openPlanScreen(regenerate = false, includeWaiting = false) {
+    exitAllGameModes();
+    stopPlanSession();
+    hideMistakesLayer();
+
+    studyPlan.buildItemIndex();
+    const plan = studyPlan.generate(regenerate || includeWaiting, includeWaiting);
+    renderPlanScreen(plan);
+    if (planScreen) planScreen.classList.remove('hidden');
+  }
+
+  function closePlanScreen() {
+    if (planScreen) planScreen.classList.add('hidden');
+  }
+
+  function renderPlanScreen(plan) {
+    const d = new Date();
+    const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    const gunler = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+    if (planDateEl) planDateEl.textContent = `${d.getDate()} ${aylar[d.getMonth()]} ${gunler[d.getDay()]}`;
+
+    const toplam = plan.queue.length;
+    if (planTotalBadge) planTotalBadge.textContent = `${toplam} soru`;
+
+    // Faz kartları
+    const fazSayilari = { yeni: 0, tekrar: 0, yanlis: 0 };
+    plan.queue.forEach(q => { fazSayilari[q.phase] = (fazSayilari[q.phase] || 0) + 1; });
+    if (planPhasesEl) {
+      planPhasesEl.innerHTML = ['yeni', 'tekrar', 'yanlis'].map(k => `
+        <div class="plan-phase ${k}">
+          <span class="pp-icon">${PHASE_META[k].icon}</span>
+          <span class="pp-val">${fazSayilari[k] || 0}</span>
+          <span class="pp-lbl">${PHASE_META[k].label}</span>
+        </div>
+      `).join('');
+    }
+
+    // Konu satırları
+    if (planRowsEl) {
+      planRowsEl.innerHTML = plan.rows.map(row => {
+        if (!row.hasData) {
+          return `
+            <div class="plan-row empty">
+              <span class="plan-row-icon">${row.icon}</span>
+              <span class="plan-row-label">${row.label}</span>
+              <span class="plan-row-note">veri yok — bu konu pakete eklenemedi</span>
+              <span class="plan-row-count">0</span>
+            </div>`;
+        }
+        const t = Math.max(1, row.planned);
+        const seg = (k) => `<i class="${k}" style="width:${(row.counts[k] / t) * 100}%"></i>`;
+
+        // Kota dolmadiysa sebebini yaz: havuz mu kucuk, yoksa tekrar sirasi mi gelmemis?
+        let not = '';
+        if (row.planned < row.quota) {
+          if (row.waiting > 0) {
+            not = `<span class="plan-row-note">${row.waiting} tanesi tekrar sırasını bekliyor</span>`;
+          } else if (row.available < row.quota) {
+            not = `<span class="plan-row-note">havuzda ${row.available} var</span>`;
+          }
+        }
+        return `
+          <div class="plan-row${row.planned === 0 ? ' empty' : ''}">
+            <span class="plan-row-icon">${row.icon}</span>
+            <span class="plan-row-label">${row.label}</span>
+            <span class="plan-row-bar">${seg('yeni')}${seg('tekrar')}${seg('yanlis')}</span>
+            ${not}
+            <span class="plan-row-count">${row.planned}</span>
+          </div>`;
+      }).join('');
+    }
+
+    // Bilgi kutusu: verisi olmayan konular + bekleyenler
+    const eksikler = plan.rows.filter(r => !r.hasData).map(r => r.label);
+    const bekleyen = plan.rows.reduce((t, r) => t + (r.waiting || 0), 0);
+    const notlar = [];
+    if (eksikler.length) {
+      notlar.push(`⚠️ <strong>${eksikler.join(', ')}</strong> konuları için veri setinde henüz kayıt yok, bu yüzden pakete giremediler. Veri eklenince plan bu satırları kendiliğinden doldurur.`);
+    }
+    if (bekleyen > 0 && !plan.includeWaiting) {
+      notlar.push(`⏳ <strong>${bekleyen} yer şekli</strong> tekrar sırasını bekliyor — yakın zamanda doğru bildiğin için bugün getirilmedi. <button id="plan-force-waiting" class="plan-btn ghost small" style="margin-left:6px;">Yine de ekle</button>`);
+    }
+    if (planMissingEl) {
+      planMissingEl.style.display = notlar.length ? 'block' : 'none';
+      planMissingEl.innerHTML = notlar.join('<br><br>');
+      const forceBtn = document.getElementById('plan-force-waiting');
+      if (forceBtn) forceBtn.addEventListener('click', () => openPlanScreen(true, true));
+    }
+
+    // Paket bosalirsa kullanici cikmaza dusmesin
+    const startBtn = document.getElementById('plan-start-btn');
+    if (startBtn) {
+      startBtn.disabled = plan.queue.length === 0;
+      startBtn.textContent = plan.queue.length === 0 ? '✅ Bugün için her şey güncel' : '▶ Çalışmaya Başla';
+      startBtn.style.opacity = plan.queue.length === 0 ? '0.6' : '';
+    }
+
+    // Yarım kalan oturum
+    const durum = studyPlan.status();
+    if (planResumeBar) {
+      if (durum === 'devam') {
+        const pr = studyPlan.progress();
+        planResumeBar.style.display = 'flex';
+        planResumeText.textContent = `Yarım kalan oturum: ${pr.done}/${pr.total} soru bitti (%${pr.percent}).`;
+      } else if (durum === 'bitti') {
+        planResumeBar.style.display = 'flex';
+        planResumeText.textContent = `Bugünkü paketi tamamladın 🎉 (✓ ${plan.correct} · ✗ ${plan.wrong})`;
+      } else {
+        planResumeBar.style.display = 'none';
+      }
+    }
+
+    const ozet = studyPlan.mistakeSummary();
+    if (planMistakesCount) planMistakesCount.textContent = ozet.total;
+  }
+
+  // ---------- Oturum akışı ----------
+  function startPlanSession(resume = false) {
+    exitAllGameModes();
+    closePlanScreen();
+    hideMistakesLayer();
+
+    if (!resume) {
+      studyPlan.plan.index = 0;
+      studyPlan.plan.correct = 0;
+      studyPlan.plan.wrong = 0;
+      studyPlan.plan.sessionWrongIds = [];
+      studyPlan.plan.finished = false;
+      studyPlan.save();
+    }
+
+    studyPlan.skipMissing();
+    if (!studyPlan.current()) { finishPlanSession(); return; }
+
+    planSessionActive = true;
+    currentMode = 'quiz';
+    syncModeToggleLabel();
+    document.body.classList.remove('game-mode-active');
+    hideAllGameHuds();
+    if (planHud) planHud.style.display = 'flex';
+    if (quizPanel) quizPanel.classList.remove('minimized');
+
+    loadPlanQuestion();
+  }
+
+  function stopPlanSession() {
+    planSessionActive = false;
+    if (planHud) planHud.style.display = 'none';
+  }
+
+  /** Plandaki SIRADAKİ soruyu yükler (deneme modundaki akışın aynısı) */
+  function loadPlanQuestion() {
+    const entry = studyPlan.current();
+    if (!entry) { finishPlanSession(); return; }
+
+    const qItem = entry.item;
+    geoQuiz.currentQuestion = qItem;
+    geoQuiz.isAnswered = false;
+
+    // Çeldiriciler: mümkünse aynı konudan, yetmezse tüm havuzdan
+    const sameCat = (COGRAFYA_DATA[qItem.category] || []).filter(i => i.id !== qItem.id);
+    let candidatePool = sameCat;
+    const wanted = geoQuiz.getOptionCount();
+    const need = wanted === 'all' ? 9 : Math.max(1, parseInt(wanted, 10) - 1);
+    if (candidatePool.length < need) {
+      const global = [];
+      Object.keys(COGRAFYA_DATA).forEach(c => global.push(...COGRAFYA_DATA[c]));
+      candidatePool = candidatePool.concat(
+        global.filter(i => i.id !== qItem.id && !candidatePool.some(c => c.id === i.id))
+      );
+    }
+
+    let options;
+    if (wanted === 'all') {
+      options = [qItem, ...candidatePool].sort(() => 0.5 - Math.random());
+    } else {
+      const distractors = geoQuiz.selectDistractorsByProximity(qItem, candidatePool, need);
+      options = [qItem, ...distractors].sort(() => 0.5 - Math.random());
+    }
+    geoQuiz.currentOptions = options;
+
+    const fmt = geoQuiz.getQuizFormat();
+    const actualFormat = fmt === 'mixed' ? (Math.random() > 0.5 ? 'find_on_map' : 'identify') : fmt;
+    geoQuiz.currentActualFormat = actualFormat;
+
+    let questionText;
+    if (actualFormat === 'find_on_map') {
+      questionText = `📍 <span style="color: #7dd3fc; font-weight:800;">${qItem.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${qItem.type})</span>`;
+    } else if (qItem.shapeType === 'polyline') {
+      questionText = 'İşaretli Akarsu / Hat Nedir?';
+    } else if (qItem.shapeType === 'polygon') {
+      questionText = 'İşaretli Alan / Plato Nedir?';
+    } else {
+      questionText = 'İşaretli Yer Şekli Nedir?';
+    }
+
+    const a = geoQuiz.analytics[qItem.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
+    renderQuestion({
+      question: qItem,
+      options,
+      questionText,
+      questionTypeTitle: `${PHASE_META[entry.phase].label.toUpperCase()}`,
+      categoryBadgeText: `${entry.icon} ${entry.topic} — ${PHASE_META[entry.phase].icon} ${PHASE_META[entry.phase].label}`,
+      actualFormat,
+      isProblematic: a.wrongCount >= 2 && a.wrongCount > a.correctCount,
+      isMastered: (a.streak || 0) >= 3,
+      wrongCount: a.wrongCount || 0,
+      correctCount: a.correctCount || 0,
+      streak: a.streak || 0,
+      difficultyLevel: geoQuiz.getDifficultyLevel()
+    });
+
+    updatePlanHud();
+  }
+
+  function advancePlanSession() {
+    const next = studyPlan.advance();
+    if (!next) { finishPlanSession(); return; }
+    loadPlanQuestion();
+  }
+
+  function updatePlanHud() {
+    if (!studyPlan.plan) return;
+    const pr = studyPlan.progress();
+    const entry = studyPlan.current();
+    const phase = entry ? entry.phase : 'yanlis';
+
+    if (planHudPhase) {
+      planHudPhase.className = `plan-phase-chip ${phase}`;
+      planHudPhase.textContent = `${PHASE_META[phase].icon} ${PHASE_META[phase].label}`;
+    }
+    if (planHudTopic) planHudTopic.textContent = entry ? `${entry.icon} ${entry.topic}` : '';
+    if (planHudCount) planHudCount.textContent = `${Math.min(pr.done + 1, pr.total)} / ${pr.total}`;
+    if (planHudScore) planHudScore.textContent = `✓ ${studyPlan.plan.correct} · ✗ ${studyPlan.plan.wrong}`;
+    if (planHudFill) planHudFill.style.width = `${pr.percent}%`;
+  }
+
+  function finishPlanSession() {
+    const plan = studyPlan.plan;
+    stopPlanSession();
+    if (!plan) { openPlanScreen(); return; }
+
+    plan.finished = true;
+    studyPlan.save();
+
+    const toplam = plan.correct + plan.wrong;
+    const oran = toplam ? Math.round((plan.correct / toplam) * 100) : 0;
+
+    document.getElementById('plan-res-correct').textContent = plan.correct;
+    document.getElementById('plan-res-wrong').textContent = plan.wrong;
+    document.getElementById('plan-res-rate').textContent = `%${oran}`;
+    document.getElementById('plan-res-title').textContent =
+      plan.adHoc ? `${plan.adHocLabel} Tamamlandı!` : 'Bugünkü Paket Tamamlandı!';
+    document.getElementById('plan-res-badge').textContent = oran >= 85 ? '🏆' : oran >= 60 ? '🎉' : '💪';
+    document.getElementById('plan-res-sub').textContent =
+      plan.adHoc ? 'Sonuçların analitiğe işlendi.' : 'Yeni → Tekrar → Yanlışlar zinciri tamamlandı.';
+
+    // Zincir: bu oturumun yanlışları + geçmiş yanlışlar
+    const zincirBtn = document.getElementById('plan-res-mistakes-btn');
+    const zincir = studyPlan.buildMistakeQueue();
+    const buOturum = plan.sessionWrongIds.length;
+    const chainEl = document.getElementById('plan-res-chain');
+    if (chainEl) {
+      chainEl.innerHTML = zincir.length
+        ? `🔴 <strong>Yanlışlar Testi</strong> hazır: bu oturumda yanlış yaptığın <strong>${buOturum}</strong> soru ile geçmiş testlerden biriken hatalar birleştirildi — toplam <strong>${zincir.length}</strong> soru.`
+        : '✨ Bekleyen yanlışın yok. Temiz sayfa!';
+    }
+    if (zincirBtn) zincirBtn.style.display = zincir.length ? 'inline-flex' : 'none';
+
+    if (planResultModal) planResultModal.style.display = 'flex';
+  }
+
+  // ---------- 🔴 Yanlışlarım ----------
+  function severityLabel(sev) {
+    return { kritik: 'Kritik', orta: 'Orta', hafif: 'Hafif', iyilesen: 'Düzeliyor' }[sev] || sev;
+  }
+
+  function showMistakesLayer() {
+    exitAllGameModes();
+    stopPlanSession();
+    closePlanScreen();
+
+    mistakesLayerVisible = true;
+    currentMode = 'quiz';
+    document.body.classList.remove('game-mode-active');
+    hideAllGameHuds();
+
+    geoMap.clearAll();
+    mistakesLayerGroup.clearLayers();
+    if (!geoMap.map.hasLayer(mistakesLayerGroup)) mistakesLayerGroup.addTo(geoMap.map);
+
+    const sessionWrong = (studyPlan.plan && studyPlan.plan.sessionWrongIds) || [];
+    const list = studyPlan.mistakes(sessionWrong);
+    const ozet = studyPlan.mistakeSummary(sessionWrong);
+
+    // Harita pinleri
+    const coords = [];
+    list.forEach(m => {
+      const it = m.item;
+      if (typeof it.lat !== 'number' || typeof it.lng !== 'number') return;
+      coords.push([it.lat, it.lng]);
+
+      const boyut = m.severity === 'kritik' ? 20 : m.severity === 'orta' ? 17 : 14;
+      const marker = L.marker([it.lat, it.lng], {
+        icon: L.divIcon({
+          className: 'mistake-pin',
+          html: `<div class="mp-dot ${m.severity}"></div>`,
+          iconSize: [boyut, boyut],
+          iconAnchor: [boyut / 2, boyut / 2]
+        })
+      });
+      marker.bindTooltip(
+        `${m.severity === 'iyilesen' ? '🟢' : m.severity === 'kritik' ? '🔴' : m.severity === 'orta' ? '🟠' : '🟡'} <strong>${it.name}</strong><br>${m.wrongCount} yanlış · ${m.correctCount} doğru`,
+        { direction: 'top' }
+      );
+      marker.bindPopup(`
+        <div class="popup-title">${it.name}</div>
+        <div class="popup-type">${it.type || ''} (${it.region || ''})</div>
+        <div class="popup-text">${it.kpssNot || ''}</div>
+      `, { maxWidth: 280 });
+
+      // Çizgisel şekillerde hattı da göster
+      if (it.shapeType === 'polyline' && Array.isArray(it.coordinates) && Array.isArray(it.coordinates[0])) {
+        mistakesLayerGroup.addLayer(L.polyline(it.coordinates, {
+          color: m.severity === 'kritik' ? '#ef4444' : m.severity === 'orta' ? '#f97316' : '#facc15',
+          weight: 4, opacity: 0.75, dashArray: '6, 6'
+        }));
+        it.coordinates.forEach(c => coords.push(c));
+      }
+      mistakesLayerGroup.addLayer(marker);
+    });
+
+    if (coords.length) geoMap.flyToBoundsSafely(L.latLngBounds(coords).pad(0.25));
+    else geoMap.resetView();
+
+    // Panel
+    if (mistakesSummaryEl) {
+      mistakesSummaryEl.innerHTML = `
+        <span>Toplam ${ozet.total}</span>
+        <span style="color:#fca5a5">🔴 ${ozet.kritik}</span>
+        <span style="color:#fdba74">🟠 ${ozet.orta}</span>
+        <span style="color:#fde047">🟡 ${ozet.hafif}</span>
+        <span style="color:#86efac">🟢 ${ozet.iyilesen}</span>`;
+    }
+
+    if (mistakesListEl) {
+      mistakesListEl.innerHTML = '';
+      if (!list.length) {
+        mistakesListEl.innerHTML = '<div class="mistakes-empty">Henüz yanlışın yok 🎉<br>Test çözdükçe buraya birikir.</div>';
+      } else {
+        list.forEach(m => {
+          const btn = document.createElement('button');
+          btn.className = `mistake-item ${m.severity}`;
+          btn.innerHTML = `
+            <span class="mistake-name">${m.item.name}</span>
+            <span class="mistake-meta">${m.wrongCount}✗ / ${m.correctCount}✓</span>`;
+          btn.title = `${severityLabel(m.severity)} · ${m.item.type || ''}`;
+          btn.addEventListener('click', () => {
+            if (typeof m.item.lat === 'number') {
+              geoMap.flySafely([m.item.lat, m.item.lng], Math.max(geoMap.map.getZoom(), 8));
+            }
+          });
+          mistakesListEl.appendChild(btn);
+        });
+      }
+    }
+
+    const testBtn = document.getElementById('mistakes-test-btn');
+    if (testBtn) testBtn.style.display = list.length ? 'inline-flex' : 'none';
+
+    if (mistakesPanel) mistakesPanel.style.display = 'flex';
+  }
+
+  function hideMistakesLayer() {
+    mistakesLayerVisible = false;
+    mistakesLayerGroup.clearLayers();
+    if (mistakesPanel) mistakesPanel.style.display = 'none';
+  }
+
+  // ---------- Ad-hoc oturumlar ----------
+  function startMistakeTest() {
+    const queue = studyPlan.buildMistakeQueue();
+    if (!queue.length) {
+      alert('Tekrar edilecek yanlışın yok 🎉');
+      return;
+    }
+    hideMistakesLayer();
+    if (planResultModal) planResultModal.style.display = 'none';
+    studyPlan.startAdHocSession(queue, 'Yanlışlar Testi');
+    startPlanSession(true);
+  }
+
+  function startGeneralReview() {
+    const queue = studyPlan.buildGeneralReviewQueue();
+    if (!queue.length) {
+      alert('Genel tekrar için önce biraz soru çözmelisin.');
+      return;
+    }
+    studyPlan.startAdHocSession(queue, 'Genel Tekrar');
+    startPlanSession(true);
+  }
+
+  // ---------- Olay bağlantıları ----------
+  const bind = (id, fn, evt = 'click') => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(evt, fn);
+  };
+
+  bind('plan-start-btn', () => {
+    if (studyPlan.status() === 'devam') startPlanSession(true);
+    else startPlanSession(false);
+  });
+  bind('plan-resume-btn', () => startPlanSession(true));
+  bind('plan-regen-btn', () => openPlanScreen(true));
+  bind('plan-mistakes-btn', showMistakesLayer);
+  bind('plan-review-btn', startGeneralReview);
+  bind('plan-free-btn', () => { closePlanScreen(); stopPlanSession(); loadNextQuestion(); });
+  bind('back-to-plan-btn', () => openPlanScreen(false));
+  bind('plan-hud-exit', () => openPlanScreen(false));
+  bind('mistakes-close-btn', hideMistakesLayer);
+  bind('mistakes-test-btn', startMistakeTest);
+  bind('mistakes-clear-btn', () => {
+    if (!confirm('Tüm hata geçmişin silinecek. Bu, aralıklı tekrar sıralamanı da sıfırlar. Emin misin?')) return;
+    geoQuiz.analytics = {};
+    geoQuiz.saveAnalytics();
+    showMistakesLayer();
+  });
+  bind('plan-res-close-btn', () => {
+    if (planResultModal) planResultModal.style.display = 'none';
+    openPlanScreen(false);
+  });
+  bind('plan-res-mistakes-btn', () => {
+    if (planResultModal) planResultModal.style.display = 'none';
+    startMistakeTest();
+  });
+
   // Başlangıç Yüklemesi
   renderCategories();
   loadNextQuestion();
   updateStatsUI();
+  openPlanScreen();   // Uygulama doğrudan "Bugünün Planı" ile açılır
 });
