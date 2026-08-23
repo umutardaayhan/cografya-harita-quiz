@@ -2190,301 +2190,416 @@ const COGRAFYA_DATA = {
   // --- 🚜 TARIM: ÜRÜN - YÖRE EŞLEŞMELERİ ---
   tarim: [
     {
-      id: "tarim_findik_giresun", name: "Fındık (Giresun - Ordu)", category: "tarim",
-      type: "Meyvecilik / İhraç Ürünü", lat: 40.91, lng: 38.39, region: "Karadeniz", city: "Giresun",
-      kpssNot: "Türkiye dünya fındık üretiminde ilk sıradadır. Doğu Karadeniz kıyı kuşağında, yaz kuraklığı görülmeyen nemli iklim ve eğimli yamaçlarda yetişir. Giresun ve Ordu üretimin merkezidir."
+      id: "tarim_findik_giresun", name: "Fındık (Doğu Karadeniz Kıyısı)", shortName: "Fındık Üretim Alanı", category: "tarim",
+      promptTitle: "Türkiye'nin Dünya üretiminde ilk sırada olduğu, kış ılıklığı ve bol nem isteyen fındık üretim alanı haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 40.91, lng: 38.39, region: "Karadeniz", city: "Giresun - Ordu - Trabzon",
+      shapeType: "polygon",
+      coordinates: [[40.85, 37.4], [41.15, 37.7], [41.1, 39.5], [41.25, 40.8], [40.95, 41.0], [40.65, 39.2], [40.68, 37.5]],
+      kpssNot: "Türkiye dünya fındık üretiminde 1. sıradadır. Doğu Karadeniz kıyı kuşağında, yaz kuraklığı görülmeyen nemli iklim ve eğimli yamaçlarda yetişir. Ordu ve Giresun üretimin merkezidir."
     },
     {
-      id: "tarim_cay_rize", name: "Çay (Rize)", category: "tarim",
-      type: "Endüstri Bitkisi", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize",
-      kpssNot: "Her mevsim yağışlı iklim, yüksek nem ve asidik toprak ister. Üretim Rize merkezli olarak Doğu Karadeniz kıyı şeridinde toplanmıştır; yayılış alanı Türkiye'de çok dardır."
+      id: "tarim_cay_rize", name: "Çay (Doğu Karadeniz Kıyı Kuşağı)", shortName: "Çay Tarım Alanı", category: "tarim",
+      promptTitle: "Her mevsim bol yağış, yüksek nem ve asidik toprak isteyen, Türkiye'de en dar alanda yetişen monokültür tarım alanı haritada neresidir?",
+      type: "Endüstri Bitkisi", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize - Artvin - Trabzon",
+      shapeType: "polygon",
+      coordinates: [[40.95, 40.1], [41.25, 40.5], [41.48, 41.4], [41.35, 41.6], [41.1, 41.2], [40.85, 40.3]],
+      kpssNot: "Her mevsim yağışlı iklim, yüksek bağıl nem ve kireçsiz asidik toprak ister. Rize merkezli Doğu Karadeniz kıyı şeridinde toplanmıştır; yayılış alanı Türkiye'de çok dardır."
     },
     {
-      id: "tarim_pamuk_cukurova", name: "Pamuk (Çukurova)", category: "tarim",
-      type: "Endüstri Bitkisi", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana",
-      kpssNot: "Yüksek sıcaklık ve sulama ister. Çukurova alüvyal toprakları ve uzun vejetasyon süresiyle klasik pamuk yöresidir; tekstil sanayisini besler."
+      id: "tarim_pamuk_cukurova", name: "Pamuk (Çukurova Deltası)", shortName: "Pamuk (Çukurova)", category: "tarim",
+      promptTitle: "Yüksek yaz sıcaklığı ve alüvyal delta toprağı isteyen, tekstil sanayisinin hammaddesi olan pamuk alanı haritada neresidir?",
+      type: "Endüstri Bitkisi", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana - Mersin",
+      shapeType: "polygon",
+      coordinates: [[36.75, 34.9], [37.15, 35.1], [37.2, 35.8], [36.85, 36.0], [36.55, 35.4]],
+      kpssNot: "Yüksek sıcaklık ve olgunlaşma döneminde kuraklık ister. Çukurova alüvyal toprakları ve uzun vejetasyon süresiyle klasik pamuk yöresidir; tekstil sanayisini besler."
     },
     {
-      id: "tarim_pamuk_gap", name: "Pamuk (GAP - Şanlıurfa)", category: "tarim",
-      type: "Endüstri Bitkisi", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
-      kpssNot: "GAP sulaması devreye girdikten sonra Güneydoğu Anadolu pamuk üretiminde ilk sıraya yükselmiştir. Sulamanın tarımsal üretimi nasıl değiştirdiğine dair en tipik örnektir."
+      id: "tarim_pamuk_gap", name: "Pamuk (GAP / Harran Ovası)", shortName: "Pamuk (GAP / Şanlıurfa)", category: "tarim",
+      promptTitle: "GAP sulama projeleri sonrasında Türkiye pamuk üretiminde ilk sıraya yerleşen sulu tarım alanı haritada neresidir?",
+      type: "Endüstri Bitkisi", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa (Harran Ovası)",
+      shapeType: "polygon",
+      coordinates: [[37.35, 38.6], [37.35, 39.3], [36.85, 39.4], [36.7, 38.8], [37.0, 38.5]],
+      kpssNot: "GAP sulaması devreye girdikten sonra Güneydoğu Anadolu pamuk üretiminde 1. sıraya yükselmiştir. Sulamanın tarımsal verimi artırma etkisinin en somut örneğidir."
     },
     {
-      id: "tarim_incir_aydin", name: "İncir (Aydın - Büyük Menderes)", category: "tarim",
-      type: "Meyvecilik / İhraç Ürünü", lat: 37.85, lng: 27.84, region: "Ege", city: "Aydın",
+      id: "tarim_incir_aydin", name: "İncir (Büyük Menderes Grabeni)", shortName: "İncir Üretim Alanı", category: "tarim",
+      promptTitle: "Dünya kuru incir üretim ve ihracatında 1. sırada yer aldığımız Ege graben sahası haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 37.85, lng: 27.84, region: "Ege", city: "Aydın - Büyük Menderes",
+      shapeType: "polygon",
+      coordinates: [[37.75, 27.2], [37.95, 27.6], [38.0, 28.5], [37.7, 28.6], [37.6, 27.5]],
       kpssNot: "Türkiye kuru incir üretim ve ihracatında dünyada ilk sıradadır. Akdeniz iklimi ve Büyük Menderes Ovası'nın alüvyal toprakları belirleyicidir."
     },
     {
-      id: "tarim_uzum_manisa", name: "Çekirdeksiz Üzüm (Manisa - Gediz)", category: "tarim",
-      type: "Meyvecilik / İhraç Ürünü", lat: 38.61, lng: 27.43, region: "Ege", city: "Manisa",
+      id: "tarim_uzum_manisa", name: "Çekirdeksiz Üzüm (Gediz Grabeni)", shortName: "Çekirdeksiz Kuru Üzüm", category: "tarim",
+      promptTitle: "Kuru üzüm (Sultaniye) üretiminin merkezi olan, Ege'nin güneşli graben ovası haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 38.61, lng: 27.43, region: "Ege", city: "Manisa - Gediz Ovası",
+      shapeType: "polygon",
+      coordinates: [[38.55, 27.2], [38.75, 27.5], [38.55, 28.6], [38.3, 28.5], [38.4, 27.4]],
       kpssNot: "Kuru üzüm (sultaniye) üretiminin merkezi Gediz Ovası çevresidir. Akdeniz ikliminin kurak ve güneşli yazı kurutma için elverişlidir."
     },
     {
-      id: "tarim_zeytin_ayvalik", name: "Zeytin (Ayvalık - Edremit)", category: "tarim",
-      type: "Meyvecilik / Yağ Bitkisi", lat: 39.32, lng: 26.69, region: "Marmara", city: "Balıkesir (Ayvalık)",
-      kpssNot: "Zeytin, Akdeniz ikliminin tipik bitkisidir; kışın don olmaması şarttır. Bu yüzden Karadeniz kıyısında Trabzon çevresine, iç kesimlerde ise yükseltinin izin verdiği yerlere kadar sokulabilir."
+      id: "tarim_zeytin_ayvalik", name: "Zeytin (Edremit & Güney Marmara)", shortName: "Zeytin Üretim Kuşağı", category: "tarim",
+      promptTitle: "Kış ılıklığı isteyen, sofralık ve yağlık üretimin yoğunlaştığı kıyı kuşağı haritada neresidir?",
+      type: "Meyvecilik / Yağ Bitkisi", lat: 39.32, lng: 26.69, region: "Ege - Marmara", city: "Balıkesir (Ayvalık - Edremit)",
+      shapeType: "polygon",
+      coordinates: [[39.2, 26.5], [39.6, 26.6], [39.7, 27.1], [39.3, 27.0]],
+      kpssNot: "Zeytin, Akdeniz ikliminin tipik bitkisidir; kışın don olmaması şarttır. Ege ve Güney Marmara kıyıları en yoğun üretim sahalarıdır."
     },
     {
-      id: "tarim_tutun_akhisar", name: "Tütün (Akhisar - Manisa)", category: "tarim",
-      type: "Endüstri Bitkisi", lat: 38.92, lng: 27.84, region: "Ege", city: "Manisa (Akhisar)",
-      kpssNot: "Kaliteli tütün, verimi düşük ve eğimli topraklarda yetişir. Ege (Akhisar), Karadeniz (Bafra - Samsun) ve Güneydoğu (Adıyaman) başlıca üretim yöreleridir."
+      id: "tarim_tutun_akhisar", name: "Tütün (Ege & Karadeniz Kuşağı)", shortName: "Tütün Yetişme Alanı", category: "tarim",
+      promptTitle: "Kıraç ve eğimli arazilerde kaliteli yetiştirilen, devlet kontrolünde üretilen tütün yöresi haritada neresidir?",
+      type: "Endüstri Bitkisi", lat: 38.92, lng: 27.84, region: "Ege", city: "Manisa (Akhisar) - Ege",
+      shapeType: "polygon",
+      coordinates: [[38.7, 27.5], [39.1, 27.7], [39.05, 28.2], [38.65, 28.0]],
+      kpssNot: "Kaliteli tütün, taban suyu az ve eğimli topraklarda yetişir. Ege (Akhisar), Karadeniz (Bafra - Samsun) ve Güneydoğu (Adıyaman) başlıca üretim yöreleridir."
     },
     {
-      id: "tarim_muz_anamur", name: "Muz (Anamur - Mersin)", category: "tarim",
-      type: "Meyvecilik / Mikroklima Ürünü", lat: 36.08, lng: 32.84, region: "Akdeniz", city: "Mersin (Anamur)",
-      kpssNot: "Tropikal kökenli bir üründür; kışın dahi düşük sıcaklık görülmeyen mikroklima alanları ister. Anamur - Gazipaşa kıyı şeridi Toroslar'ın kuzeyden gelen soğuğu kesmesi sayesinde uygundur."
+      id: "tarim_muz_anamur", name: "Muz (Anamur - Alanya Kıyı Şeridi)", shortName: "Muz Yetişme Sahası", category: "tarim",
+      promptTitle: "Torosların kuzeyden gelen soğuğu kesmesiyle kış ılıklığının korunduğu mikroklima muz sahası haritada neresidir?",
+      type: "Meyvecilik / Mikroklima Ürünü", lat: 36.08, lng: 32.84, region: "Akdeniz", city: "Mersin (Anamur) - Antalya (Alanya)",
+      shapeType: "polygon",
+      coordinates: [[36.0, 32.3], [36.3, 32.0], [36.4, 32.5], [36.1, 33.1], [35.95, 32.9]],
+      kpssNot: "Tropikal kökenli bir üründür; kışın dahi düşük sıcaklık görülmeyen mikroklima alanları ister. Anamur - Gazipaşa - Alanya kıyı şeridi uygundur."
     },
     {
-      id: "tarim_antepfistigi_gaziantep", name: "Antep Fıstığı (Gaziantep - Şanlıurfa)", category: "tarim",
-      type: "Meyvecilik / İhraç Ürünü", lat: 37.07, lng: 37.38, region: "Güneydoğu Anadolu", city: "Gaziantep",
-      kpssNot: "Kurakçıl bir türdür, sulama gerektirmeden taşlı ve kireçli topraklarda yetişebilir. Güneydoğu Anadolu'nun sıcak ve kurak yazına uyum sağlamıştır."
+      id: "tarim_antepfistigi_gaziantep", name: "Antep Fıstığı (Güneydoğu Platoları)", shortName: "Antep Fıstığı Sahası", category: "tarim",
+      promptTitle: "Taşlı, kireçli topraklara ve aşırı yaz kuraklığına dayanıklı fıstık üretim alanı haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 37.07, lng: 37.38, region: "Güneydoğu Anadolu", city: "Gaziantep - Şanlıurfa",
+      shapeType: "polygon",
+      coordinates: [[36.85, 37.1], [37.35, 37.2], [37.4, 38.2], [36.8, 38.3]],
+      kpssNot: "Kurakçıl bir türdür, sulama gerektirmeden taşlı ve kireçli topraklarda yetişebilir. Güneydoğu Anadolu'nun sıcak ve kurak yazına tam uyum sağlamıştır."
     },
     {
-      id: "tarim_kayisi_malatya", name: "Kayısı (Malatya)", category: "tarim",
+      id: "tarim_kayisi_malatya", name: "Kayısı (Malatya Havzası)", shortName: "Kayısı Üretim Havzası", category: "tarim",
+      promptTitle: "Dünya kuru kayısı üretiminde lider olduğumuz, çöküntü havzası niteliğindeki alan haritada neresidir?",
       type: "Meyvecilik / İhraç Ürünü", lat: 38.35, lng: 38.31, region: "Doğu Anadolu", city: "Malatya",
+      shapeType: "polygon",
+      coordinates: [[38.15, 38.0], [38.55, 38.1], [38.6, 38.6], [38.2, 38.5]],
       kpssNot: "Türkiye kuru kayısı üretiminde dünyada ilk sıradadır. Malatya Ovası, Doğu Anadolu içinde çevresine göre daha ılıman ve sulanabilir bir çöküntü alanıdır."
     },
     {
-      id: "tarim_gul_isparta", name: "Gül (Isparta - Burdur)", category: "tarim",
-      type: "Endüstri Bitkisi", lat: 37.76, lng: 30.55, region: "Akdeniz", city: "Isparta",
-      kpssNot: "Yağ gülü üretimi Göller Yöresi'nde toplanmıştır. Gülyağı, parfüm sanayisinin hammaddesidir ve yüksek katma değerli bir ihraç ürünüdür."
+      id: "tarim_gul_isparta", name: "Gül (Göller Yöresi / Isparta)", shortName: "Yağ Gülü Tarım Alanı", category: "tarim",
+      promptTitle: "Kozmetik ve parfüm sanayisinin değerli hammaddesi olan yağ gülü üretim sahası haritada neresidir?",
+      type: "Endüstri Bitkisi", lat: 37.76, lng: 30.55, region: "Akdeniz", city: "Isparta - Burdur",
+      shapeType: "polygon",
+      coordinates: [[37.55, 30.2], [37.95, 30.3], [38.0, 31.0], [37.6, 30.9]],
+      kpssNot: "Yağ gülü üretimi Göller Yöresi'nde (Isparta-Burdur) toplanmıştır. Gülyağı, parfüm sanayisinin hammaddesidir ve yüksek katma değerli bir ihraç ürünüdür."
     },
     {
-      id: "tarim_hashas_afyon", name: "Haşhaş (Afyonkarahisar)", category: "tarim",
-      type: "Endüstri Bitkisi (Devlet Kontrollü)", lat: 38.76, lng: 30.54, region: "Ege", city: "Afyonkarahisar",
-      kpssNot: "Ekimi devlet iznine bağlı ve belirli illerle sınırlıdır. Afyonkarahisar üretimin merkezidir; Bolvadin'deki tesiste tıbbi alkaloid üretilir."
+      id: "tarim_hashas_afyon", name: "Haşhaş (İç Batı Anadolu)", shortName: "Haşhaş Ekim Sahası", category: "tarim",
+      promptTitle: "Tıbbi alkaloid üretimi amacıyla ekimi devlet denetiminde yapılan haşhaş bölgesi haritada neresidir?",
+      type: "Endüstri Bitkisi (Devlet Kontrollü)", lat: 38.76, lng: 30.54, region: "Ege", city: "Afyonkarahisar - Uşak",
+      shapeType: "polygon",
+      coordinates: [[38.4, 30.0], [38.9, 30.1], [38.95, 31.1], [38.45, 31.0]],
+      kpssNot: "Ekimi devlet iznine bağlıdır. Afyonkarahisar üretimin merkezidir; Bolvadin'deki tesiste tıbbi alkaloid üretilir."
     },
     {
-      id: "tarim_sekerpancari_konya", name: "Şeker Pancarı (Konya)", category: "tarim",
-      type: "Endüstri Bitkisi", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
-      kpssNot: "Bozulmadan uzağa taşınamadığı için şeker fabrikaları üretim alanlarının içine kurulur — hammaddeye bağlı sanayinin ders kitabı örneğidir. Sulanabilen karasal ovalarda yetişir."
+      id: "tarim_sekerpancari_konya", name: "Şeker Pancarı (İç Anadolu Havzası)", shortName: "Şeker Pancarı Alanı", category: "tarim",
+      promptTitle: "Hasattan sonra çabuk bozulduğu için fabrikaları üretim sahasına kurulan şeker pancarı havzası haritada neresidir?",
+      type: "Endüstri Bitkisi", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya - Aksaray - Karaman",
+      shapeType: "polygon",
+      coordinates: [[37.3, 32.2], [38.2, 32.4], [38.3, 33.7], [37.4, 33.6]],
+      kpssNot: "Bozulmadan uzağa taşınamadığı için fabrikalar tarlaların yakınına kurulur (hammaddeye bağlılık). Sulanabilen karasal ovalarda yetişir."
     },
     {
-      id: "tarim_celtik_edirne", name: "Çeltik (Edirne - Meriç)", category: "tarim",
-      type: "Tahıl / Sulu Tarım", lat: 41.68, lng: 26.56, region: "Marmara", city: "Edirne",
-      kpssNot: "Bol su isteyen bir üründür; akarsu boylarında ve taban suyu yüksek ovalarda yetiştirilir. Meriç - Ergene çevresi, Tosya (Kastamonu) ve Boyabat (Sinop) başlıca alanlardır."
+      id: "tarim_celtik_edirne", name: "Çeltik / Pirinç (Meriç & Ergene Havzası)", shortName: "Çeltik (Pirinç) Sahası", category: "tarim",
+      promptTitle: "Bol su ve bataklık ortamı isteyen, sıtma riski nedeniyle yerleşim yerlerinden uzakta devlet kontrolünde ekilen çeltik sahası haritada neresidir?",
+      type: "Tahıl / Sulu Tarım", lat: 41.68, lng: 26.56, region: "Marmara", city: "Edirne (Meriç - Ergene)",
+      shapeType: "polygon",
+      coordinates: [[41.1, 26.3], [41.75, 26.4], [41.8, 26.8], [41.3, 26.8]],
+      kpssNot: "Bol su isteyen bir üründür; Meriç-Ergene havzası Türkiye pirinç üretiminin en büyük bölümünü karşılar. Ekim alanları sıtma riski sebebiyle devlet iznine bağlıdır."
     },
     {
-      id: "tarim_turuncgil_antalya", name: "Turunçgil (Antalya - Mersin)", category: "tarim",
-      type: "Meyvecilik", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya",
-      kpssNot: "Kışın don görmeyen kıyı ovalarında yetişir. Akdeniz kıyı şeridi ile Doğu Karadeniz'de Rize çevresi başlıca üretim alanlarıdır."
+      id: "tarim_turuncgil_antalya", name: "Turunçgil (Akdeniz Kıyı Kuşağı)", shortName: "Turunçgil (Narenciye) Kuşağı", category: "tarim",
+      promptTitle: "Kış donlarına karşı aşırı duyarlı olan, Türkiye üretiminin büyük kısmının yapıldığı Akdeniz kıyı kuşağı haritada neresidir?",
+      type: "Meyvecilik", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya - Mersin - Adana",
+      shapeType: "polygon",
+      coordinates: [[36.3, 30.1], [36.95, 30.6], [36.85, 32.2], [36.4, 34.5], [36.8, 35.8], [36.2, 35.8], [36.1, 30.5]],
+      kpssNot: "Kışın don görmeyen kıyı ovalarında yetişir. Akdeniz kıyı şeridi ile Doğu Karadeniz'de Rize çevresi (mikroklima) başlıca üretim alanlarıdır."
     },
     {
-      id: "tarim_aycicegi_trakya", name: "Ayçiçeği (Trakya)", category: "tarim",
-      type: "Yağ Bitkisi", lat: 40.98, lng: 27.51, region: "Marmara", city: "Tekirdağ",
+      id: "tarim_aycicegi_trakya", name: "Ayçiçeği (Ergene / Trakya Havzası)", shortName: "Ayçiçeği Üretim Havzası", category: "tarim",
+      promptTitle: "Türkiye'nin sıvı yağ ihtiyacının karşılanmasında 1. sırada yer alan Trakya tarım havzası haritada neresidir?",
+      type: "Yağ Bitkisi", lat: 40.98, lng: 27.51, region: "Marmara", city: "Tekirdağ - Edirne - Kırklareli",
+      shapeType: "polygon",
+      coordinates: [[41.0, 26.6], [41.55, 26.8], [41.6, 27.6], [41.1, 27.8], [40.85, 27.3]],
       kpssNot: "Türkiye'nin bitkisel yağ açığını kapatan temel üründür. Ergene Havzası (Tekirdağ - Edirne - Kırklareli) üretimin ağırlık merkezidir."
     },
     {
-      id: "tarim_bugday_polatli", name: "Buğday (İç Anadolu - Polatlı)", category: "tarim",
-      type: "Tahıl", lat: 39.58, lng: 32.14, region: "İç Anadolu", city: "Ankara (Polatlı)",
-      kpssNot: "Türkiye'de en geniş ekim alanına sahip üründür. Karasal iklimin yarı kurak koşullarına uyumludur; İç Anadolu ve Güneydoğu platoları başlıca alanlardır."
+      id: "tarim_bugday_polatli", name: "Buğday (İç Anadolu Tahıl Kuşağı)", shortName: "Buğday Ekim Kuşağı", category: "tarim",
+      promptTitle: "Türkiye'de ekim alanı en geniş olan, ilkbahar yağışı ve yaz kuraklığı isteyen temel tahıl kuşağı haritada neresidir?",
+      type: "Tahıl", lat: 39.58, lng: 32.14, region: "İç Anadolu", city: "Ankara (Polatlı) - Konya",
+      shapeType: "polygon",
+      coordinates: [[39.2, 31.6], [39.9, 31.8], [39.95, 32.9], [39.25, 32.8]],
+      kpssNot: "Türkiye'de en geniş ekim alanına sahip üründür. Karasal iklimin yarı kurak koşullarına uyumludur; İç Anadolu platoları başlıca alandır."
     },
     {
-      id: "tarim_mercimek_diyarbakir", name: "Kırmızı Mercimek (Diyarbakır - Şanlıurfa)", category: "tarim",
-      type: "Baklagil", lat: 37.91, lng: 40.24, region: "Güneydoğu Anadolu", city: "Diyarbakır",
+      id: "tarim_mercimek_diyarbakir", name: "Kırmızı Mercimek (Güneydoğu Platoları)", shortName: "Kırmızı Mercimek Sahası", category: "tarim",
+      promptTitle: "Aşırı kurak ve sıcak iklime uyum sağlamış olan kırmızı mercimek üretim sahası haritada neresidir?",
+      type: "Baklagil", lat: 37.91, lng: 40.24, region: "Güneydoğu Anadolu", city: "Diyarbakır - Şanlıurfa - Mardin",
+      shapeType: "polygon",
+      coordinates: [[37.2, 39.5], [38.0, 39.7], [38.1, 41.0], [37.3, 41.1]],
       kpssNot: "Kırmızı mercimek üretimi Güneydoğu Anadolu'da yoğunlaşmıştır. Yeşil mercimek ise daha çok İç Anadolu'da (Yozgat - Çorum) yetiştirilir."
     },
     {
-      id: "tarim_sera_kumluca", name: "Örtü Altı (Sera) Tarımı - Kumluca", category: "tarim",
-      type: "Sera Tarımı", lat: 36.37, lng: 30.29, region: "Akdeniz", city: "Antalya (Kumluca)",
-      kpssNot: "Akdeniz kıyısındaki ılık kışlar sayesinde seralar az enerjiyle ısıtılır. Kumluca - Finike - Demre hattı Türkiye'nin sera merkezidir; kış sebzeciliğini mümkün kılar."
+      id: "tarim_sera_kumluca", name: "Örtü Altı (Sera) Sebzeciliği - Kumluca", shortName: "Sera Tarım Alanı", category: "tarim",
+      promptTitle: "Kış ılıklığı ve yüksek güneşlenme süresi sayesinde kış sebzeciliğinin yapıldığı örtü altı tarım merkezi haritada neresidir?",
+      type: "Sera Tarımı", lat: 36.37, lng: 30.29, region: "Akdeniz", city: "Antalya (Kumluca - Finike - Demre)",
+      shapeType: "polygon",
+      coordinates: [[36.2, 29.9], [36.4, 30.1], [36.45, 30.4], [36.25, 30.4]],
+      kpssNot: "Akdeniz kıyısındaki ılık kışlar sayesinde seralar az enerjiyle ısıtılır. Kumluca - Finike - Demre hattı Türkiye'nin sera merkezidir."
     },
     {
-      id: "tarim_sarimsak_taskopru", name: "Sarımsak (Taşköprü - Kastamonu)", category: "tarim",
-      type: "Sebze / Coğrafi İşaretli", lat: 41.51, lng: 34.21, region: "Karadeniz", city: "Kastamonu (Taşköprü)",
-      kpssNot: "Taşköprü sarımsağı coğrafi işaretli bir üründür. Gökırmak Vadisi'nin taban suyu yüksek alüvyal toprakları belirleyicidir."
-    },
-    {
-      id: "tarim_elma_karaman", name: "Elma (Karaman - Isparta)", category: "tarim",
-      type: "Meyvecilik", lat: 37.18, lng: 33.22, region: "İç Anadolu", city: "Karaman",
-      kpssNot: "Elma, kış soğuğuna ihtiyaç duyan bir meyvedir; bu yüzden kıyıdan çok iç kesimlerde ve yüksek yörelerde yetişir. Karaman, Isparta ve Niğde başlıca üretim alanlarıdır."
+      id: "tarim_elma_karaman", name: "Elma (İç Anadolu & Göller Yöresi)", shortName: "Elma Yetişme Kuşağı", category: "tarim",
+      promptTitle: "Kış soğuklamasına ihtiyaç duyan, Türkiye üretiminde başı çeken elma bahçeleri kuşağı haritada neresidir?",
+      type: "Meyvecilik", lat: 37.18, lng: 33.22, region: "İç Anadolu - Akdeniz", city: "Karaman - Niğde - Isparta",
+      shapeType: "polygon",
+      coordinates: [[37.0, 30.8], [37.9, 31.0], [38.1, 34.6], [37.1, 34.0], [36.9, 33.1]],
+      kpssNot: "Elma, kış soğuğuna ihtiyaç duyan bir meyvedir. Karaman, Isparta ve Niğde Türkiye elma üretiminin zirvesindedir."
     }
   ],
 
-  // --- 🏭 SANAYİ: TESİS - YER İLİŞKİSİ ---
+  hayvancilik: [
+    {
+      id: "hayvan_buyukbas_erzurum_kars", name: "Büyükbaş Mera Hayvancılığı (Erzurum - Kars)", shortName: "Büyükbaş (Mera / Çayır)", category: "hayvancilik",
+      promptTitle: "Yaz yağışlarıyla yeşeren gür Alpin çayırları sayesinde büyükbaş mera hayvancılığının geliştiği yüksek plato sahası haritada neresidir?",
+      type: "Büyükbaş (Mera)", lat: 40.50, lng: 42.60, region: "Doğu Anadolu", city: "Erzurum - Kars - Ardahan",
+      shapeType: "polygon",
+      coordinates: [[39.7, 41.0], [41.2, 41.5], [41.4, 43.2], [40.4, 43.5], [39.6, 42.2]],
+      kpssNot: "Yaz yağışları -> gür çayırlar -> büyükbaş mera hayvancılığı bağlantısı KPSS'nin en klasik nedensellik sorularındandır. Et ve süt kombinaları gelişmiştir."
+    },
+    {
+      id: "hayvan_kil_kecisi_teke_taseli", name: "Kıl Keçisi (Teke & Taşeli Karstik Platoları)", shortName: "Kıl Keçisi Yetiştiriciliği", category: "hayvancilik",
+      promptTitle: "Engebeli karstik araziye ve maki bitki örtüsüne uyum sağlamış kıl keçisi yetiştiriciliğinin merkezi olan platolar haritada neresidir?",
+      type: "Küçükbaş (Kıl Keçisi)", lat: 36.55, lng: 31.50, region: "Akdeniz", city: "Teke ve Taşeli Platoları",
+      shapeType: "polygon",
+      coordinates: [[36.2, 29.3], [37.1, 29.8], [37.0, 33.4], [36.0, 33.2], [36.0, 30.5]],
+      kpssNot: "Kıl keçisi dağlık ve kayalık alanlara çok iyi tırmanır; maki çalılarıyla beslenir. Ormanlara zarar verdiği için otlatılması devlet kontrolündedir."
+    },
+    {
+      id: "hayvan_tiftik_ankara", name: "Tiftik Keçisi (Ankara & İç Batı Anadolu)", shortName: "Tiftik (Ankara) Keçisi", category: "hayvancilik",
+      promptTitle: "Yünü (Moher) dokuma sanayisinde değerli olan tiftik keçisinin anavatanı ve yetiştirme alanı haritada neresidir?",
+      type: "Küçükbaş (Tiftik Keçisi)", lat: 39.93, lng: 32.85, region: "İç Anadolu", city: "Ankara - Eskişehir - Çankırı",
+      shapeType: "polygon",
+      coordinates: [[39.3, 31.5], [40.4, 31.8], [40.5, 33.7], [39.4, 33.5]],
+      kpssNot: "Ankara keçisi olarak da bilinir. İnce, parlak ve dayanıklı tiftik (moher) yünü için beslenir; bozkır alanlarına uyumludur."
+    },
+    {
+      id: "hayvan_kucukbas_koyun_ic_anadolu", name: "Küçükbaş Koyun Hayvancılığı (İç Anadolu)", shortName: "Koyun (Step / Bozkır)", category: "hayvancilik",
+      promptTitle: "İlkbaharda yeşerip yazın kuruyan bozkır (step) otlarıyla beslenen koyun yetiştiriciliğinin en yaygın olduğu düzlükler haritada neresidir?",
+      type: "Küçükbaş (Koyun)", lat: 38.60, lng: 33.50, region: "İç Anadolu", city: "Konya - Aksaray - Karaman - Kırşehir",
+      shapeType: "polygon",
+      coordinates: [[37.5, 32.0], [39.3, 32.3], [39.5, 34.5], [37.6, 34.2]],
+      kpssNot: "Türkiye'de sayıca en fazla beslenen hayvan koyundur. Düz araziler ve kısa boylu bozkır otları küçükbaş koyun için idealdir."
+    },
+    {
+      id: "hayvan_kumes_marmara_bolu", name: "Kümes Hayvancılığı (Marmara & Bolu Kuşağı)", shortName: "Kümes Hayvancılığı Kuşağı", category: "hayvancilik",
+      promptTitle: "İklimden bağımsız olarak büyük şehirlerin et ve yumurta tüketim ihtiyacını karşılamak amacıyla kurulan tesisler kuşağı haritada neresidir?",
+      type: "Kümes Hayvancılığı (Pazara Yakınlık)", lat: 40.73, lng: 31.60, region: "Marmara - Karadeniz", city: "Bolu - Sakarya - Manisa - Balıkesir",
+      shapeType: "polygon",
+      coordinates: [[40.3, 29.5], [40.9, 30.2], [40.9, 32.1], [40.2, 31.9]],
+      kpssNot: "Kümes hayvancılığı kapalı modern tesislerde yapıldığı için iklimden etkilenmez. Kuruluşunda tek belirleyici etken tüketim merkezlerine (pazara) yakınlıktır."
+    },
+    {
+      id: "hayvan_aricilik_mentese_mugla", name: "Arıcılık / Çam Balı (Menteşe Yöresi)", shortName: "Arıcılık (Çam Balı / Menteşe)", category: "hayvancilik",
+      promptTitle: "Zengin kızılçam ormanları ve basra böceği sayesinde dünya çam balı üretiminin merkezi olan engebeli kıyı sahası haritada neresidir?",
+      type: "Arıcılık", lat: 37.05, lng: 28.25, region: "Ege", city: "Muğla (Menteşe Yöresi)",
+      shapeType: "polygon",
+      coordinates: [[36.6, 27.4], [37.3, 27.6], [37.4, 28.8], [36.7, 28.7]],
+      kpssNot: "Muğla - Menteşe yöresi Türkiye ve dünya çam balı üretiminin kalbidir. Arıcılık ayrıca bitki örtüsü zengin Doğu Karadeniz (Rize-Anzer) ve Hakkâri'de de gelişmiştir."
+    },
+    {
+      id: "hayvan_ipekbocegi_diyarbakir_bursa", name: "İpek Böcekçiliği (Diyarbakır & Güney Marmara)", shortName: "İpek Böcekçiliği", category: "hayvancilik",
+      promptTitle: "Dut yaprağı ile beslenen tırtıllardan doğal ipek lifi elde edilen tarihî yetiştiricilik alanı haritada neresidir?",
+      type: "İpek Böcekçiliği", lat: 37.91, lng: 40.24, region: "Güneydoğu & Marmara", city: "Diyarbakır (Kulp) - Bursa",
+      shapeType: "polygon",
+      coordinates: [[38.1, 40.5], [38.5, 40.8], [38.6, 41.3], [38.0, 41.1]],
+      kpssNot: "Geleneksel merkezi Bursa iken, günümüzde yaş koza üretiminde Diyarbakır (Kulp) ilk sıraya yükselmiştir."
+    }
+  ],
+
   sanayi: [
     {
-      id: "sanayi_eregli_demircelik", name: "Ereğli Demir-Çelik (Erdemir)", category: "sanayi",
-      type: "Demir-Çelik (Entegre)", lat: 41.28, lng: 31.42, region: "Karadeniz", city: "Zonguldak (K. Ereğli)",
-      kpssNot: "Zonguldak taşkömürü havzasının hemen yanına, enerji kaynağına yakınlık ilkesiyle kurulmuştur. Aynı zamanda liman avantajıyla cevher ithal edebilir."
+      id: "sanayi_eregli_demircelik", name: "Ereğli Demir-Çelik (Erdemir)", shortName: "Ereğli Demir-Çelik Tesisleri", category: "sanayi",
+      promptTitle: "Taşkömürü havzasına (enerji kaynağına) yakınlık ve liman avantajıyla kurulan entegre demir-çelik sahası haritada neresidir?",
+      type: "Demir-Çelik (Enerjiye Yakınlık)", lat: 41.28, lng: 31.42, region: "Karadeniz", city: "Zonguldak (Kdz. Ereğli)",
+      shapeType: "polygon",
+      coordinates: [[41.2, 31.3], [41.35, 31.35], [41.35, 31.55], [41.2, 31.5]],
+      kpssNot: "Zonguldak taşkömürü havzasının hemen yanına, enerji kaynağına yakınlık ilkesiyle kurulmuştur. Liman avantajıyla cevher ithal eder."
     },
     {
-      id: "sanayi_karabuk_demircelik", name: "Karabük Demir-Çelik", category: "sanayi",
-      type: "Demir-Çelik (Entegre)", lat: 41.20, lng: 32.63, region: "Karadeniz", city: "Karabük",
-      kpssNot: "Türkiye'nin ilk entegre demir-çelik tesisidir (1937). Kuruluşunda ekonomik ölçütlerden çok, iç kesimde güvenli bir konum tercih edilmesi etkili olmuştur."
+      id: "sanayi_karabuk_demircelik", name: "Karabük Demir-Çelik (Kardemir)", shortName: "Karabük Demir-Çelik", category: "sanayi",
+      promptTitle: "Türkiye'nin ilk entegre demir-çelik tesisi olan, iç kesimde güvenli konum amacıyla vadi içine kurulan tesis haritada neresidir?",
+      type: "Demir-Çelik (Tarihî İlk Tesis)", lat: 41.20, lng: 32.63, region: "Karadeniz", city: "Karabük",
+      shapeType: "polygon",
+      coordinates: [[41.15, 32.55], [41.25, 32.55], [41.25, 32.7], [41.15, 32.7]],
+      kpssNot: "Türkiye'nin ilk entegre demir-çelik tesisidir (1937). Kuruluşunda iç kesimde stratejik ve güvenli konum tercihi etkili olmuştur."
     },
     {
-      id: "sanayi_iskenderun_demircelik", name: "İskenderun Demir-Çelik (İsdemir)", category: "sanayi",
-      type: "Demir-Çelik (Entegre)", lat: 36.58, lng: 36.17, region: "Akdeniz", city: "Hatay (İskenderun)",
-      kpssNot: "Liman kenarında kurulmuştur; ithal cevher ve kömürü doğrudan tesise indirebilir. Ulaşım/liman etkeninin sanayi kuruluş yerine etkisine örnektir."
+      id: "sanayi_iskenderun_demircelik", name: "İskenderun Demir-Çelik (İsdemir)", shortName: "İskenderun Demir-Çelik", category: "sanayi",
+      promptTitle: "İthal hammadde ve kömürü doğrudan deniz yoluyla indirmek üzere ulaşım/liman avantajıyla kurulan dev demir-çelik kompleksi haritada neresidir?",
+      type: "Demir-Çelik (Ulaşım / Liman)", lat: 36.58, lng: 36.17, region: "Akdeniz", city: "Hatay (İskenderun Körfezi)",
+      shapeType: "polygon",
+      coordinates: [[36.5, 36.05], [36.75, 36.1], [36.75, 36.25], [36.5, 36.22]],
+      kpssNot: "Liman kenarında kurulmuştur; ithal cevher ve kömürü doğrudan tesise indirir. Ulaşım/liman etkeninin sanayi kuruluş yerine etkisine en güzel örnektir."
     },
     {
-      id: "sanayi_seydisehir_aluminyum", name: "Seydişehir Alüminyum Tesisleri", category: "sanayi",
-      type: "Metalurji (Boksit)", lat: 37.42, lng: 31.85, region: "İç Anadolu", city: "Konya (Seydişehir)",
+      id: "sanayi_izmit_rafineri", name: "İzmit (Tüpraş) Rafinerisi & Petrokimya", shortName: "İzmit Rafinerisi", category: "sanayi",
+      promptTitle: "Türkiye'nin en büyük petrol rafinerisi olan, tüketim merkezine yakınlık (pazar) amacıyla Marmara kıyısında kurulan tesis haritada neresidir?",
+      type: "Petrol Rafinerisi (Pazara Yakınlık)", lat: 40.76, lng: 29.92, region: "Marmara", city: "Kocaeli (İzmit Körfezi)",
+      shapeType: "polygon",
+      coordinates: [[40.7, 29.75], [40.82, 29.75], [40.82, 30.05], [40.7, 30.05]],
+      kpssNot: "Türkiye'nin en büyük rafinerisidir. İthal ham petrolü limandan alır ve ülkenin en yoğun tüketim bölgesinin içinde yer alır (pazara yönelik)."
+    },
+    {
+      id: "sanayi_kirikkale_rafineri", name: "Kırıkkale (Orta Anadolu) Rafinerisi", shortName: "Kırıkkale Rafinerisi", category: "sanayi",
+      promptTitle: "İç bölgelerin akaryakıt ihtiyacını karşılamak amacıyla merkezi konumda boru hattıyla beslenen rafineri haritada neresidir?",
+      type: "Petrol Rafinerisi (Merkezi Konum)", lat: 39.85, lng: 33.51, region: "İç Anadolu", city: "Kırıkkale",
+      shapeType: "polygon",
+      coordinates: [[39.78, 33.4], [39.92, 33.4], [39.92, 33.6], [39.78, 33.6]],
+      kpssNot: "İç bölgelerin akaryakıt ihtiyacını karşılamak için kurulmuştur; Ceyhan'dan gelen ham petrol boru hattıyla taşınır."
+    },
+    {
+      id: "sanayi_batman_rafineri", name: "Batman Petrol Rafinerisi", shortName: "Batman Rafinerisi", category: "sanayi",
+      promptTitle: "Türkiye'nin ilk rafinerisi olup yerli petrol çıkarım sahalarının yanına (hammaddeye yakınlık) kurulan tesis haritada neresidir?",
+      type: "Petrol Rafinerisi (Hammaddeye Yakınlık)", lat: 37.88, lng: 41.13, region: "Güneydoğu Anadolu", city: "Batman",
+      shapeType: "polygon",
+      coordinates: [[37.82, 41.05], [37.95, 41.05], [37.95, 41.22], [37.82, 41.22]],
+      kpssNot: "Türkiye'nin ilk rafinerisidir ve ülkedeki petrol çıkarım sahalarının (Raman, Garzan) yanı başındadır — hammaddeye bağlı kuruluş örneğidir."
+    },
+    {
+      id: "sanayi_aliaga_petrokimya", name: "Aliağa Rafineri ve Petrokimya (Petkim / Star)", shortName: "Aliağa Petrokimya Kompleksi", category: "sanayi",
+      promptTitle: "Liman avantajı, rafineri entegrasyonu ve gemi söküm tesislerinin bir arada bulunduğu Ege petrokimya kompleksi haritada neresidir?",
+      type: "Rafineri / Petrokimya", lat: 38.80, lng: 26.97, region: "Ege", city: "İzmir (Aliağa)",
+      shapeType: "polygon",
+      coordinates: [[38.72, 26.9], [38.86, 26.9], [38.86, 27.05], [38.72, 27.05]],
+      kpssNot: "Rafineri ile Petkim tesisleri yan yanadır; rafineri çıktısı doğrudan petrokimyaya hammadde olur. Ayrıca ülkenin en büyük gemi söküm tesisleri buradadır."
+    },
+    {
+      id: "sanayi_seydisehir_aluminyum", name: "Seydişehir Alüminyum Tesisleri", shortName: "Seydişehir Alüminyum", category: "sanayi",
+      promptTitle: "Yakın çevresindeki boksit maden yataklarına bağlı olarak kurulan Türkiye'nin tek birincil alüminyum tesisi haritada neresidir?",
+      type: "Metalurji (Boksit / Alüminyum)", lat: 37.42, lng: 31.85, region: "İç Anadolu", city: "Konya (Seydişehir)",
+      shapeType: "polygon",
+      coordinates: [[37.35, 31.78], [37.5, 31.78], [37.5, 31.95], [37.35, 31.95]],
       kpssNot: "Türkiye'nin alüminyum üretim merkezidir. Yakınındaki boksit yataklarına, yani hammaddeye bağlı olarak kurulmuştur."
     },
     {
-      id: "sanayi_batman_rafineri", name: "Batman Rafinerisi", category: "sanayi",
-      type: "Petrol Rafinerisi", lat: 37.88, lng: 41.13, region: "Güneydoğu Anadolu", city: "Batman",
-      kpssNot: "Türkiye'nin ilk rafinerisidir ve ülkedeki petrol üretiminin yapıldığı Güneydoğu Anadolu sahalarının yanı başındadır — hammaddeye yönelik kuruluş örneğidir."
-    },
-    {
-      id: "sanayi_izmit_rafineri", name: "İzmit (Tüpraş) Rafinerisi", category: "sanayi",
-      type: "Petrol Rafinerisi", lat: 40.76, lng: 29.92, region: "Marmara", city: "Kocaeli",
-      kpssNot: "Türkiye'nin en büyük rafinerisidir. İthal ham petrolü limandan alır ve ülkenin en yoğun tüketim bölgesinin içinde yer alır — pazara yönelik kuruluştur."
-    },
-    {
-      id: "sanayi_kirikkale_rafineri", name: "Kırıkkale (Orta Anadolu) Rafinerisi", category: "sanayi",
-      type: "Petrol Rafinerisi", lat: 39.85, lng: 33.51, region: "İç Anadolu", city: "Kırıkkale",
-      kpssNot: "İç bölgelerin akaryakıt ihtiyacını karşılamak için kurulmuştur; ham petrol boru hattıyla taşınır. Ülke içi dağıtımda merkezi konumdan yararlanır."
-    },
-    {
-      id: "sanayi_aliaga_petrokimya", name: "Aliağa Rafineri ve Petrokimya Tesisleri", category: "sanayi",
-      type: "Rafineri / Petrokimya", lat: 38.80, lng: 26.97, region: "Ege", city: "İzmir (Aliağa)",
-      kpssNot: "Rafineri ile Petkim petrokimya tesisleri yan yanadır: rafineri çıktısı doğrudan petrokimyaya hammadde olur. Ayrıca ülkenin en büyük gemi söküm tesisleri buradadır."
-    },
-    {
-      id: "sanayi_murgul_bakir", name: "Murgul Bakır İşletmesi", category: "sanayi",
-      type: "Madencilik (Bakır)", lat: 41.29, lng: 41.58, region: "Karadeniz", city: "Artvin (Murgul)",
-      kpssNot: "Türkiye'nin başlıca bakır yataklarındandır. Bakır işletmeleri cevherin ağırlığı nedeniyle çıkarıldığı yerde kurulur."
-    },
-    {
-      id: "sanayi_ergani_bakir", name: "Ergani Bakır İşletmesi", category: "sanayi",
-      type: "Madencilik (Bakır)", lat: 38.27, lng: 39.76, region: "Güneydoğu Anadolu", city: "Diyarbakır (Ergani)",
-      kpssNot: "Maden (Elazığ) - Ergani hattı Türkiye'nin tarihî bakır kuşağıdır. Cevher yerinde zenginleştirilerek taşıma maliyeti düşürülür."
-    },
-    {
-      id: "sanayi_guleman_krom", name: "Guleman Krom Yatakları", category: "sanayi",
-      type: "Madencilik (Krom)", lat: 38.52, lng: 39.62, region: "Doğu Anadolu", city: "Elazığ (Alacakaya)",
-      kpssNot: "Türkiye krom rezervi bakımından dünyanın önde gelen ülkelerindendir. Guleman, Fethiye - Köyceğiz ve Bursa - Orhaneli başlıca krom sahalarıdır."
-    },
-    {
-      id: "sanayi_kirka_bor", name: "Kırka Bor (Boraks) İşletmesi", category: "sanayi",
-      type: "Madencilik (Bor)", lat: 39.28, lng: 30.52, region: "İç Anadolu", city: "Eskişehir (Kırka)",
-      kpssNot: "Türkiye dünya bor rezervlerinin büyük bölümüne sahiptir. Kırka, Emet (Kütahya) ve Bigadiç (Balıkesir) başlıca bor sahalarıdır; Bandırma'da işlenir."
-    },
-    {
-      id: "sanayi_bursa_otomotiv", name: "Otomotiv Sanayisi (Bursa)", category: "sanayi",
-      type: "Otomotiv / Montaj", lat: 40.19, lng: 29.06, region: "Marmara", city: "Bursa",
+      id: "sanayi_bursa_otomotiv", name: "Bursa Otomotiv Sanayisi Kuşağı", shortName: "Otomotiv Sanayi Kuşağı", category: "sanayi",
+      promptTitle: "Yan sanayi gücü, limanlara yakınlık ve kalifiye işgücü ile Türkiye otomotiv üretiminin kalbi olan sanayi kuşağı haritada neresidir?",
+      type: "Otomotiv / Montaj", lat: 40.19, lng: 29.06, region: "Marmara", city: "Bursa - Gemlik",
+      shapeType: "polygon",
+      coordinates: [[40.1, 28.9], [40.4, 29.0], [40.4, 29.5], [40.1, 29.4]],
       kpssNot: "Bursa, Türkiye otomotiv üretiminin merkezidir. Yan sanayi yoğunluğu, İstanbul pazarına ve Gemlik limanına yakınlık belirleyici olmuştur."
     },
     {
-      id: "sanayi_denizli_tekstil", name: "Tekstil Sanayisi (Denizli)", category: "sanayi",
+      id: "sanayi_denizli_tekstil", name: "Denizli Tekstil ve Dokuma Havzası", shortName: "Tekstil ve Dokuma Havzası", category: "sanayi",
+      promptTitle: "Havlu ve bornoz ihracatında dünya çapında marka olan, Anadolu sanayileşmesinin öncüsü tekstil kenti haritada neresidir?",
       type: "Tekstil / Dokuma", lat: 37.78, lng: 29.09, region: "Ege", city: "Denizli",
-      kpssNot: "Havlu ve bornoz ihracatında öne çıkar. Anadolu'da sanayileşen 'yeni' sanayi kentlerinin (Anadolu Kaplanları) tipik örneğidir."
+      shapeType: "polygon",
+      coordinates: [[37.68, 28.95], [37.88, 28.95], [37.88, 29.25], [37.68, 29.25]],
+      kpssNot: "Havlu ve bornoz ihracatında öne çıkar. Anadolu'da sanayileşen yeni sanayi kentlerinin (Anadolu Kaplanları) tipik örneğidir."
     },
     {
-      id: "sanayi_usak_deri_hali", name: "Halı ve Deri Sanayisi (Uşak)", category: "sanayi",
-      type: "Dokuma / Deri", lat: 38.68, lng: 29.41, region: "Ege", city: "Uşak",
-      kpssNot: "Uşak, battaniye-halı dokumacılığı ve deri işlemeciliğiyle bilinir. Ayrıca Türkiye'nin ilk şeker fabrikalarından biri 1926'da burada kurulmuştur."
+      id: "sanayi_usak_deri_hali", name: "Uşak Halı, Battaniye ve Deri Sanayisi", shortName: "Deri ve Dokuma Sanayisi", category: "sanayi",
+      promptTitle: "Battaniye-halı dokumacılığı, tekstil geri dönüşümü ve deri işlemeciliğiyle öne çıkan sanayi merkezi haritada neresidir?",
+      type: "Dokuma / Deri Sanayisi", lat: 38.68, lng: 29.41, region: "Ege", city: "Uşak",
+      shapeType: "polygon",
+      coordinates: [[38.58, 29.3], [38.78, 29.3], [38.78, 29.55], [38.58, 29.55]],
+      kpssNot: "Uşak; battaniye, halı dokumacılığı ve deri sanayisiyle bilinir. Ayrıca Türkiye'nin ilk şeker fabrikası 1926'da burada kurulmuştur."
     },
     {
-      id: "sanayi_alpullu_seker", name: "Alpullu Şeker Fabrikası", category: "sanayi",
-      type: "Gıda (Şeker)", lat: 41.50, lng: 27.28, region: "Marmara", city: "Kırklareli (Alpullu)",
-      kpssNot: "Cumhuriyet döneminin ilk şeker fabrikalarındandır (1926). Şeker pancarı uzağa taşınamadığı için fabrika üretim alanının içine kurulmuştur."
-    },
-    {
-      id: "sanayi_dalaman_kagit", name: "Dalaman Kâğıt (SEKA) Tesisi", category: "sanayi",
+      id: "sanayi_dalaman_kagit", name: "Dalaman Kâğıt (SEKA) Tesisleri", shortName: "Kâğıt ve Selüloz Sanayisi", category: "sanayi",
+      promptTitle: "Selüloz hammaddesi için orman varlığına ve bol tatlı su kaynağına bağlı olarak kurulan kâğıt tesisi haritada neresidir?",
       type: "Kâğıt / Orman Ürünleri", lat: 36.77, lng: 28.80, region: "Ege", city: "Muğla (Dalaman)",
-      kpssNot: "Kâğıt sanayisi selüloz için orman varlığına ve bol suya bağlıdır. Bu nedenle tesisler ormanlık ve akarsu bakımından zengin yörelere kurulur."
+      shapeType: "polygon",
+      coordinates: [[36.7, 28.7], [36.85, 28.7], [36.85, 28.9], [36.7, 28.9]],
+      kpssNot: "Kâğıt sanayisi selüloz için orman varlığına ve bol suya bağlıdır. Bu nedenle tesisler ormanlık ve akarsu zengini yörelere kurulur."
     },
     {
-      id: "sanayi_kutahya_gubre", name: "Kütahya Azot (Gübre) Sanayisi", category: "sanayi",
-      type: "Kimya / Gübre", lat: 39.42, lng: 29.98, region: "Ege", city: "Kütahya",
-      kpssNot: "Gübre sanayisi tarımsal üretim alanlarına yakın kurulur. Kütahya ayrıca linyit, manyezit ve seramik-çini üretimiyle de öne çıkar."
-    },
-    {
-      id: "sanayi_afsin_elbistan_termik", name: "Afşin-Elbistan Termik Santrali", category: "sanayi",
-      type: "Enerji (Linyit)", lat: 38.28, lng: 36.90, region: "Akdeniz", city: "Kahramanmaraş",
-      kpssNot: "Türkiye'nin en büyük linyit rezervlerinden birinin üzerine kurulmuştur. Linyit ısı değeri düşük ve taşınması pahalı olduğu için santraller doğrudan ocak başına yapılır."
-    },
-    {
-      id: "sanayi_soma_termik", name: "Soma Termik Santrali", category: "sanayi",
-      type: "Enerji (Linyit)", lat: 39.19, lng: 27.61, region: "Ege", city: "Manisa (Soma)",
-      kpssNot: "Soma linyit havzasının yanındadır. Ege Bölgesi'ndeki linyit yatakları (Soma, Tunçbilek, Yatağan) termik santrallerle birlikte anılır."
-    },
-    {
-      id: "sanayi_tuzla_tersane", name: "Tuzla Tersaneler Bölgesi", category: "sanayi",
-      type: "Gemi İnşa", lat: 40.83, lng: 29.30, region: "Marmara", city: "İstanbul (Tuzla)",
-      kpssNot: "Türkiye gemi inşa sanayisinin merkezidir. Korunaklı koy, derin su ve sanayi bölgesine yakınlık tersaneciliğin temel kuruluş koşullarıdır."
+      id: "sanayi_tuzla_tersane", name: "Tuzla Tersaneler ve Gemi İnşa Bölgesi", shortName: "Gemi İnşa / Tersaneler Bölgesi", category: "sanayi",
+      promptTitle: "Korunaklı koy yapısı ve sanayi pazarına yakınlığıyla Türkiye gemi inşa ve bakım sanayisinin merkezi olan bölge haritada neresidir?",
+      type: "Gemi İnşa / Tersane", lat: 40.83, lng: 29.30, region: "Marmara", city: "İstanbul (Tuzla - Pendik)",
+      shapeType: "polygon",
+      coordinates: [[40.8, 29.24], [40.88, 29.26], [40.88, 29.38], [40.8, 29.35]],
+      kpssNot: "Türkiye gemi inşa sanayisinin kalbidir. Korunaklı körfez, derin su ve ağır sanayi merkezlerine yakınlık tersaneciliğin temel kuruluş koşullarıdır."
     }
   ],
 
-  // --- 🌡️ İKLİM: TİPLER VE UÇ DEĞERLER ---
   iklim: [
     {
-      id: "iklim_akdeniz_antalya", name: "Akdeniz İklimi (Antalya)", category: "iklim",
-      type: "İklim Tipi", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya",
-      kpssNot: "Yazları sıcak ve kurak, kışları ılık ve yağışlıdır. En fazla yağış kışın düşer. Doğal bitki örtüsü makidir; turunçgil, zeytin ve muz yetiştirilir."
+      id: "iklim_akdeniz_antalya", name: "Akdeniz İklim Kuşağı", shortName: "Akdeniz İklimi", category: "iklim",
+      promptTitle: "Yazları sıcak ve kurak, kışları ılık ve bol yağışlı geçen, maki bitki örtüsünün hakim olduğu iklim kuşağı haritada neresidir?",
+      type: "İklim Kuşağı", lat: 36.89, lng: 30.71, region: "Akdeniz - Ege", city: "Antalya - Mersin - Muğla",
+      shapeType: "polygon",
+      coordinates: [[36.0, 27.5], [37.2, 27.2], [37.8, 28.5], [36.8, 32.0], [36.3, 34.5], [36.7, 36.0], [35.9, 36.0], [36.0, 32.5], [35.8, 28.5]],
+      kpssNot: "Yazları sıcak-kurak, kışları ılık-yağışlıdır. En fazla yağış kışın düşer (cephesel yağışlar). Kar ve don olayı çok nadirdir; maki ve turunçgil kuşağıdır."
     },
     {
-      id: "iklim_karadeniz_rize", name: "Karadeniz İklimi (Rize)", category: "iklim",
-      type: "İklim Tipi", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize",
-      kpssNot: "Her mevsim yağışlıdır ve yaz kuraklığı görülmez. Türkiye'nin en çok yağış alan ve nemi en yüksek kesimidir; çay ve fındık bu koşullara bağlıdır."
+      id: "iklim_karadeniz_rize", name: "Karadeniz İklim Kuşağı", shortName: "Karadeniz İklimi", category: "iklim",
+      promptTitle: "Her mevsim yağışlı, yıllık sıcaklık farkı en az, nemi en yüksek olan ılıman okyanusal iklim kuşağı haritada neresidir?",
+      type: "İklim Kuşağı", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize - Trabzon - Zonguldak",
+      shapeType: "polygon",
+      coordinates: [[41.5, 31.0], [42.0, 35.0], [41.6, 41.5], [40.7, 41.5], [40.8, 35.0], [40.6, 31.0]],
+      kpssNot: "Her mevsim yağışlıdır, yaz kuraklığı yoktur. En fazla yağış sonbaharda düşer (yamaç yağışları). Nem yüksek olduğundan kimyasal çözünme fazladır."
     },
     {
-      id: "iklim_karasal_konya", name: "Karasal İklim (Konya Ovası)", category: "iklim",
-      type: "İklim Tipi", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
-      kpssNot: "Yazları sıcak-kurak, kışları soğuk geçer; günlük ve yıllık sıcaklık farkı yüksektir. Çevresi dağlarla kuşatıldığı için yağış azdır — Türkiye'nin en kurak alanlarındandır."
+      id: "iklim_karasal_konya", name: "Ilıman Karasal (Step) İklim Kuşağı", shortName: "Karasal (Step) İklim", category: "iklim",
+      promptTitle: "Yazları sıcak-kurak, kışları soğuk-kar yağışlı, en çok yağışı ilkbaharda konveksiyonel alan step iklimi haritada neresidir?",
+      type: "İklim Kuşağı", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya - Ankara - Sivas",
+      shapeType: "polygon",
+      coordinates: [[37.2, 31.5], [39.8, 31.5], [40.2, 36.5], [37.5, 36.0], [37.0, 33.5]],
+      kpssNot: "Etrafı dağlarla çevrili iç çanaklarda görülür. Yağış azdır (~300-400 mm), en çok ilkbaharda (kırkikindi yağışları) düşer. Bitki örtüsü bozkırdır."
     },
     {
-      id: "iklim_marmara_gecis", name: "Marmara (Geçiş) İklimi", category: "iklim",
-      type: "İklim Tipi", lat: 40.19, lng: 29.06, region: "Marmara", city: "Bursa",
-      kpssNot: "Akdeniz, Karadeniz ve karasal iklim arasında geçiş özelliği taşır. Kışlar Akdeniz'e göre soğuk, karasal bölgelere göre ılıktır; bu yüzden hem zeytin hem tahıl yetişir."
+      id: "iklim_erzurum_sert_kis", name: "Sert Karasal İklim (Erzurum-Kars)", shortName: "Sert Karasal İklim", category: "iklim",
+      promptTitle: "Türkiye'de kışların en sert ve uzun geçtiği, donlu gün sayısının en fazla olduğu, yaz yağışlarıyla çayırların yeşerdiği iklim alanı haritada neresidir?",
+      type: "Uç Değer / İklim Kuşağı", lat: 39.91, lng: 41.28, region: "Doğu Anadolu", city: "Erzurum - Kars - Ardahan",
+      shapeType: "polygon",
+      coordinates: [[39.5, 40.5], [41.3, 41.2], [41.4, 43.5], [40.3, 43.5], [39.3, 42.0]],
+      kpssNot: "Yükselti ve karasallık nedeniyle kışlar çok sert geçer. En fazla yağış yaz başlarında konveksiyonel olarak düşer; bu sayede gür Alpin çayırlar oluşur."
     },
     {
-      id: "iklim_igdir_enaz_yagis", name: "Iğdır Ovası (En Az Yağış)", category: "iklim",
-      type: "Uç Değer / Mikroklima", lat: 39.92, lng: 44.04, region: "Doğu Anadolu", city: "Iğdır",
-      kpssNot: "Türkiye'nin en az yağış alan yerlerindendir. Çevresindeki yüksek dağların yağış getiren nemli havayı kesmesiyle oluşan çanak konumdadır; buna rağmen alçak olduğu için pamuk ve kayısı yetişen bir mikroklimadır."
+      id: "iklim_hopa_encok_yagis", name: "Türkiye'nin En Çok Yağış Alan Kıyı Şeridi (Rize-Hopa)", shortName: "En Çok Yağış Alan Yöre", category: "iklim",
+      promptTitle: "Nemli hava kütlelerinin dik kıyı dağlarına çarparak yükselmesiyle yıllık 2400 mm ile Türkiye'nin yağış rekorunu kıran yöre haritada neresidir?",
+      type: "Uç Değer / Yağış Rekoru", lat: 41.39, lng: 41.42, region: "Karadeniz", city: "Rize - Hopa (Kaçkar Etekleri)",
+      shapeType: "polygon",
+      coordinates: [[41.0, 40.3], [41.45, 41.3], [41.5, 41.6], [41.2, 41.6], [40.85, 40.5]],
+      kpssNot: "Doğu Karadeniz dağlarının kıyıya paralel ve çok yüksek olması nemli havanın hızla yükselip soğumasını sağlar (orografik yağış). Türkiye yağış şampiyonudur."
     },
     {
-      id: "iklim_karapinar_kuraklik", name: "Karapınar (İç Anadolu Kuraklığı)", category: "iklim",
+      id: "iklim_igdir_enaz_yagis", name: "Iğdır Ovası Mikrokliması (En Az Yağış)", shortName: "Iğdır Çukur Mikrokliması", category: "iklim",
+      promptTitle: "Çevresindeki yüksek dağlar nedeniyle föhn rüzgârları alan, en az yağış alan ve pamuk yetişen çukur mikroklima sahası haritada neresidir?",
+      type: "Mikroklima / Az Yağış", lat: 39.92, lng: 44.04, region: "Doğu Anadolu", city: "Iğdır Ovası",
+      shapeType: "polygon",
+      coordinates: [[39.8, 43.7], [40.1, 43.8], [40.1, 44.4], [39.75, 44.3]],
+      kpssNot: "Çevresine göre 1000 metre daha alçakta bir çöküntü ovasıdır. Föhn etkisiyle kışları ılık geçer; Türkiye'nin en az yağış alan mikroklima sahasıdır."
+    },
+    {
+      id: "iklim_karapinar_kuraklik", name: "Karapınar Çölleşme & Kuraklık Alanı", shortName: "Karapınar Kuraklık Alanı", category: "iklim",
+      promptTitle: "Türkiye'de rüzgâr erozyonunun en şiddetli olduğu, kumul hareketleri ve aşırı kuraklığın görüldüğü saha haritada neresidir?",
       type: "Uç Değer / Kuraklık", lat: 37.72, lng: 33.55, region: "İç Anadolu", city: "Konya (Karapınar)",
-      kpssNot: "Türkiye'nin en kurak kesimlerindendir. Aşırı yer altı suyu kullanımı ve yanlış arazi kullanımı nedeniyle obruk oluşumu ve çölleşme riskiyle anılır."
+      shapeType: "polygon",
+      coordinates: [[37.55, 33.3], [37.9, 33.35], [37.9, 33.8], [37.55, 33.75]],
+      kpssNot: "Türkiye'nin en az yağış alan ve rüzgâr erozyonunun en yıkıcı olduğu sahasıdır. Yer altı sularının aşırı çekilmesiyle obruk oluşumu hızlanmıştır."
     },
     {
-      id: "iklim_hopa_encok_yagis", name: "Hopa - Çamlıhemşin (En Çok Yağış)", category: "iklim",
-      type: "Uç Değer / Yağış", lat: 41.39, lng: 41.42, region: "Karadeniz", city: "Artvin (Hopa)",
-      kpssNot: "Doğu Karadeniz'in dağlara dik gelen nemli havayı yükselmeye zorladığı kesimdir (yamaç yağışı). Türkiye'nin en yağışlı yöresidir."
+      id: "iklim_cizre_sicaklik", name: "Cizre - Şırnak (En Yüksek Yaz Sıcaklıkları)", shortName: "En Sıcak Yaz Yöresi", category: "iklim",
+      promptTitle: "Güneyli enlem, alçak rakım ve çöl rüzgârları (Samyeli) nedeniyle yaz aylarında Türkiye sıcaklık rekorunun kırıldığı yöre haritada neresidir?",
+      type: "Uç Değer / Sıcaklık Rekoru", lat: 37.32, lng: 42.19, region: "Güneydoğu Anadolu", city: "Şırnak (Cizre - Silopi)",
+      shapeType: "polygon",
+      coordinates: [[37.15, 41.9], [37.45, 41.9], [37.5, 42.5], [37.15, 42.5]],
+      kpssNot: "Yaz mevsiminde Türkiye'nin en yüksek gölge sıcaklıkları (49°C+) burada ölçülür. Basra Alçak Basıncı ve Samyeli rüzgârı etkilidir."
     },
     {
-      id: "iklim_erzurum_sert_kis", name: "Erzurum (En Sert Kış)", category: "iklim",
-      type: "Uç Değer / Sıcaklık", lat: 39.91, lng: 41.28, region: "Doğu Anadolu", city: "Erzurum",
-      kpssNot: "Yüksekliği ve karasallığı nedeniyle kışları çok soğuk ve uzundur. Karla örtülü gün sayısı ve don olaylı gün sayısı Türkiye ortalamasının çok üzerindedir."
-    },
-    {
-      id: "iklim_cizre_sicaklik", name: "Cizre - Şırnak (En Sıcak Yazlar)", category: "iklim",
-      type: "Uç Değer / Sıcaklık", lat: 37.32, lng: 42.19, region: "Güneydoğu Anadolu", city: "Şırnak (Cizre)",
-      kpssNot: "Türkiye'nin yaz sıcaklıklarının en yüksek olduğu kesimdir. Güney enlemde bulunması, alçak olması ve karasal etkiler birleşir; sıcaklık rekorları bu yörede kırılır."
-    },
-    {
-      id: "iklim_ardahan_bolge_disi", name: "Ardahan (Karadeniz'de Karasallık)", category: "iklim",
-      type: "İklim Tipi / İstisna", lat: 41.11, lng: 42.70, region: "Doğu Anadolu", city: "Ardahan",
-      kpssNot: "Coğrafi bölge ile iklim tipinin örtüşmediğini gösteren klasik örnektir: Karadeniz'e yakın olmasına rağmen dağların gerisinde ve yüksekte kaldığı için sert karasal iklim yaşanır."
-    },
-    {
-      id: "iklim_hakkari_kar", name: "Hakkâri (Kar Örtüsü Süresi)", category: "iklim",
-      type: "Uç Değer / Kar", lat: 37.57, lng: 43.74, region: "Doğu Anadolu", city: "Hakkâri",
-      kpssNot: "Yükseltinin çok fazla olması nedeniyle karın yerde kalma süresi Türkiye'de en uzun olan yörelerdendir. Güneyde yer almasına rağmen sıcaklığın düşük olması yükseltinin enleme baskın geldiğini gösterir."
-    },
-    {
-      id: "iklim_kars_sicaklik_farki", name: "Kars (Yıllık Sıcaklık Farkı)", category: "iklim",
-      type: "Uç Değer / Karasallık", lat: 40.60, lng: 43.10, region: "Doğu Anadolu", city: "Kars",
-      kpssNot: "Denizden uzaklık ve yükseklik birleşince yaz ile kış arasındaki sıcaklık farkı Türkiye'de en yüksek düzeye çıkar. Karasallığın en belirgin olduğu yörelerdendir."
-    },
-    {
-      id: "iklim_erzincan_mikroklima", name: "Erzincan Ovası (Mikroklima)", category: "iklim",
-      type: "Mikroklima", lat: 39.75, lng: 39.49, region: "Doğu Anadolu", city: "Erzincan",
-      kpssNot: "Doğu Anadolu'nun genel sertliğine karşın, çevresine göre alçak ve korunaklı bir çöküntü ovası olduğu için daha ılımandır; bağcılık ve meyvecilik yapılabilir."
-    },
-    {
-      id: "iklim_samsun_orta_karadeniz", name: "Samsun (Orta Karadeniz Farkı)", category: "iklim",
-      type: "İklim Tipi / Kıyaslama", lat: 41.29, lng: 36.33, region: "Karadeniz", city: "Samsun",
-      kpssNot: "Kıyı dağlarının alçaldığı ve kıyıya paralelliğin bozulduğu kesimdir; bu nedenle Doğu Karadeniz'e göre belirgin biçimde daha az yağış alır ve karasal etkiler iç kesimlere sokulabilir."
+      id: "iklim_hakkari_kar", name: "Hakkâri Cilo Yöresi (Kar Örtüsü Süresi)", shortName: "En Uzun Kar Örtüsü Yöresi", category: "iklim",
+      promptTitle: "Aşırı yükselti ve sarp dağlık yapı nedeniyle karın yerde kalma süresinin en uzun olduğu yöre haritada neresidir?",
+      type: "Uç Değer / Kar Örtüsü", lat: 37.57, lng: 43.74, region: "Doğu Anadolu", city: "Hakkâri - Cilo Dağları",
+      shapeType: "polygon",
+      coordinates: [[37.3, 43.3], [37.8, 43.4], [37.85, 44.3], [37.2, 44.2]],
+      kpssNot: "Yükseltinin enleme üstün geldiği yerdir: Güneyde olmasına rağmen aşırı yüksek olduğu için kar yerde 6 aydan fazla kalır ve güncel buzullar barındırır."
     }
   ],
 
-  // --- 🌲 ORMAN VE BİTKİ ÖRTÜSÜ ---
   orman: [
     {
       id: "orman_dogu_karadeniz", name: "Doğu Karadeniz Ormanları", category: "orman",
@@ -2557,6 +2672,7 @@ const COGRAFYA_DATA = {
       kpssNot: "Orman üst sınırının (yaklaşık 2000-2200 m) üzerinde ağaç yetişemez; yerini yaz aylarında yeşeren gür çayırlar alır. Yaylacılık bu kuşakta yapılır."
     }
   ]
+
 };
 
 // Kategori başlıkları ve ikonları
@@ -2567,11 +2683,12 @@ const CATEGORIES = [
   { id: "platolar", title: "Platolar", short: "Plato", icon: "⛰️", color: "#d35400", count: COGRAFYA_DATA.platolar.length },
   { id: "su_kaynaklari", title: "Akarsu & Göller", short: "Sular", icon: "🌊", color: "#2980b9", count: COGRAFYA_DATA.su_kaynaklari.length },
   { id: "gecitler", title: "Geçitler & Boğazlar", short: "Geçit", icon: "🚪", color: "#8e44ad", count: COGRAFYA_DATA.gecitler.length },
-  { id: "iliskili_cografya", title: "İlişkili Eşleştirme", short: "Eşleştir", icon: "🔗", color: "#ec4899", count: COGRAFYA_DATA.iliskili_cografya.length },
-  { id: "tarim", title: "Tarım", short: "Tarım", icon: "🚜", color: "#84cc16", count: COGRAFYA_DATA.tarim.length },
-  { id: "sanayi", title: "Sanayi", short: "Sanayi", icon: "🏭", color: "#64748b", count: COGRAFYA_DATA.sanayi.length },
-  { id: "iklim", title: "İklim", short: "İklim", icon: "🌡️", color: "#f59e0b", count: COGRAFYA_DATA.iklim.length },
-  { id: "orman", title: "Orman & Bitki Örtüsü", short: "Orman", icon: "🌲", color: "#16a34a", count: COGRAFYA_DATA.orman.length }
+  { id: "tarim", title: "Tarım Ürünleri", short: "Tarım", icon: "🚜", color: "#84cc16", count: COGRAFYA_DATA.tarim.length },
+  { id: "hayvancilik", title: "Hayvancılık Alanları", short: "Hayvan", icon: "🐑", color: "#10b981", count: COGRAFYA_DATA.hayvancilik.length },
+  { id: "sanayi", title: "Sanayi & Tesisler", short: "Sanayi", icon: "🏭", color: "#64748b", count: COGRAFYA_DATA.sanayi.length },
+  { id: "iklim", title: "İklim & Uç Değerler", short: "İklim", icon: "🌡️", color: "#f59e0b", count: COGRAFYA_DATA.iklim.length },
+  { id: "orman", title: "Orman & Bitki Örtüsü", short: "Orman", icon: "🌲", color: "#16a34a", count: COGRAFYA_DATA.orman.length },
+  { id: "iliskili_cografya", title: "İlişkili Eşleştirme", short: "Eşleştir", icon: "🔗", color: "#ec4899", count: COGRAFYA_DATA.iliskili_cografya.length }
 ];
 
 // KPSS Oluşum ve Alt Tür Filtreleme Haritası
@@ -2613,12 +2730,6 @@ const SUB_TYPES = {
     { id: "akdeniz", label: "Akdeniz Geçitleri", icon: "☀️", filter: (item) => (item.region || "").toLowerCase().includes("akdeniz") },
     { id: "bogazlar", label: "Deniz Boğazları", icon: "🌉", filter: (item) => (item.type || "").toLowerCase().includes("deniz boğazı") || (item.type || "").toLowerCase().includes("su yolu") }
   ],
-  iliskili_cografya: [
-    { id: "all", label: "Tüm Eşleştirmeler", icon: "🔗" },
-    { id: "akarsu_delta", label: "Akarsu ➡️ Delta", icon: "🏖️", filter: (item) => item.matchType === 'akarsu_delta' },
-    { id: "dag_gecit", label: "Dağ ➡️ Geçit", icon: "🚪", filter: (item) => item.matchType === 'dag_gecit' },
-    { id: "olusum_sekil", label: "Oluşum ➡️ Yer Şekli", icon: "🌋", filter: (item) => item.matchType === 'olusum_sekil' }
-  ],
   tarim: [
     { id: "all", label: "Tüm Tarım Ürünleri", icon: "🚜" },
     { id: "endustri", label: "Endüstri & Yağ Bitkileri", icon: "🏭", filter: (item) => trLower(item.type).includes("endustri") || trLower(item.type).includes("yag bitkisi") },
@@ -2626,18 +2737,22 @@ const SUB_TYPES = {
     { id: "tahil", label: "Tahıl & Baklagil", icon: "🌾", filter: (item) => trLower(item.type).includes("tahil") || trLower(item.type).includes("baklagil") },
     { id: "ihrac", label: "İhraç Ürünleri", icon: "🚢", filter: (item) => trLower(item.type).includes("ihrac") }
   ],
+  hayvancilik: [
+    { id: "all", label: "Tüm Hayvancılık Türleri", icon: "🐑" },
+    { id: "buyukbas", label: "Büyükbaş (Mera/Çayır)", icon: "🐂", filter: (item) => trLower(item.type).includes("buyukbas") },
+    { id: "kucukbas", label: "Küçükbaş (Koyun/Keçi)", icon: "🐐", filter: (item) => trLower(item.type).includes("kucukbas") },
+    { id: "diger_hayvan", label: "Arıcılık & Kümes & İpek", icon: "🐝", filter: (item) => trLower(item.type).includes("aricilik") || trLower(item.type).includes("kumes") || trLower(item.type).includes("ipek") }
+  ],
   sanayi: [
     { id: "all", label: "Tüm Sanayi Tesisleri", icon: "🏭" },
     { id: "demir_celik", label: "Demir-Çelik", icon: "⚙️", filter: (item) => trLower(item.type).includes("demir-celik") },
     { id: "rafineri", label: "Rafineri & Petrokimya", icon: "🛢️", filter: (item) => trLower(item.type).includes("rafineri") || trLower(item.type).includes("petrokimya") },
-    { id: "maden", label: "Madencilik", icon: "⛏️", filter: (item) => trLower(item.type).includes("madencilik") || trLower(item.type).includes("metalurji") },
-    { id: "enerji", label: "Enerji Santralleri", icon: "⚡", filter: (item) => trLower(item.type).includes("enerji") },
-    { id: "imalat", label: "İmalat & Hafif Sanayi", icon: "🧵", filter: (item) => { const t = trLower(item.type); return t.includes("tekstil") || t.includes("dokuma") || t.includes("otomotiv") || t.includes("gida") || t.includes("kagit") || t.includes("kimya") || t.includes("gemi"); } }
+    { id: "imalat", label: "Otomotiv & Dokuma & İmalat", icon: "🧵", filter: (item) => { const t = trLower(item.type); return t.includes("tekstil") || t.includes("dokuma") || t.includes("otomotiv") || t.includes("deri") || t.includes("kagit") || t.includes("gemi") || t.includes("metalurji"); } }
   ],
   iklim: [
     { id: "all", label: "Tüm İklim Konuları", icon: "🌡️" },
-    { id: "tipler", label: "İklim Tipleri", icon: "🗺️", filter: (item) => trLower(item.type).includes("iklim tipi") },
-    { id: "uc_deger", label: "Uç Değerler (Rekorlar)", icon: "📈", filter: (item) => trLower(item.type).includes("uc deger") },
+    { id: "kusaklar", label: "İklim Kuşakları", icon: "🗺️", filter: (item) => trLower(item.type).includes("iklim kusagi") || trLower(item.type).includes("iklim") },
+    { id: "uc_degerler", label: "Uç Değerler & Rekorlar", icon: "📈", filter: (item) => trLower(item.type).includes("uc deger") || trLower(item.type).includes("rekor") },
     { id: "mikroklima", label: "Mikroklima Alanları", icon: "🔍", filter: (item) => trLower(item.type).includes("mikroklima") }
   ],
   orman: [
@@ -2647,6 +2762,12 @@ const SUB_TYPES = {
     { id: "cali", label: "Çalı Formasyonu (Maki)", icon: "🌿", filter: (item) => trLower(item.type).includes("cali") },
     { id: "ot", label: "Ot Formasyonu (Bozkır/Alpin)", icon: "🌾", filter: (item) => trLower(item.type).includes("ot formasyonu") },
     { id: "milli_park", label: "Milli Parklar", icon: "🏞️", filter: (item) => trLower(item.type).includes("milli park") }
+  ],
+  iliskili_cografya: [
+    { id: "all", label: "Tüm Eşleştirmeler", icon: "🔗" },
+    { id: "akarsu_delta", label: "Akarsu ➡️ Delta", icon: "🏖️", filter: (item) => item.matchType === 'akarsu_delta' },
+    { id: "dag_gecit", label: "Dağ ➡️ Geçit", icon: "🚪", filter: (item) => item.matchType === 'dag_gecit' },
+    { id: "hayvan_bolge", label: "Hayvancılık ➡️ Bölge", icon: "🐑", filter: (item) => item.matchType === 'hayvan_bolge' }
   ],
   ozel_cizimler: [
     { id: "all", label: "Tüm Çizimlerim", icon: "🎨" },

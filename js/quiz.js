@@ -401,7 +401,7 @@ class GeographyQuiz {
       this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
     }
 
-    // SADE, NET VE LAF KALABALIĞINDAN ARINDIRILMIŞ SORU BAŞLIKLARI
+    // SADE, NET VE LAF KALABALIĞINDAN ARINDIRILMIŞ SORU BAŞLIKLARI (Cevap Spoil Önleme Korumalı)
     let questionText = '';
     let questionTypeTitle = '';
 
@@ -409,18 +409,39 @@ class GeographyQuiz {
       questionText = this.currentQuestion.questionText;
       questionTypeTitle = 'İLİŞKİLİ EŞLEŞTİRME';
     } else if (this.currentActualFormat === 'find_on_map') {
-      // Doğrudan isim ve tip
-      questionText = `📍 <span style="color: #60a5fa; font-weight:800;">${this.currentQuestion.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${this.currentQuestion.type})</span>`;
-      questionTypeTitle = 'HARİTADA BUL';
+      if (this.currentQuestion.promptTitle) {
+        questionText = `<span style="color: #60a5fa; font-weight:700;">${this.currentQuestion.promptTitle}</span>`;
+        questionTypeTitle = 'HARİTADA BUL';
+      } else {
+        // Şehir/yöre ipucu içeren parantezleri temizle (ör. "Fındık (Giresun - Ordu)" -> "Fındık")
+        const safeName = this.currentQuestion.shortName || this.currentQuestion.name.replace(/\s*\([^)]*\)/g, '').trim();
+        questionText = `📍 <span style="color: #60a5fa; font-weight:800;">${safeName}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${this.currentQuestion.type})</span>`;
+        questionTypeTitle = 'HARİTADA BUL';
+      }
     } else {
+      const cat = this.currentQuestion.category;
       if (this.currentQuestion.shapeType === 'polyline') {
-        questionText = 'İşaretli Akarsu / Hat Nedir?';
+        questionText = 'Haritada işaretli akarsu / hat hangisidir?';
         questionTypeTitle = 'HAT SORUSU';
       } else if (this.currentQuestion.shapeType === 'polygon') {
-        questionText = 'İşaretli Alan / Plato Nedir?';
-        questionTypeTitle = 'ALAN SORUSU';
+        if (cat === 'tarim') {
+          questionText = 'Haritada işaretli tarım / üretim alanı hangisidir?';
+          questionTypeTitle = 'TARIM ALANI';
+        } else if (cat === 'hayvancilik') {
+          questionText = 'Haritada işaretli hayvancılık yetiştirme alanı hangisidir?';
+          questionTypeTitle = 'HAYVANCILIK ALANI';
+        } else if (cat === 'sanayi') {
+          questionText = 'Haritada işaretli sanayi / tesis bölgesi hangisidir?';
+          questionTypeTitle = 'SANAYİ BÖLGESİ';
+        } else if (cat === 'iklim') {
+          questionText = 'Haritada işaretli iklim / uç değer sahası hangisidir?';
+          questionTypeTitle = 'İKLİM SAHASI';
+        } else {
+          questionText = 'Haritada işaretli alan / plato hangisidir?';
+          questionTypeTitle = 'ALAN SORUSU';
+        }
       } else {
-        questionText = 'İşaretli Yer Şekli Nedir?';
+        questionText = 'Haritada işaretli coğrafi konum / merkez hangisidir?';
         questionTypeTitle = 'KONUM SORUSU';
       }
     }

@@ -13,6 +13,11 @@ Kullanıcı, ana kategori seçtikten sonra üst panelin hemen altındaki dinamik
 - **⛰️ Platolar:** `[Tüm Platolar]` | `[🌋 Volkanik (Lav)]` | `[💧 Karstik Platolar]` | `[📉 Aşınım (Peneplen)]` | `[🥞 Tabaka Düzlüğü]`
 - **🌊 Su Kaynakları:** `[Tüm Su Kaynakları]` | `[〰️ Akarsular / Nehirler (Polyline)]` | `[🏞️ Göller]`
 - **🚪 Geçitler:** `[Tüm Geçitler]` | `[🌲 Karadeniz Geçitleri]` | `[☀️ Akdeniz Geçitleri]`
+- **🚜 Tarım Ürünleri:** `[Tüm Tarım Ürünleri]` | `[🏭 Endüstri Bitkileri]` | `[🍑 Meyvecilik]` | `[🌾 Tahıl & Baklagil]` | `[🚢 İhraç Ürünleri]`
+- **🐑 Hayvancılık Alanları:** `[Tüm Hayvancılık]` | `[🐂 Büyükbaş Mera]` | `[🐐 Küçükbaş]` | `[🐝 Arıcılık & Kümes]`
+- **🏭 Sanayi & Tesisler:** `[Tüm Sanayi]` | `[⚙️ Demir-Çelik]` | `[🛢️ Rafineri]` | `[🧵 İmalat]`
+- **🌡️ İklim & Uç Değerler:** `[Tüm İklim]` | `[🗺️ İklim Kuşakları]` | `[📈 Uç Değerler]` | `[🔍 Mikroklima]`
+- **🌲 Orman & Bitki Örtüsü:** `[Tüm Bitki Örtüsü]` | `[🌳 Nemli Orman]` | `[🌲 İğne Yapraklı]` | `[🌿 Maki]` | `[🌾 Bozkır/Alpin]`
 - **🎨 Çizimlerim:** `[Tümü]` | `[📍 Noktalar]` | `[📏 Çizgiler]` | `[📐 Alanlar]`
 
 ---
@@ -48,3 +53,19 @@ Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevab�
 ## 5. 📋 Doğrudan JSON Yapıştırma & Harita Katmanları
 - NotebookLM çıktısını kopyalayıp dosyasız tek tıkla yapıştırma desteği.
 - 5 Harita Katmanı (Sade, Fiziki, Gerçek Uydu, Gece, Kabartı) ve açılıp kapanabilir Otomatik Odak (Auto-Zoom).
+
+---
+
+## 6. 🛡️ Cevap İfşası (Spoiler) Önleme Sistemi
+Soru kökü ve şık butonları arasında ipucu sızmasını önleyen çift yönlü koruma:
+- **`find_on_map` (Haritada Bul) Modunda:** Şık butonlarında şehir isimleri (`📍 Erzurum`) tamamen gizlenerek ÖSYM formatında `A) I. Konum (A Pini)`, `B) II. Konum (B Pini)` gösterilir. Öğrenci haritadaki pini ve coğrafi konumu incelemek zorunda kalır.
+- **Soru Başlıklarında:** İklim ve ilişkili sorularda soru başlığı doğrudan soru niteliğini sorar (`Türkiye'de kışların en sert ve soğuk geçtiği yöre haritada neresidir?`), cevap şehri soru kökünde açık edilmez.
+
+---
+
+## 7. 🗺️ Bölgesel Alan (Polygon) Geometrisi
+Tek bir nokta ile sınırlı kalmayan geniş coğrafi varlıklar için dinamik poligonlar:
+- **Tarım & Hayvancılık:** Doğu Karadeniz Fındık/Çay Kuşağı, Çukurova Deltası, GAP Harran Pamuk Havzası, Erzurum-Kars Alpin Çayır Platosu, Teke-Taşeli Karstik Kıl Keçisi Alanları.
+- **Sanayi:** İzmit Petrokimya Havzası, Bursa Otomotiv Kuşağı, İskenderun ve Ereğli Demir-Çelik Havzaları.
+- **İklim Kuşakları:** Akdeniz, Karadeniz ve Karasal İklim Kuşakları ile Uç Değer (Iğdır Çukur Mikroklima, Hopa Yağış Kuşağı, Cizre Sıcaklık Sahası) poligonları.
+

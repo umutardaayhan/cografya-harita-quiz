@@ -508,11 +508,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const letter = optionLetters[index] || `${index + 1}`;
           const roman = romanNumerals[index] || `${index + 1}`;
-          const cityLabel = opt.city ? `📍 ${opt.city}` : `${roman}. Konum`;
 
           optBtn.innerHTML = `
             <span class="option-key">${letter}</span>
-            <span class="option-name"><strong>${cityLabel}</strong> <span style="font-size:0.74rem; color:var(--text-muted); margin-left:3px;">(${roman} / ${letter} Pini)</span></span>
+            <span class="option-name"><strong>${roman}. Konum</strong> <span style="font-size:0.74rem; color:var(--text-muted); margin-left:4px;">(${letter} Pini)</span></span>
           `;
           optBtn.addEventListener('click', () => handleAnswer(opt.id));
           optionsGrid.appendChild(optBtn);
@@ -537,10 +536,11 @@ document.addEventListener('DOMContentLoaded', () => {
         optBtn.dataset.index = index;
 
         const keyLabel = optionLetters[index] || (index + 1);
+        const displayName = opt.shortName || opt.name.replace(/\s*\([^)]*\)/g, '').trim();
 
         optBtn.innerHTML = `
           <span class="option-key">${keyLabel}</span>
-          <span class="option-name">${opt.name}</span>
+          <span class="option-name">${displayName}</span>
         `;
         optBtn.addEventListener('click', () => handleAnswer(opt.id));
         optionsGrid.appendChild(optBtn);

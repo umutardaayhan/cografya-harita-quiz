@@ -393,12 +393,36 @@ class GeographyMap {
       }
     } else if (shapeType === 'polygon') {
       const coords = questionItem.coordinates;
+      const cat = questionItem.category;
+      
+      let polyColor = '#ef4444';
+      let fillCol = '#ef4444';
+
+      if (cat === 'tarim') {
+        polyColor = '#84cc16';
+        fillCol = '#84cc16';
+      } else if (cat === 'hayvancilik') {
+        polyColor = '#10b981';
+        fillCol = '#10b981';
+      } else if (cat === 'sanayi') {
+        polyColor = '#a855f7';
+        fillCol = '#a855f7';
+      } else if (cat === 'iklim') {
+        polyColor = '#06b6d4';
+        fillCol = '#06b6d4';
+      } else if (cat === 'platolar') {
+        polyColor = '#f59e0b';
+        fillCol = '#f59e0b';
+      } else if (cat === 'ovalar') {
+        polyColor = '#22c55e';
+        fillCol = '#22c55e';
+      }
 
       this.currentShapeLayer = L.polygon(coords, {
-        color: '#ef4444',
-        weight: 4,
-        fillColor: '#ef4444',
-        fillOpacity: 0.35,
+        color: polyColor,
+        weight: 3.5,
+        fillColor: fillCol,
+        fillOpacity: 0.38,
         className: 'animated-pulse-polygon'
       }).addTo(this.map);
 
