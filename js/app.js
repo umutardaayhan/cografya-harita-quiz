@@ -2654,6 +2654,37 @@ document.addEventListener('DOMContentLoaded', () => {
     startMistakeTest();
   });
 
+  // ============================================================
+  // 🪟 PANELLERİ TAŞINABİLİR / BOYUTLANDIRILABİLİR / KATLANABİLİR YAP
+  // ============================================================
+  const panelManager = new PanelManager();
+
+  panelManager.register('ust-cubuk', document.querySelector('.top-nav-wrapper'), {
+    label: '📚 Menü', resize: false, minWidth: 260
+  });
+  panelManager.register('soru-paneli', document.getElementById('quiz-panel'), {
+    // Quiz paneli zaten .minimized kullanıyor; aynı sınıfı paylaşırsak
+    // eski küçültme düğmesiyle çakışma olmaz.
+    label: '📝 Soru Paneli', collapseClass: 'minimized', minWidth: 280, minHeight: 90
+  });
+  panelManager.register('harita-kontrolleri', document.getElementById('map-controls-left'), {
+    label: '🗺️ Harita Araçları', collapseClass: 'minimized', minWidth: 240, minHeight: 60
+  });
+  panelManager.register('yanlislarim', document.getElementById('mistakes-panel'), {
+    label: '🔴 Yanlışlarım', minWidth: 240, minHeight: 140
+  });
+  panelManager.register('cizim-cubugu', document.getElementById('drawing-toolbar'), {
+    label: '🎨 Çizim Araçları', resize: false, minWidth: 280
+  });
+
+  const resetPanelsBtn = document.getElementById('reset-panels-btn');
+  if (resetPanelsBtn) {
+    resetPanelsBtn.addEventListener('click', () => {
+      closeToolsDropdown();
+      panelManager.resetAll();
+    });
+  }
+
   // Başlangıç Yüklemesi
   renderCategories();
   loadNextQuestion();

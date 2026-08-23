@@ -1125,6 +1125,140 @@ body {
 }
 
 /* ============================================================
+   🪟 PANEL YÖNETİCİSİ — taşıma tutamağı, kenar boyutlandırıcılar, katlama
+   ============================================================ */
+.pm-panel {
+  /* Boyutlandırıcılar panelin kenarına oturur */
+  position: absolute;
+}
+
+.pm-panel.pm-dragging,
+.pm-panel.pm-resizing,
+.pm-panel[data-pm-pinned="1"] {
+  user-select: none;
+  /* Konumu elle belirlenmiş panelde CSS geçişi kapalı: .quiz-panel'in
+     "transition: all .25s" kuralı sürükleme ve konum geri yüklemeyi
+     animasyona sokup paneli kaydırıyordu. */
+  transition: none !important;
+}
+
+.pm-panel.pm-dragging { cursor: grabbing; }
+
+/* --- Başlık şeridi --- */
+.pm-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 2px 4px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--bg-card-border);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  pointer-events: auto;
+  flex: 0 0 auto;
+}
+
+.pm-draggable { cursor: grab; }
+.pm-draggable:active { cursor: grabbing; }
+
+.pm-grip {
+  font-size: 0.85rem;
+  letter-spacing: -1px;
+  opacity: 0.6;
+}
+
+.pm-label {
+  flex: 1 1 auto;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pm-btn {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pm-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-main);
+}
+
+/* --- Genel katlama: başlık şeridi hariç her şey gizlenir --- */
+.pm-panel.panel-collapsed > *:not(.pm-bar):not(.pm-resizer) {
+  display: none !important;
+}
+
+.pm-panel.panel-collapsed {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  max-height: none !important;
+  padding-bottom: 6px !important;
+}
+
+/* Üst çubuk katlandığında yalnızca tutamak kalır */
+.top-nav-wrapper.pm-panel { pointer-events: none; }
+.top-nav-wrapper.pm-panel > .pm-bar {
+  pointer-events: auto;
+  align-self: stretch;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-bottom-color: var(--bg-card-border);
+  padding: 3px 8px;
+  backdrop-filter: blur(16px);
+}
+
+/* --- Kenar / köşe boyutlandırıcıları --- */
+.pm-resizer {
+  position: absolute;
+  z-index: 5;
+  background: transparent;
+}
+
+.pm-n, .pm-s { left: 8px; right: 8px; height: 7px; cursor: ns-resize; }
+.pm-e, .pm-w { top: 8px; bottom: 8px; width: 7px; cursor: ew-resize; }
+.pm-n { top: -3px; }
+.pm-s { bottom: -3px; }
+.pm-e { right: -3px; }
+.pm-w { left: -3px; }
+
+.pm-ne, .pm-nw, .pm-se, .pm-sw { width: 14px; height: 14px; }
+.pm-ne { top: -3px; right: -3px; cursor: nesw-resize; }
+.pm-nw { top: -3px; left: -3px; cursor: nwse-resize; }
+.pm-se { bottom: -3px; right: -3px; cursor: nwse-resize; }
+.pm-sw { bottom: -3px; left: -3px; cursor: nesw-resize; }
+
+/* Fare panelin üzerindeyken kenarlar hafifçe belirsin */
+.pm-panel:hover > .pm-resizer { background: rgba(56, 189, 248, 0.14); }
+.pm-panel > .pm-resizer:hover { background: rgba(56, 189, 248, 0.45); }
+
+/* Katlanmış panelde boyutlandırma kapalı */
+.pm-panel.panel-collapsed > .pm-resizer,
+.pm-panel.minimized > .pm-resizer { display: none; }
+
+/* Boyutlandırılan panellerin içeriği taşmasın */
+.quiz-panel.pm-panel { overflow: auto; }
+.mistakes-panel.pm-panel { overflow: hidden; }
+
+/* Odak modunda panel kromu görünmesin */
+body.focus-mode .pm-bar { display: none; }
+
+/* ============================================================
    📅 BUGÜNÜN PLANI — Açılış Ekranı, Oturum HUD'u, Yanlışlarım
    ============================================================ */
 .plan-screen {
