@@ -9,6 +9,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Yöneticileri başlat
   const customDrawManager = new CustomDrawManager();
+  // Paket düzenleme katmanı: kaynak paket dosyaları ASLA değişmez, kullanıcının
+  // silme/düzenleme/ekleme işlemleri burada tutulur (bkz. js/pack_edits.js).
+  const packEdits = new PackEditStore();
   const geoMap = new GeographyMap('map');
   const geoQuiz = new GeographyQuiz('daglar', customDrawManager);
 
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Zorluk Seviyesi Butonları (1-5 Kademe)
   const diffBtns = document.querySelectorAll('.diff-btn');
+  const homoBtns = document.querySelectorAll('.homo-btn');
 
   // Harita Katmanları & Auto-Zoom
   const mapLayerBtn = document.getElementById('map-layer-btn');
@@ -37,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Çizim Araç Çubuğu Elemanları
   const drawingToolbar = document.getElementById('drawing-toolbar');
+  const drawingRefInfo = document.getElementById('drawing-ref-info');
   const drawPointBtn = document.getElementById('draw-point-btn');
   const drawLineBtn = document.getElementById('draw-line-btn');
   const drawPolyBtn = document.getElementById('draw-poly-btn');
@@ -230,13 +235,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- KATEGORİ VE ALT OLUŞUM MENÜSÜ ---
   function renderCategories() {
     categoriesContainer.innerHTML = '';
+    const activeMap = customDrawManager.getActiveMap();
+    const allMaps = customDrawManager.getMaps();
+    const totalCustomCount = allMaps.reduce((sum, m) => sum + m.count, 0);
 
     const allCategories = [
       ...CATEGORIES,
       {
         id: 'ozel_cizimler',
-        title: `Çizimlerim (${customDrawManager.drawings.length})`,
-        short: `Çizim (${customDrawManager.drawings.length})`,
+        title: `Çizimlerim: ${activeMap.name} (${activeMap.drawings.length})`,
+        short: `Çizim (${activeMap.drawings.length})`,
         icon: '🎨',
         color: '#8b5cf6',
         isCustom: true
@@ -254,12 +262,57 @@ document.addEventListener('DOMContentLoaded', () => {
       categoriesContainer.appendChild(btn);
     });
 
-    customDrawCountBadge.textContent = customDrawManager.drawings.length;
+    customDrawCountBadge.textContent = totalCustomCount;
     renderSubCategories();
   }
 
   function renderSubCategories() {
     subCategoriesBar.innerHTML = '';
+
+    // 🎨 Özel Çizimler Kategorisindeyken: Harita Sekmeleri ve Yeni Harita Ekleme
+    if (activeCategory === 'ozel_cizimler') {
+      subCategoriesBar.style.display = 'flex';
+      const maps = customDrawManager.getMaps();
+      const activeMap = customDrawManager.getActiveMap();
+
+      maps.forEach(m => {
+        const pillBtn = document.createElement('button');
+        pillBtn.className = `sub-type-btn ${m.id === activeMap.id ? 'active' : ''}`;
+        pillBtn.dataset.mapId = m.id;
+        pillBtn.innerHTML = `<span>🗺️</span> <span>${m.name} (${m.count})</span>`;
+        pillBtn.title = `"${m.name}" haritasına geç (${m.count} şekil)`;
+
+        pillBtn.addEventListener('click', () => {
+          if (customDrawManager.switchMap(m.id)) {
+            geoQuiz.reloadCategoryItems();
+            renderCategories();
+            if (currentMode === 'explore') loadExploreMode();
+            else loadNextQuestion();
+          }
+        });
+        subCategoriesBar.appendChild(pillBtn);
+      });
+
+      // ➕ Yeni Harita Ekleme Hap Butonu
+      const addMapBtn = document.createElement('button');
+      addMapBtn.className = 'sub-type-btn add-custom-map-pill';
+      addMapBtn.innerHTML = `<span>➕</span> <span>Yeni Harita</span>`;
+      addMapBtn.title = 'Yeni bir çizim haritası oluştur ve isimlendir';
+      addMapBtn.addEventListener('click', () => {
+        const name = prompt('Yeni çizim haritası için isim girin:', `Harita ${maps.length + 1}`);
+        if (name && name.trim()) {
+          const newMap = customDrawManager.createMap(name.trim());
+          geoQuiz.reloadCategoryItems();
+          renderCategories();
+          if (currentMode === 'explore') loadExploreMode();
+          else loadNextQuestion();
+          showEditToast(`"${newMap.name}" haritası oluşturuldu ve seçildi.`);
+        }
+      });
+      subCategoriesBar.appendChild(addMapBtn);
+      return;
+    }
+
     const subTypes = (typeof SUB_TYPES !== 'undefined' && SUB_TYPES[activeCategory]) ? SUB_TYPES[activeCategory] : [];
 
     if (!subTypes || subTypes.length <= 1) {
@@ -271,12 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeSubId = geoQuiz.getSubType();
 
     // Toplam elemanları saymak için kategori ham veri seti
-    let baseItems = [];
-    if (activeCategory === 'ozel_cizimler') {
-      baseItems = customDrawManager.getQuizItems();
-    } else {
-      baseItems = COGRAFYA_DATA[activeCategory] || [];
-    }
+    const baseItems = COGRAFYA_DATA[activeCategory] || [];
 
     subTypes.forEach(sub => {
       let count = baseItems.length;
@@ -322,6 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
         openManageModal();
       }
       return;
+    }
+
+    if (geoQuiz.customPool) {
+      geoQuiz.clearCustomPool();
+      const cpBanner = document.getElementById('custom-pool-banner');
+      if (cpBanner) cpBanner.style.display = 'none';
     }
 
     activeCategory = categoryKey;
@@ -401,6 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeSubObj = subTypes.find(s => s.id === geoQuiz.getSubType());
     const subTitle = activeSubObj && activeSubObj.id !== 'all' ? ` > ${activeSubObj.label}` : '';
 
+    // Keşif balonlarındaki "✏️ Düzenle / 🗑 Sil" şeridi yalnızca burada açılır
+    geoMap.setEditingEnabled(true);
     geoMap.showAllPoints(items, catColor);
 
     // Paneli Keşif görünümüne uyarla
@@ -417,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- QUIZ & ADAPTİF SORU MODU ---
   function loadNextQuestion() {
+    geoMap.setEditingEnabled(false);
     const qData = geoQuiz.nextQuestion();
     if (!qData) {
       if (activeCategory === 'ozel_cizimler' && customDrawManager.drawings.length === 0) {
@@ -476,15 +533,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     questionDifficultyBadge.textContent = `⚡ Seviye ${diffNames[qData.difficultyLevel] || qData.difficultyLevel}`;
 
-    // Adaptif hata ve ustalık rozetleri
+    // Adaptif hata, 5+ ustalık ve yeni soru rozetleri
     if (qData.isProblematic) {
       questionAdaptiveBadge.style.display = 'inline-block';
+      questionAdaptiveBadge.style.background = '';
+      questionAdaptiveBadge.style.borderColor = '';
+      questionAdaptiveBadge.style.color = '';
       questionAdaptiveBadge.textContent = `⚠️ Sık Yanıldığın Soru (${qData.wrongCount} Yanlış)`;
       questionMasteredBadge.style.display = 'none';
+    } else if (qData.isMastered5) {
+      questionMasteredBadge.style.display = 'inline-block';
+      questionMasteredBadge.textContent = `🎓 5+ Kez Bilindi (${qData.correctCount} Doğru · Seyrek Havuz)`;
+      questionAdaptiveBadge.style.display = 'none';
     } else if (qData.isMastered) {
       questionMasteredBadge.style.display = 'inline-block';
       questionMasteredBadge.textContent = `🎓 Ustalaşılan Soru (${qData.streak} Seri Doğru)`;
       questionAdaptiveBadge.style.display = 'none';
+    } else if (qData.isNew) {
+      questionAdaptiveBadge.style.display = 'inline-block';
+      questionAdaptiveBadge.style.background = 'rgba(56, 189, 248, 0.2)';
+      questionAdaptiveBadge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+      questionAdaptiveBadge.style.color = '#38bdf8';
+      questionAdaptiveBadge.textContent = `✨ Yeni Soru`;
+      questionMasteredBadge.style.display = 'none';
     } else {
       questionAdaptiveBadge.style.display = 'none';
       questionMasteredBadge.style.display = 'none';
@@ -969,6 +1040,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const initialDiff = geoQuiz.getDifficultyLevel();
   diffBtns.forEach(btn => {
     btn.classList.toggle('active', parseInt(btn.dataset.level, 10) === initialDiff);
+  });
+
+  // --- HOMOJENLİK DÜZEYİ YÖNETİMİ (1: Bilinmeyen/Yanlışlar Ön Planda, 5: Tam Eşit) ---
+  homoBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      homoBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const level = parseInt(btn.dataset.level, 10);
+      geoQuiz.setHomogeneityLevel(level);
+
+      if (currentMode === 'quiz') {
+        loadNextQuestion();
+      }
+    });
+  });
+
+  // Başlangıç homojenlik butonunu aktif et
+  const initialHomo = geoQuiz.getHomogeneityLevel();
+  homoBtns.forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.level, 10) === initialHomo);
   });
 
   // ============================================================
@@ -1912,14 +2003,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // Menü yüksekliği gizliyken değişmiş olabilir; araç çubuğu altına otursun
     updateNavBottom();
     drawModeBtn.classList.add('active');
+
+    // Soru vurgusu ve etkileşimli keşif katmanı kalkar, AMA seçili konunun
+    // şekilleri solgun bir referans katmanı olarak haritada kalır. Eskiden
+    // `clearAll()` haritayı tamamen boşaltıyor, kullanıcı yeni şekli hiçbir
+    // bağlam olmadan boş zemine çizmek zorunda kalıyordu.
     geoMap.clearAll();
+    cizimReferansiniTazele();
+
     setDrawShape(activeDrawShape);
   }
 
-  function closeDrawingToolbar() {
+  /** Çizim modundaki solgun referans katmanını seçili konuya göre tazeler */
+  function cizimReferansiniTazele() {
+    if (currentMode !== 'drawing') return 0;
+    // `geoQuiz.items` seçili kategori + alt tür filtresinden geçmiş listedir
+    const sayi = geoMap.showReferenceLayer(geoQuiz.items || []);
+    if (drawingRefInfo) {
+      drawingRefInfo.style.display = sayi ? 'inline-flex' : 'none';
+      drawingRefInfo.textContent = `🗺️ ${sayi} mevcut şekil referans olarak gösteriliyor`;
+    }
+    return sayi;
+  }
+
+  /**
+   * @param {boolean} sessiz  true ise mod değiştirilmez ve yeni soru
+   *   yüklenmez. Paket kaydının geometrisini yeniden çizme akışı, çizim
+   *   bitince düzenleme modaline geri döneceği için bunu kullanır.
+   */
+  function closeDrawingToolbar(sessiz = false) {
     drawingToolbar.style.display = 'none';
     drawModeBtn.classList.remove('active');
     geoMap.cancelDrawing();
+    geoMap.clearReferenceLayer();
+    if (drawingRefInfo) drawingRefInfo.style.display = 'none';
+    if (sessiz) return;
+    // Kullanıcı yeniden çizimi yarıda bıraktı: hedefi düşür, yoksa bir sonraki
+    // serbest çizim yanlışlıkla o kaydın geometrisine yazılırdı.
+    yenidenCizimHedefi = null;
+    hideEditToast();
     currentMode = 'quiz';
     loadNextQuestion();
   }
@@ -1939,6 +2061,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     geoMap.startDrawing(shapeType, (result) => {
+      // Mevcut bir paket kaydının geometrisi yeniden çiziliyorsa yeni kayıt
+      // modali değil, düzenleme modali geri açılır.
+      if (yenidenCizimHedefi) { yenidenCizimTamamlandi(result); return; }
       pendingDrawingData = result;
       openSaveModal();
     });
@@ -1959,27 +2084,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   drawUndoBtn.addEventListener('click', () => geoMap.undoLastVertex());
   drawFinishBtn.addEventListener('click', () => geoMap.finishDrawing());
-  drawExitBtn.addEventListener('click', closeDrawingToolbar);
+  // DİKKAT: doğrudan `closeDrawingToolbar` bağlanırsa Event nesnesi `sessiz`
+  // parametresine düşer ve çıkışta soru yüklenmez.
+  drawExitBtn.addEventListener('click', () => closeDrawingToolbar());
 
   // --- ÇİZİM KAYDETME MODALI ---
   function openSaveModal() {
     drawModal.style.display = 'flex';
     drawSaveForm.reset();
     
-    // Varsayılan olarak o anki aktif kategoriyi seç
-    shapeCategoryInput.value = activeCategory || 'daglar';
-
-    if (pendingDrawingData.shapeType === 'polyline') {
-      shapeTypeInput.value = 'Akarsu / Vadi / Hat';
-    } else if (pendingDrawingData.shapeType === 'polygon') {
-      shapeTypeInput.value = 'Plato / Havza / Bölge';
-    } else {
-      if (activeCategory === 'daglar') shapeTypeInput.value = 'Volkanik Dağ / Sıra Dağ';
-      else if (activeCategory === 'ovalar') shapeTypeInput.value = 'Tektonik Ova / Delta';
-      else if (activeCategory === 'platolar') shapeTypeInput.value = 'Tabaka Düzlüğü Platosu';
-      else if (activeCategory === 'gecitler') shapeTypeInput.value = 'Dağ Geçidi';
-      else shapeTypeInput.value = 'Özel Yer Şekli';
-    }
+    // Konu listesi KURULU PAKETLERDEN gelir (sabit 5 konuluk eski liste değil).
+    // `reset()` seçimi ilk seçeneğe düşürdüğü için doldurma ondan SONRA yapılır.
+    fillCategorySelect(shapeCategoryInput, activeCategory, true);
+    // "Nereye kaydedilsin?" seçicisi: bağımsız çizim mi, bir paketin düzenleme
+    // katmanı mı? (Kaynak paket dosyası her iki durumda da değişmez.)
+    fillTargetPackSelect(shapeCategoryInput.value);
+    shapeTypeInput.value = varsayilanTurOnerisi(shapeCategoryInput.value, pendingDrawingData.shapeType);
 
     shapeNameInput.focus();
   }
@@ -2014,13 +2134,44 @@ document.addEventListener('DOMContentLoaded', () => {
       color: color
     };
 
+    const hedefPaket = shapeTargetPackInput ? shapeTargetPackInput.value : '';
+    const catObj = CATEGORIES.find(c => c.id === targetCat) || { title: 'Özel Çizimlerim' };
+
+    if (hedefPaket) {
+      // Paketin DÜZENLEME KATMANINA eklenir; kaynak .js dosyasına dokunulmaz.
+      const eklenen = packEdits.addItem(hedefPaket, {
+        name: newItem.name,
+        category: targetCat,
+        shapeType: newItem.shapeType,
+        coordinates: newItem.shapeType === 'point' ? undefined : newItem.coordinates,
+        lat: newItem.shapeType === 'point' ? newItem.coordinates[0] : undefined,
+        lng: newItem.shapeType === 'point' ? newItem.coordinates[1] : undefined,
+        type: newItem.type,
+        region: newItem.region,
+        kpssNot: newItem.kpssNot,
+        color: newItem.color
+      });
+
+      if (!eklenen) {
+        alert('Kayıt eklenemedi: ad ve geçerli bir konum gerekiyor.');
+        return;
+      }
+
+      closeSaveModal();
+      packEditsChanged();
+      const pdef = packManager.packDef(hedefPaket);
+      showEditToast(`"${eklenen.name}" ${pdef ? pdef.icon : ''} paketine eklendi. Kaynak paket dosyası değişmedi.`);
+      return;
+    }
+
     customDrawManager.addDrawing(newItem);
     geoQuiz.reloadCategoryItems();
     renderCategories();
     closeSaveModal();
+    // Yeni şekil, çizime devam eden kullanıcının referans katmanında hemen görünsün
+    cizimReferansiniTazele();
 
-    const catObj = CATEGORIES.find(c => c.id === targetCat) || { title: 'Özel Çizimlerim' };
-    alert(`🎉 "${newItem.name}" başarıyla kaydedildi ve "${catObj.title}" konusuna eklendi!`);
+    showEditToast(`"${newItem.name}" kaydedildi ve "${catObj.title}" konusuna eklendi.`);
   });
 
   // --- ÇİZİMLERİ YÖNETME & JSON İÇE/DIŞA AKTARMA MODALI ---
@@ -2035,14 +2186,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderDrawingsList() {
     drawingsListContainer.innerHTML = '';
-    const drawings = customDrawManager.drawings;
+    const activeMap = customDrawManager.getActiveMap();
+    const allMaps = customDrawManager.getMaps();
+
+    // 🗺️ Harita Seçici ve Yönetim Çubuğu
+    const mapHeaderEl = document.createElement('div');
+    mapHeaderEl.className = 'manage-map-selector-bar';
+    mapHeaderEl.innerHTML = `
+      <div class="manage-map-select-row">
+        <label for="manage-map-select"><strong>🗺️ Aktif Harita:</strong></label>
+        <select id="manage-map-select" class="form-select manage-map-dropdown">
+          ${allMaps.map(m => `<option value="${m.id}" ${m.id === activeMap.id ? 'selected' : ''}>${m.name} (${m.count} yer şekli)</option>`).join('')}
+        </select>
+        <button type="button" id="manage-add-map-btn" class="tool-btn" title="Yeni Harita Oluştur"><span>➕</span> <span>Yeni</span></button>
+        <button type="button" id="manage-rename-map-btn" class="tool-btn" title="Harita Adını Değiştir"><span>✏️</span> <span>Adlandır</span></button>
+        <button type="button" id="manage-delete-map-btn" class="tool-btn danger" title="Bu Haritayı Sil"><span>🗑️</span> <span>Sil</span></button>
+      </div>
+    `;
+
+    mapHeaderEl.querySelector('#manage-map-select').addEventListener('change', (e) => {
+      customDrawManager.switchMap(e.target.value);
+      geoQuiz.reloadCategoryItems();
+      renderCategories();
+      renderDrawingsList();
+      if (currentMode === 'explore') loadExploreMode();
+      else if (activeCategory === 'ozel_cizimler') loadNextQuestion();
+    });
+
+    mapHeaderEl.querySelector('#manage-add-map-btn').addEventListener('click', () => {
+      const name = prompt('Yeni harita için isim girin:', `Harita ${allMaps.length + 1}`);
+      if (name && name.trim()) {
+        customDrawManager.createMap(name.trim());
+        geoQuiz.reloadCategoryItems();
+        renderCategories();
+        renderDrawingsList();
+        if (currentMode === 'explore') loadExploreMode();
+        else if (activeCategory === 'ozel_cizimler') loadNextQuestion();
+        showEditToast(`"${name.trim()}" haritası oluşturuldu.`);
+      }
+    });
+
+    mapHeaderEl.querySelector('#manage-rename-map-btn').addEventListener('click', () => {
+      const newName = prompt(`"${activeMap.name}" haritası için yeni isim girin:`, activeMap.name);
+      if (newName && newName.trim()) {
+        customDrawManager.renameMap(activeMap.id, newName.trim());
+        geoQuiz.reloadCategoryItems();
+        renderCategories();
+        renderDrawingsList();
+        showEditToast(`Harita adı "${newName.trim()}" olarak güncellendi.`);
+      }
+    });
+
+    mapHeaderEl.querySelector('#manage-delete-map-btn').addEventListener('click', () => {
+      if (confirm(`"${activeMap.name}" haritasını ve içindeki tüm çizimleri silmek istediğinize emin misiniz?`)) {
+        customDrawManager.deleteMap(activeMap.id);
+        geoQuiz.reloadCategoryItems();
+        renderCategories();
+        renderDrawingsList();
+        if (currentMode === 'explore') loadExploreMode();
+        else if (activeCategory === 'ozel_cizimler') loadNextQuestion();
+        showEditToast('Harita silindi.');
+      }
+    });
+
+    drawingsListContainer.appendChild(mapHeaderEl);
+
+    const drawings = activeMap.drawings || [];
 
     if (drawings.length === 0) {
-      drawingsListContainer.innerHTML = `
-        <div style="text-align: center; color: var(--text-muted); padding: 20px 10px;">
-          Henüz kayıtlı özel çizim bulunmuyor. Yukarıdaki kutucuğa JSON yapıştırabilir veya haritadan çizebilirsiniz.
+      const emptyNotice = document.createElement('div');
+      emptyNotice.innerHTML = `
+        <div style="text-align: center; color: var(--text-muted); padding: 25px 10px;">
+          "${activeMap.name}" haritasında henüz kayıtlı çizim bulunmuyor.<br>
+          Yukarıdaki kutucuğa JSON yapıştırabilir veya haritadan yeni şekiller çizebilirsiniz.
         </div>
       `;
+      drawingsListContainer.appendChild(emptyNotice);
       return;
     }
 
@@ -2064,17 +2283,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (item.shapeType === 'polygon') shapeIcon = '📐';
 
       const catBadge = catLabels[item.category] || '🎨 Özel';
+      const groupBadge = item.groupId 
+        ? `<span style="font-size: 0.72rem; background: rgba(168, 85, 247, 0.25); color: #c084fc; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">🔗 Birleşik</span>` 
+        : '';
 
       itemEl.innerHTML = `
         <div class="drawing-item-info">
           <div class="drawing-item-title">
             ${shapeIcon} ${item.name} 
             <span style="font-size: 0.72rem; background: rgba(139, 92, 246, 0.25); color: #c084fc; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${catBadge}</span>
+            ${groupBadge}
           </div>
           <div class="drawing-item-sub">${item.type} | ${item.region || ''}</div>
         </div>
-        <button class="drawing-item-delete" data-id="${item.id}" title="Çizimi Sil">Sil</button>
+        <div class="drawing-item-actions" style="display: flex; gap: 6px;">
+          <button class="drawing-item-edit tool-btn" data-id="${item.id}" title="Kaydı ve Geometriyi Düzenle">✏️ Düzenle</button>
+          <button class="drawing-item-delete tool-btn danger" data-id="${item.id}" title="Çizimi Sil">🗑️</button>
+        </div>
       `;
+
+      itemEl.querySelector('.drawing-item-edit').addEventListener('click', () => {
+        closeManageModal();
+        openPackEditModal('custom', item.id);
+      });
 
       itemEl.querySelector('.drawing-item-delete').addEventListener('click', () => {
         if (confirm(`"${item.name}" çizimini silmek istediğinize emin misiniz?`)) {
@@ -2082,6 +2313,7 @@ document.addEventListener('DOMContentLoaded', () => {
           geoQuiz.reloadCategoryItems();
           renderDrawingsList();
           renderCategories();
+          if (currentMode === 'explore') loadExploreMode();
         }
       });
 
@@ -2185,6 +2417,32 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleLabelsBtn.addEventListener('click', () => {
       geoMap.toggleLabels();
       updateLabelsBtnUI();
+    });
+  }
+
+  // --- SORU GÖSTERGELERİ (PİNLER) GİZLE/KÜÇÜLT BUTONU ---
+  const toggleBadgesBtn = document.getElementById('toggle-badges-btn');
+  const badgesBtnLabel = document.getElementById('badges-btn-label');
+
+  function updateBadgesBtnUI() {
+    if (!toggleBadgesBtn) return;
+    const isHidden = !geoMap.badgesEnabled;
+    if (isHidden) {
+      toggleBadgesBtn.classList.add('active');
+      toggleBadgesBtn.title = "Soru göstergeleri gizli (küçük nokta) modunda. Rozetleri açmak için tıklayın.";
+      if (badgesBtnLabel) badgesBtnLabel.textContent = "Göstergeler (Gizli)";
+    } else {
+      toggleBadgesBtn.classList.remove('active');
+      toggleBadgesBtn.title = "Sorulardaki harf/sayı pinlerini küçülterek sadece sade nokta ve çizgileri gösterir.";
+      if (badgesBtnLabel) badgesBtnLabel.textContent = "Göstergeler";
+    }
+  }
+
+  if (toggleBadgesBtn) {
+    updateBadgesBtnUI();
+    toggleBadgesBtn.addEventListener('click', () => {
+      geoMap.toggleBadges();
+      updateBadgesBtnUI();
     });
   }
 
@@ -2860,10 +3118,485 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   // 📦 PAKET SİSTEMİ (DLC) — mağaza, mod kilitleri ve açılış akışı
   // ============================================================
-  const packManager = new PackManager(GEO_CATALOG);
+  const packManager = new PackManager(GEO_CATALOG, packEdits);
   // study_plan.js plan satırlarını buradan okur (eski sabit DAILY_PLAN_SPEC yerine)
   window.geoPackManager = packManager;
   const packStore = new PackStoreUI(packManager);
+
+  // ============================================================
+  // ✏️ PAKET KAYDI DÜZENLEME (referans modeli)
+  //
+  // Kaynak `data/packs/pack.*.js` dosyaları ASLA değişmez. Silme, düzenleme ve
+  // ekleme `packEdits` katmanına yazılır; `packManager.rebuild()` kaynağın
+  // üstüne bu katmanı uygulayıp `COGRAFYA_DATA`'yı tazeler. Bu yüzden quiz,
+  // harita ve oyun motorlarının hiçbiri değişmeden düzenlenmiş veriyi görür.
+  // Paket kaldırılınca katmanı da düşer -> yeniden kurulum fabrika hâlidir.
+  // ============================================================
+  const packEditModal = document.getElementById('pack-edit-modal');
+  const packEditForm = document.getElementById('pack-edit-form');
+  const peSourceName = document.getElementById('pack-edit-source-name');
+  const peStateTag = document.getElementById('pack-edit-state');
+  const peName = document.getElementById('pe-name');
+  const peCategory = document.getElementById('pe-category');
+  const peType = document.getElementById('pe-type');
+  const peRegion = document.getElementById('pe-region');
+  const peCity = document.getElementById('pe-city');
+  const peTier = document.getElementById('pe-tier');
+  const peNote = document.getElementById('pe-note');
+  const peGeomInfo = document.getElementById('pe-geom-info');
+  const peLat = document.getElementById('pe-lat');
+  const peLng = document.getElementById('pe-lng');
+  const peRedrawBtn = document.getElementById('pe-redraw-btn');
+  const peResetBtn = document.getElementById('pe-reset-btn');
+  const peCancelBtn = document.getElementById('pe-cancel-btn');
+  const peCloseBtn = document.getElementById('pack-edit-close-btn');
+  const shapeTargetPackInput = document.getElementById('shape-target-pack');
+  const editToast = document.getElementById('edit-toast');
+  const editToastText = document.getElementById('edit-toast-text');
+  const editToastUndo = document.getElementById('edit-toast-undo');
+
+  /** Düzenlenmekte olan kayıt: { packId, itemId, item, kaynak, geom } */
+  let peCurrent = null;
+  /** Geometri yeniden çizimi sürüyorsa hedef kayıt */
+  let yenidenCizimHedefi = null;
+  let toastTimer = null;
+
+  const SEKIL_ETIKET = { point: '📍 Nokta', polyline: '➿ Çizgi / Hat', polygon: '⬟ Alan / Poligon' };
+
+  // --- Geri alma şeridi -----------------------------------------------------
+  function hideEditToast() {
+    clearTimeout(toastTimer);
+    editToast.style.display = 'none';
+    editToastUndo.onclick = null;
+  }
+
+  function showEditToast(metin, geriAl = null) {
+    editToastText.textContent = metin;
+    editToast.style.display = 'flex';
+    editToastUndo.style.display = geriAl ? 'inline-flex' : 'none';
+    editToastUndo.onclick = geriAl ? () => { geriAl(); hideEditToast(); } : null;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideEditToast, 8000);
+  }
+
+  /**
+   * Katman değiştikten sonra türetilmiş her şeyi tazeler.
+   * `rebuild()` zaten `packs:changed` yayınlar; oradaki dinleyici kategori
+   * listesini, mod kilitlerini ve plan indeksini tazeliyor. Burada yalnızca
+   * quiz havuzunu ve açık görünümü yeniliyoruz.
+   */
+  function packEditsChanged() {
+    packManager.rebuild();
+    geoQuiz.reloadCategoryItems();
+    // Çizim modunda yeni kayıt eklendiyse referans katmanında hemen görünsün
+    if (currentMode === 'drawing') cizimReferansiniTazele();
+    else if (currentMode === 'explore') loadExploreMode();
+    else if (currentMode === 'quiz') loadNextQuestion();
+  }
+
+  /** Çalışma zamanı havuzundaki (yani düzenlenmiş) kaydı bulur */
+  function runtimeItem(itemId) {
+    const kategoriler = Object.keys(COGRAFYA_DATA);
+    for (let i = 0; i < kategoriler.length; i++) {
+      const bulunan = COGRAFYA_DATA[kategoriler[i]].find(it => it.id === itemId);
+      if (bulunan) return bulunan;
+    }
+    if (customDrawManager) {
+      const cItem = customDrawManager.findDrawing(itemId);
+      if (cItem) return cItem;
+    }
+    return null;
+  }
+
+  /**
+   * Kategori seçicisini KURULU PAKETLERDEN doldurur.
+   * Liste eskiden index.html'de sabitti ve yalnızca 5 fiziki konuyu tanıyordu;
+   * paket sistemine geçildikten sonra madenler, turizm, nüfus, kıyılar gibi
+   * konulara çizim eklemek imkânsızdı.
+   *
+   * @param {boolean} ozelEkle  "🎨 Özel Çizimlerim" seçeneği de listelensin mi?
+   */
+  function fillCategorySelect(select, secili, ozelEkle = false) {
+    select.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat.id;
+      opt.textContent = `${cat.icon} ${cat.short || cat.title}`;
+      select.appendChild(opt);
+    });
+
+    if (ozelEkle) {
+      const opt = document.createElement('option');
+      opt.value = 'ozel_cizimler';
+      opt.textContent = '🎨 Özel Çizimlerim';
+      select.appendChild(opt);
+    }
+
+    // Kaydın kategorisi kurulu listede yoksa (ör. o kategorinin son kaydıydı)
+    // seçenek yine de eklenir, aksi halde kaydetmek kategoriyi sessizce değiştirirdi.
+    if (secili && !Array.prototype.some.call(select.options, o => o.value === secili)) {
+      const opt = document.createElement('option');
+      opt.value = secili;
+      opt.textContent = secili;
+      select.appendChild(opt);
+    }
+    select.value = secili || (select.options[0] && select.options[0].value) || '';
+  }
+
+  function geomOzeti(geom) {
+    const etiket = SEKIL_ETIKET[geom.shapeType] || geom.shapeType;
+    if (geom.shapeType === 'point' || !Array.isArray(geom.coordinates)) return etiket;
+    return `${etiket} · ${geom.coordinates.length} nokta`;
+  }
+
+  // --- Modal ---------------------------------------------------------------
+  function openPackEditModal(packId, itemId) {
+    const item = runtimeItem(itemId);
+    if (!item) {
+      showEditToast('Kayıt bulunamadı; kaldırılmış veya silinmiş olabilir.');
+      return;
+    }
+
+    const isCustom = packId === 'custom' || item.isCustomUserAdded || item.category === 'ozel_cizimler';
+    const kaynak = isCustom ? null : packManager.sourceItem(packId, itemId);
+    const bekleyen = (peCurrent && peCurrent.itemId === itemId) ? peCurrent.geom : null;
+
+    peCurrent = {
+      packId: isCustom ? 'custom' : packId,
+      itemId: itemId,
+      item: item,
+      isCustom: isCustom,
+      kaynak: kaynak,
+      geom: bekleyen || {
+        shapeType: item.shapeType || 'point',
+        coordinates: item.coordinates || null,
+        lat: item.lat,
+        lng: item.lng
+      }
+    };
+
+    if (isCustom) {
+      const activeMap = customDrawManager.getActiveMap();
+      peSourceName.textContent = `🎨 Özel Çizim (Harita: "${activeMap.name}") — Bilgileri ve haritadan şekli dilediğiniz gibi güncelleyebilirsiniz.`;
+      peStateTag.style.display = 'inline-flex';
+      peStateTag.textContent = '🎨 Özel Çizim';
+      peStateTag.classList.add('added');
+      peResetBtn.style.display = 'inline-flex';
+      peResetBtn.textContent = '🗑 Çizimi Sil';
+    } else {
+      const def = packManager.packDef(packId);
+      const paketAdi = def ? `${def.icon} ${GeoI18n.field(def.i18n, 'title', def.id)}` : packId;
+      peSourceName.textContent = kaynak
+        ? `Kaynak paket: ${paketAdi} — kaynak dosya değişmez, düzenlemen ayrı katmanda tutulur.`
+        : `${paketAdi} paketine senin eklediğin kayıt.`;
+
+      const yamali = !!packEdits.patchOf(packId, itemId);
+      peStateTag.style.display = (yamali || !kaynak) ? 'inline-flex' : 'none';
+      peStateTag.textContent = kaynak ? '✎ düzenlenmiş' : '✚ eklediğin kayıt';
+      peStateTag.classList.toggle('added', !kaynak);
+      peResetBtn.style.display = (yamali || !kaynak) ? 'inline-flex' : 'none';
+      peResetBtn.textContent = kaynak ? '↺ Varsayılana Döndür' : '🗑 Kaydı Sil';
+    }
+
+    peName.value = item.name || '';
+    fillCategorySelect(peCategory, item.category, true);
+    peType.value = item.type || '';
+    peRegion.value = item.region || '';
+    peCity.value = item.city || '';
+    peTier.value = String(item.tier || 3);
+    peNote.value = item.kpssNot || '';
+    peLat.value = Number.isFinite(peCurrent.geom.lat) ? peCurrent.geom.lat : '';
+    peLng.value = Number.isFinite(peCurrent.geom.lng) ? peCurrent.geom.lng : '';
+    peGeomInfo.textContent = geomOzeti(peCurrent.geom) + (bekleyen ? '  · yeniden çizildi, kaydedilmeyi bekliyor' : '');
+    peGeomInfo.classList.toggle('pending', !!bekleyen);
+
+    packEditModal.style.display = 'flex';
+    peName.focus();
+  }
+
+  function closePackEditModal(sakla) {
+    packEditModal.style.display = 'none';
+    if (sakla) return;
+    // Yeniden çizim için harita boşaltılmıştı; vazgeçildiyse görünümü geri getir.
+    const haritaBos = !!(peCurrent && peCurrent.haritaBosaldi);
+    peCurrent = null;
+    if (!haritaBos) return;
+    if (currentMode === 'explore') loadExploreMode();
+    else loadNextQuestion();
+  }
+
+  // --- Geometriyi haritadan yeniden çiz ------------------------------------
+  function startRedraw() {
+    if (!peCurrent) return;
+    yenidenCizimHedefi = { packId: peCurrent.packId, itemId: peCurrent.itemId, donulecekMod: currentMode };
+    closePackEditModal(true);   // peCurrent korunur, form değerleri kaybolmaz
+    hideEditToast();
+
+    openDrawingToolbar();
+    setDrawShape(peCurrent.geom.shapeType || 'point');
+    showEditToast('Yeni şekli haritaya çiz. Araç çubuğundan nokta/çizgi/alan türünü de değiştirebilirsin.');
+  }
+
+  function yenidenCizimTamamlandi(result) {
+    const hedef = yenidenCizimHedefi;
+    yenidenCizimHedefi = null;
+    closeDrawingToolbar(true);
+    hideEditToast();
+
+    if (!hedef || !peCurrent) return;
+
+    if (result.shapeType === 'point') {
+      const c = result.coordinates;
+      peCurrent.geom = { shapeType: 'point', coordinates: null, lat: c[0], lng: c[1] };
+    } else {
+      const m = PackEditStore.merkez(result.coordinates);
+      peCurrent.geom = { shapeType: result.shapeType, coordinates: result.coordinates, lat: m[0], lng: m[1] };
+    }
+
+    currentMode = hedef.donulecekMod === 'explore' ? 'explore' : 'quiz';
+    openPackEditModal(hedef.packId, hedef.itemId);
+    // Çizim modu haritayı boşalttı: modal kaydetmeden kapanırsa görünüm geri gelsin
+    if (peCurrent) peCurrent.haritaBosaldi = true;
+  }
+
+  // --- Kaydet --------------------------------------------------------------
+  packEditForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!peCurrent) return;
+
+    const packId = peCurrent.packId;
+    const itemId = peCurrent.itemId;
+    const isCustom = peCurrent.isCustom;
+    const kaynak = peCurrent.kaynak;
+    const geom = peCurrent.geom;
+
+    const elleLat = parseFloat(peLat.value);
+    const elleLng = parseFloat(peLng.value);
+
+    const alanlar = {
+      name: peName.value.trim(),
+      category: peCategory.value,
+      type: peType.value.trim(),
+      region: peRegion.value.trim(),
+      city: peCity.value.trim(),
+      kpssNot: peNote.value.trim(),
+      tier: peTier.value,
+      shapeType: geom.shapeType,
+      lat: Number.isFinite(elleLat) ? elleLat : geom.lat,
+      lng: Number.isFinite(elleLng) ? elleLng : geom.lng
+    };
+    if (geom.shapeType !== 'point' && Array.isArray(geom.coordinates)) {
+      alanlar.coordinates = geom.coordinates;
+    }
+
+    if (!alanlar.name) { peName.focus(); return; }
+
+    if (isCustom) {
+      customDrawManager.updateDrawing(itemId, alanlar);
+      closePackEditModal();
+      geoQuiz.reloadCategoryItems();
+      renderCategories();
+      if (currentMode === 'explore') loadExploreMode();
+      else if (activeCategory === 'ozel_cizimler') loadNextQuestion();
+      showEditToast(`"${alanlar.name}" çizimi başarıyla güncellendi.`);
+      return;
+    }
+
+    // Şekil noktaya döndüyse yamadaki eski çizgi/alan dizisi TEMİZLENMELİ;
+    // yoksa kayıt "nokta ama poligon koordinatlı" tutarsız hâlde kalırdı.
+    const temizle = geom.shapeType === 'point' ? ['coordinates'] : [];
+
+    // `kaynak` verilir ki kullanıcının DEĞİŞTİRMEDİĞİ alanlar yamaya yazılmasın;
+    // böylece paket sürümü yükseldiğinde o alanlar yeni sürümden gelmeye devam eder.
+    packEdits.patchItem(packId, itemId, alanlar, kaynak, temizle);
+
+    closePackEditModal();
+    packEditsChanged();
+    showEditToast(`"${alanlar.name}" güncellendi. Kaynak paket dosyası değişmedi.`);
+  });
+
+  // --- Varsayılana döndür / kaydı sil --------------------------------------
+  peResetBtn.addEventListener('click', () => {
+    if (!peCurrent) return;
+    const packId = peCurrent.packId;
+    const itemId = peCurrent.itemId;
+    const isCustom = peCurrent.isCustom;
+    const kaynak = peCurrent.kaynak;
+    const item = peCurrent.item;
+
+    if (isCustom) {
+      if (!confirm(`"${item.name}" çizimini silmek istediğinize emin misiniz?`)) return;
+      customDrawManager.deleteDrawing(itemId);
+      closePackEditModal();
+      geoQuiz.reloadCategoryItems();
+      renderCategories();
+      if (currentMode === 'explore') loadExploreMode();
+      else if (activeCategory === 'ozel_cizimler') loadNextQuestion();
+      showEditToast(`"${item.name}" çizimi silindi.`);
+      return;
+    }
+
+    if (!kaynak) {
+      // Kullanıcı eklemesi: dönülecek bir kaynak yok, kayıt tamamen silinir
+      if (!confirm(`"${item.name}" kaydı silinsin mi? Bu kaydı sen eklemiştin, geri alınamaz.`)) return;
+      packEdits.resetItem(packId, itemId);
+      closePackEditModal();
+      packEditsChanged();
+      showEditToast(`"${item.name}" silindi.`);
+      return;
+    }
+
+    packEdits.resetItem(packId, itemId);
+    closePackEditModal();
+    packEditsChanged();
+    showEditToast(`"${kaynak.name}" kaynak paketteki hâline döndürüldü.`);
+  });
+
+  // --- Sil (geri alınabilir) -----------------------------------------------
+  function deletePackItem(packId, itemId) {
+    const item = runtimeItem(itemId);
+    if (!item) return;
+    const ad = item.name;
+
+    if (packId === 'custom' || item.isCustomUserAdded || item.category === 'ozel_cizimler') {
+      if (confirm(`"${ad}" çizimini silmek istediğinize emin misiniz?`)) {
+        customDrawManager.deleteDrawing(itemId);
+        geoQuiz.reloadCategoryItems();
+        renderCategories();
+        if (currentMode === 'explore') loadExploreMode();
+        else if (activeCategory === 'ozel_cizimler') loadNextQuestion();
+        showEditToast(`"${ad}" çizimi silindi.`);
+      }
+      return;
+    }
+
+    const jeton = packEdits.removeItem(packId, itemId);
+    if (!jeton) return;
+
+    packEditsChanged();
+    showEditToast(
+      `"${ad}" haritadan kaldırıldı. Kaynak paket dosyası değişmedi.`,
+      () => { packEdits.undoRemove(jeton); packEditsChanged(); }
+    );
+  }
+
+  // --- Harita balonundaki düğmeler -----------------------------------------
+  document.addEventListener('pack:item-action', (e) => {
+    const d = e.detail || {};
+    if (!d.itemId || !d.packId) return;
+    if (d.action === 'edit') openPackEditModal(d.packId, d.itemId);
+    else if (d.action === 'delete') deletePackItem(d.packId, d.itemId);
+  });
+
+  // --- Keşif Modunda Sürükle-Bırak ile Eleman Birleştirme / Ayırma Dinleyicisi ---
+  document.addEventListener('custom-draw:link-toggle', (e) => {
+    const d = e.detail || {};
+    if (!d.sourceId || !d.targetId) return;
+
+    const res = customDrawManager.toggleLink(d.sourceId, d.targetId);
+    if (!res) return;
+
+    geoQuiz.reloadCategoryItems();
+    renderCategories();
+    if (currentMode === 'explore') {
+      loadExploreMode();
+    } else {
+      loadNextQuestion();
+    }
+
+    if (res.action === 'linked') {
+      showEditToast(`✨ "${res.item1.name}" ve "${res.item2.name}" BİRLEŞTİRİLDİ! Artık testlerde tek bir ortak cevap sayılacak.`);
+    } else {
+      showEditToast(`🔗 "${res.item1.name}" ve "${res.item2.name}" arasındaki bağlantı KOPARILDI (Ayrıldı).`);
+    }
+  });
+
+  peRedrawBtn.addEventListener('click', startRedraw);
+  peCancelBtn.addEventListener('click', () => closePackEditModal());
+  peCloseBtn.addEventListener('click', () => closePackEditModal());
+  packEditModal.addEventListener('click', (e) => {
+    if (e.target === packEditModal) closePackEditModal();
+  });
+
+  // --- Yeni çizim: hedef paket seçici --------------------------------------
+  /**
+   * Yeni bir şekil kaydedilirken "nereye" sorusunu doldurur. Boş değer =
+   * bağımsız "Çizimlerim" katmanı (eski davranış). Bir paket seçilirse kayıt
+   * o paketin düzenleme katmanına gider ve paket kaldırılınca birlikte düşer.
+   */
+  function fillTargetPackSelect(catId) {
+    if (!shapeTargetPackInput) return;
+    const activeMap = customDrawManager ? customDrawManager.getActiveMap() : { name: 'Özel Çizimlerim' };
+    shapeTargetPackInput.innerHTML = `<option value="">🎨 Çizim Haritası: "${activeMap.name}"</option>`;
+
+    // YALNIZCA bu konuyu sağlayan paketler listelenir. "Dağlar" kaydını
+    // "Akarsular" paketine iliştirmek mümkün olsaydı, o paket kaldırıldığında
+    // kayıt alakasız bir yerden düşer, kullanıcı nedenini anlayamazdı.
+    const saglayan = (catId === 'ozel_cizimler') ? [] : packManager.packsForCategory(catId);
+    saglayan.forEach(packId => {
+      const def = packManager.packDef(packId);
+      if (!def || def.virtual) return;
+      const opt = document.createElement('option');
+      opt.value = packId;
+      opt.textContent = `${def.icon} ${GeoI18n.field(def.i18n, 'title', def.id)}`;
+      shapeTargetPackInput.appendChild(opt);
+    });
+
+    // Bu konuyu sağlayan TEK paket varsa onu öner; yoksa bağımsız katman
+    shapeTargetPackInput.value = (saglayan.length === 1) ? saglayan[0] : '';
+    shapeTargetPackInput.disabled = saglayan.length === 0;
+  }
+
+  /**
+   * Konu + geometri türüne göre "Tür / Oluşum" alanına başlangıç önerisi.
+   * Tablo katalogdaki tüm konuları kapsar; bilinmeyen konuda geometriye düşer.
+   */
+  const TUR_ONERI = {
+    daglar: 'Volkanik Dağ / Sıra Dağ',
+    ovalar: 'Tektonik Ova / Delta',
+    platolar: 'Tabaka Düzlüğü Platosu',
+    gecitler: 'Dağ Geçidi',
+    su_kaynaklari: 'Akarsu / Göl',
+    sehirler: 'İl / Şehir',
+    bolgeler: 'Coğrafi Bölge / Bölüm',
+    madenler: 'Maden / Enerji Kaynağı',
+    tarim: 'Tarım Ürünü / Üretim Alanı',
+    hayvancilik: 'Hayvancılık Sahası',
+    sanayi: 'Sanayi Tesisi / Bölgesi',
+    iklim: 'İklim Tipi / Uç Değer',
+    orman: 'Orman / Bitki Örtüsü',
+    toprak: 'Toprak Tipi',
+    afet: 'Doğal Afet Sahası',
+    fay: 'Fay Hattı / Tektonik Yapı',
+    nufus: 'Nüfus / Yerleşme Özelliği',
+    kiyilar: 'Kıyı / Ada / Yarımada',
+    dis_kuvvetler: 'Dış Kuvvet Şekli',
+    turizm: 'Turizm / Kültür Varlığı',
+    ulasim: 'Ulaşım / Ticaret Noktası',
+    iliskili_cografya: 'İlişkili Eşleştirme',
+    ozel_cizimler: 'Özel Yer Şekli'
+  };
+
+  function varsayilanTurOnerisi(catId, shapeType) {
+    if (TUR_ONERI[catId]) return TUR_ONERI[catId];
+    if (shapeType === 'polyline') return 'Akarsu / Vadi / Hat';
+    if (shapeType === 'polygon') return 'Plato / Havza / Bölge';
+    return 'Özel Yer Şekli';
+  }
+
+  if (shapeCategoryInput && shapeTargetPackInput) {
+    shapeCategoryInput.addEventListener('change', () => {
+      fillTargetPackSelect(shapeCategoryInput.value);
+      // Kullanıcı tür alanını elle doldurduysa üzerine yazma
+      if (!shapeTypeInput.value || Object.values(TUR_ONERI).includes(shapeTypeInput.value)) {
+        shapeTypeInput.value = varsayilanTurOnerisi(
+          shapeCategoryInput.value,
+          pendingDrawingData ? pendingDrawingData.shapeType : 'point'
+        );
+      }
+    });
+  }
+
 
   /** Oyun menüsündeki DOM butonu -> paket manifestindeki `unlocks` kimliği */
   const MODE_BUTTON_MAP = {
@@ -3014,6 +3747,386 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNextQuestion();
     updateStatsUI();
     openPlanScreen();
+  }
+
+  // ============================================================
+  // 🗑️ TÜM İSTATİSTİKLERİ SIFIRLAMA (TAM FABRİKA SIFIRLAMASI)
+  // ============================================================
+  const resetAllStatsBtn = document.getElementById('reset-all-stats-btn');
+  if (resetAllStatsBtn) {
+    resetAllStatsBtn.addEventListener('click', () => {
+      closeToolsDropdown();
+      const msg = `⚠️ TÜM İSTATİSTİKLERİ SIFIRLAMA ONAYI\n\n` +
+        `Bu işlem:\n` +
+        `• Tüm doğru/yanlış sayılarını ve başarı yüzdenizi,\n` +
+        `• Soru bazlı ustalık geçmişini (5+ kez bilinenler dahil),\n` +
+        `• Hata havuzunu ve yanlışlar kayıtlarını,\n` +
+        `• Günlük çalışma planı ve oyun modu rekorlarını\n\n` +
+        `KALICI OLARAK SIFIRLAYACAKTIR.\n\n` +
+        `Her şeye sıfırdan başlamak istediğinize emin misiniz?`;
+
+      if (confirm(msg)) {
+        geoQuiz.resetAllProgress();
+        updateStatsUI();
+        if (typeof mistakesManager !== 'undefined' && mistakesManager.render) {
+          mistakesManager.render();
+        }
+        if (currentMode === 'quiz') {
+          loadNextQuestion();
+        }
+        alert('✨ Tüm istatistikler ve ilerleme başarıyla sıfırlandı. Tertemiz bir başlangıç!');
+      }
+    });
+  }
+
+  // ============================================================
+  // 🎯 SEÇMECE QUİZ SİSTEMİ (ÖZEL SORU HAVUZU)
+  // ============================================================
+  const secmeceModal = document.getElementById('secmece-modal');
+  const btnSecmeceModal = document.getElementById('btn-secmece-modal');
+  const btnSecmeceGame = document.getElementById('btn-secmece-mode');
+  const btnSecmeceTools = document.getElementById('btn-secmece-tools');
+  const secmeceCloseBtn = document.getElementById('secmece-close-btn');
+  const secmeceCancelBtn = document.getElementById('secmece-cancel-btn');
+  const secmeceStartBtn = document.getElementById('secmece-start-btn');
+  const secmeceSearchInput = document.getElementById('secmece-search-input');
+  const secmeceClearSearchBtn = document.getElementById('secmece-clear-search-btn');
+  const secmeceSelectFilteredBtn = document.getElementById('secmece-select-filtered-btn');
+  const secmeceClearSelectionBtn = document.getElementById('secmece-clear-selection-btn');
+  const secmeceSelectWrongBtn = document.getElementById('secmece-select-wrong-btn');
+  const secmeceSelectNewBtn = document.getElementById('secmece-select-new-btn');
+  const secmeceCategoryPills = document.getElementById('secmece-category-pills');
+  const secmeceItemsGrid = document.getElementById('secmece-items-grid');
+  const secmeceSelectedCount = document.getElementById('secmece-selected-count');
+  const secmeceTotalCount = document.getElementById('secmece-total-count');
+  const secmeceWrongCount = document.getElementById('secmece-wrong-count');
+  const secmeceNewCount = document.getElementById('secmece-new-count');
+  const customPoolBanner = document.getElementById('custom-pool-banner');
+  const customPoolCount = document.getElementById('custom-pool-count');
+  const customPoolExitBtn = document.getElementById('custom-pool-exit-btn');
+
+  // Seçili ID'leri sakla
+  let secmeceSelectedIds = new Set();
+  try {
+    const saved = JSON.parse(localStorage.getItem('kpss_secmece_selected_ids') || '[]');
+    if (Array.isArray(saved)) secmeceSelectedIds = new Set(saved);
+  } catch (e) {}
+
+  let secmeceActiveCategory = 'all';
+  let secmeceSearchQuery = '';
+
+  function saveSecmeceSelection() {
+    try {
+      localStorage.setItem('kpss_secmece_selected_ids', JSON.stringify([...secmeceSelectedIds]));
+    } catch (e) {}
+  }
+
+  function getAllSecmeceItems() {
+    const all = [];
+    const seen = new Set();
+    Object.keys(COGRAFYA_DATA).forEach(cat => {
+      (COGRAFYA_DATA[cat] || []).forEach(it => {
+        if (!seen.has(it.id)) {
+          seen.add(it.id);
+          all.push(it);
+        }
+      });
+    });
+    if (customDrawManager) {
+      customDrawManager.getQuizItems().forEach(it => {
+        if (!seen.has(it.id)) {
+          seen.add(it.id);
+          all.push(it);
+        }
+      });
+    }
+    return all;
+  }
+
+  function getCategoryMeta(catId) {
+    if (GEO_CATALOG && GEO_CATALOG.categories && GEO_CATALOG.categories[catId]) {
+      const meta = GEO_CATALOG.categories[catId];
+      const title = GeoI18n.pick(meta.i18n).title || catId;
+      return { icon: meta.icon || '📍', title: title };
+    }
+    const catObj = (CATEGORIES || []).find(c => c.id === catId);
+    if (catObj) return { icon: catObj.icon || '📍', title: catObj.title || catId };
+    return { icon: '📍', title: catId };
+  }
+
+  function openSecmeceModal() {
+    closeToolsDropdown();
+    if (gamesDropdown) gamesDropdown.style.display = 'none';
+
+    const allItems = getAllSecmeceItems();
+    const analytics = geoQuiz.analytics || {};
+
+    let wrongCnt = 0;
+    let newCnt = 0;
+    allItems.forEach(it => {
+      const an = analytics[it.id];
+      if (an && an.wrongCount > 0) wrongCnt++;
+      if (!an || ((an.correctCount || 0) + (an.wrongCount || 0)) === 0) newCnt++;
+    });
+
+    if (secmeceWrongCount) secmeceWrongCount.textContent = wrongCnt;
+    if (secmeceNewCount) secmeceNewCount.textContent = newCnt;
+    if (secmeceTotalCount) secmeceTotalCount.textContent = allItems.length;
+
+    renderSecmeceCategoryPills();
+    renderSecmeceGrid();
+    updateSecmeceFooter();
+
+    if (secmeceModal) secmeceModal.style.display = 'flex';
+    if (secmeceSearchInput) {
+      setTimeout(() => secmeceSearchInput.focus(), 50);
+    }
+  }
+
+  function closeSecmeceModal() {
+    if (secmeceModal) secmeceModal.style.display = 'none';
+  }
+
+  function renderSecmeceCategoryPills() {
+    if (!secmeceCategoryPills) return;
+    const allItems = getAllSecmeceItems();
+    const catCounts = {};
+    allItems.forEach(it => {
+      catCounts[it.category] = (catCounts[it.category] || 0) + 1;
+    });
+
+    secmeceCategoryPills.innerHTML = '';
+
+    // 'Tümü' Sekmesi
+    const allBtn = document.createElement('button');
+    allBtn.className = `secmece-pill ${secmeceActiveCategory === 'all' ? 'active' : ''}`;
+    allBtn.innerHTML = `🌍 Tümü (${allItems.length})`;
+    allBtn.addEventListener('click', () => {
+      secmeceActiveCategory = 'all';
+      renderSecmeceCategoryPills();
+      renderSecmeceGrid();
+    });
+    secmeceCategoryPills.appendChild(allBtn);
+
+    Object.keys(catCounts).forEach(catId => {
+      const meta = getCategoryMeta(catId);
+      const btn = document.createElement('button');
+      btn.className = `secmece-pill ${secmeceActiveCategory === catId ? 'active' : ''}`;
+      btn.innerHTML = `${meta.icon} ${meta.title} (${catCounts[catId]})`;
+      btn.addEventListener('click', () => {
+        secmeceActiveCategory = catId;
+        renderSecmeceCategoryPills();
+        renderSecmeceGrid();
+      });
+      secmeceCategoryPills.appendChild(btn);
+    });
+  }
+
+  function getFilteredSecmeceItems() {
+    const allItems = getAllSecmeceItems();
+    const q = (secmeceSearchQuery || '').toLowerCase().trim();
+
+    return allItems.filter(it => {
+      if (secmeceActiveCategory !== 'all' && it.category !== secmeceActiveCategory) return false;
+      if (!q) return true;
+
+      const name = (it.name || '').toLowerCase();
+      const type = (it.type || '').toLowerCase();
+      const region = (it.region || '').toLowerCase();
+      const kpss = (it.kpssNot || '').toLowerCase();
+      return name.includes(q) || type.includes(q) || region.includes(q) || kpss.includes(q);
+    });
+  }
+
+  function renderSecmeceGrid() {
+    if (!secmeceItemsGrid) return;
+    secmeceItemsGrid.innerHTML = '';
+
+    const filtered = getFilteredSecmeceItems();
+    const analytics = geoQuiz.analytics || {};
+
+    if (filtered.length === 0) {
+      secmeceItemsGrid.innerHTML = `
+        <div style="grid-column: 1/-1; padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+          🔍 Aramanızla eşleşen yer şekli bulunamadı.
+        </div>
+      `;
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    filtered.forEach(it => {
+      const isSelected = secmeceSelectedIds.has(it.id);
+      const meta = getCategoryMeta(it.category);
+      const an = analytics[it.id] || { correctCount: 0, wrongCount: 0, streak: 0 };
+      const totalAsked = (an.correctCount || 0) + (an.wrongCount || 0);
+
+      const card = document.createElement('div');
+      card.className = `secmece-item-card ${isSelected ? 'selected' : ''}`;
+      card.dataset.id = it.id;
+
+      let badgeHtml = '';
+      if (an.wrongCount > 0) {
+        badgeHtml = `<span class="secmece-item-stat-badge wrong">⚠️ ${an.wrongCount} Yanlış</span>`;
+      } else if (an.correctCount >= 5) {
+        badgeHtml = `<span class="secmece-item-stat-badge mastered">🎓 ${an.correctCount} Doğru</span>`;
+      } else if (totalAsked === 0) {
+        badgeHtml = `<span class="secmece-item-stat-badge new">✨ Yeni</span>`;
+      }
+
+      card.innerHTML = `
+        <span class="secmece-item-check">${isSelected ? '☑️' : '⬜'}</span>
+        <span class="secmece-item-icon">${meta.icon}</span>
+        <div class="secmece-item-info">
+          <span class="secmece-item-name" title="${it.name}">${it.name}</span>
+          <span class="secmece-item-sub" title="${it.type || it.region || ''}">${it.type || it.region || meta.title}</span>
+          ${badgeHtml}
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        if (secmeceSelectedIds.has(it.id)) {
+          secmeceSelectedIds.delete(it.id);
+          card.classList.remove('selected');
+          const chk = card.querySelector('.secmece-item-check');
+          if (chk) chk.textContent = '⬜';
+        } else {
+          secmeceSelectedIds.add(it.id);
+          card.classList.add('selected');
+          const chk = card.querySelector('.secmece-item-check');
+          if (chk) chk.textContent = '☑️';
+        }
+        saveSecmeceSelection();
+        updateSecmeceFooter();
+      });
+
+      fragment.appendChild(card);
+    });
+
+    secmeceItemsGrid.appendChild(fragment);
+  }
+
+  function updateSecmeceFooter() {
+    const cnt = secmeceSelectedIds.size;
+    if (secmeceSelectedCount) secmeceSelectedCount.textContent = cnt;
+    if (secmeceStartBtn) {
+      secmeceStartBtn.disabled = cnt < 2;
+      secmeceStartBtn.textContent = `🎯 Seçilenlerle Quiz Başlat (${cnt} Soru)`;
+    }
+  }
+
+  function startSecmeceQuiz() {
+    if (secmeceSelectedIds.size < 2) {
+      alert('Quiz başlatmak için lütfen en az 2 yer şekli seçin.');
+      return;
+    }
+
+    const allItems = getAllSecmeceItems();
+    const selectedItems = allItems.filter(it => secmeceSelectedIds.has(it.id));
+
+    closeSecmeceModal();
+    hideAllGameHuds();
+
+    // Normal quiz moduna geç ve havuzu kur
+    if (currentMode !== 'quiz') {
+      currentMode = 'quiz';
+      modeToggleBtn.innerHTML = '<span>🧭</span> <span>Keşif Modu</span>';
+      modeToggleBtn.classList.remove('active');
+    }
+
+    geoQuiz.setCustomPool(selectedItems, false);
+
+    if (customPoolBanner) {
+      customPoolBanner.style.display = 'flex';
+      if (customPoolCount) customPoolCount.textContent = selectedItems.length;
+    }
+
+    loadNextQuestion();
+  }
+
+  function exitSecmeceQuiz() {
+    geoQuiz.clearCustomPool();
+    if (customPoolBanner) customPoolBanner.style.display = 'none';
+    geoQuiz.reloadCategoryItems();
+    loadNextQuestion();
+  }
+
+  // Secmece Event Listeners
+  if (btnSecmeceModal) btnSecmeceModal.addEventListener('click', openSecmeceModal);
+  if (btnSecmeceGame) btnSecmeceGame.addEventListener('click', openSecmeceModal);
+  if (btnSecmeceTools) btnSecmeceTools.addEventListener('click', openSecmeceModal);
+  if (secmeceCloseBtn) secmeceCloseBtn.addEventListener('click', closeSecmeceModal);
+  if (secmeceCancelBtn) secmeceCancelBtn.addEventListener('click', closeSecmeceModal);
+  if (secmeceStartBtn) secmeceStartBtn.addEventListener('click', startSecmeceQuiz);
+  if (customPoolExitBtn) customPoolExitBtn.addEventListener('click', exitSecmeceQuiz);
+
+  if (secmeceSearchInput) {
+    secmeceSearchInput.addEventListener('input', (e) => {
+      secmeceSearchQuery = e.target.value;
+      if (secmeceClearSearchBtn) {
+        secmeceClearSearchBtn.style.display = secmeceSearchQuery ? 'block' : 'none';
+      }
+      renderSecmeceGrid();
+    });
+  }
+
+  if (secmeceClearSearchBtn) {
+    secmeceClearSearchBtn.addEventListener('click', () => {
+      secmeceSearchQuery = '';
+      if (secmeceSearchInput) secmeceSearchInput.value = '';
+      secmeceClearSearchBtn.style.display = 'none';
+      renderSecmeceGrid();
+      if (secmeceSearchInput) secmeceSearchInput.focus();
+    });
+  }
+
+  if (secmeceSelectFilteredBtn) {
+    secmeceSelectFilteredBtn.addEventListener('click', () => {
+      const filtered = getFilteredSecmeceItems();
+      filtered.forEach(it => secmeceSelectedIds.add(it.id));
+      saveSecmeceSelection();
+      renderSecmeceGrid();
+      updateSecmeceFooter();
+    });
+  }
+
+  if (secmeceClearSelectionBtn) {
+    secmeceClearSelectionBtn.addEventListener('click', () => {
+      secmeceSelectedIds.clear();
+      saveSecmeceSelection();
+      renderSecmeceGrid();
+      updateSecmeceFooter();
+    });
+  }
+
+  if (secmeceSelectWrongBtn) {
+    secmeceSelectWrongBtn.addEventListener('click', () => {
+      const allItems = getAllSecmeceItems();
+      const analytics = geoQuiz.analytics || {};
+      allItems.forEach(it => {
+        const an = analytics[it.id];
+        if (an && an.wrongCount > 0) secmeceSelectedIds.add(it.id);
+      });
+      saveSecmeceSelection();
+      renderSecmeceGrid();
+      updateSecmeceFooter();
+    });
+  }
+
+  if (secmeceSelectNewBtn) {
+    secmeceSelectNewBtn.addEventListener('click', () => {
+      const allItems = getAllSecmeceItems();
+      const analytics = geoQuiz.analytics || {};
+      allItems.forEach(it => {
+        const an = analytics[it.id];
+        const totalAsked = an ? ((an.correctCount || 0) + (an.wrongCount || 0)) : 0;
+        if (totalAsked === 0) secmeceSelectedIds.add(it.id);
+      });
+      saveSecmeceSelection();
+      renderSecmeceGrid();
+      updateSecmeceFooter();
+    });
   }
 
   // ============================================================

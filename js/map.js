@@ -80,6 +80,36 @@ function topicColor(category, fallback = '#ef4444') {
   return TOPIC_CATEGORY_COLOR[category] || fallback;
 }
 
+/**
+ * Serbest metin bir HTML özniteliğine gömülüyor (özel harita kayıtlarında ad
+ * alanı kullanıcı yazımıdır). Tırnak kaçmadığında ikon HTML'i bozuluyordu.
+ */
+function escAttr(text) {
+  return String(text == null ? '' : text)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * `title` özniteliği KEŞİF modunda faydalıdır, SORU sırasında ise kopyadır:
+ * fare ikonun üzerinde bir saniye beklediğinde tarayıcı cevabın adını balonda
+ * gösteriyordu. Soru bağlamındaki her çağrı `isimsiz: true` geçer.
+ */
+function iconTitle(item, opts) {
+  return (opts && opts.isimsiz) ? '' : ` title="${escAttr(item && item.name)}"`;
+}
+
+/**
+ * `notr: true` iken alt tür sınıfı (volkanik / karstik / delta ...) yazılmaz.
+ * Şık pinlerinde tür sınıfı ikonu renklendirdiği için "hangisi volkanik
+ * kökenlidir" tipi sorularda doğru şıkkı tek bakışta ele veriyordu.
+ */
+function iconTypeClass(typeClass, opts) {
+  return (opts && opts.notr) ? '' : typeClass;
+}
+
 class GeographyMap {
   constructor(mapContainerId) {
     this.containerId = mapContainerId;
@@ -89,12 +119,22 @@ class GeographyMap {
     this.multiChoiceLayerGroup = L.layerGroup();
     this.exploreLayerGroup = L.layerGroup();
     this.drawingLayerGroup = L.layerGroup();
+    // Çizim yaparken seçili konunun mevcut şekilleri solgun bir referans olarak
+    // haritada kalır; kendi pane'inde ve TIKLANAMAZ durur (bkz. showReferenceLayer)
+    this.referenceLayerGroup = L.layerGroup();
     
     // Otomatik Yakınlaştırma (Auto-Zoom) Ayarı (LocalStorage destekli)
     this.autoZoomEnabled = this.loadAutoZoomSetting();
 
     // Dilsiz Harita (Yazısız / No-Labels Modu) (LocalStorage destekli)
     this.labelsEnabled = this.loadLabelsSetting();
+
+    // Soru İçi Şık Göstergelerini Gizle/Küçült (LocalStorage destekli)
+    this.badgesEnabled = this.loadBadgesSetting();
+
+    // Keşif balonlarındaki "Düzenle / Sil" şeridi (yalnızca Keşif Modunda açılır)
+    this.editingEnabled = false;
+    this._popupActionsBound = false;
 
     // Aktif çizim durumu
     this.isDrawing = false;
@@ -119,22 +159,22 @@ class GeographyMap {
         options: { attribution: '&copy; OpenStreetMap &copy; OpenTopoMap / Esri', maxZoom: 17, minZoom: 2 }
       },
       satellite: {
-        name: '🛰️ Gerçek Uydu',
+        name: 'Gerçek Uydu',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 18, minZoom: 2 }
       },
       dark: {
-        name: '🌙 Gece / Karanlık',
+        name: 'Gece / Kontrast',
         withLabels: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         noLabels: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
         options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 2 }
       },
       terrain: {
-        name: '⛰️ Kabartı / Arazi',
+        name: 'Kabartı / Arazi',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; USGS', maxZoom: 18, minZoom: 2 }
+        options: { attribution: '&copy; Esri &copy; USGS, NOAA', maxZoom: 13, minZoom: 2 }
       }
     };
 
@@ -185,6 +225,30 @@ class GeographyMap {
     return this.labelsEnabled;
   }
 
+  loadBadgesSetting() {
+    const saved = localStorage.getItem('kpss_cografya_badges_enabled');
+    return saved !== null ? JSON.parse(saved) : true;
+  }
+
+  setBadgesEnabled(enabled, persist = true) {
+    this.badgesEnabled = enabled;
+    if (persist) {
+      localStorage.setItem('kpss_cografya_badges_enabled', JSON.stringify(enabled));
+    }
+    if (document.body) {
+      document.body.classList.toggle('hide-choice-badges', !enabled);
+    }
+    const container = document.getElementById(this.containerId);
+    if (container) {
+      container.classList.toggle('hide-choice-badges', !enabled);
+    }
+  }
+
+  toggleBadges() {
+    this.setBadgesEnabled(!this.badgesEnabled);
+    return this.badgesEnabled;
+  }
+
   initMap() {
     // Türkiye merkezli harita başlatma
     // Harita Turkiye'ye kilitli degildir: tum dunya gezilebilir.
@@ -206,6 +270,12 @@ class GeographyMap {
       document.body.classList.add('map-no-labels');
     }
 
+    if (!this.badgesEnabled) {
+      document.body.classList.add('hide-choice-badges');
+      const container = document.getElementById(this.containerId);
+      if (container) container.classList.add('hide-choice-badges');
+    }
+
     // İlk katmanı yükle
     this.updateTileLayer();
 
@@ -217,6 +287,8 @@ class GeographyMap {
     // NaN koordinat üretip soru render'ını komple çökertiyordu. Kabı izleyip
     // her boyut değişiminde önbelleği tazeliyoruz.
     this._watchContainerSize();
+    this._ensureReferencePane();
+    this.referenceLayerGroup.addTo(this.map);
     this.drawingLayerGroup.addTo(this.map);
 
     // Zoom kontrolünü sağ üste al
@@ -256,7 +328,7 @@ class GeographyMap {
   }
 
   // 3D Üçgen Prizma Dağ Kabartma İkonu Üretici
-  createMountainPrismIcon(item) {
+  createMountainPrismIcon(item, opts = {}) {
     let typeClass = 'folded';
     const typeStr = (item.type || '').toLowerCase();
     if (typeStr.includes('volkanik') || typeStr.includes('yanardağ')) {
@@ -268,7 +340,7 @@ class GeographyMap {
     return L.divIcon({
       className: 'mountain-3d-icon',
       html: `
-        <div class="mountain-prism ${typeClass}" title="${item.name}">
+        <div class="mountain-prism ${iconTypeClass(typeClass, opts)}"${iconTitle(item, opts)}>
           <div class="prism-pyramid">
             <div class="prism-snow-cap"></div>
           </div>
@@ -280,7 +352,7 @@ class GeographyMap {
   }
 
   // 🌾 3D Ova & Alüvyal Vadi Kabartma İkonu
-  createPlainIcon(item) {
+  createPlainIcon(item, opts = {}) {
     let typeClass = '';
     const typeStr = (item.type || '').toLowerCase();
     if (typeStr.includes('delta')) typeClass = 'delta';
@@ -290,7 +362,7 @@ class GeographyMap {
     return L.divIcon({
       className: 'plain-3d-icon',
       html: `
-        <div class="plain-badge ${typeClass}" title="${item.name}">
+        <div class="plain-badge ${iconTypeClass(typeClass, opts)}"${iconTitle(item, opts)}>
           <span>🌾</span>
         </div>
       `,
@@ -300,7 +372,7 @@ class GeographyMap {
   }
 
   // ⛰️ 3D Masa Dağı (Tabaka Düzlüğü / Plato) İkonu
-  createPlateauIcon(item) {
+  createPlateauIcon(item, opts = {}) {
     let typeClass = '';
     const typeStr = (item.type || '').toLowerCase();
     if (typeStr.includes('volkanik') || typeStr.includes('lav')) typeClass = 'volcanic';
@@ -310,7 +382,7 @@ class GeographyMap {
     return L.divIcon({
       className: 'plateau-3d-icon',
       html: `
-        <div class="plateau-mesa ${typeClass}" title="${item.name}">
+        <div class="plateau-mesa ${iconTypeClass(typeClass, opts)}"${iconTitle(item, opts)}>
           <div class="mesa-top"></div>
           <div class="mesa-cliff"></div>
         </div>
@@ -321,13 +393,13 @@ class GeographyMap {
   }
 
   // 🚪 Dağ Geçidi & 🌉 Deniz Boğazı İkonu
-  createPassOrStraitIcon(item) {
+  createPassOrStraitIcon(item, opts = {}) {
     const isStrait = (item.type || '').toLowerCase().includes('deniz boğazı') || (item.type || '').toLowerCase().includes('su yolu');
     if (isStrait) {
       return L.divIcon({
         className: 'strait-3d-icon',
         html: `
-          <div class="strait-badge" title="${item.name}">
+          <div class="strait-badge"${iconTitle(item, opts)}>
             <span>🌉</span>
           </div>
         `,
@@ -339,7 +411,7 @@ class GeographyMap {
     return L.divIcon({
       className: 'pass-3d-icon',
       html: `
-        <div class="pass-badge" title="${item.name}">
+        <div class="pass-badge"${iconTitle(item, opts)}>
           <span>🚪</span>
         </div>
       `,
@@ -385,38 +457,44 @@ class GeographyMap {
   }
 
   // 🚜🏭🌡️🌲 Yeni konu kategorileri icin emoji rozeti
-  createTopicBadgeIcon(item, emoji, cssClass) {
+  createTopicBadgeIcon(item, emoji, cssClass, opts = {}) {
     return L.divIcon({
       className: 'topic-3d-icon',
-      html: `<div class="topic-badge ${cssClass}" title="${item.name}"><span>${emoji}</span></div>`,
+      html: `<div class="topic-badge ${cssClass}"${iconTitle(item, opts)}><span>${emoji}</span></div>`,
       iconSize: [30, 30],
       iconAnchor: [15, 15]
     });
   }
 
   // Öğe kategorisine göre en uygun özel ikonu döndür
-  getCustomCategoryIcon(item) {
+  /**
+   * @param {object} opts  `isimsiz: true` -> ikona `title` yazılmaz (kopya önleme),
+   *                       `notr: true`    -> alt tür sınıfı ve alt tür emojisi kullanılmaz.
+   */
+  getCustomCategoryIcon(item, opts = {}) {
     const cat = item.category || '';
     const typeStr = (item.type || '').toLowerCase();
 
     // Elle modellenmiş 3B ikonlar (prizma dağ, ova, plato, geçit)
     if (cat === 'daglar' || typeStr.includes('dağ')) {
-      return this.createMountainPrismIcon(item);
+      return this.createMountainPrismIcon(item, opts);
     }
     if (cat === 'ovalar' || typeStr.includes('ova') || typeStr.includes('delta')) {
-      return this.createPlainIcon(item);
+      return this.createPlainIcon(item, opts);
     }
     if (cat === 'platolar' || typeStr.includes('plato')) {
-      return this.createPlateauIcon(item);
+      return this.createPlateauIcon(item, opts);
     }
     if (cat === 'gecitler' || typeStr.includes('geçit') || typeStr.includes('boğaz')) {
-      return this.createPassOrStraitIcon(item);
+      return this.createPassOrStraitIcon(item, opts);
     }
 
     // Konu kategorileri: önce alt tür, sonra kategori emojisi
     if (TOPIC_CATEGORY_ICON[cat]) {
-      const emoji = pickTopicEmoji(item);
-      return this.createTopicBadgeIcon(item, emoji, `topic-${cat}`);
+      // Nötr modda alt tür emojisi de kopyadır: 5 turizm şıkkından yalnız
+      // birinin 🏅 (UNESCO) çıkması soruyu cevaplıyordu.
+      const emoji = opts.notr ? TOPIC_CATEGORY_ICON[cat] : pickTopicEmoji(item);
+      return this.createTopicBadgeIcon(item, emoji, `topic-${cat}`, opts);
     }
 
     return L.divIcon({
@@ -427,10 +505,78 @@ class GeographyMap {
     });
   }
 
+  // --- 81 İL GEOJSON YARDIMCISI ---
+  getCityFeature(itemOrId) {
+    if (typeof window.TR_CITIES_GEOJSON === 'undefined' || !window.TR_CITIES_GEOJSON.features) return null;
+    const id = typeof itemOrId === 'string' ? itemOrId : (itemOrId && itemOrId.id);
+    const name = itemOrId && itemOrId.name;
+    const plate = itemOrId && itemOrId.plate;
+    return window.TR_CITIES_GEOJSON.features.find(f => {
+      const p = f.properties;
+      return p.id === id || p.name === name || (plate && p.plate === plate);
+    }) || null;
+  }
+
   // --- KLASİK MOD: TEK SORU VURGULAMA MOTORU ---
   highlightQuestionShape(questionItem) {
     this.clearQuestionHighlight();
     if (!questionItem) return;
+
+    // Şehirler kategorisinde gerçek GeoJSON sınırlarını parıldat
+    if (questionItem.category === 'sehirler') {
+      const feat = this.getCityFeature(questionItem);
+      if (feat) {
+        this.currentShapeLayer = L.geoJSON(feat, {
+          style: {
+            color: '#93c5fd',
+            weight: 3.5,
+            fillColor: '#3b82f6',
+            fillOpacity: 0.65,
+            className: 'city-polygon-target animated-pulse-polygon'
+          }
+        }).addTo(this.map);
+
+        if (this.autoZoomEnabled) {
+          this.flyToBoundsSafely(this.currentShapeLayer.getBounds().pad(0.45));
+        }
+        return;
+      }
+    }
+
+    // Birleşik / Grup Şekiller (Composite Group): Tüm alt şekilleri aynı anda parıldat
+    if (questionItem.isGroup && Array.isArray(questionItem.groupItems)) {
+      const groupLayer = L.featureGroup();
+      const polyColor = topicColor(questionItem.category);
+
+      questionItem.groupItems.forEach(subItem => {
+        const sType = subItem.shapeType || 'point';
+        if (sType === 'point' || !subItem.coordinates || !Array.isArray(subItem.coordinates[0])) {
+          const icon = this.getCustomCategoryIcon(subItem, { isimsiz: true });
+          L.marker([subItem.lat, subItem.lng], { icon: icon }).addTo(groupLayer);
+        } else if (sType === 'polyline') {
+          L.polyline(subItem.coordinates, {
+            color: '#f59e0b',
+            weight: 7,
+            opacity: 0.9,
+            className: 'animated-pulse-polyline'
+          }).addTo(groupLayer);
+        } else if (sType === 'polygon') {
+          L.polygon(subItem.coordinates, {
+            color: polyColor,
+            weight: 3.5,
+            fillColor: polyColor,
+            fillOpacity: 0.45,
+            className: 'animated-pulse-polygon'
+          }).addTo(groupLayer);
+        }
+      });
+
+      this.currentShapeLayer = groupLayer.addTo(this.map);
+      if (this.autoZoomEnabled && groupLayer.getLayers().length > 0) {
+        this.flyToBoundsSafely(groupLayer.getBounds().pad(0.35));
+      }
+      return;
+    }
 
     const shapeType = questionItem.shapeType || 'point';
     const isMountain = questionItem.category === 'daglar' || (questionItem.type || '').toLowerCase().includes('dağ');
@@ -443,7 +589,9 @@ class GeographyMap {
       if (this.isLakePoint(questionItem)) {
         this.currentMarker = this.createLakeCircle(questionItem, true).addTo(this.map);
       } else {
-        const icon = this.getCustomCategoryIcon(questionItem);
+        // "Haritada işaretli konum hangisidir?" sorusunda işaretçinin üzerinde
+        // beklemek cevabın adını tarayıcı balonunda gösteriyordu.
+        const icon = this.getCustomCategoryIcon(questionItem, { isimsiz: true });
         this.currentMarker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
       }
 
@@ -498,7 +646,13 @@ class GeographyMap {
   }
 
   // --- YENİ MOD: ÇOKLU SEÇENEK (I-V / A-E) HARİTA ROZETLERİ ---
-  showMultipleChoiceLocations(options, onSelectOption) {
+  /**
+   * @param {object} ayarlar  `rozetSabit: true` -> harf/roma rozeti "Gösterge
+   *   Gizle" açıkken bile gizlenmez. Mutlak Konum oyunlarında pin ile panel
+   *   kartını eşleştiren TEK ipucu harftir; gizlenince oyun oynanamaz hale
+   *   geliyordu (tüm pinler aynı anonim daireye dönüşüyordu).
+   */
+  showMultipleChoiceLocations(options, onSelectOption, ayarlar = {}) {
     this.clearQuestionHighlight();
     if (!options || options.length === 0) return;
 
@@ -524,8 +678,67 @@ class GeographyMap {
 
       const shapeType = opt.shapeType || 'point';
 
-      // Çokgen veya Çizgi ise hafifçe göster
-      if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
+      // Rozet ancak haritada GERÇEKTEN çizilmiş bir geometri varsa gizlenebilir.
+      // Aksi halde (GeoJSON'u bulunamayan il, koordinat dizisi olmayan bölge)
+      // şık ne görünür ne de tıklanabilir kalıyordu.
+      let geometriVar = false;
+
+      // Şehirler kategorisi ise resmi GeoJSON sınırlarını çiz
+      if (opt.category === 'sehirler') {
+        const feat = this.getCityFeature(opt);
+        if (feat) {
+          geometriVar = true;
+          const geoLayer = L.geoJSON(feat, {
+            style: {
+              color: '#38bdf8',
+              weight: 2.2,
+              fillColor: '#0284c7',
+              fillOpacity: 0.28,
+              className: 'city-choice-polygon'
+            },
+            onEachFeature: (feature, layer) => {
+              layer.on('click', () => {
+                if (onSelectOption) onSelectOption(opt.id);
+              });
+              layer.on('mouseover', () => {
+                layer.setStyle({
+                  weight: 3.2,
+                  color: '#60a5fa',
+                  fillOpacity: 0.6
+                });
+              });
+              layer.on('mouseout', () => {
+                geoLayer.resetStyle(layer);
+              });
+            }
+          }).addTo(this.multiChoiceLayerGroup);
+        }
+      } else if (opt.isGroup && Array.isArray(opt.groupItems)) {
+        geometriVar = true;
+        opt.groupItems.forEach(sub => {
+          if (Number.isFinite(sub.lat) && Number.isFinite(sub.lng)) {
+            boundsCoords.push([sub.lat, sub.lng]);
+          }
+          if (sub.shapeType === 'polygon' && sub.coordinates && Array.isArray(sub.coordinates[0])) {
+            const poly = L.polygon(sub.coordinates, {
+              color: '#3b82f6',
+              weight: 2,
+              fillColor: '#3b82f6',
+              fillOpacity: 0.25
+            }).addTo(this.multiChoiceLayerGroup);
+            poly.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
+          } else if (sub.shapeType === 'polyline' && sub.coordinates && Array.isArray(sub.coordinates[0])) {
+            const line = L.polyline(sub.coordinates, {
+              color: '#3b82f6',
+              weight: 4,
+              opacity: 0.7,
+              dashArray: '4, 4'
+            }).addTo(this.multiChoiceLayerGroup);
+            line.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
+          }
+        });
+      } else if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
+        geometriVar = true;
         const polyline = L.polyline(opt.coordinates, {
           color: '#3b82f6',
           weight: 4,
@@ -537,6 +750,7 @@ class GeographyMap {
           if (onSelectOption) onSelectOption(opt.id);
         });
       } else if (shapeType === 'polygon' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
+        geometriVar = true;
         const polygon = L.polygon(opt.coordinates, {
           color: '#3b82f6',
           weight: 2,
@@ -549,19 +763,57 @@ class GeographyMap {
         });
       }
 
+      const isLinear = shapeType === 'polyline';
+      const isArea = shapeType === 'polygon' || opt.category === 'sehirler' || opt.category === 'bolgeler';
+      const isPoint = !isLinear && !isArea;
+      const shapeClass = isLinear ? 'shape-linear' : (isArea ? 'shape-area' : 'shape-point');
+
+      const rozetSabit = !!ayarlar.rozetSabit;
+
+      // Noktasal şekiller için keşif modundaki zengin özel ikonun HTML'i
+      let exploreIconHtml = '';
+      if (isPoint && !rozetSabit) {
+        // `isimsiz` + `notr`: ikon ne adı ne de oluşum türünü ele vermeli.
+        const customIcon = this.getCustomCategoryIcon(opt, { isimsiz: true, notr: true });
+        const ikonAyar = (customIcon && customIcon.options) || {};
+        const iconHtml = ikonAyar.html || '<div class="pulse-circle"></div>';
+
+        // Kaynak ikon normalde kendi `iconAnchor`'ıyla hizalanır (dağ prizmasının
+        // tabanı 32 px'lik kutunun 26. pikselindedir). Yalnızca HTML'ini kopyalayıp
+        // ortalarsak ikon kendi yarıçapı kadar kayar; farkı burada telafi ediyoruz.
+        const [ikonG, ikonY] = ikonAyar.iconSize || [0, 0];
+        const [ankraX, ankraY] = ikonAyar.iconAnchor || [ikonG / 2, ikonY / 2];
+        const dx = (ikonG / 2) - ankraX;
+        const dy = (ikonY / 2) - ankraY;
+
+        exploreIconHtml =
+          `<div class="choice-pin-explore-icon" style="--pin-dx:${dx}px; --pin-dy:${dy}px;">${iconHtml}</div>`;
+      }
+
+      const durumSiniflari = [
+        shapeClass,
+        geometriVar ? 'geometri-var' : 'geometri-yok',
+        rozetSabit ? 'rozet-sabit' : ''
+      ].filter(Boolean).join(' ');
+
       // Harfli ve Roma rakamlı şık pini
       const badgeHtml = `
-        <div class="choice-pin-container" data-id="${opt.id}">
+        <div class="choice-pin-container ${durumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}">
           <div class="choice-pin-badge">
             <span class="choice-pin-letter">${letter}</span>
             <span class="choice-pin-roman">${roman}</span>
           </div>
           <div class="choice-pin-point"></div>
+          ${exploreIconHtml}
         </div>
       `;
 
       const choiceIcon = L.divIcon({
-        className: 'choice-map-icon',
+        // Şekil/geometri sınıfları KÖK öğeye de yazılır. Rozet gizlendiğinde
+        // Leaflet işaretçisinin 36x44'lük şeffaf kutusu DOM'da kalıyor ve boş
+        // görünen haritaya tıklayan öğrenci farkında olmadan o şıkkı
+        // işaretliyordu; CSS bu kutuyu ancak kökten kapatabiliyor.
+        className: `choice-map-icon ${durumSiniflari}`,
         html: badgeHtml,
         iconSize: [36, 44],
         iconAnchor: [18, 44]
@@ -614,9 +866,12 @@ class GeographyMap {
       else if (info.state === 'dim') pin.classList.add('dimmed-pin');
       else if (info.state === 'picked') pin.classList.add('picked-pin');
 
-      // Siralama modunda pin uzerinde harf yerine secim sirasi gorunsun
+      // Siralama modunda pin uzerinde harf yerine secim sirasi gorunsun.
+      // Sira dusunce harf GERI DONMELI; aksi halde pin eski numarada kaliyordu.
       const letterEl = pin.querySelector('.choice-pin-letter');
-      if (letterEl && info.order) letterEl.textContent = info.order;
+      if (letterEl) {
+        letterEl.textContent = info.order ? info.order : (pin.dataset.letter || letterEl.textContent);
+      }
     });
   }
 
@@ -708,6 +963,111 @@ class GeographyMap {
 
   resetView() {
     this.flySafely([39.0, 35.3], 6.4);
+  }
+
+  // =========================================================================
+  // 🖉 ÇİZİM REFERANS KATMANI
+  //
+  // Çizim moduna girildiğinde harita eskiden tamamen boşaltılıyordu; kullanıcı
+  // yeni şekli hiçbir bağlam olmadan boş zemine çizmek zorunda kalıyordu.
+  // Artık seçili konunun mevcut şekilleri SOLGUN bir referans katmanı olarak
+  // haritada kalır.
+  //
+  // Katman KENDİ pane'indedir ve `pointer-events: none` taşır. Bu şart:
+  // referans şekiller tıklanabilir olsaydı, üzerlerine tıklamak Leaflet'te
+  // katman olayını tetikler, harita tıklamasına DÜŞMEZDİ — yani mevcut bir
+  // şeklin üstüne çizim noktası bırakmak imkânsız olurdu.
+  // =========================================================================
+
+  /** Referans pane'ini bir kez oluşturur (haritanın altında, tıklanamaz) */
+  _ensureReferencePane() {
+    if (!this.map || this.map.getPane('cizimReferans')) return;
+    const pane = this.map.createPane('cizimReferans');
+    pane.style.zIndex = 350;            // overlayPane (400) ve markerPane (600) ALTINDA
+    pane.style.pointerEvents = 'none';  // tıklama haritaya geçsin -> çizim noktası bırakılabilsin
+  }
+
+  clearReferenceLayer() {
+    this.referenceLayerGroup.clearLayers();
+  }
+
+  /**
+   * Seçili konunun şekillerini solgun/tıklanamaz referans olarak çizer.
+   * @returns {number} haritaya çizilen kayıt sayısı
+   */
+  showReferenceLayer(items, defaultColor = '#3b82f6') {
+    this.clearReferenceLayer();
+    if (!Array.isArray(items) || !items.length) return 0;
+    this._ensureReferencePane();
+
+    const ortak = { pane: 'cizimReferans', interactive: false };
+    let cizilen = 0;
+
+    items.forEach(item => {
+      const shapeType = item.shapeType || 'point';
+      const renk = topicColor(item.category, item.color || defaultColor);
+
+      // 81 il: resmi sınır geometrisi
+      if (item.category === 'sehirler') {
+        const feat = this.getCityFeature(item);
+        if (feat) {
+          L.geoJSON(feat, Object.assign({}, ortak, {
+            style: {
+              color: '#93c5fd', weight: 1.4, fillColor: '#3b82f6',
+              fillOpacity: 0.1, className: 'cizim-referans-sekil'
+            }
+          })).addTo(this.referenceLayerGroup);
+          cizilen++;
+        }
+        return;
+      }
+
+      if (shapeType === 'polyline' && Array.isArray(item.coordinates) && Array.isArray(item.coordinates[0])) {
+        L.polyline(item.coordinates, Object.assign({}, ortak, {
+          color: renk, weight: 3, opacity: 0.55,
+          dashArray: '5, 5', className: 'cizim-referans-sekil'
+        })).addTo(this.referenceLayerGroup);
+        cizilen++;
+        return;
+      }
+
+      if (shapeType === 'polygon' && Array.isArray(item.coordinates) && Array.isArray(item.coordinates[0])) {
+        L.polygon(item.coordinates, Object.assign({}, ortak, {
+          color: renk, weight: 1.6, fillColor: renk,
+          fillOpacity: 0.12, opacity: 0.5, className: 'cizim-referans-sekil'
+        })).addTo(this.referenceLayerGroup);
+        cizilen++;
+        return;
+      }
+
+      // Noktasal kayıtlar: keşif ikonunun solgun kopyası
+      if (!Number.isFinite(item.lat) || !Number.isFinite(item.lng)) return;
+
+      if (this.isLakePoint(item)) {
+        const daire = this.createLakeCircle(item, false);
+        daire.options.pane = 'cizimReferans';
+        daire.options.interactive = false;
+        daire.options.className = 'lake-circle cizim-referans-sekil';
+        daire.addTo(this.referenceLayerGroup);
+        cizilen++;
+        return;
+      }
+
+      // `isimsiz`: referans ikonunun tarayıcı balonunda kaydın adını göstermesi
+      // gereksiz; çizim sırasında imleç zaten sürekli şekillerin üzerinden geçer.
+      const ikon = this.getCustomCategoryIcon(item, { isimsiz: true });
+      const solgunIkon = L.divIcon({
+        className: `${ikon.options.className || ''} cizim-referans-ikon`,
+        html: ikon.options.html,
+        iconSize: ikon.options.iconSize,
+        iconAnchor: ikon.options.iconAnchor
+      });
+      L.marker([item.lat, item.lng], Object.assign({}, ortak, { icon: solgunIkon }))
+        .addTo(this.referenceLayerGroup);
+      cizilen++;
+    });
+
+    return cizilen;
   }
 
   // --- ÇİZİM MODU (DRAWING ENGINE) ---
@@ -862,11 +1222,254 @@ class GeographyMap {
     }
   }
 
+  // =========================================================================
+  // KEŞİF MODU BALONLARI VE DÜZENLEME EYLEMLERİ
+  // =========================================================================
+  /**
+   * Keşif balonunun alt şeridi. Kaynak paket dosyası ASLA değişmez; bu
+   * düğmeler `js/pack_edits.js` katmanına yazan olayları yayınlar.
+   * Yalnızca bir pakete ait kayıtlar düzenlenebilir (özel çizimlerin kendi
+   * yöneticisi vardır).
+   */
+  _popupActions(item) {
+    if (!this.editingEnabled || !item) return '';
+    const isCustom = item.isCustomUserAdded || item.category === 'ozel_cizimler' || !item.packId;
+    const targetPackId = isCustom ? 'custom' : item.packId;
+
+    const rozet = isCustom
+      ? '<span class="popup-edit-tag added">🎨 özel çizim</span>'
+      : (item.isUserAdded
+        ? '<span class="popup-edit-tag added">✚ eklediğin kayıt</span>'
+        : (item.isPackEdited ? '<span class="popup-edit-tag">✎ düzenlenmiş</span>' : ''));
+
+    const groupTag = item.groupId
+      ? `<div class="popup-group-tag" title="Diğer bir elemana sürükleyip bırakarak bağlayabilir veya bağı koparabilirsiniz">🔗 Birleşik Grup Üyesi</div>`
+      : '';
+
+    return `
+      <div class="popup-actions">
+        ${rozet}
+        ${groupTag}
+        <button type="button" class="popup-act" data-pop-act="edit"
+                data-pop-id="${escAttr(item.id)}" data-pop-pack="${escAttr(targetPackId)}">✏️ Düzenle</button>
+        <button type="button" class="popup-act danger" data-pop-act="delete"
+                data-pop-id="${escAttr(item.id)}" data-pop-pack="${escAttr(targetPackId)}">🗑 Sil</button>
+      </div>`;
+  }
+
+  /** Keşif modundaki tekil kayıt balonu (başlık + tür + not + eylemler) */
+  _popupHtml(item, baslik = null, altBaslik = null, metin = null) {
+    return `
+      <div class="popup-title">${baslik !== null ? baslik : item.name}</div>
+      <div class="popup-type">${altBaslik !== null ? altBaslik : `${item.type} (${item.region || ''})`}</div>
+      <div class="popup-text">${metin !== null ? metin : (item.kpssNot || '')}</div>
+      ${this._popupActions(item)}
+    `;
+  }
+
+  /**
+   * Balon içindeki düzenle/sil düğmeleri Leaflet tarafından her açılışta
+   * yeniden üretilir; tek tek dinleyici bağlamak yerine harita kabında bir
+   * kez devredilmiş dinleyici kuruyoruz.
+   */
+  _bindPopupActions() {
+    if (this._popupActionsBound) return;
+    const el = this.map && this.map.getContainer();
+    if (!el) return;
+    this._popupActionsBound = true;
+
+    el.addEventListener('click', (e) => {
+      const btn = e.target.closest && e.target.closest('[data-pop-act]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      document.dispatchEvent(new CustomEvent('pack:item-action', {
+        detail: {
+          action: btn.dataset.popAct,
+          itemId: btn.dataset.popId,
+          packId: btn.dataset.popPack
+        }
+      }));
+    });
+  }
+
+  /** Keşif balonlarındaki düzenle/sil şeridini aç/kapat */
+  setEditingEnabled(acik) {
+    this.editingEnabled = !!acik;
+    this._bindPopupActions();
+  }
+
+  /**
+   * Keşif Modunda elemanlar arası sürükle-bırak ile birleştirme / ayırma (Link/Unlink) etkileşimi
+   */
+  _enableDragLinking(layer, item, allItems) {
+    if (!layer || !layer.on) return;
+
+    layer.on('mousedown', (e) => {
+      if (e.originalEvent && e.originalEvent.button !== 0) return; // Yalnızca sol tık
+      
+      const startX = e.originalEvent.clientX;
+      const startY = e.originalEvent.clientY;
+      const startLatLng = e.latlng || [item.lat, item.lng];
+      let isDragging = false;
+      let hoveredTarget = null;
+      let laserLine = null;
+
+      const onMouseMove = (ev) => {
+        const dist = Math.hypot(ev.clientX - startX, ev.clientY - startY);
+        if (dist > 10 && !isDragging) {
+          isDragging = true;
+          this.map.dragging.disable();
+          this.map.getContainer().classList.add('linking-drag-mode');
+          laserLine = L.polyline([startLatLng, this.map.mouseEventToLatLng(ev)], {
+            color: '#8b5cf6',
+            weight: 3.5,
+            dashArray: '6, 6',
+            opacity: 0.9,
+            className: 'laser-drag-line'
+          }).addTo(this.map);
+        }
+
+        if (isDragging && laserLine) {
+          const currentLatLng = this.map.mouseEventToLatLng(ev);
+          laserLine.setLatLngs([startLatLng, currentLatLng]);
+
+          // En yakın hedef elemanı bul
+          hoveredTarget = null;
+          let minPixelDist = 45;
+          allItems.forEach(other => {
+            if (other.id === item.id) return;
+            const otherPt = this.map.latLngToContainerPoint([other.lat, other.lng]);
+            const pDist = Math.hypot(ev.clientX - otherPt.x, ev.clientY - otherPt.y);
+            if (pDist < minPixelDist) {
+              minPixelDist = pDist;
+              hoveredTarget = other;
+            }
+          });
+        }
+      };
+
+      const onMouseUp = (ev) => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+
+        if (isDragging) {
+          this.map.dragging.enable();
+          this.map.getContainer().classList.remove('linking-drag-mode');
+          if (laserLine) {
+            this.map.removeLayer(laserLine);
+            laserLine = null;
+          }
+
+          if (hoveredTarget && hoveredTarget.id !== item.id) {
+            document.dispatchEvent(new CustomEvent('custom-draw:link-toggle', {
+              detail: {
+                sourceId: item.id,
+                targetId: hoveredTarget.id,
+                sourceItem: item,
+                targetItem: hoveredTarget
+              }
+            }));
+          }
+          if (layer.closePopup) setTimeout(() => layer.closePopup(), 10);
+        }
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
+  }
+
   // --- KEŞİF MODU VE TÜM ÇİZİMLERİ GÖSTERME ---
   showAllPoints(items, defaultColor = '#3b82f6') {
     this.clearAll();
+    this._bindPopupActions();
 
+    // 1. Birleşik / Gruplanmış elemanlar arasında zarif bağlantı çizgileri çiz
+    const groupMap = new Map();
+    items.forEach(it => {
+      if (it.groupId) {
+        if (!groupMap.has(it.groupId)) groupMap.set(it.groupId, []);
+        groupMap.get(it.groupId).push(it);
+      }
+    });
+
+    groupMap.forEach((members, gId) => {
+      if (members.length >= 2) {
+        for (let i = 0; i < members.length - 1; i++) {
+          const p1 = [members[i].lat, members[i].lng];
+          const p2 = [members[i + 1].lat, members[i + 1].lng];
+          const groupLine = L.polyline([p1, p2], {
+            color: '#a855f7',
+            weight: 2.8,
+            dashArray: '8, 8',
+            opacity: 0.85,
+            className: 'group-connection-line'
+          });
+          groupLine.bindTooltip(`🔗 Birleşik Saha: <b>${members[0].name}</b>`, { sticky: true });
+          this.exploreLayerGroup.addLayer(groupLine);
+        }
+      }
+    });
+
+    // 2. Elemanları haritaya çiz ve sürükle-bırak bağlama dinleyicilerini bağla
     items.forEach(item => {
+      // 81 İl (Şehirler) için gerçek GeoJSON sınırlarını ve interaktif glow efektini çiz
+      if (item.category === 'sehirler') {
+        const feat = this.getCityFeature(item);
+        if (feat) {
+          const p = feat.properties;
+          const geoLayer = L.geoJSON(feat, {
+            style: {
+              color: 'rgba(96, 165, 250, 0.45)',
+              weight: 1.5,
+              fillColor: '#3b82f6',
+              fillOpacity: 0.12,
+              className: 'city-polygon'
+            },
+            onEachFeature: (feature, layer) => {
+              const tooltipContent = `📍 <span class="city-tooltip-plate">${p.plateStr}</span> <b>${p.name}</b> <span class="city-tooltip-region">${p.region}</span>`;
+              layer.bindTooltip(tooltipContent, {
+                sticky: true,
+                direction: 'top',
+                className: 'city-hover-tooltip',
+                offset: [0, -10]
+              });
+
+              layer.on('mouseover', () => {
+                layer.setStyle({
+                  weight: 2.8,
+                  color: '#60a5fa',
+                  fillColor: '#3b82f6',
+                  fillOpacity: 0.55
+                });
+                if (layer._path) {
+                  layer._path.classList.add('city-polygon-glow');
+                }
+              });
+
+              layer.on('mouseout', () => {
+                geoLayer.resetStyle(layer);
+                if (layer._path) {
+                  layer._path.classList.remove('city-polygon-glow');
+                }
+              });
+
+              const popupContent = this._popupHtml(
+                item,
+                `📍 ${p.name} (${p.plateStr})`,
+                `${p.region} Bölgesi | Rakım: ~${p.alt}m`,
+                p.kpss || item.kpssNot || ''
+              );
+              layer.bindPopup(popupContent, { maxWidth: 300 });
+              this._enableDragLinking(layer, item, items);
+            }
+          });
+          this.exploreLayerGroup.addLayer(geoLayer);
+          return;
+        }
+      }
+
       const color = item.color || defaultColor;
       const shapeType = item.shapeType || 'point';
       const isMountain = item.category === 'daglar' || (item.type || '').toLowerCase().includes('dağ');
@@ -875,15 +1478,12 @@ class GeographyMap {
       const customIcon = this.getCustomCategoryIcon(item);
 
       if (shapeType === 'point' || !item.coordinates || !Array.isArray(item.coordinates[0])) {
-        const popupContent = `
-          <div class="popup-title">${item.name}</div>
-          <div class="popup-type">${item.type} (${item.region || ''})</div>
-          <div class="popup-text">${item.kpssNot || ''}</div>
-        `;
+        const popupContent = this._popupHtml(item);
         const marker = this.isLakePoint(item)
           ? this.createLakeCircle(item, false)
           : L.marker([item.lat, item.lng], { icon: customIcon });
         marker.bindPopup(popupContent, { maxWidth: 280 });
+        this._enableDragLinking(marker, item, items);
         this.exploreLayerGroup.addLayer(marker);
       } else if (shapeType === 'polyline') {
         let polyColor = topicColor(item.category, color);
@@ -896,14 +1496,10 @@ class GeographyMap {
           opacity: 0.9,
           dashArray: isMountain ? '8, 4' : null
         });
-        const popupContent = `
-          <div class="popup-title">${item.name}</div>
-          <div class="popup-type">${item.type} (${item.region || 'Hat/Güzergah'})</div>
-          <div class="popup-text">${item.kpssNot || ''}</div>
-        `;
+        const popupContent = this._popupHtml(item, null, `${item.type} (${item.region || 'Hat/Güzergah'})`);
         line.bindPopup(popupContent, { maxWidth: 280 });
+        this._enableDragLinking(line, item, items);
         this.exploreLayerGroup.addLayer(line);
-        // Akarsu ve sıra dağlarda merkez noktası YOK: tıklama hedefi çizginin kendisi.
       } else if (shapeType === 'polygon') {
         const areaColor = topicColor(item.category, color);
         const polygon = L.polygon(item.coordinates, {
@@ -912,17 +1508,15 @@ class GeographyMap {
           fillColor: areaColor,
           fillOpacity: 0.3
         });
-        const popupContent = `
-          <div class="popup-title">${item.name}</div>
-          <div class="popup-type">${item.type} (${item.region || 'Alan/Bölge'})</div>
-          <div class="popup-text">${item.kpssNot || ''}</div>
-        `;
+        const popupContent = this._popupHtml(item, null, `${item.type} (${item.region || 'Alan/Bölge'})`);
         polygon.bindPopup(popupContent, { maxWidth: 280 });
+        this._enableDragLinking(polygon, item, items);
         this.exploreLayerGroup.addLayer(polygon);
 
         if (item.lat && item.lng) {
           const centerMarker = L.marker([item.lat, item.lng], { icon: customIcon });
           centerMarker.bindPopup(popupContent, { maxWidth: 280 });
+          this._enableDragLinking(centerMarker, item, items);
           this.exploreLayerGroup.addLayer(centerMarker);
         }
       }
@@ -935,6 +1529,7 @@ class GeographyMap {
     this.clearQuestionHighlight();
     this.exploreLayerGroup.clearLayers();
     this.drawingLayerGroup.clearLayers();
+    this.clearReferenceLayer();
   }
 
   clearAllLayers() {

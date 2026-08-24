@@ -333,6 +333,21 @@ const GEO_CATALOG = {
           "short": "Transport"
         }
       }
+    },
+    "sehirler": {
+      "canonical": "provinces",
+      "icon": "🏛️",
+      "color": "#3b82f6",
+      "i18n": {
+        "tr": {
+          "title": "Şehirler (81 İl)",
+          "short": "İller"
+        },
+        "en": {
+          "title": "Provinces & 81 Cities",
+          "short": "Cities"
+        }
+      }
     }
   },
   subTypes: {
@@ -1685,6 +1700,104 @@ const GEO_CATALOG = {
           }
         }
       }
+    ],
+    "sehirler": [
+      {
+        "id": "all",
+        "icon": "🌍",
+        "i18n": {
+          "tr": {
+            "label": "Tüm İller (81)"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "marmara",
+        "icon": "🏙️",
+        "i18n": {
+          "tr": {
+            "label": "Marmara (11)"
+          },
+          "en": {
+            "label": "Marmara (11)"
+          }
+        }
+      },
+      {
+        "id": "ege",
+        "icon": "🏖️",
+        "i18n": {
+          "tr": {
+            "label": "Ege (8)"
+          },
+          "en": {
+            "label": "Ege (8)"
+          }
+        }
+      },
+      {
+        "id": "akdeniz_bolge",
+        "icon": "☀️",
+        "i18n": {
+          "tr": {
+            "label": "Akdeniz (8)"
+          },
+          "en": {
+            "label": "Akdeniz (8)"
+          }
+        }
+      },
+      {
+        "id": "icanadolu",
+        "icon": "🌾",
+        "i18n": {
+          "tr": {
+            "label": "İç Anadolu (13)"
+          },
+          "en": {
+            "label": "İç Anadolu (13)"
+          }
+        }
+      },
+      {
+        "id": "karadeniz_bolge",
+        "icon": "🌲",
+        "i18n": {
+          "tr": {
+            "label": "Karadeniz (18)"
+          },
+          "en": {
+            "label": "Karadeniz (18)"
+          }
+        }
+      },
+      {
+        "id": "doguanadolu",
+        "icon": "🏔️",
+        "i18n": {
+          "tr": {
+            "label": "Doğu Anadolu (14)"
+          },
+          "en": {
+            "label": "Doğu Anadolu (14)"
+          }
+        }
+      },
+      {
+        "id": "guneydogu",
+        "icon": "🏛️",
+        "i18n": {
+          "tr": {
+            "label": "Güneydoğu (9)"
+          },
+          "en": {
+            "label": "Güneydoğu (9)"
+          }
+        }
+      }
     ]
   },
   packs: [
@@ -1701,14 +1814,14 @@ const GEO_CATALOG = {
         "daglar"
       ],
       "tiers": {
-        "1": 12,
-        "2": 22,
-        "3": 34
+        "1": 14,
+        "2": 26,
+        "3": 39
       },
       "sizeKb": {
-        "1": 4,
-        "2": 8,
-        "3": 12
+        "1": 5,
+        "2": 9,
+        "3": 14
       },
       "unlocks": [
         "quiz",
@@ -1755,14 +1868,14 @@ const GEO_CATALOG = {
         "su_kaynaklari"
       ],
       "tiers": {
-        "1": 26,
-        "2": 42,
-        "3": 55
+        "1": 35,
+        "2": 55,
+        "3": 79
       },
       "sizeKb": {
-        "1": 11,
-        "2": 17,
-        "3": 23
+        "1": 15,
+        "2": 23,
+        "3": 32
       },
       "unlocks": [
         "quiz",
@@ -1817,14 +1930,14 @@ const GEO_CATALOG = {
         "platolar"
       ],
       "tiers": {
-        "1": 19,
-        "2": 28,
-        "3": 41
+        "1": 26,
+        "2": 43,
+        "3": 65
       },
       "sizeKb": {
-        "1": 7,
-        "2": 10,
-        "3": 14
+        "1": 9,
+        "2": 15,
+        "3": 22
       },
       "unlocks": [
         "quiz",
@@ -2249,14 +2362,14 @@ const GEO_CATALOG = {
         "madenler"
       ],
       "tiers": {
-        "1": 12,
-        "2": 23,
-        "3": 35
+        "1": 23,
+        "2": 43,
+        "3": 65
       },
       "sizeKb": {
-        "1": 6,
-        "2": 10,
-        "3": 15
+        "1": 10,
+        "2": 19,
+        "3": 28
       },
       "unlocks": [
         "quiz",
@@ -2289,6 +2402,59 @@ const GEO_CATALOG = {
       }
     },
     {
+      "id": "tr.sehirler",
+      "country": "tr",
+      "group": "beseri",
+      "version": 1,
+      "icon": "🏛️",
+      "color": "#3b82f6",
+      "file": "data/packs/pack.tr.sehirler.js",
+      "virtual": false,
+      "categories": [
+        "sehirler"
+      ],
+      "tiers": {
+        "1": 28,
+        "2": 52,
+        "3": 81
+      },
+      "sizeKb": {
+        "1": 15,
+        "2": 27,
+        "3": 42
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "conqueror",
+        "speedrun",
+        "exam"
+      ],
+      "recommends": [
+        "tr.bolgeler",
+        "tr.nufus"
+      ],
+      "planRows": [
+        {
+          "cat": "sehirler",
+          "icon": "🏛️",
+          "count": 18,
+          "tr": "İl",
+          "en": "City"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Şehirler & 81 İl",
+          "desc": "Türkiye'nin 81 ili, resmi il sınırları, plaka kodları, coğrafi bölgeleri ve KPSS özellikleri."
+        },
+        "en": {
+          "title": "Provinces & 81 Cities",
+          "desc": "Turkey's 81 provinces, official borders, license plates, geographic regions and facts."
+        }
+      }
+    },
+    {
       "id": "tr.nufus",
       "country": "tr",
       "group": "beseri",
@@ -2312,28 +2478,31 @@ const GEO_CATALOG = {
       },
       "unlocks": [
         "quiz",
+        "geoguessr",
         "conqueror",
         "speedrun",
         "exam"
       ],
-      "recommends": [],
+      "recommends": [
+        "tr.bolgeler"
+      ],
       "planRows": [
         {
           "cat": "nufus",
           "icon": "👥",
           "count": 12,
           "tr": "Nüfus",
-          "en": "Population"
+          "en": "Pop."
         }
       ],
       "i18n": {
         "tr": {
-          "title": "Nüfus, Yerleşme & Göç",
-          "desc": "Yoğun ve seyrek nüfus alanları, göç yönleri, yerleşme dokusu ve mevsimlik hareketler."
+          "title": "Nüfus & Yerleşme",
+          "desc": "Yoğun ve seyrek nüfuslu alanlar, göç hareketleri, kır-kent ve idari merkezler."
         },
         "en": {
-          "title": "Population, Settlement & Migration",
-          "desc": "Dense and sparse areas, migration flows, settlement patterns and seasonal movement."
+          "title": "Population & Settlement",
+          "desc": "Densely and sparsely populated areas, migration, rural-urban and administrative centers."
         }
       }
     },
@@ -2343,7 +2512,7 @@ const GEO_CATALOG = {
       "group": "beseri",
       "version": 1,
       "icon": "🗺️",
-      "color": "#7c3aed",
+      "color": "#10b981",
       "file": "data/packs/pack.tr.bolgeler.js",
       "virtual": false,
       "categories": [
@@ -2366,7 +2535,9 @@ const GEO_CATALOG = {
         "speedrun",
         "exam"
       ],
-      "recommends": [],
+      "recommends": [
+        "tr.sehirler"
+      ],
       "planRows": [
         {
           "cat": "bolgeler",
@@ -2378,12 +2549,12 @@ const GEO_CATALOG = {
       ],
       "i18n": {
         "tr": {
-          "title": "7 Bölge & 21 Bölüm",
-          "desc": "Coğrafi bölgelerin sınırları ve her bölümün ayırt edici özellikleri."
+          "title": "Coğrafi Bölgeler & Bölümler",
+          "desc": "7 coğrafi bölge ve 21 coğrafi bölüm; sınırları, genel özellikleri ve kalkınma projeleri."
         },
         "en": {
-          "title": "7 Regions & 21 Subregions",
-          "desc": "Boundaries of the geographic regions and the distinguishing traits of each subregion."
+          "title": "Regions & Subregions",
+          "desc": "7 geographic regions and 21 subregions; boundaries, traits and development projects."
         }
       }
     },
@@ -2393,7 +2564,7 @@ const GEO_CATALOG = {
       "group": "fiziki",
       "version": 1,
       "icon": "🏖️",
-      "color": "#06b6d4",
+      "color": "#0ea5e9",
       "file": "data/packs/pack.tr.kiyilar.js",
       "virtual": false,
       "categories": [
@@ -2414,15 +2585,16 @@ const GEO_CATALOG = {
         "geoguessr",
         "conqueror",
         "speedrun",
-        "exam",
-        "layer_satellite"
+        "exam"
       ],
-      "recommends": [],
+      "recommends": [
+        "tr.sular"
+      ],
       "planRows": [
         {
           "cat": "kiyilar",
           "icon": "🏖️",
-          "count": 14,
+          "count": 12,
           "tr": "Kıyı",
           "en": "Coast"
         }
@@ -2430,11 +2602,11 @@ const GEO_CATALOG = {
       "i18n": {
         "tr": {
           "title": "Kıyılar, Adalar & Denizler",
-          "desc": "Yarımadalar, körfezler, burunlar, adalar, kıyı tipleri ve dört denizin özellikleri."
+          "desc": "Boyuna, enine, dalmaçya, ria ve limanlı kıyı tipleri; adalar, körfezler ve denizlerimiz."
         },
         "en": {
           "title": "Coasts, Islands & Seas",
-          "desc": "Peninsulas, gulfs, capes, islands, coast types and the traits of the four seas."
+          "desc": "Longitudinal, transverse, Dalmatian, ria and liman coast types; islands and gulfs."
         }
       }
     },
@@ -2444,7 +2616,7 @@ const GEO_CATALOG = {
       "group": "fiziki",
       "version": 1,
       "icon": "🌬️",
-      "color": "#14b8a6",
+      "color": "#8b5cf6",
       "file": "data/packs/pack.tr.dis_kuvvetler.js",
       "virtual": false,
       "categories": [
@@ -2468,25 +2640,25 @@ const GEO_CATALOG = {
         "exam"
       ],
       "recommends": [
-        "tr.sular"
+        "tr.daglar"
       ],
       "planRows": [
         {
           "cat": "dis_kuvvetler",
           "icon": "🌬️",
           "count": 14,
-          "tr": "Dış Kuvvet",
+          "tr": "Şekil",
           "en": "Landform"
         }
       ],
       "i18n": {
         "tr": {
-          "title": "Dış Kuvvetler & Yerşekilleri",
-          "desc": "Karstik, buzul, rüzgâr, akarsu ve dalga şekilleri; aşınım ve birikim ayrımı."
+          "title": "Dış Kuvvetler & Yer Şekilleri",
+          "desc": "Karstik, buzul, rüzgâr, dalga-akıntı ve peri bacaları gibi aşınım ve birikim şekilleri."
         },
         "en": {
-          "title": "Exogenic Forces & Landforms",
-          "desc": "Karstic, glacial, aeolian, fluvial and wave landforms; erosion versus deposition."
+          "title": "Exogenic Landforms",
+          "desc": "Karstic, glacial, aeolian, coastal and fairy chimney erosional/depositional landforms."
         }
       }
     },

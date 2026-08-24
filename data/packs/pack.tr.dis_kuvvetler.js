@@ -1,5 +1,5 @@
 /**
- * 📦 Dış Kuvvetler & Yerşekilleri  —  tr.dis_kuvvetler
+ * 📦 Dış Kuvvetler & Yer Şekilleri  —  tr.dis_kuvvetler
  *
  * OTOMATİK ÜRETİLDİ — elle düzenlemeyin: node tools/build_packs.js
  * Şema: { id, cat, tier(1-3), sub[], formation, geom, i18n: { lang: {...} } }

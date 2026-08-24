@@ -1,5 +1,5 @@
 /**
- * 📦 7 Bölge & 21 Bölüm  —  tr.bolgeler
+ * 📦 Coğrafi Bölgeler & Bölümler  —  tr.bolgeler
  *
  * OTOMATİK ÜRETİLDİ — elle düzenlemeyin: node tools/build_packs.js
  * Şema: { id, cat, tier(1-3), sub[], formation, geom, i18n: { lang: {...} } }

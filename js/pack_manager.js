@@ -48,8 +48,15 @@ const PACK_TIERS = [
 ];
 
 class PackManager {
-  constructor(catalog) {
+  /**
+   * @param {object} catalog  `data/packs/catalog.js` manifesti
+   * @param {PackEditStore} edits  Kullanıcı düzenleme katmanı (bkz. js/pack_edits.js).
+   *   Kaynak paket dosyaları ASLA değişmez; silme/düzenleme/ekleme bu katmanda
+   *   tutulur ve `rebuild()` sırasında kaynağın üstüne uygulanır.
+   */
+  constructor(catalog, edits = null) {
     this.catalog = catalog;
+    this.edits = edits;
     this.state = this._load();
     this._loading = {};        // url -> Promise (aynı dosya iki kez indirilmesin)
     this.unlockedModes = new Set();
@@ -166,25 +173,34 @@ class PackManager {
     return this.install(packId, tier);
   }
 
+  /**
+   * Paketi kaldırır. Kullanıcının o pakete yaptığı düzenlemeler DE düşer:
+   * paket yeniden kurulduğunda fabrika hâli gelmelidir. Kademe değiştirmek
+   * (`setTier`) düzenlemeleri silmez, yalnızca kaldırma siler.
+   */
   uninstall(packId) {
     if (!this.state || !this.state[packId]) return false;
     delete this.state[packId];
+    if (this.edits) this.edits.dropPack(packId);
     this._save();
     this.rebuild();
     return true;
   }
 
   /**
-   * Kurulu olmayan TÜM paketleri kurar. Zaten kurulu paketlerin kademesine
-   * dokunulmaz — kullanıcı bilinçli olarak "Az" seçtiyse toplu kurulum bunu
-   * ezmemelidir.
-   * @param {number} tier      yeni kurulacaklar için kademe
+   * TÜM paketleri kurar veya kademelerini günceller.
+   * @param {number} tier      kurulacak kademe (1: Az, 2: Orta, 3: Tam)
    * @param {function} ilerle  (yapilan, toplam) ile çağrılır
+   * @param {boolean} forceAll true ise kurulu paketlerin kademesini de günceller
    */
-  async installAll(tier = 2, ilerle = null) {
-    const hedefler = this.catalog.packs.filter(p => !this.isInstalled(p.id));
+  async installAll(tier = 2, ilerle = null, forceAll = false) {
+    const t = Math.max(1, Math.min(3, parseInt(tier, 10) || 2));
+    const hedefler = forceAll
+      ? this.catalog.packs
+      : this.catalog.packs.filter(p => !this.isInstalled(p.id) || this.installedTier(p.id) !== t);
+
     for (let i = 0; i < hedefler.length; i++) {
-      await this.install(hedefler[i].id, tier);
+      await this.install(hedefler[i].id, t);
       if (ilerle) ilerle(i + 1, hedefler.length);
     }
     return hedefler.length;
@@ -195,6 +211,7 @@ class PackManager {
   uninstallAll() {
     const sayi = this.installedIds().length;
     this.state = {};
+    if (this.edits) this.edits.dropAll();
     this._save();
     this.rebuild();
     return sayi;
@@ -304,9 +321,24 @@ class PackManager {
       const esik = this.tierOf(packId);
       payload.items.forEach(raw => {
         if ((raw.tier || 3) > esik) return;
-        const item = PackManager.project(Object.assign({ _packId: packId }, raw));
+        const kaynak = PackManager.project(Object.assign({ _packId: packId }, raw));
+
+        // DÜZENLEME KATMANI: kaynak kaydın üstüne kullanıcının yaması uygulanır.
+        // `null` dönmesi kullanıcının o kaydı gizlediği anlamına gelir.
+        const item = this.edits ? this.edits.applyTo(packId, kaynak) : kaynak;
+        if (!item) return;
+
         (COGRAFYA_DATA[item.category] || (COGRAFYA_DATA[item.category] = [])).push(item);
       });
+
+      // Kullanıcının bu pakete EKLEDİĞİ kayıtlar. Kademe eşiğine tabi değildir:
+      // kendi eklediğin kaydın "Az" kurulumda kaybolması beklenmedik olurdu.
+      if (this.edits) {
+        this.edits.addedFor(packId).forEach(item => {
+          if (!item.category) return;
+          (COGRAFYA_DATA[item.category] || (COGRAFYA_DATA[item.category] = [])).push(item);
+        });
+      }
     });
 
     // --- 3. Sekme listesi: katalog sırasına sadık kal, canlı sayaçla ---
@@ -356,6 +388,29 @@ class PackManager {
   // =========================================================================
   // SORGULAR
   // =========================================================================
+  /**
+   * Bir kaydın DÜZENLENMEMİŞ kaynak hâlini döndürür.
+   * Düzenleme modali hem "yalnızca gerçekten değişen alanı yamala" hem de
+   * "bu kaydı varsayılana döndür" için buna ihtiyaç duyar.
+   * Kullanıcının kendi eklediği kayıtların kaynağı yoktur -> `null`.
+   */
+  sourceItem(packId, itemId) {
+    const payload = GeoPacks.get(packId);
+    if (!payload || !Array.isArray(payload.items)) return null;
+    const raw = payload.items.find(it => it.id === itemId);
+    if (!raw) return null;
+    return PackManager.project(Object.assign({ _packId: packId }, raw));
+  }
+
+  /** Kurulu paketlerden bu kategoriye kayıt sağlayanların id listesi */
+  packsForCategory(catId) {
+    return this.installedIds().filter(packId => {
+      const payload = GeoPacks.get(packId);
+      if (!payload || !Array.isArray(payload.items)) return false;
+      return payload.items.some(it => it.cat === catId);
+    });
+  }
+
   totalItems() {
     return Object.keys(COGRAFYA_DATA).reduce((n, k) => n + COGRAFYA_DATA[k].length, 0);
   }

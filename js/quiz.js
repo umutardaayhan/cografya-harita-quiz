@@ -24,6 +24,7 @@ class GeographyQuiz {
     this.isAnswered = false;
     this.optionCount = this.loadOptionCount(); // 2, 3, 4, 5, 6, 8, 'all'
     this.difficultyLevel = this.loadDifficultyLevel(); // 1, 2, 3, 4, 5
+    this.homogeneityLevel = this.loadHomogeneityLevel(); // 1 (Bilinmeyen/Yanlışlar ön planda) - 5 (Tam homojen / eşit)
     this.quizFormat = this.loadQuizFormat(); // 'identify', 'find_on_map', 'mixed'
     this.currentActualFormat = 'identify';
 
@@ -65,6 +66,31 @@ class GeographyQuiz {
       bestStreak: 0
     };
     this.saveStats();
+  }
+
+  resetAllProgress() {
+    this.stats = {
+      correct: 0,
+      wrong: 0,
+      streak: 0,
+      bestStreak: 0
+    };
+    this.saveStats();
+
+    this.analytics = {};
+    this.saveAnalytics();
+
+    this.wrongPool = [];
+    this.recentQuestionIds = [];
+
+    localStorage.removeItem('kpss_cografya_stats');
+    localStorage.removeItem('kpss_cografya_question_analytics');
+    localStorage.removeItem('kpss_mistakes_bank');
+    localStorage.removeItem('kpss_speedrun_best_score');
+    localStorage.removeItem('kpss_gunun_plani_v1');
+    localStorage.removeItem('kpss_cografya_conqueror_progress');
+
+    this.reloadCategoryItems();
   }
 
   loadAnalytics() {
@@ -109,6 +135,20 @@ class GeographyQuiz {
 
   getDifficultyLevel() {
     return this.difficultyLevel;
+  }
+
+  loadHomogeneityLevel() {
+    const saved = localStorage.getItem('kpss_cografya_homogeneity');
+    return saved ? parseInt(saved, 10) : 3;
+  }
+
+  setHomogeneityLevel(level) {
+    this.homogeneityLevel = Math.max(1, Math.min(5, parseInt(level, 10) || 3));
+    localStorage.setItem('kpss_cografya_homogeneity', this.homogeneityLevel.toString());
+  }
+
+  getHomogeneityLevel() {
+    return this.homogeneityLevel;
   }
 
   loadOptionCount() {
@@ -223,21 +263,50 @@ class GeographyQuiz {
     return Math.round(R * c);
   }
 
-  // Ustalık Düzeyi & Hata Ağırlığı (Dengeli Doğal Dağılım)
+  // Ustalık Düzeyi & Hata Ağırlığı & Dinamik Homojenlik Enterpolasyonu
   calculateItemWeight(item) {
-    const itemAnalytics = this.analytics[item.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
-    
-    if (itemAnalytics.streak >= 4) {
-      return 0.4;
-    }
-    if (itemAnalytics.streak >= 2) {
-      return 0.7;
-    }
-    if (itemAnalytics.wrongCount > 0) {
-      return 1.0 + Math.min(1.2, itemAnalytics.wrongCount * 0.3);
+    // Düzey 5 ise TAM HOMOJEN: tüm sorular geçmişten bağımsız eşit ihtimalle (1.0) gelir.
+    if (this.homogeneityLevel === 5) {
+      return 1.0;
     }
 
-    return 1.0;
+    const itemAnalytics = this.analytics[item.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
+    const correctCount = itemAnalytics.correctCount || 0;
+    const wrongCount = itemAnalytics.wrongCount || 0;
+    const streak = itemAnalytics.streak || 0;
+    const totalCount = correctCount + wrongCount;
+
+    let rawWeight = 1.0;
+
+    // 🎓 5. kez sorulan ve bilinen cevaplar soru havuzunda nadiren çıkar
+    if (correctCount >= 5 && streak >= 2) {
+      rawWeight = 0.05; // %95 seyreltme (çok nadir)
+    } else if (correctCount >= 5) {
+      rawWeight = 0.12;
+    } else if (streak >= 3) {
+      rawWeight = 0.35;
+    } else if (streak >= 1) {
+      rawWeight = 0.7;
+    } else if (totalCount === 0) {
+      // ✨ Hiç sorulmamış / bilinmeyen yeni soru ön planda gelsin
+      rawWeight = 1.8;
+    }
+
+    // ⚠️ Yanlış bilinen soruların ağırlığı katlanarak artar
+    if (wrongCount > 0) {
+      const wrongBoost = 1.5 + Math.min(3.5, wrongCount * 0.8);
+      // Son denemede de hata yapıldıysa önceliği daha da artır
+      const freshMistakeBonus = (streak === 0) ? 0.8 : 0.0;
+      rawWeight = Math.max(rawWeight, wrongBoost + freshMistakeBonus);
+    }
+
+    // Homojenlik Seviyesi Enterpolasyonu:
+    // Düzey 1 -> alpha = 1.0 (Tam adaptif / bilinmeyen ve yanlışlar ön planda, 5+ bilinenler nadir)
+    // Düzey 5 -> alpha = 0.0 (Tam homojen / eşit ağırlık)
+    const alpha = (5 - this.homogeneityLevel) / 4.0;
+    const finalWeight = Math.max(0.02, 1.0 + (rawWeight - 1.0) * alpha);
+
+    return finalWeight;
   }
 
   getWeightedRandomItem(pool) {
@@ -358,8 +427,13 @@ class GeographyQuiz {
     }
 
     const itemAnalytics = this.analytics[selectedQuestion.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
-    const isProblematic = itemAnalytics.wrongCount >= 2 && itemAnalytics.wrongCount > itemAnalytics.correctCount;
+    const correctCount = itemAnalytics.correctCount || 0;
+    const wrongCount = itemAnalytics.wrongCount || 0;
+    const totalCount = correctCount + wrongCount;
+    const isProblematic = wrongCount >= 2 && wrongCount > correctCount;
     const isMastered = itemAnalytics.streak >= 3;
+    const isMastered5 = correctCount >= 5;
+    const isNew = totalCount === 0;
 
     if (this.optionCount === 'all') {
       if (this.currentActualFormat === 'find_on_map') {
@@ -454,10 +528,13 @@ class GeographyQuiz {
       actualFormat: this.currentActualFormat,
       isProblematic,
       isMastered,
+      isMastered5,
+      isNew,
       wrongCount: itemAnalytics.wrongCount,
       correctCount: itemAnalytics.correctCount,
       streak: itemAnalytics.streak,
-      difficultyLevel: this.difficultyLevel
+      difficultyLevel: this.difficultyLevel,
+      homogeneityLevel: this.homogeneityLevel
     };
   }
 
@@ -466,8 +543,11 @@ class GeographyQuiz {
     if (this.isAnswered || !this.currentQuestion) return null;
     this.isAnswered = true;
 
-    const isCorrect = selectedId === this.currentQuestion.id;
-    const qId = this.currentQuestion.id;
+    const q = this.currentQuestion;
+    const isCorrect = (selectedId === q.id) || 
+                      (q.isGroup && Array.isArray(q.memberIds) && q.memberIds.includes(selectedId)) ||
+                      (q.groupId && (selectedId === q.groupId));
+    const qId = q.id;
 
     if (!this.analytics[qId]) {
       this.analytics[qId] = { wrongCount: 0, correctCount: 0, streak: 0, lastSeen: Date.now() };
@@ -503,6 +583,8 @@ class GeographyQuiz {
       isCorrect,
       currentQuestion: this.currentQuestion,
       correctId: this.currentQuestion.id,
+      memberIds: this.currentQuestion.memberIds || [this.currentQuestion.id],
+      isGroup: !!this.currentQuestion.isGroup,
       selectedId,
       kpssNot: this.currentQuestion.kpssNot,
       type: this.currentQuestion.type,

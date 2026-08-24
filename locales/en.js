@@ -59,11 +59,15 @@ GeoI18n.register('en', {
   'group.modul': 'Modules',
 
   // --- Tiers ---
-  'tier.az': 'Light',
+  'tier.az': 'Basic',
   'tier.orta': 'Medium',
   'tier.tam': 'Full',
-  'tier.azDesc': 'Core — exam records and the most asked entries',
-  'tier.ortaDesc': 'Core plus the frequently asked second ring',
+  'tier.1': 'Basic',
+  'tier.2': 'Medium',
+  'tier.3': 'Full',
+  'store.globalTier': 'Global Level',
+  'tier.azDesc': 'Core — exam records and most asked items',
+  'tier.ortaDesc': 'Core + frequently asked second circle',
   'tier.tamDesc': 'Every entry in the pack',
 
   // --- Locks ---

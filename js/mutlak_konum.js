@@ -259,9 +259,12 @@ class MutlakKonumGameBase {
    * (standart "Haritada Bul" testiyle aynı davranış).
    */
   showPins(cities) {
+    // `rozetSabit`: bu ailedeki oyunlarda pini panel kartina baglayan tek sey
+    // A-B-C-D harfidir. "Gosterge Gizle" acikken harf gizlenince tum pinler
+    // ayni anonim daireye donusuyor ve oyun oynanamaz hale geliyordu.
     this.geoMap.showMultipleChoiceLocations(cities, (cityId) => {
       if (this.onPinSelect) this.onPinSelect(cityId);
-    });
+    }, { rozetSabit: true });
   }
 
   baseView(extra) {

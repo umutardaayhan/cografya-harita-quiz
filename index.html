@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Uygulama Stili -->
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=5">
   <link rel="stylesheet" href="css/packs.css?v=2">
 </head>
 <body>
@@ -103,6 +103,14 @@
               </div>
             </button>
 
+            <button id="btn-secmece-mode" class="game-mode-option-btn">
+              <span>🎯</span>
+              <div>
+                <strong>Seçmece Quiz</strong>
+                <small>Kategori sınırı olmadan istediğin yer şekillerini seç ve çöz</small>
+              </div>
+            </button>
+
             <div class="games-dropdown-divider"><span>🧬 OLUŞUM & SINIFLANDIRMA</span></div>
 
             <button id="btn-boyama-mode" class="game-mode-option-btn">
@@ -160,6 +168,11 @@
           </div>
         </div>
 
+        <!-- 🎯 Seçmece Quiz Girişi -->
+        <button id="btn-secmece-modal" class="nav-btn secmece-btn" title="İstediğin yer şekillerini havuza ekleyip sadece onlardan oluşan test çöz">
+          <span>🎯</span> <span>Seçmece</span>
+        </button>
+
         <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Test / Keşif Modu Değiştir">
           <span>🧭</span> <span>Keşif Modu</span>
         </button>
@@ -187,6 +200,9 @@
             </button>
 
             <div class="tools-section-title">🛠️ Araçlar</div>
+            <button id="btn-secmece-tools" class="tools-row-btn" title="İstediğin yer şekillerini seçip özel quiz havuzu oluştur">
+              <span>🎯</span> <span>Seçmece Quiz Havuzu</span>
+            </button>
             <button id="focus-mode-btn" class="tools-row-btn" title="Haritayı Tam Ekran Gör (Sadece Soru ve Harita)">
               <span>🔍</span> <span>Odak Modu</span>
             </button>
@@ -195,6 +211,10 @@
             </button>
             <button id="reset-panels-btn" class="tools-row-btn" title="Tüm panelleri varsayılan konum ve boyutlarına döndür">
               <span>🪟</span> <span>Panelleri Sıfırla</span>
+            </button>
+            <div class="tools-section-title" style="color: #ef4444;">⚠️ İstatistikler</div>
+            <button id="reset-all-stats-btn" class="tools-row-btn danger-text" title="Tüm soru geçmişini, başarı oranlarını ve ustalık kayıtlarını sıfırla">
+              <span>🗑️</span> <span>Tüm İstatistikleri Sıfırla</span>
             </button>
           </div>
         </div>
@@ -242,8 +262,11 @@
         <span>❌ Kapat</span>
       </button>
     </div>
-    <div id="drawing-hint" class="drawing-hint">
-      💡 Haritada bir noktaya tıklayın.
+    <!-- DİKKAT: setDrawShape() `drawingHint.textContent` yazar; ipucu metni bu
+         yüzden KENDİ span'inde durmalı, yoksa yanındaki referans çipi silinir. -->
+    <div class="drawing-hint">
+      <span id="drawing-hint">💡 Haritada bir noktaya tıklayın.</span>
+      <span id="drawing-ref-info" class="drawing-ref-info" style="display:none;"></span>
     </div>
   </div>
 
@@ -279,6 +302,11 @@
           <span>🔇</span> <span id="labels-btn-label">Dilsiz Harita</span>
         </button>
 
+        <!-- Soru İçi Şık Göstergelerini Gizle/Küçült Butonu -->
+        <button id="toggle-badges-btn" class="tool-btn" title="Sorulardaki harf/sayı pinlerini küçülterek sadece sade nokta ve çizgileri gösterir">
+          <span>🏷️</span> <span id="badges-btn-label">Göstergeler</span>
+        </button>
+
         <button id="reset-view-btn" class="tool-btn" title="Haritayı Merkeze Al">
           <span>🎯</span> <span>Merkezle</span>
         </button>
@@ -305,6 +333,16 @@
           <button class="opt-count-btn" data-count="6">6</button>
           <button class="opt-count-btn" data-count="8">8</button>
           <button class="opt-count-btn celal-opt-btn" data-count="all" title="🌋 Celal Şengör Modu: Bu kategorideki TÜM yer şekillerini şıklara döker!">🌋 Celal Şengör (Tümü)</button>
+        </div>
+
+        <!-- Soru Havuzu Homojenlik Düzeyi (1: Bilinmeyen ve Yanlışlar Ön Planda, 5: Tam Eşit İhtimal) -->
+        <div class="homogeneity-selector" title="Homojenlik Düzeyi (1: Bilinmeyen ve Yanlış Yapılanlar Ön Planda, 5: Tüm Sorular Eşit İhtimalle Gelir)">
+          <span class="selector-label" id="homogeneity-label">🎲 Homojenlik:</span>
+          <button class="homo-btn" data-level="1" title="1. Düzey: Bilinmeyen & Yanlış Yapılanlar Ön Planda (5+ Kez Bilinenler Çok Nadir)">1 (Adaptif)</button>
+          <button class="homo-btn" data-level="2" title="2. Düzey: Yüksek Adaptif">2</button>
+          <button class="homo-btn active" data-level="3" title="3. Düzey: Dengeli Dağılım">3</button>
+          <button class="homo-btn" data-level="4" title="4. Düzey: Hafif Adaptif">4</button>
+          <button class="homo-btn" data-level="5" title="5. Düzey: Tam Homojen (Tüm Sorular Eşit İhtimalle Gelir)">5 (Eşit)</button>
         </div>
       </div>
     </div>
@@ -472,6 +510,14 @@
         <!-- Keşif Modu Bilgisi -->
         <div id="explore-banner" class="explore-banner"></div>
 
+        <!-- 🎯 Seçmece Quiz Aktif Bilgi Çubuğu -->
+        <div id="custom-pool-banner" class="custom-pool-banner" style="display: none;">
+          <div class="custom-pool-banner-text">
+            <span>🎯 <strong>Seçmece Quiz:</strong> <span id="custom-pool-count">0</span> özel yer şekli</span>
+          </div>
+          <button id="custom-pool-exit-btn" class="custom-pool-exit-btn" title="Seçmece modundan çık ve normal kategorilere dön">✕ Çık</button>
+        </div>
+
         <!-- Soru Başlığı ve Rozetler -->
         <div class="question-header">
           <div class="question-badge-container">
@@ -530,15 +576,22 @@
           </div>
           <div class="form-group">
             <label for="shape-category">Eklenecek Konu / Kategori *</label>
-            <select id="shape-category" class="form-select">
-              <option value="daglar">🏔️ Dağlar</option>
-              <option value="ovalar">🌾 Ovalar</option>
-              <option value="platolar">⛰️ Platolar</option>
-              <option value="su_kaynaklari">🌊 Akarsu & Göller</option>
-              <option value="gecitler">🚪 Geçitler & Boğazlar</option>
-              <option value="ozel_cizimler">🎨 Özel Çizimlerim</option>
-            </select>
+            <!-- Secenekler KURULU PAKETLERDEN turetilir (app.js -> fillCategorySelect).
+                 Sabit liste, paket sistemine gecildikten sonra yeni konulari
+                 (madenler, turizm, nufus, kiyilar...) hic gostermiyordu. -->
+            <select id="shape-category" class="form-select"></select>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="shape-target-pack">Nereye Kaydedilsin?</label>
+          <select id="shape-target-pack" class="form-select">
+            <option value="">🎨 Çizimlerim (bağımsız katman)</option>
+          </select>
+          <small class="form-hint">
+            Bir paket seçersen kayıt o paketin <strong>düzenleme katmanına</strong> eklenir; paketin
+            kaynak dosyası değişmez. Paketi kaldırdığında bu eklemeler de düşer.
+          </small>
         </div>
 
         <div class="form-row">
@@ -575,6 +628,96 @@
         </div>
       </form>
     </div>
+  </div>
+
+  <!-- Paket Kaydı Düzenleme Modalı (kaynak paket dosyası ASLA değişmez) -->
+  <div id="pack-edit-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Kaydı Düzenle</h3>
+        <button id="pack-edit-close-btn" class="modal-close">&times;</button>
+      </div>
+
+      <div class="pack-edit-source">
+        <span id="pack-edit-source-name">—</span>
+        <span id="pack-edit-state" class="popup-edit-tag" style="display:none;"></span>
+      </div>
+
+      <form id="pack-edit-form" class="modal-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pe-name">Ad *</label>
+            <input type="text" id="pe-name" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="pe-category">Konu / Kategori *</label>
+            <select id="pe-category" class="form-select"></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pe-type">Tür / Oluşum</label>
+            <input type="text" id="pe-type" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="pe-region">Bölge / Yöre</label>
+            <input type="text" id="pe-region" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pe-city">İl / Şehir</label>
+            <input type="text" id="pe-city" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="pe-tier">Detay Kademesi</label>
+            <select id="pe-tier" class="form-select">
+              <option value="1">🌱 Az (çekirdek)</option>
+              <option value="2">🌿 Orta</option>
+              <option value="3">🌳 Tam</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pe-note">KPSS Hap Bilgisi / Not</label>
+          <textarea id="pe-note" rows="3"></textarea>
+        </div>
+
+        <div class="form-group pack-edit-geom">
+          <label>Geometri</label>
+          <div class="pack-edit-geom-row">
+            <span id="pe-geom-info" class="pack-edit-geom-info">—</span>
+            <button type="button" id="pe-redraw-btn" class="tool-btn">🖉 Haritadan Yeniden Çiz</button>
+          </div>
+          <div class="pack-edit-latlng">
+            <label for="pe-lat">Enlem</label>
+            <input type="number" id="pe-lat" step="0.00001" min="-90" max="90">
+            <label for="pe-lng">Boylam</label>
+            <input type="number" id="pe-lng" step="0.00001" min="-180" max="180">
+          </div>
+          <small class="form-hint">
+            Yeniden çizim yalnızca <strong>düzenleme katmanına</strong> yazılır. Kaynak paketteki
+            özgün koordinat korunur, “Varsayılana Döndür” ile geri gelir.
+          </small>
+        </div>
+
+        <div class="modal-footer pack-edit-footer">
+          <button type="button" id="pe-reset-btn" class="modal-btn secondary" title="Bu kaydı kaynak paketteki hâline döndürür">↺ Varsayılana Döndür</button>
+          <span class="pack-edit-spacer"></span>
+          <button type="button" id="pe-cancel-btn" class="modal-btn secondary">Vazgeç</button>
+          <button type="submit" class="modal-btn primary">💾 Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Silme / düzenleme geri alma şeridi -->
+  <div id="edit-toast" class="edit-toast" style="display: none;">
+    <span id="edit-toast-text"></span>
+    <button type="button" id="edit-toast-undo" class="edit-toast-undo">↩ Geri Al</button>
   </div>
 
   <!-- Kayıtlı Çizimleri Yönetme ve JSON Yapıştırma Modalı -->
@@ -844,9 +987,59 @@
     </div>
   </div>
 
+  <!-- 🎯 Seçmece Quiz Havuz Modalı -->
+  <div id="secmece-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card modal-large secmece-modal-card">
+      <div class="modal-header">
+        <div class="secmece-modal-title-group">
+          <h3>🎯 Seçmece Quiz Havuzu</h3>
+          <span class="secmece-modal-subtitle">Kategori ayırt etmeksizin istediğin yer şekillerini listeye ekle, sadece onlardan oluşan özel test çöz.</span>
+        </div>
+        <button id="secmece-close-btn" class="modal-close" title="Kapat">&times;</button>
+      </div>
+
+      <!-- Arama ve Hızlı Filtreleme Araç Çubuğu -->
+      <div class="secmece-toolbar">
+        <div class="secmece-search-wrapper">
+          <span class="secmece-search-icon">🔍</span>
+          <input type="text" id="secmece-search-input" placeholder="İsim, tür veya bölge ara... (Örn: Nemrut, Fırat, Çukurova)" autocomplete="off">
+          <button id="secmece-clear-search-btn" class="secmece-clear-search-btn" style="display: none;" title="Aramayı Temizle">&times;</button>
+        </div>
+        <div class="secmece-quick-actions">
+          <button id="secmece-select-filtered-btn" class="secmece-quick-btn" title="Şu an listelenen tüm yer şekillerini seç">⚡ Tümünü Seç</button>
+          <button id="secmece-clear-selection-btn" class="secmece-quick-btn" title="Tüm seçimleri sıfırla">🧹 Temizle</button>
+          <button id="secmece-select-wrong-btn" class="secmece-quick-btn warning" title="Geçmişte yanlış yaptığın yer şekillerini seç">🔴 Yanlışlarım (<span id="secmece-wrong-count">0</span>)</button>
+          <button id="secmece-select-new-btn" class="secmece-quick-btn info" title="Henüz testlerde hiç çıkmamış yeni soruları seç">✨ Bilinmeyenler (<span id="secmece-new-count">0</span>)</button>
+        </div>
+      </div>
+
+      <!-- Kategori Filtresi Hapları -->
+      <div class="secmece-category-pills" id="secmece-category-pills">
+        <!-- JS ile dinamik doldurulur -->
+      </div>
+
+      <!-- Yer Şekilleri Listesi (Kaydırılabilir Grid) -->
+      <div class="secmece-items-grid" id="secmece-items-grid">
+        <!-- JS ile kartlar doldurulur -->
+      </div>
+
+      <!-- Modal Alt Barı -->
+      <div class="modal-footer secmece-modal-footer">
+        <div class="secmece-footer-status">
+          <span>📊 Seçilen: <strong id="secmece-selected-count">0</strong> / <span id="secmece-total-count">0</span> yer şekli</span>
+        </div>
+        <div class="secmece-footer-actions">
+          <button id="secmece-cancel-btn" class="modal-btn secondary">Kapat</button>
+          <button id="secmece-start-btn" class="modal-btn primary" disabled>🎯 Seçilenlerle Quiz Başlat (0)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Uygulama Scriptleri -->
   <!-- 1) Çalışma zamanı veri kapları (boş gelir, PackManager doldurur) -->
   <script src="data/cografya_data.js?v=2"></script>
+  <script src="data/tr_cities_geojson.js?v=2"></script>
   <script src="data/mutlak_konum_data.js?v=2"></script>
 
   <!-- 2) Paket kataloğu + i18n çekirdeği + dil sözlükleri -->
@@ -856,19 +1049,20 @@
   <script src="locales/en.js?v=2"></script>
 
   <!-- 3) DLC motoru ve mağaza arayüzü (paket dosyaları lazy yüklenir) -->
-  <script src="js/pack_manager.js?v=2"></script>
-  <script src="js/pack_store_ui.js?v=2"></script>
+  <script src="js/pack_edits.js?v=2"></script>
+  <script src="js/pack_manager.js?v=3"></script>
+  <script src="js/pack_store_ui.js?v=3"></script>
   <script src="js/custom_draw.js?v=2"></script>
   <script src="js/geoguessr.js?v=2"></script>
   <script src="js/conqueror.js?v=2"></script>
   <script src="js/match_game.js?v=2"></script>
-  <script src="js/mutlak_konum.js?v=2"></script>
+  <script src="js/mutlak_konum.js?v=3"></script>
   <script src="js/olusum_quiz.js?v=2"></script>
   <script src="js/boyama_quiz.js?v=2"></script>
   <script src="js/panel_manager.js?v=2"></script>
   <script src="js/study_plan.js?v=2"></script>
-  <script src="js/map.js?v=2"></script>
+  <script src="js/map.js?v=5"></script>
   <script src="js/quiz.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 </html>

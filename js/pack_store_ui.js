@@ -64,6 +64,11 @@ class PackStoreUI {
     this.group = 'all';
     this.query = '';
     this.page = 0;
+    this.globalTier = 3;
+    try {
+      const savedTier = parseInt(localStorage.getItem('kpss_store_global_tier') || '3', 10);
+      if (savedTier >= 1 && savedTier <= 3) this.globalTier = savedTier;
+    } catch (e) {}
 
     GeoI18n.onChange(() => {
       if (this.root.dataset.view === 'store') this.renderStore();
@@ -221,21 +226,46 @@ class PackStoreUI {
           <div class="store-pager" id="store-pager"></div>
 
           <div class="store-foot">
-            <button class="pack-btn" id="store-install-all" ${paket === this.pm.catalog.packs.length ? 'disabled' : ''}>
-              ⬇ ${this.t('store.installAll')}
-            </button>
-            <button class="pack-btn primary" id="store-done" ${bos ? 'disabled' : ''}>
-              ${bos ? this.t('store.empty') : '▶ ' + this.t('store.done')}
-            </button>
-            <button class="pack-btn danger" id="store-remove-all" ${bos ? 'disabled' : ''}>
-              🗑 ${this.t('store.removeAll')}
-            </button>
+            <div class="store-global-tier-group">
+              <span class="store-global-tier-label">${this.t('store.globalTier')}:</span>
+              <div class="store-global-tier-btns">
+                <button type="button" class="store-global-tier-btn ${this.globalTier === 1 ? 'active' : ''}" data-tier="1" title="1. Kademe: En temel çekirdek veriler">🟢 ${this.t('tier.1')}</button>
+                <button type="button" class="store-global-tier-btn ${this.globalTier === 2 ? 'active' : ''}" data-tier="2" title="2. Kademe: Dengeli standart havuz">🟡 ${this.t('tier.2')}</button>
+                <button type="button" class="store-global-tier-btn ${this.globalTier === 3 ? 'active' : ''}" data-tier="3" title="3. Kademe: Tüm kapsamlı veriler">🟣 ${this.t('tier.3')}</button>
+              </div>
+            </div>
+            <div class="store-foot-actions">
+              <button class="pack-btn" id="store-install-all">
+                ⬇ ${this.t('store.installAll')} (${this.t('tier.' + this.globalTier)})
+              </button>
+              <button class="pack-btn primary" id="store-done" ${bos ? 'disabled' : ''}>
+                ${bos ? this.t('store.empty') : '▶ ' + this.t('store.done')}
+              </button>
+              <button class="pack-btn danger" id="store-remove-all" ${bos ? 'disabled' : ''}>
+                🗑 ${this.t('store.removeAll')}
+              </button>
+            </div>
           </div>
         </div>
       </div>`;
 
     this.bindLangSwitcher();
     this.renderCards();
+
+    this.root.querySelectorAll('.store-global-tier-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const t = parseInt(e.currentTarget.dataset.tier, 10);
+        this.globalTier = t;
+        try { localStorage.setItem('kpss_store_global_tier', t); } catch (err) {}
+        this.root.querySelectorAll('.store-global-tier-btn').forEach(b => {
+          b.classList.toggle('active', parseInt(b.dataset.tier, 10) === t);
+        });
+        const installBtn = this.root.querySelector('#store-install-all');
+        if (installBtn) {
+          installBtn.textContent = `⬇ ${this.t('store.installAll')} (${this.t('tier.' + t)})`;
+        }
+      });
+    });
 
     this.root.querySelectorAll('.store-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -271,21 +301,18 @@ class PackStoreUI {
   }
 
   /**
-   * Toplu kurulum. Paketler tek tek indirildiği için düğme bir ilerleme
-   * sayacına dönüşür; ekran kilitlenmesin diye her adımda arayüze sıra verilir.
+   * Toplu kurulum / kademe güncelleme. Seçilen genel kademede tüm paketleri
+   * kurar ve mevcut paketlerin kademesini günceller.
    */
   async installAll(btn) {
-    const kalan = this.pm.catalog.packs.filter(p => !this.pm.isInstalled(p.id)).length;
-    if (!kalan) return;
-
     btn.disabled = true;
     const kartlar = this.root.querySelector('#store-grid');
     if (kartlar) kartlar.classList.add('busy');
 
     try {
-      await this.pm.installAll(2, (yapilan, toplam) => {
+      await this.pm.installAll(this.globalTier, (yapilan, toplam) => {
         btn.textContent = `⬇ ${this.t('store.installingAll', { n: yapilan, toplam: toplam })}`;
-      });
+      }, true);
     } catch (e) {
       console.error(e);
       alert(this.t('store.failed') + ' — ' + e.message);
@@ -370,6 +397,19 @@ class PackStoreUI {
       ? `<span class="recommend-pill" title="${this.t('store.recommends')}: ${oneri.map(p => GeoI18n.field(p.i18n, 'title', p.id)).join(', ')}">🔗 ${oneri.map(p => p.icon).join('')}</span>`
       : '';
 
+    // --- Kullanıcı düzenlemeleri: kaynak paket dosyası değişmez, katman ayrıdır ---
+    const duz = (this.pm.edits && row.installed) ? this.pm.edits.stats(def.id) : { toplam: 0 };
+    const duzParcalar = [];
+    if (duz.degisen) duzParcalar.push(duz.degisen + ' düzenlendi');
+    if (duz.silinen) duzParcalar.push(duz.silinen + ' gizlendi');
+    if (duz.eklenen) duzParcalar.push(duz.eklenen + ' eklendi');
+    const duzHtml = duz.toplam
+      ? `<div class="pack-edit-row">
+           <span class="pack-edit-badge" title="Kaynak paket dosyası değişmedi; bu değişiklikler ayrı bir katmanda tutuluyor.">✎ ${duzParcalar.join(' · ')}</span>
+           <button class="pack-btn ghost small" data-act="reset-edits" title="Bu paketin tüm düzenlemelerini silip fabrika hâline döndürür">↺ Varsayılan</button>
+         </div>`
+      : '';
+
     const badge = row.installed
       ? `<span class="store-badge">✓ ${this.t('tier.' + kademeAnahtar(row.tier))}</span>`
       : (def.virtual ? `<span class="store-badge virtual">📐</span>` : '');
@@ -382,6 +422,7 @@ class PackStoreUI {
       </div>
       <p class="store-item-desc" title="${(txt.desc || '').replace(/"/g, '&quot;')}">${txt.desc || ''}</p>
       ${tierHtml ? `<div class="tier-picker">${tierHtml}</div>` : ''}
+      ${duzHtml}
       <div class="store-item-meta">${modHtml}${oneriHtml}</div>
       <div class="store-item-actions">
         <button class="pack-btn primary small" data-act="install" ${busy ? 'disabled' : ''}>
@@ -407,11 +448,28 @@ class PackStoreUI {
       this.applyInstall(def, def.virtual ? 3 : seciliKademe, card);
     });
 
+    const sifirla = card.querySelector('[data-act="reset-edits"]');
+    if (sifirla) {
+      sifirla.addEventListener('click', () => {
+        const ad = txt.title || def.id;
+        if (!confirm(`"${ad}" paketindeki ${duz.toplam} düzenleme silinsin mi?
+
+Paket kaynak dosyasındaki özgün hâline döner. Kendi eklediğin kayıtlar da silinir.`)) return;
+        this.pm.edits.resetPack(def.id);
+        this.pm.rebuild();
+        this.renderCards();
+      });
+    }
+
     const rm = card.querySelector('[data-act="remove"]');
     if (rm) {
       rm.addEventListener('click', () => {
         const ad = txt.title || def.id;
         if (!confirm(this.t('store.removeConfirm', { ad: ad }))) return;
+        // Paket kaldırılınca düzenleme katmanı da düşer; kullanıcı bunu bilerek onaylasın.
+        if (duz.toplam && !confirm(`Bu pakette ${duz.toplam} düzenlemen var.
+
+Paketi kaldırmak bu düzenlemeleri de siler; yeniden kurduğunda paket fabrika hâlinde gelir. Devam edilsin mi?`)) return;
         this.pm.uninstall(def.id);
         this.refreshMeter();
         this.renderCards();

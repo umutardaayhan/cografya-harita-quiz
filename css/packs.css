@@ -414,13 +414,66 @@ body.pack-layer-open .map-tools-block {
   padding-top: 12px;
   border-top: 1px solid var(--bg-card-border);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   flex: 0 0 auto;
 }
 
-.store-foot { gap: 8px; flex-wrap: wrap; }
-.store-foot .pack-btn { min-width: 150px; }
-.store-foot #store-done { min-width: 240px; }
+.store-global-tier-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--bg-card-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.store-global-tier-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.store-global-tier-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.store-global-tier-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bg-card-border);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.store-global-tier-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text-main);
+}
+
+.store-global-tier-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.store-foot-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.store-foot-actions .pack-btn { min-width: 140px; }
+.store-foot-actions #store-done { min-width: 190px; }
 
 /* ============================================================
    3. MOD KİLİTLERİ & BOŞ DURUM

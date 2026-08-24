@@ -18,7 +18,8 @@ const CATEGORIES_EXT = [
   { id: "kiyilar",        title: "Kıyılar, Adalar & Denizler", short: "Kıyı", icon: "🏖️", color: "#06b6d4" },
   { id: "dis_kuvvetler",  title: "Dış Kuvvetler & Şekiller", short: "Dış Kuv.", icon: "🌬️", color: "#14b8a6" },
   { id: "turizm",         title: "Turizm & Kültür Mirası",  short: "Turizm",  icon: "🏛️", color: "#eab308" },
-  { id: "ulasim",         title: "Ulaşım & Ticaret",        short: "Ulaşım",  icon: "🚢", color: "#3b82f6" }
+  { id: "ulasim",         title: "Ulaşım & Ticaret",        short: "Ulaşım",  icon: "🚢", color: "#3b82f6" },
+  { id: "sehirler",       title: "Şehirler (81 İl)",        short: "İller",   icon: "🏛️", color: "#3b82f6" }
 ];
 
 /** Bir metnin BAŞTAN eşleşmesi (alt dize tuzaklarına karşı) */
@@ -105,5 +106,15 @@ const SUB_TYPES_EXT = {
     { id: "boru_hatti",  label: "Boru Hatları",           icon: "🛢️", filter: (i) => bas(i, "boru hatti") },
     { id: "kara_demir",  label: "Kara & Demiryolları",    icon: "🛣️", filter: (i) => bas(i, "demiryolu /") || bas(i, "karayolu /") },
     { id: "su_yolu",     label: "Su Yolları",             icon: "🌉", filter: (i) => bas(i, "su yolu") }
+  ],
+  sehirler: [
+    { id: "all",         label: "Tüm İller (81)",         icon: "🌍" },
+    { id: "marmara",     label: "Marmara (11)",           icon: "🏙️", filter: (i) => i.region === "Marmara" },
+    { id: "ege",         label: "Ege (8)",                icon: "🏖️", filter: (i) => i.region === "Ege" },
+    { id: "akdeniz_bolge", label: "Akdeniz (8)",          icon: "☀️", filter: (i) => i.region === "Akdeniz" },
+    { id: "icanadolu",   label: "İç Anadolu (13)",        icon: "🌾", filter: (i) => i.region === "İç Anadolu" },
+    { id: "karadeniz_bolge", label: "Karadeniz (18)",     icon: "🌲", filter: (i) => i.region === "Karadeniz" },
+    { id: "doguanadolu", label: "Doğu Anadolu (14)",      icon: "🏔️", filter: (i) => i.region === "Doğu Anadolu" },
+    { id: "guneydogu",   label: "Güneydoğu (9)",          icon: "🏛️", filter: (i) => i.region === "Güneydoğu Anadolu" }
   ]
 };

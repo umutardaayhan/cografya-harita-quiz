@@ -15,7 +15,7 @@ Harita, testler, günlük plan ve oyun modları indirilen paketlere göre şekil
 
 ---
 
-## 📚 Paket Kataloğu (18 paket · 472 kayıt)
+## 📚 Paket Kataloğu (19 paket · 636 kayıt)
 
 Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 (sayfa başına 9 kart). Kademe sütunu `Az / Orta / Tam` kayıt sayılarıdır.
@@ -23,9 +23,9 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 ### ⛰️ Fiziki Coğrafya
 | Paket | id | Az / Orta / Tam |
 | :--- | :--- | :--- |
-| 🏔️ Dağlar & Sıradağlar | `tr.daglar` | 12 / 22 / 34 |
-| 🌊 Akarsular & Göller | `tr.sular` | 26 / 42 / 55 |
-| 🌾 Ovalar & Platolar | `tr.ova_plato` | 19 / 28 / 41 |
+| 🏔️ Dağlar & Sıradağlar | `tr.daglar` | 14 / 26 / 39 |
+| 🌊 Akarsular & Göller | `tr.sular` | 35 / 55 / 79 |
+| 🌾 Ovalar & Platolar | `tr.ova_plato` | 26 / 43 / 65 |
 | 🚪 Geçitler & Boğazlar | `tr.gecitler` | 6 / 10 / 12 |
 | 🌡️ İklim & Bitki Örtüsü | `tr.iklim_orman` | 15 / 19 / 23 |
 | 🟫 Toprak Tipleri | `tr.toprak` | 8 / 11 / 15 |
@@ -37,6 +37,7 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 ### 👥 Beşeri Coğrafya
 | Paket | id | Az / Orta / Tam |
 | :--- | :--- | :--- |
+| 🏛️ Şehirler & 81 İl | `tr.sehirler` | 28 / 52 / 81 |
 | 👥 Nüfus, Yerleşme & Göç | `tr.nufus` | 11 / 16 / 22 |
 | 🗺️ 7 Bölge & 21 Bölüm | `tr.bolgeler` | 10 / 18 / 28 |
 | 🔗 İlişkili Eşleştirmeler | `tr.iliskiler` | 11 / 14 / 16 |
@@ -45,7 +46,7 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 | Paket | id | Az / Orta / Tam |
 | :--- | :--- | :--- |
 | 🚜 Tarım, Hayvancılık & Sanayi | `tr.beseri` | 19 / 30 / 41 |
-| ⛏️ Madenler & Enerji Kaynakları | `tr.madenler` | 12 / 23 / 35 |
+| ⛏️ Madenler & Enerji Kaynakları | `tr.madenler` | 23 / 43 / 65 |
 | 🏛️ Turizm & Kültür Mirası | `tr.turizm` | 13 / 20 / 31 |
 | 🚢 Ulaşım & Ticaret Koridorları | `tr.ulasim` | 10 / 18 / 26 |
 
@@ -95,6 +96,7 @@ değil). Rastgele kategori seçen oyun modları (ör. Kör Atış) böylece boş
 | `data/packs/pack.tr.*.js` | Paket içerikleri. Kendilerini `GeoPacks.register()` ile kaydeder. |
 | `data/cografya_data.js` | Boş çalışma zamanı kapları + Türkçe-güvenli `trLower`/`trUpper`. |
 | `js/pack_manager.js` | DLC motoru: kurulum, kademe, kaldırma, projeksiyon, mod kilitleri. |
+| `js/pack_edits.js` | Düzenleme katmanı: kullanıcının sildiği/değiştirdiği/eklediği kayıtlar. Kaynak paket dosyası değişmez. |
 | `js/pack_store_ui.js` | Rehber ekranı + mağaza arayüzü. |
 | `js/i18n.js` | Çift katmanlı dil motoru. |
 | `locales/tr.js`, `locales/en.js` | Arayüz metin sözlükleri. |
@@ -103,6 +105,144 @@ değil). Rastgele kategori seçen oyun modları (ör. Kör Atış) böylece boş
 > **Neden `.js`, `.json` değil?** `fetch()` `file://` altında CORS'a takılır,
 > `<script>` takılmaz. Uygulama yerel sunucu olmadan da açılabilsin diye paketler
 > kendilerini çağıran JS dosyalarıdır (JSONP mantığı).
+
+---
+
+## ✏️ Paket Düzenleme Katmanı (Referans Modeli)
+
+Kullanıcı **kurulu bir paketin kayıtlarını silebilir, düzenleyebilir ve pakete
+yeni kayıt ekleyebilir** — ama `data/packs/pack.*.js` dosyalarına ASLA
+dokunulmaz. Düzenlemeler `js/pack_edits.js` içindeki ayrı bir katmanda tutulur
+ve `rebuild()` sırasında kaynağın **üstüne** uygulanır.
+
+```
+pack.tr.daglar.js            ← KAYNAK (salt okunur, hiç değişmez)
+        │
+        ├─ PackManager.project()          düz (legacy) biçime çevirir
+        ▼
+PackEditStore.applyTo()      ← silinen / değişen  ┐
+PackEditStore.addedFor()     ← eklenen            ┘  localStorage: geo_pack_edits_v1
+        ▼
+COGRAFYA_DATA                ← quiz, harita ve tüm oyun motorlarının gördüğü havuz
+```
+
+Katman `COGRAFYA_DATA` üretilirken uygulandığı için `quiz.js`, `map.js`,
+`study_plan.js` ve oyun motorlarının **hiçbiri değişmedi**; düzenlenmiş veriyi
+otomatik olarak görürler.
+
+### Saklama şeması
+
+```js
+localStorage['geo_pack_edits_v1'] = {
+  "tr.daglar": {
+    removed: { "dag_erciyes": true },              // kaynakta duruyor, havuzda gizli
+    patched: { "dag_agri": { lat: 39.97, name: "..." } },   // YALNIZCA değişen alanlar
+    added:   [ { id: "usr_tr_daglar_...", name: "Test Tepesi", ... } ]
+  }
+}
+```
+
+**Yamada yalnızca gerçekten değişen alanlar durur.** Kaydetme sırasında
+`patchItem()`'a kaydın yamasız kaynak hâli de verilir; kullanıcının elleme­diği
+(ya da eski değerine geri döndürdüğü) alan yamaya yazılmaz. Böylece paket sürümü
+yükseldiğinde dokunulmamış alanlar yeni sürümden gelmeye devam eder ve yama
+kaydın tamamını dondurmaz.
+
+### Yaşam döngüsü kuralları
+
+| İşlem | Düzenlemelere ne olur? |
+| :--- | :--- |
+| Kademe değiştirme (Az ↔ Orta ↔ Tam) | **Korunur.** Yalnızca eşik değişir. |
+| Dil değiştirme (`rebuild()`) | **Korunur.** Yama çevrilmiş kaydın üstüne biner. |
+| Paketi kaldırma | **Düşer** (`dropPack`). Yeniden kurulum fabrika hâlidir. |
+| "Tümünü Kaldır" | Tüm katman düşer (`dropAll`). |
+| Kart üzerindeki "↺ Varsayılan" | O paketin katmanı silinir, paket kurulu kalır. |
+
+Paket kaldırılırken düzenleme varsa mağaza **ikinci bir onay** ister; kullanıcı
+bunun düzenlemeleri de sileceğini bilerek onaylar.
+
+### Arayüz
+
+Düzenleme **haritanın üzerinde** yaşar:
+
+- **Keşif Modu**nda bir şekle tıklayınca açılan balonun altında `✏️ Düzenle` ve
+  `🗑 Sil` şeridi belirir (`GeographyMap.setEditingEnabled()` yalnızca Keşif
+  Modunda açar; test sırasında balon şeridi görünmez).
+- **Sil** anında uygulanır ama alt şeritteki **↩ Geri Al** ile dönülebilir.
+- **Düzenle** modali ad, kategori, tür, bölge, il, kademe ve KPSS notunu düzenler;
+  `🖉 Haritadan Yeniden Çiz` mevcut çizim aracını açar. Çizim bitince modal
+  kaldığı yerden geri gelir — nokta ↔ çizgi ↔ alan dönüşümü de yapılabilir.
+  Şekil noktaya çevrildiğinde yamadaki eski koordinat dizisi **temizlenir**,
+  aksi halde kayıt "nokta ama poligon koordinatlı" tutarsız hâlde donardı.
+- `↺ Varsayılana Döndür` tek kaydı kaynak hâline çevirir (kullanıcının kendi
+  eklediği kayıtlarda bu düğme `🗑 Kaydı Sil`e dönüşür).
+- **Yeni kayıt**: çizim kaydetme modalindeki **"Nereye kaydedilsin?"** seçicisi.
+  Boş bırakılırsa eski davranış (bağımsız `Çizimlerim` katmanı); bir paket
+  seçilirse kayıt o paketin düzenleme katmanına gider. Seçili kategoriye kayıt
+  sağlayan tek paket varsa o önerilir. Kullanıcı eklemeleri **kademe eşiğine
+  tabi değildir** — kendi eklediğin kaydın "Az" kurulumda kaybolması beklenmedik
+  olurdu.
+- Mağaza kartında `✎ 1 düzenlendi · 1 gizlendi · 1 eklendi` rozeti ve
+  `↺ Varsayılan` düğmesi görünür.
+
+### Çizim modunda referans katmanı
+
+Çizim moduna girildiğinde harita eskiden `clearAll()` ile tamamen boşaltılıyordu;
+kullanıcı yeni şekli hiçbir bağlam olmadan boş zemine çizmek zorunda kalıyordu.
+Artık **seçili konunun mevcut şekilleri solgun bir referans katmanı olarak
+haritada kalır** (`GeographyMap.showReferenceLayer()`).
+
+Katman `cizimReferans` adlı **kendi Leaflet pane'indedir**:
+
+```js
+pane.style.zIndex = 350;            // overlayPane (400) ve markerPane (600) ALTINDA
+pane.style.pointerEvents = 'none';  // tıklama haritaya geçer
+```
+
+`pointer-events: none` işlevsel bir zorunluluktur, kozmetik değil: referans
+şekiller tıklanabilir olsaydı üzerlerine tıklamak Leaflet'te **katman** olayını
+tetikler, harita tıklamasına düşmezdi — yani mevcut bir şeklin üstüne çizim
+noktası bırakmak imkânsız olurdu. Katmandaki tüm geometriler ayrıca
+`interactive: false` ile üretilir.
+
+Referans katmanı `geoQuiz.items`'tan beslenir (seçili kategori **ve** alt tür
+filtresinden geçmiş liste) ve şu anlarda tazelenir:
+
+- çizim moduna girerken,
+- yeni bir şekil kaydedildiğinde (çizime devam eden kullanıcı yeni kaydını
+  anında referansta görür),
+- paket düzenleme katmanı değiştiğinde (`packEditsChanged()`).
+
+Çizim modundan çıkışta katman temizlenir. Araç çubuğundaki
+`🗺️ N mevcut şekil referans olarak gösteriliyor` çipi kaç kaydın çizildiğini
+söyler.
+
+> **Not:** `setDrawShape()` ipucu metnini `drawingHint.textContent` ile yazar.
+> Bu yüzden ipucu metni kendi `<span id="drawing-hint">`'inde durur; aksi halde
+> her araç değişiminde yanındaki referans çipi silinirdi.
+
+### Kaydetme modalindeki konu listesi
+
+`Eklenecek Konu / Kategori` seçeneği eskiden `index.html`'de sabitti ve yalnızca
+5 fiziki konuyu tanıyordu; paket sistemine geçildikten sonra madenler, turizm,
+nüfus, kıyılar gibi konulara çizim eklemek imkânsızdı. Liste artık
+`fillCategorySelect()` ile **kurulu paketlerden** (`CATEGORIES`) türetilir ve
+sonuna `🎨 Özel Çizimlerim` eklenir.
+
+`Nereye kaydedilsin?` seçicisi yalnızca **seçili konuyu sağlayan** paketleri
+listeler. "Dağlar" kaydını "Akarsular" paketine iliştirmek mümkün olsaydı, o
+paket kaldırıldığında kayıt alakasız bir yerden düşer, kullanıcı nedenini
+anlayamazdı. Konuyu sağlayan tek paket varsa önerilir; hiç yoksa seçici kapanır
+ve kayıt bağımsız `Çizimlerim` katmanına gider. `Tür / Oluşum` alanı da konuya
+göre önerilir (`TUR_ONERI` tablosu).
+
+### Güvenlik ve dayanıklılık
+
+`PackEditStore.sanitize()` bir **beyaz liste** uygular: yamaya yalnızca
+`PACK_EDIT_FIELDS` içindeki alanlar girer, enlem/boylam aralık dışıysa ve
+koordinat dizisi boşsa elenir. Bozuk bir koordinat Leaflet'te istisna fırlatıp
+soru render'ını komple çökertebildiği için bu eleme kritiktir. `packId` gibi
+türetilmiş alanlar yamaya hiç yazılmaz.
 
 ---
 
@@ -264,15 +404,10 @@ Kilitli görünüme tıklamak katmanı değiştirmez, mağazayı açar. Kullanı
 görünümün paketi kaldırılırsa harita otomatik olarak Sade'ye döner
 (`refreshLayerLocks`, `js/app.js`).
 
-### Mağaza toplu işlemleri
+Mağaza altlığında **Genel Düzey Seçici (🟢 Az / 🟡 Orta / 🟣 Tam)**, **Tümünü Kur** ve **Tümünü Kaldır** düğmeleri vardır:
 
-Mağaza altlığında **Tümünü Kur** ve **Tümünü Kaldır** düğmeleri vardır:
-
-- *Tümünü Kur* yalnızca kurulu OLMAYAN paketleri **Orta** kademede kurar; zaten
-  kurulu bir paketin kademesine dokunmaz (kullanıcı bilinçli olarak "Az" seçmiş
-  olabilir). Paketler tek tek indirildiği için düğme bir ilerleme sayacına döner.
-- *Tümünü Kaldır* onay ister. Soru geçmişi silinmez; paketler geri kurulduğunda
-  ustalık ve tekrar aralıkları geri gelir.
+- *Genel Düzey Seçici & Tümünü Kur*: Kullanıcı tek tıkla seçtiği kademede (örneğin Tam: 3 veya Az: 1) tüm paketleri kurabilir veya kurulu olan tüm paketlerin kademesini topluca yükseltip düşürebilir (`pm.installAll(tier, progress, true)`). Paketler indirilirken ilerleme sayacı anlık olarak gösterilir.
+- *Tümünü Kaldır*: Onay ister. Soru geçmişi silinmez; paketler geri kurulduğunda ustalık ve tekrar aralıkları geri gelir.
 
 ### Küçültülmüş soru paneli
 

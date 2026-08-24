@@ -114,7 +114,8 @@ const CATEGORY_META = {
   kiyilar:       { canonical: 'coasts',       en: { title: 'Coasts, Islands & Seas',  short: 'Coast' } },
   dis_kuvvetler: { canonical: 'exogenic',     en: { title: 'Exogenic Landforms',      short: 'Exogenic' } },
   turizm:        { canonical: 'tourism',      en: { title: 'Tourism & Heritage',      short: 'Tourism' } },
-  ulasim:        { canonical: 'transport',    en: { title: 'Transport & Trade',       short: 'Transport' } }
+  ulasim:        { canonical: 'transport',    en: { title: 'Transport & Trade',       short: 'Transport' } },
+  sehirler:      { canonical: 'provinces',    en: { title: 'Provinces & 81 Cities',   short: 'Cities' } }
 };
 
 /**
@@ -128,7 +129,7 @@ const PACK_GROUPS = {
   'tr.dis_kuvvetler': 'fiziki',
   'tr.beseri': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.turizm': 'ekonomik',
   'tr.ulasim': 'ekonomik',
-  'tr.nufus': 'beseri', 'tr.bolgeler': 'beseri', 'tr.iliskiler': 'beseri',
+  'tr.sehirler': 'beseri', 'tr.nufus': 'beseri', 'tr.bolgeler': 'beseri', 'tr.iliskiler': 'beseri',
   'tr.mutlak_konum': 'modul'
 };
 
@@ -250,40 +251,49 @@ const PACK_DEFS = [
     recommends: ['tr.beseri']
   },
   {
+    id: 'tr.sehirler', country: 'tr', categories: ['sehirler'],
+    icon: '🏛️', color: '#3b82f6',
+    tr: { title: 'Şehirler & 81 İl', desc: "Türkiye'nin 81 ili, resmi il sınırları, plaka kodları, coğrafi bölgeleri ve KPSS özellikleri." },
+    en: { title: 'Provinces & 81 Cities', desc: "Turkey's 81 provinces, official borders, license plates, geographic regions and facts." },
+    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
+    planRows: [{ cat: 'sehirler', icon: '🏛️', count: 18, tr: 'İl', en: 'City' }],
+    recommends: ['tr.bolgeler', 'tr.nufus']
+  },
+  {
     id: 'tr.nufus', country: 'tr', categories: ['nufus'],
     icon: '👥', color: '#0ea5e9',
-    tr: { title: 'Nüfus, Yerleşme & Göç', desc: 'Yoğun ve seyrek nüfus alanları, göç yönleri, yerleşme dokusu ve mevsimlik hareketler.' },
-    en: { title: 'Population, Settlement & Migration', desc: 'Dense and sparse areas, migration flows, settlement patterns and seasonal movement.' },
-    unlocks: ['quiz', 'conqueror', 'speedrun', 'exam'],
-    planRows: [{ cat: 'nufus', icon: '👥', count: 12, tr: 'Nüfus', en: 'Population' }],
-    recommends: []
+    tr: { title: 'Nüfus & Yerleşme', desc: 'Yoğun ve seyrek nüfuslu alanlar, göç hareketleri, kır-kent ve idari merkezler.' },
+    en: { title: 'Population & Settlement', desc: 'Densely and sparsely populated areas, migration, rural-urban and administrative centers.' },
+    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
+    planRows: [{ cat: 'nufus', icon: '👥', count: 12, tr: 'Nüfus', en: 'Pop.' }],
+    recommends: ['tr.bolgeler']
   },
   {
     id: 'tr.bolgeler', country: 'tr', categories: ['bolgeler'],
-    icon: '🗺️', color: '#7c3aed',
-    tr: { title: '7 Bölge & 21 Bölüm', desc: 'Coğrafi bölgelerin sınırları ve her bölümün ayırt edici özellikleri.' },
-    en: { title: '7 Regions & 21 Subregions', desc: 'Boundaries of the geographic regions and the distinguishing traits of each subregion.' },
+    icon: '🗺️', color: '#10b981',
+    tr: { title: 'Coğrafi Bölgeler & Bölümler', desc: '7 coğrafi bölge ve 21 coğrafi bölüm; sınırları, genel özellikleri ve kalkınma projeleri.' },
+    en: { title: 'Regions & Subregions', desc: '7 geographic regions and 21 subregions; boundaries, traits and development projects.' },
     unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
     planRows: [{ cat: 'bolgeler', icon: '🗺️', count: 14, tr: 'Bölge', en: 'Region' }],
-    recommends: []
+    recommends: ['tr.sehirler']
   },
   {
     id: 'tr.kiyilar', country: 'tr', categories: ['kiyilar'],
-    icon: '🏖️', color: '#06b6d4',
-    tr: { title: 'Kıyılar, Adalar & Denizler', desc: 'Yarımadalar, körfezler, burunlar, adalar, kıyı tipleri ve dört denizin özellikleri.' },
-    en: { title: 'Coasts, Islands & Seas', desc: 'Peninsulas, gulfs, capes, islands, coast types and the traits of the four seas.' },
-    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam', 'layer_satellite'],
-    planRows: [{ cat: 'kiyilar', icon: '🏖️', count: 14, tr: 'Kıyı', en: 'Coast' }],
-    recommends: []
+    icon: '🏖️', color: '#0ea5e9',
+    tr: { title: 'Kıyılar, Adalar & Denizler', desc: 'Boyuna, enine, dalmaçya, ria ve limanlı kıyı tipleri; adalar, körfezler ve denizlerimiz.' },
+    en: { title: 'Coasts, Islands & Seas', desc: 'Longitudinal, transverse, Dalmatian, ria and liman coast types; islands and gulfs.' },
+    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
+    planRows: [{ cat: 'kiyilar', icon: '🏖️', count: 12, tr: 'Kıyı', en: 'Coast' }],
+    recommends: ['tr.sular']
   },
   {
     id: 'tr.dis_kuvvetler', country: 'tr', categories: ['dis_kuvvetler'],
-    icon: '🌬️', color: '#14b8a6',
-    tr: { title: 'Dış Kuvvetler & Yerşekilleri', desc: 'Karstik, buzul, rüzgâr, akarsu ve dalga şekilleri; aşınım ve birikim ayrımı.' },
-    en: { title: 'Exogenic Forces & Landforms', desc: 'Karstic, glacial, aeolian, fluvial and wave landforms; erosion versus deposition.' },
+    icon: '🌬️', color: '#8b5cf6',
+    tr: { title: 'Dış Kuvvetler & Yer Şekilleri', desc: 'Karstik, buzul, rüzgâr, dalga-akıntı ve peri bacaları gibi aşınım ve birikim şekilleri.' },
+    en: { title: 'Exogenic Landforms', desc: 'Karstic, glacial, aeolian, coastal and fairy chimney erosional/depositional landforms.' },
     unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
-    planRows: [{ cat: 'dis_kuvvetler', icon: '🌬️', count: 14, tr: 'Dış Kuvvet', en: 'Landform' }],
-    recommends: ['tr.sular']
+    planRows: [{ cat: 'dis_kuvvetler', icon: '🌬️', count: 14, tr: 'Şekil', en: 'Landform' }],
+    recommends: ['tr.daglar']
   },
   {
     id: 'tr.turizm', country: 'tr', categories: ['turizm'],

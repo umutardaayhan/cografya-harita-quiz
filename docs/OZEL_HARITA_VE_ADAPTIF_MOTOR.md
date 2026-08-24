@@ -34,11 +34,24 @@ Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevab�
 
 ---
 
-## 3. 🧠 Ustalık Düzeyi & İyi Bilinen Soruları Seyreltme (Mastery Decay)
+## 3. 🧠 Ustalık Düzeyi, 5+ Bilinenleri Seyreltme (Mastery Decay) & Dinamik Homojenlik (1-5 Kademe)
 
-Öğrencinin zaten ezberlediği sorularla vakit kaybetmesini önlemek için akıllı seyreltme devrededir:
-- **Ustalaşılan Sorular (Seri $\ge 3$ Doğru):** Seçim ağırlığı $0.04 - 0.12$ bandına iner (%90-95 oranında havuzdan geri çekilir). Sadece uzun aralıklarla hafızayı yoklamak için nadiren gelir ve kartta `🎓 Ustalaşılan Soru` rozeti yanar.
-- **Takılınan Sorular (Yanlış $\ge 1$):** Yanlış sayısı kadar ağırlığı katlanarak artar ve `⚠️ Sık Yanıldığın Soru` rozetiyle öncelikli olarak tekrar tekrar karşınıza çıkarılır.
+Öğrencinin zaten ezberlediği sorularla vakit kaybetmesini önlemek ve bilinmeyen/yanlış yapılan sorulara odaklanmasını sağlamak için dinamik ağırlıklandırma sistemi devrededir:
+
+### 🎲 Homojenlik Düzeyleri (Harita Araçları Menüsünden Ayarlanabilir):
+- **Düzey 1 (Maksimum Adaptif):** Yanlış yapılan ve henüz hiç sorulmamış yeni sorular en yüksek öncelikle (%68+ ihtimalle) havuzdan çekilir. 5. kez sorulup bilinen sorular (%0.6 ihtimalle) çok nadir gelir.
+- **Düzey 2 (Yüksek Adaptif):** Yanlışlar ve bilinmeyenler belirgin şekilde öne çıkarılır.
+- **Düzey 3 (Dengeli Dağılım - Varsayılan):** Standart adaptif çalışma dengesi.
+- **Düzey 4 (Hafif Adaptif):** Bilinen sorular hafifçe seyreltilir.
+- **Düzey 5 (Tam Homojen):** Geçmiş istatistiklerden ve doğru/yanlış sayılarından tamamen bağımsız olarak **tüm sorular eşit ihtimalle (1.0 ağırlık)** sorulur.
+
+### 📐 Ağırlık Dağılımı ve Enterpolasyon Formülü:
+- **5+ Kez Bilinen Sorular ($\text{correctCount} \ge 5$):** Taban ağırlık $0.05$ (havuzdan %95 seyreltilir, kartta `🎓 5+ Kez Bilindi` rozeti yanar).
+- **Yeni / Hiç Sorulmamış Sorular:** Taban ağırlık $1.8$ (`✨ Yeni Soru` rozeti).
+- **Sık Yanılınan Sorular ($\text{wrongCount} \ge 1$):** Taban ağırlık $1.5 + \min(3.5, \text{wrongCount} \times 0.8) + \text{taze hata bonusu}$ (`⚠️ Sık Yanıldığın Soru` rozeti).
+- **Dinamik Enterpolasyon:**
+  $$\alpha = \frac{5 - \text{homogeneityLevel}}{4}$$
+  $$\text{Ağırlık} = \max(0.02, 1.0 + (\text{HamAğırlık} - 1.0) \times \alpha)$$
 
 ---
 
@@ -68,4 +81,95 @@ Tek bir nokta ile sınırlı kalmayan geniş coğrafi varlıklar için dinamik p
 - **Tarım & Hayvancılık:** Doğu Karadeniz Fındık/Çay Kuşağı, Çukurova Deltası, GAP Harran Pamuk Havzası, Erzurum-Kars Alpin Çayır Platosu, Teke-Taşeli Karstik Kıl Keçisi Alanları.
 - **Sanayi:** İzmit Petrokimya Havzası, Bursa Otomotiv Kuşağı, İskenderun ve Ereğli Demir-Çelik Havzaları.
 - **İklim Kuşakları:** Akdeniz, Karadeniz ve Karasal İklim Kuşakları ile Uç Değer (Iğdır Çukur Mikroklima, Hopa Yağış Kuşağı, Cizre Sıcaklık Sahası) poligonları.
+
+---
+
+## 8. 🎯 Seçmece Quiz (Kategori Bağımsız Özel Havuz)
+Öğrencinin kendi belirlediği yer şekillerinden oluşan odaklanmış çalışma havuzu:
+- **Kategori Sınırı Yok:** Dağ, ova, plato, akarsu, göl, maden, geçit veya turizm varlıkları tek bir sepette toplanabilir.
+- **Akıllı Filtreleme & Hızlı Seçim:** Anlık arama (search), kategori hapları, `🔴 Yanlış Yaptıklarım` ve `✨ Bilinmeyenler` tek tıkla seçime dahil edilebilir.
+- **Kalıcı Sepet:** Seçilen varlıklar `localStorage`'da korunur; kullanıcı dilediğinde listesini güncelleyip quiz başlatabilir.
+- **Özel HUD Banner:** Seçmece modunda soru panelinde `🎯 Seçmece Quiz (X Soru)` bilgi çubuğu ve tek tıkla moddan çıkış butonu yer alır.
+
+---
+
+## 9. 🗑️ Tüm İstatistikleri Sıfırla (Master Factory Reset)
+Tüm soru analizlerini ve çalışma geçmişini sıfırdan başlatma:
+- Genel doğru/yanlış sayıları ve serileri (`kpss_cografya_stats`),
+- Soru bazlı ustalık ve hata geçmişi analitiği (`kpss_cografya_question_analytics`),
+- Hata bankası (`kpss_mistakes_bank`),
+- Günlük çalışma planı ilerlemesi (`kpss_gunun_plani_v1`),
+- Oyun modları en iyi skorları (`kpss_speedrun_best_score`, `kpss_cografya_conqueror_progress`)
+tamamen temizlenir ve kullanıcıya tertemiz bir başlangıç sunulur.
+
+---
+
+## 10. 🏛️ 81 İl (Şehirler) Haritası ve Glow Efektli Sınır Poligonları
+Türkiye'nin 81 ilinin sade ve resmi sınır geometrisi ile interaktif test sistemi:
+- **Gerçek Statik GeoJSON:** 81 ilin tamamı resmi sınır geometrisiyle (`data/tr_cities_geojson.js`) çizilir. Nokta yerine gerçek poligonlar kullanılır.
+- **İnteraktif Hover Glow:** Fareyle üzerine gelinen il `city-polygon-glow` efekti ile parıldar (`filter: drop-shadow(0 0 10px #60a5fa)`). Tooltip ile plaka kodu, il adı ve bölgesi görüntülenir.
+- **Çift Yönlü Şehirler Testi:**
+  - *Konumdan İl Bulma:* Hedef il haritada parıldayan mavi/altın renkli pulsasyonla gösterilir; şıklardan ili bulma istenir.
+  - *İsimden Haritada İl Bulma:* Şık seçenekleri olan 4-5 il haritada sınırları ve A-E / I-V pinleriyle parıldar, doğrudan haritaya veya şıkka tıklanarak cevaplanır.
+- **7 Bölge Alt Filtresi:** Marmara (11), Ege (8), Akdeniz (8), İç Anadolu (13), Karadeniz (18), Doğu Anadolu (14), Güneydoğu (9) illeri tek tıkla filtrelenebilir.
+- **Paket Entegrasyonu:** `tr.sehirler` paketi altında 81 kayıt (Az: 28, Orta: 52, Tam: 81) olarak yönetilir.
+
+---
+
+## 11. 🏷️ Gösterge Gizle (Minimalist Soru Noktaları & Çizgileri)
+Soru çözümü esnasında haritayı kapatan büyük şık pinlerini (`choice-pin-badge`) gizleme ve minimalist şekillere dönüştürme modu:
+- **Hedef:** Harita üzerindeki büyük harf ve roma rakamı kutularını gizleyerek yalnızca yer şeklinin kendi geometrisini veya keşif ikonu temsilini ön plana çıkarmak.
+- **Çalışma Prensibi:**
+  - `Harita Araçları` çubuğundaki **🏷️ Göstergeler** butonu ile açılıp kapatılır.
+  - Aktif olduğunda (`.hide-choice-badges`):
+    - **Çizgisel ve Poligon Varlıklar (Dağ sıraları, Akarsular, Şehirler, Bölgeler):** Üzerlerindeki tüm pin ve göstergeler **TAMAMEN GİZLENİR**; haritada doğrudan çizgi ve alanın kendisi parıldar ve tıklanabilir kalır.
+    - **Noktasal Varlıklar (Tek Dağlar, Göller, Geçitler, Madenler, Platolar):** Pin rozeti gizlenir; varlığın tam merkezinde (`lat, lng`) Keşif Modunda onu temsil eden 3B Dağ Prizması, Ova/Plato tepsisi veya konu ikonu merkezlenerek parıldar.
+  - Fareyle üzerine gelindiğinde (hover) şık rozeti yukarıda belirir ve tıklanabilirlik tam olarak korunur.
+  - Tercih `localStorage` (`kpss_cografya_badges_enabled`) üzerinde kalıcı olarak saklanır.
+
+### 11.1 Kopya, Konum ve Seçme Güvenceleri
+Gizleme modu haritayı sadeleştirirken sessizce üç sınıf hata üretebiliyordu; motor
+bunları yapısal olarak engeller:
+
+| Güvence | Sorun | Çözüm |
+| --- | --- | --- |
+| **Kopya (isim balonu)** | Keşif ikonlarının HTML'inde `title="${item.name}"` vardı. Gizli modda ikonun üzerinde bir saniye beklemek cevabın adını tarayıcı balonunda gösteriyordu. Aynı sızıntı "Konumdan İsim Bul" modunda **vurgulanan soru işaretçisinde** de vardı. | `getCustomCategoryIcon(item, { isimsiz: true })` — soru bağlamındaki tüm çağrılarda `title` hiç basılmaz. Keşif Modunda korunur. |
+| **Kopya (tür sızıntısı)** | İkonun alt tür sınıfı (`volcanic`, `karstic`, `delta`) ve alt tür emojisi (🏅 UNESCO) şıkları renklendiriyor, "hangisi volkanik kökenlidir" tipi soruyu tek bakışta ele veriyordu. | Şık pinleri `{ notr: true }` ile üretilir: alt tür sınıfı yazılmaz, kategori emojisi kullanılır. Tüm şıklar birbirinin aynı görünür, öğrenci konuma bakmak zorunda kalır. |
+| **Konum kayması** | Keşif ikonu `transform: translate(-50%,-50%)` ile ortalanıyordu. `pulseCorrectPin` ve `shake` animasyonları `transform`'u tümüyle ezip ikonu kendi yarıçapı kadar (16 px) kaydırıyordu — hem de doğru cevabın gösterildiği anda. Kapsayıcıya verilen hover/sönük `transform`'u da hizalama kutusunu kaydırıyordu. | Ortalama artık `translate` **özelliğiyle** yapılır (`transform`'dan bağımsızdır); gizli modda kapsayıcıya `transform: none` verilir, ölçekleme ikonun kendisinde olur. |
+| **Konum kayması (ankraj)** | Şık pini, kaynak ikonun yalnızca HTML'ini kopyalayıp `iconAnchor`'ını atıyordu. Dağ prizmasının tabanı 32 px'lik kutunun 26. pikselindedir; ortalanınca dağ 10 px aşağı oturuyordu. | Kaynak ikonun `iconSize`/`iconAnchor` farkı `--pin-dx` / `--pin-dy` değişkenleriyle telafi edilir. |
+| **Hayalet şık** | Rozet CSS ile gizlense de Leaflet işaretçisinin 36×44'lük şeffaf kutusu DOM'da kalıyordu. Haritanın bomboş görünen bir yerine tıklayan öğrenci farkında olmadan o şıkkı işaretliyordu. | Şekil sınıfları işaretçinin **kök** öğesine de yazılır; gizlenen kutu `pointer-events: none` ile kapatılır. Noktasal şıklarda tıklama hedefi yalnızca görünen ikondur. |
+| **Kaybolan şık** | GeoJSON'u bulunamayan bir il ya da koordinat dizisi olmayan bir bölge şıkkında rozet gizlenince şık haritada ne görünür ne de tıklanabilir kalıyordu. | Rozet yalnızca haritada **gerçekten çizilmiş** bir geometri varsa gizlenir (`geometri-var`); yoksa rozet yerinde durur. |
+| **Anonim pin** | Mutlak Konum ailesinde (Güneş, Sıcaklık, Gündüz-Gece, Koordinat Avcısı, Düello) pini panel kartına bağlayan tek ipucu A-B-C-D harfidir. Gizleme açıkken tüm pinler aynı anonim daireye dönüşüyor ve oyun oynanamaz hale geliyordu. | `showMultipleChoiceLocations(..., { rozetSabit: true })` — bu modlarda rozet hiçbir zaman gizlenmez. |
+| **Takılı sıra numarası** | Sıralama modunda pin harfinin yerine seçim sırası yazılıyor, sıra düşünce harf geri gelmiyordu. | Özgün harf `data-letter` üzerinde saklanır ve sıra boşalınca geri yazılır. |
+
+---
+
+## 12. 🗺️ Çoklu Çizim Haritaları, Sürükle-Bırak Birleştirme (Linking) ve Edit Sistemi
+
+Kullanıcının coğrafi olarak birbiriyle teması olmayan ayrık bölgeleri (örneğin hem Doğu Karadeniz hem Akdeniz'deki Yayla Evleri) tek bir soru ve cevap varlığı olarak tanımlayabilmesini, birden fazla bağımsız harita üretebilmesini ve tam düzenleme yapabilmesini sağlayan sistem:
+
+### 12.1 🗂️ Çoklu Çizim Haritaları & İsimlendirme
+- **Bağımsız Harita Üretimi:** Kullanıcı "Çizimlerim" sekmesi altındayken dilediği kadar harita (örn: `Yayla Evleri Haritası`, `Maden Havzalarım`, `Özel Notlarım`) oluşturabilir, isimlendirebilir ve yeniden adlandırabilir.
+- **Alt Kategori Barı Entegrasyonu:** "Çizimlerim" kategorisi seçildiğinde alt kategori barında kayıtlı tüm haritalar `[🗺️ Yayla Evleri (3)] [🗺️ Madenlerim (5)]` şeklinde hap butonlar olarak listelenir ve `[➕ Yeni Harita]` butonuyla anında yeni harita açılabilir.
+- **İçe/Dışa Aktarma:** Haritalar tekil olarak veya toplu yedek halinde JSON formatında dışa aktarılabilir ve içe alınabilir.
+
+### 12.2 🔗 Keşif Modunda Sürükle-Bırak ile Birleştirme & Ayırma (Drag-to-Connect)
+- **Kullanım:** Keşif Modundayken haritadaki bir yer şeklinin üzerine sol tık ile basılı tutup başka bir yer şekline sürüklendiğinde aralarında dinamik parıldayan bir bağlantı çizgisi (laser link) uzanır.
+- **Birleştirme (Merge / Group):** Hedef elemanın üzerine bırakıldığında iki eleman birbirine bağlanır (`groupId` atanır).
+- **Ayırma (Unlink / Split):** Zaten bağlı olan iki eleman arasında aynı sürükleme işlemi tekrar yapıldığında aralarındaki bağ koparılır ve bağımsız iki elemana dönüşürler.
+- **Görsel Bağlantı:** Keşif modunda bağlı elemanlar arasında zarif kesikli çizgiler (`group-connection-line`) ve popup içinde `🔗 Birleşik Grup Üyesi` rozeti görüntülenir.
+
+### 12.3 🎯 Test ve Soru Motoru Entegrasyonu
+- **Tek ve Ortak Cevap:** Birleştirilmiş elemanlar quiz motoru tarafından tek bir kompozit soru olarak ele alınır.
+- **Konumdan İsim Bul Modunda:** Soru sorulduğunda gruptaki tüm üyelerin geometrileri (tüm poligon, çizgi ve noktalar) haritada aynı anda parıldar ve harita tüm üyeleri kapsayacak şekilde otomatik kadrajlanır.
+- **İsimden Haritada Bul Modunda:** Gruptaki tüm üyeler aynı şık pini (örn: A Pini) ile işaretlenir; öğrenci haritada bağlı bölgelerden herhangi birine tıkladığında cevap **DOĞRU** kabul edilir.
+
+### 12.4 ✏️ Çizimler İçin Tam Düzenleme (Edit) ve Haritadan Yeniden Çizim
+- Keşif balonundaki `✏️ Düzenle` butonu ile özel çizimlerin adı, kategorisi, türü, yöresi, KPSS notu ve koordinatları güncellenebilir.
+- `🖉 Haritadan Yeniden Çiz` butonuyla şekil doğrudan harita üzerinden yeniden çizilip kaydedilebilir.
+
+
+
+
+
 

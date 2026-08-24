@@ -1,5 +1,5 @@
 /**
- * 📦 Nüfus, Yerleşme & Göç  —  tr.nufus
+ * 📦 Nüfus & Yerleşme  —  tr.nufus
  *
  * OTOMATİK ÜRETİLDİ — elle düzenlemeyin: node tools/build_packs.js
  * Şema: { id, cat, tier(1-3), sub[], formation, geom, i18n: { lang: {...} } }
