@@ -173,7 +173,16 @@ Ayrıntılar: [docs/PAKET_SISTEMI.md](docs/PAKET_SISTEMI.md)
 2. Root Directory olarak ana dizini seçin (Framework Preset: **Other**).
 3. **Deploy** butonuna tıklayın; `vercel.json` yönlendirme ve önbellek başlıklarını otomatik uygular.
 
-> Paket dosyaları CDN'de bir yıl `immutable` saklanır. Bir paketin içeriğini güncellerken `data/packs/catalog.js` içindeki `version` alanını artırın; yükleyici `?v=` ile önbelleği kırar.
+> **Önbellek notu.** `vercel.json`, `/css`, `/js` ve `/data` altını bir yıl `immutable`
+> saklar. Bu yüzden yayın alırken iki sürüm numarası vardır:
+>
+> | Ne değişti? | Ne yapılmalı? |
+> | :--- | :--- |
+> | Herhangi bir `css/` veya `js/` dosyası | `index.html` içindeki `?v=N` sürümünü artır |
+> | Bir paketin içeriği | `data/packs/catalog.js` içindeki ilgili `version` alanını artır |
+>
+> Bu yapılmazsa siteyi daha önce ziyaret etmiş tarayıcılar YENİ `index.html` ile
+> ESKİ `app.js`/`style.css` dosyalarını karıştırır ve uygulama bozuk görünür.
 
 ---
 
