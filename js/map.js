@@ -659,10 +659,99 @@ class GeographyMap {
     const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
     const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     const boundsCoords = [];
+    const rozetSabit = !!ayarlar.rozetSabit;
 
     options.forEach((opt, index) => {
       const letter = letters[index] || `${index + 1}`;
       const roman = romanNumerals[index] || `${index + 1}`;
+
+      // --- GRUP / BİRLEŞİK SEÇENEK DURUMU ---
+      // İzmir ve Van gibi birbiriyle teması olmayan ayrık yerleri birleştirdiğimizde
+      // Nevşehir'de sahte bir orta nokta pini çıkması TAMAMEN ENGELLENİR.
+      // Grubun her bir üyesinin (İzmir'deki dağ ve Van'daki dağ) tam kendi konumunda
+      // AYNI şık pini (örn. A Pini) ve kendi geometrisi (poligon/çizgi/nokta) gösterilir.
+      if (opt.isGroup && Array.isArray(opt.groupItems) && opt.groupItems.length > 0) {
+        opt.groupItems.forEach(subItem => {
+          const subLat = subItem.lat;
+          const subLng = subItem.lng;
+          if (Number.isFinite(subLat) && Number.isFinite(subLng)) {
+            boundsCoords.push([subLat, subLng]);
+          }
+
+          let subGeometriVar = false;
+          if (subItem.shapeType === 'polygon' && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
+            subGeometriVar = true;
+            const poly = L.polygon(subItem.coordinates, {
+              color: '#3b82f6',
+              weight: 2,
+              fillColor: '#3b82f6',
+              fillOpacity: 0.25
+            }).addTo(this.multiChoiceLayerGroup);
+            poly.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
+          } else if (subItem.shapeType === 'polyline' && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
+            subGeometriVar = true;
+            const line = L.polyline(subItem.coordinates, {
+              color: '#3b82f6',
+              weight: 4,
+              opacity: 0.7,
+              dashArray: '4, 4'
+            }).addTo(this.multiChoiceLayerGroup);
+            line.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
+          }
+
+          if (!Number.isFinite(subLat) || !Number.isFinite(subLng)) return;
+
+          const subIsLinear = subItem.shapeType === 'polyline';
+          const subIsArea = subItem.shapeType === 'polygon' || subItem.category === 'sehirler' || subItem.category === 'bolgeler';
+          const subIsPoint = !subIsLinear && !subIsArea;
+          const subShapeClass = subIsLinear ? 'shape-linear' : (subIsArea ? 'shape-area' : 'shape-point');
+
+          let subExploreIconHtml = '';
+          if (subIsPoint && !rozetSabit) {
+            const customIcon = this.getCustomCategoryIcon(subItem, { isimsiz: true, notr: true });
+            const ikonAyar = (customIcon && customIcon.options) || {};
+            const iconHtml = ikonAyar.html || '<div class="pulse-circle"></div>';
+            const [ikonG, ikonY] = ikonAyar.iconSize || [0, 0];
+            const [ankraX, ankraY] = ikonAyar.iconAnchor || [ikonG / 2, ikonY / 2];
+            const dx = (ikonG / 2) - ankraX;
+            const dy = (ikonY / 2) - ankraY;
+            subExploreIconHtml = `<div class="choice-pin-explore-icon" style="--pin-dx:${dx}px; --pin-dy:${dy}px;">${iconHtml}</div>`;
+          }
+
+          const subDurumSiniflari = [
+            subShapeClass,
+            subGeometriVar ? 'geometri-var' : 'geometri-yok',
+            rozetSabit ? 'rozet-sabit' : ''
+          ].filter(Boolean).join(' ');
+
+          const subBadgeHtml = `
+            <div class="choice-pin-container ${subDurumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}">
+              <div class="choice-pin-badge">
+                <span class="choice-pin-letter">${letter}</span>
+                <span class="choice-pin-roman">${roman}</span>
+              </div>
+              <div class="choice-pin-point"></div>
+              ${subExploreIconHtml}
+            </div>
+          `;
+
+          const subChoiceIcon = L.divIcon({
+            className: `choice-map-icon ${subDurumSiniflari}`,
+            html: subBadgeHtml,
+            iconSize: [36, 44],
+            iconAnchor: [18, 44]
+          });
+
+          const subMarker = L.marker([subLat, subLng], { icon: subChoiceIcon }).addTo(this.multiChoiceLayerGroup);
+          subMarker.on('click', () => {
+            if (onSelectOption) onSelectOption(opt.id);
+          });
+        });
+
+        return; // Grup için tüm üye pinleri ve geometrileri çizildi, sahte orta nokta atlandı!
+      }
+
+      // --- STANDART TEKİL SEÇENEK DURUMU ---
       const lat = opt.lat;
       const lng = opt.lng;
 
@@ -713,30 +802,6 @@ class GeographyMap {
             }
           }).addTo(this.multiChoiceLayerGroup);
         }
-      } else if (opt.isGroup && Array.isArray(opt.groupItems)) {
-        geometriVar = true;
-        opt.groupItems.forEach(sub => {
-          if (Number.isFinite(sub.lat) && Number.isFinite(sub.lng)) {
-            boundsCoords.push([sub.lat, sub.lng]);
-          }
-          if (sub.shapeType === 'polygon' && sub.coordinates && Array.isArray(sub.coordinates[0])) {
-            const poly = L.polygon(sub.coordinates, {
-              color: '#3b82f6',
-              weight: 2,
-              fillColor: '#3b82f6',
-              fillOpacity: 0.25
-            }).addTo(this.multiChoiceLayerGroup);
-            poly.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
-          } else if (sub.shapeType === 'polyline' && sub.coordinates && Array.isArray(sub.coordinates[0])) {
-            const line = L.polyline(sub.coordinates, {
-              color: '#3b82f6',
-              weight: 4,
-              opacity: 0.7,
-              dashArray: '4, 4'
-            }).addTo(this.multiChoiceLayerGroup);
-            line.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
-          }
-        });
       } else if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
         geometriVar = true;
         const polyline = L.polyline(opt.coordinates, {
@@ -767,8 +832,6 @@ class GeographyMap {
       const isArea = shapeType === 'polygon' || opt.category === 'sehirler' || opt.category === 'bolgeler';
       const isPoint = !isLinear && !isArea;
       const shapeClass = isLinear ? 'shape-linear' : (isArea ? 'shape-area' : 'shape-point');
-
-      const rozetSabit = !!ayarlar.rozetSabit;
 
       // Noktasal şekiller için keşif modundaki zengin özel ikonun HTML'i
       let exploreIconHtml = '';
@@ -1000,10 +1063,19 @@ class GeographyMap {
     if (!Array.isArray(items) || !items.length) return 0;
     this._ensureReferencePane();
 
+    const flatItems = [];
+    items.forEach(it => {
+      if (it.isGroup && Array.isArray(it.groupItems)) {
+        it.groupItems.forEach(sub => flatItems.push(sub));
+      } else {
+        flatItems.push(it);
+      }
+    });
+
     const ortak = { pane: 'cizimReferans', interactive: false };
     let cizilen = 0;
 
-    items.forEach(item => {
+    flatItems.forEach(item => {
       const shapeType = item.shapeType || 'point';
       const renk = topicColor(item.category, item.color || defaultColor);
 
