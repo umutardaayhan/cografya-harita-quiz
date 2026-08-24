@@ -1385,9 +1385,19 @@ class GeographyMap {
     this.clearAll();
     this._bindPopupActions();
 
+    // 0. Kompozit veya birleşik grup nesnelerini tekil alt çizimlere aç (flatten)
+    const flatItems = [];
+    (items || []).forEach(it => {
+      if (it.isGroup && Array.isArray(it.groupItems)) {
+        it.groupItems.forEach(sub => flatItems.push(sub));
+      } else {
+        flatItems.push(it);
+      }
+    });
+
     // 1. Birleşik / Gruplanmış elemanlar arasında zarif bağlantı çizgileri çiz
     const groupMap = new Map();
-    items.forEach(it => {
+    flatItems.forEach(it => {
       if (it.groupId) {
         if (!groupMap.has(it.groupId)) groupMap.set(it.groupId, []);
         groupMap.get(it.groupId).push(it);
@@ -1399,21 +1409,23 @@ class GeographyMap {
         for (let i = 0; i < members.length - 1; i++) {
           const p1 = [members[i].lat, members[i].lng];
           const p2 = [members[i + 1].lat, members[i + 1].lng];
-          const groupLine = L.polyline([p1, p2], {
-            color: '#a855f7',
-            weight: 2.8,
-            dashArray: '8, 8',
-            opacity: 0.85,
-            className: 'group-connection-line'
-          });
-          groupLine.bindTooltip(`🔗 Birleşik Saha: <b>${members[0].name}</b>`, { sticky: true });
-          this.exploreLayerGroup.addLayer(groupLine);
+          if (Number.isFinite(p1[0]) && Number.isFinite(p1[1]) && Number.isFinite(p2[0]) && Number.isFinite(p2[1])) {
+            const groupLine = L.polyline([p1, p2], {
+              color: '#a855f7',
+              weight: 2.8,
+              dashArray: '8, 8',
+              opacity: 0.85,
+              className: 'group-connection-line'
+            });
+            groupLine.bindTooltip(`🔗 Birleşik Saha: <b>${members[0].name}</b>`, { sticky: true });
+            this.exploreLayerGroup.addLayer(groupLine);
+          }
         }
       }
     });
 
     // 2. Elemanları haritaya çiz ve sürükle-bırak bağlama dinleyicilerini bağla
-    items.forEach(item => {
+    flatItems.forEach(item => {
       // 81 İl (Şehirler) için gerçek GeoJSON sınırlarını ve interaktif glow efektini çiz
       if (item.category === 'sehirler') {
         const feat = this.getCityFeature(item);
@@ -1462,7 +1474,7 @@ class GeographyMap {
                 p.kpss || item.kpssNot || ''
               );
               layer.bindPopup(popupContent, { maxWidth: 300 });
-              this._enableDragLinking(layer, item, items);
+              this._enableDragLinking(layer, item, flatItems);
             }
           });
           this.exploreLayerGroup.addLayer(geoLayer);
@@ -1483,7 +1495,7 @@ class GeographyMap {
           ? this.createLakeCircle(item, false)
           : L.marker([item.lat, item.lng], { icon: customIcon });
         marker.bindPopup(popupContent, { maxWidth: 280 });
-        this._enableDragLinking(marker, item, items);
+        this._enableDragLinking(marker, item, flatItems);
         this.exploreLayerGroup.addLayer(marker);
       } else if (shapeType === 'polyline') {
         let polyColor = topicColor(item.category, color);
@@ -1498,7 +1510,7 @@ class GeographyMap {
         });
         const popupContent = this._popupHtml(item, null, `${item.type} (${item.region || 'Hat/Güzergah'})`);
         line.bindPopup(popupContent, { maxWidth: 280 });
-        this._enableDragLinking(line, item, items);
+        this._enableDragLinking(line, item, flatItems);
         this.exploreLayerGroup.addLayer(line);
       } else if (shapeType === 'polygon') {
         const areaColor = topicColor(item.category, color);
@@ -1510,13 +1522,13 @@ class GeographyMap {
         });
         const popupContent = this._popupHtml(item, null, `${item.type} (${item.region || 'Alan/Bölge'})`);
         polygon.bindPopup(popupContent, { maxWidth: 280 });
-        this._enableDragLinking(polygon, item, items);
+        this._enableDragLinking(polygon, item, flatItems);
         this.exploreLayerGroup.addLayer(polygon);
 
         if (item.lat && item.lng) {
           const centerMarker = L.marker([item.lat, item.lng], { icon: customIcon });
           centerMarker.bindPopup(popupContent, { maxWidth: 280 });
-          this._enableDragLinking(centerMarker, item, items);
+          this._enableDragLinking(centerMarker, item, flatItems);
           this.exploreLayerGroup.addLayer(centerMarker);
         }
       }

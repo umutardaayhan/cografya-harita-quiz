@@ -438,13 +438,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- KEŞİF MODU ---
   function loadExploreMode() {
     // geoQuiz.items zaten seçili alt oluşum türüne göre filtrelenmiştir!
-    const items = geoQuiz.items;
+    let items = geoQuiz.items;
     let catTitle = '';
     let catColor = '#3b82f6';
 
     if (activeCategory === 'ozel_cizimler') {
       catTitle = 'Özel Çizimlerim';
       catColor = '#8b5cf6';
+      // Keşif modunda tüm tekil şekiller, poligon alanları ve aralarındaki bağlantı çizgileri gösterilir
+      items = customDrawManager ? customDrawManager.drawings : [];
     } else {
       const catObj = CATEGORIES.find(c => c.id === activeCategory);
       catTitle = catObj ? catObj.title : '';
