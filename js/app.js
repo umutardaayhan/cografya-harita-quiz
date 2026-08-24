@@ -444,6 +444,18 @@ document.addEventListener('DOMContentLoaded', () => {
     renderQuestion(qData);
   }
 
+  /**
+   * Panelleri görünüm alanının içine çeker.
+   *
+   * PanelManager bunu bir ResizeObserver ile de yapıyor; ancak gözlemci
+   * tarayıcının çizim döngüsüne bağlıdır ve panel bir kare boyunca dışarıda
+   * kalabilir. Soru içeriği değiştiğinde (panelin en çok büyüdüğü an)
+   * doğrudan çağırmak bu boşluğu kapatır.
+   */
+  function panelleriIceriCek() {
+    if (typeof panelManager !== 'undefined' && panelManager) panelManager.clampAll();
+  }
+
   function renderQuestion(qData) {
     if (exploreBanner) exploreBanner.style.display = 'none';
     if (kpssInfoCard) kpssInfoCard.style.display = 'none';
@@ -548,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     updateStatsUI();
+    panelleriIceriCek();
   }
 
   // Cevap Verildiğinde
@@ -1053,6 +1066,12 @@ document.addEventListener('DOMContentLoaded', () => {
     s.left = `${sol}px`;
     s.top = `${ust}px`;
     s.width = `${genislik}px`;
+    // Menü top/left ile konumlanır. `bottom`/`right` inline temizlense bile
+    // stil sayfasındaki kural yeniden devreye girebiliyor (harita katmanı
+    // menüsü `bottom: calc(100% + 8px)` ile yukarı açılıyordu) ve kutu hem
+    // üstten hem alttan bağlanınca yüksekliği eziliyordu.
+    s.bottom = 'auto';
+    s.right = 'auto';
 
     // Kutu modeli farkı yüzünden kalan taşmayı geri kırp
     const son = dropdown.getBoundingClientRect();
@@ -1836,11 +1855,22 @@ document.addEventListener('DOMContentLoaded', () => {
     e.stopPropagation();
     const isVisible = layerDropdown.style.display === 'flex';
     layerDropdown.style.display = isVisible ? 'none' : 'flex';
+    // Menü, kaydırılabilir #map-controls-left kutusunun İÇİNDE duruyordu ve
+    // taşan kısmı kırpılıyordu. Diğer menüler gibi body'ye taşınıp görünüm
+    // alanına göre konumlandırılır; böylece hiçbir kaba takılmaz.
+    if (!isVisible) konumlandirMenu(layerDropdown, mapLayerBtn);
   });
 
   layerOptionBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
+      // Kilitli görünüm: katmanı değiştirmek yerine mağazayı aç
+      if (btn.classList.contains('layer-locked')) {
+        layerDropdown.style.display = 'none';
+        packStore.openStore(afterPacksReady);
+        return;
+      }
+
       const layerKey = btn.dataset.layer;
       const layerName = geoMap.setLayer(layerKey);
 
@@ -1879,6 +1909,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function openDrawingToolbar() {
     currentMode = 'drawing';
     drawingToolbar.style.display = 'flex';
+    // Menü yüksekliği gizliyken değişmiş olabilir; araç çubuğu altına otursun
+    updateNavBottom();
     drawModeBtn.classList.add('active');
     geoMap.clearAll();
     setDrawShape(activeDrawShape);
@@ -2206,10 +2238,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (controlsToggleBtn && mapControlsLeft) {
+    const okuYenile = () => {
+      controlsToggleBtn.querySelector('span').textContent =
+        mapControlsLeft.classList.contains('minimized') ? '▶' : '◀';
+    };
     controlsToggleBtn.addEventListener('click', () => {
       mapControlsLeft.classList.toggle('minimized');
-      controlsToggleBtn.querySelector('span').textContent = mapControlsLeft.classList.contains('minimized') ? '▶' : '◀';
+      okuYenile();
     });
+    // Katlanma durumu PanelManager tarafından da geri yüklenebiliyor;
+    // ok yönü her iki yoldan da güncel kalsın.
+    new MutationObserver(okuYenile).observe(mapControlsLeft, {
+      attributes: true, attributeFilter: ['class']
+    });
+    okuYenile();
   }
 
   // Harita Tıklama Dinleyicisi (Kör Atış / GeoGuessr Modu İçin)
@@ -2795,7 +2837,10 @@ document.addEventListener('DOMContentLoaded', () => {
     label: '📝 Soru Paneli', collapseClass: 'minimized', minWidth: 280, minHeight: 90
   });
   panelManager.register('harita-kontrolleri', document.getElementById('map-controls-left'), {
-    label: '🗺️ Harita Araçları', collapseClass: 'minimized', minWidth: 240, minHeight: 60
+    // Bu panelin kendi ◀/▶ küçültme düğmesi (#controls-toggle-btn) zaten var;
+    // tutamağa ikinci bir düğme eklenmez.
+    label: '🗺️ Harita Araçları', collapseClass: 'minimized', collapseBtn: false,
+    minWidth: 240, minHeight: 60
   });
   panelManager.register('yanlislarim', document.getElementById('mistakes-panel'), {
     label: '🔴 Yanlışlarım', minWidth: 240, minHeight: 140
@@ -2812,9 +2857,214 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Başlangıç Yüklemesi
-  renderCategories();
-  loadNextQuestion();
-  updateStatsUI();
-  openPlanScreen();   // Uygulama doğrudan "Bugünün Planı" ile açılır
+  // ============================================================
+  // 📦 PAKET SİSTEMİ (DLC) — mağaza, mod kilitleri ve açılış akışı
+  // ============================================================
+  const packManager = new PackManager(GEO_CATALOG);
+  // study_plan.js plan satırlarını buradan okur (eski sabit DAILY_PLAN_SPEC yerine)
+  window.geoPackManager = packManager;
+  const packStore = new PackStoreUI(packManager);
+
+  /** Oyun menüsündeki DOM butonu -> paket manifestindeki `unlocks` kimliği */
+  const MODE_BUTTON_MAP = {
+    'btn-geoguessr-mode': 'geoguessr',
+    'btn-conqueror-mode': 'conqueror',
+    'btn-match-mode': 'match',
+    'speedrun-btn': 'speedrun',
+    'exam-mode-btn': 'exam',
+    'btn-boyama-mode': 'boyama',
+    'btn-olusum-mode': 'olusum',
+    'btn-mk-sun': 'mk_sun',
+    'btn-mk-temp': 'mk_temp',
+    'btn-mk-daynight': 'mk_daynight',
+    'btn-mk-coord': 'mk_coord',
+    'btn-mk-duel': 'mk_duel'
+  };
+
+  /**
+   * Kurulu paketlere göre oyun modlarını kilitler/açar.
+   * Kilitli butonun açıklaması "hangi paket gerekli"ye dönüşür; asıl engelleme
+   * aşağıdaki YAKALAMA fazı dinleyicisiyle yapılır, böylece her modun kendi
+   * başlatma fonksiyonuna ayrı ayrı kontrol eklemek gerekmez.
+   */
+  function refreshModeLocks() {
+    Object.keys(MODE_BUTTON_MAP).forEach(btnId => {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      const modeId = MODE_BUTTON_MAP[btnId];
+      const acik = packManager.isModeAvailable(modeId);
+
+      btn.classList.toggle('mode-locked', !acik);
+      const small = btn.querySelector('small');
+      if (!small) return;
+
+      if (acik) {
+        if (small.dataset.original) small.textContent = small.dataset.original;
+        return;
+      }
+      if (!small.dataset.original) small.dataset.original = small.textContent;
+
+      const saglayan = packManager.packsProviding(modeId)
+        .map(p => GeoI18n.field(p.i18n, 'title', p.id));
+      // Uzun listeler okunmuyordu: 3+ paket sağlıyorsa isim saymak yerine
+      // "herhangi bir konu paketi" demek daha anlaşılır.
+      if (saglayan.length === 1) {
+        small.textContent = GeoI18n.t('lock.needs', { paket: saglayan[0] });
+      } else if (saglayan.length <= 2) {
+        small.textContent = GeoI18n.t('lock.needsAny', { paketler: saglayan.join(' / ') });
+      } else {
+        small.textContent = GeoI18n.t('lock.needsTopic');
+      }
+    });
+  }
+
+  /**
+   * Harita görünümleri (tile katmanları) de pakete bağlıdır.
+   * `voyager` (Sade) her zaman açıktır — en az bir taban harita gerekir;
+   * diğerleri konusuyla tematik olarak eşleşen paketle gelir:
+   *   Fiziki/Topografik → Dağlar, Ovalar & Platolar
+   *   Kabartı/Arazi     → Dağlar, Fay Hatları
+   *   Gerçek Uydu       → Turizm, Kıyılar
+   *   Gece/Karanlık     → Matematiksel Konum (gece-gündüz modülü)
+   */
+  const LAYER_UNLOCK = {
+    voyager: null,               // her zaman açık
+    topo: 'layer_topo',
+    terrain: 'layer_terrain',
+    satellite: 'layer_satellite',
+    dark: 'layer_dark'
+  };
+
+  function refreshLayerLocks() {
+    let aktifKilitlendi = false;
+
+    layerOptionBtns.forEach(btn => {
+      const gerekli = LAYER_UNLOCK[btn.dataset.layer];
+      const acik = !gerekli || packManager.isModeAvailable(gerekli);
+
+      btn.classList.toggle('layer-locked', !acik);
+      if (!btn.dataset.originalLabel) btn.dataset.originalLabel = btn.textContent.trim();
+      btn.textContent = acik ? btn.dataset.originalLabel : '🔒 ' + btn.dataset.originalLabel;
+      btn.title = acik ? '' : GeoI18n.t('lock.layer');
+
+      if (!acik && btn.classList.contains('active')) aktifKilitlendi = true;
+    });
+
+    // Kullanılan görünümün paketi kaldırıldıysa taban haritaya dön
+    if (aktifKilitlendi) {
+      const taban = [...layerOptionBtns].find(b => b.dataset.layer === 'voyager');
+      if (taban) {
+        layerOptionBtns.forEach(b => b.classList.remove('active'));
+        taban.classList.add('active');
+        mapLayerLabel.textContent = geoMap.setLayer('voyager');
+      }
+    }
+  }
+
+  // Kilitli bir moda tıklama: oyunu başlatmak yerine mağazayı aç
+  if (gamesDropdown) {
+    gamesDropdown.addEventListener('click', (e) => {
+      const btn = e.target.closest('.game-mode-option-btn');
+      if (!btn || !btn.classList.contains('mode-locked')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      closeGamesDropdown();
+      packStore.openStore(afterPacksReady);
+    }, true);   // YAKALAMA fazı: mod başlatıcılarından önce çalışır
+  }
+
+  /** Aktif sekme kaldırılan bir pakete aitse ilk geçerli kategoriye kay */
+  function ensureValidCategory() {
+    if (!CATEGORIES.length) return;                 // hiç paket yok: mağaza zaten açılacak
+    if (COGRAFYA_DATA[activeCategory]) return;      // sekme hâlâ geçerli
+    // Çizim sekmesinde ancak gerçekten çizim varsa kalınır
+    if (activeCategory === 'ozel_cizimler' && customDrawManager.drawings.length) return;
+    activeCategory = CATEGORIES[0].id;
+    geoQuiz.setCategory(activeCategory);
+  }
+
+  // Paket kurulunca/kaldırılınca tüm türetilmiş arayüz tazelenir
+  document.addEventListener('packs:changed', () => {
+    ensureValidCategory();
+    renderCategories();
+    refreshModeLocks();
+    refreshLayerLocks();
+    studyPlan.buildItemIndex();
+  });
+
+  // Dil değişiminde veri projeksiyonu yeniden kurulur (isimler/notlar çevrilir)
+  GeoI18n.onChange(() => {
+    packManager.rebuild();
+    GeoI18n.applyDom();
+  });
+
+  const packsBtn = document.getElementById('packs-btn');
+  if (packsBtn) {
+    packsBtn.addEventListener('click', () => packStore.openStore(afterPacksReady));
+  }
+
+  /** Mağaza/rehber kapandıktan sonraki normal açılış akışı */
+  function afterPacksReady() {
+    // Kullanıcı tüm paketlerini kaldırdıysa boş bir haritaya değil, mağazaya döner
+    if (packManager.isEmpty()) { packStore.openStore(afterPacksReady); return; }
+    ensureValidCategory();
+    renderCategories();
+    refreshModeLocks();
+    refreshLayerLocks();
+    loadNextQuestion();
+    updateStatsUI();
+    openPlanScreen();
+  }
+
+  // ============================================================
+  // 📐 ÜST MENÜ YÜKSEKLİĞİ — çizim araç çubuğu menünün altına otursun
+  // ============================================================
+  /**
+   * Çizim araç çubuğu sabit bir `top: 76px` kullanıyordu. Üst menü artık iki
+   * satır + alt tür barı olduğu için (ve paket sayısına göre yüksekliği
+   * değiştiği için) araç çubuğu menünün ARKASINDA kalıyordu. Menünün gerçek
+   * alt kenarını ölçüp CSS değişkenine yazıyoruz; `.drawing-toolbar` bunu
+   * `top` olarak kullanır.
+   */
+  const navWrapper = document.querySelector('.top-nav-wrapper');
+  function updateNavBottom() {
+    if (!navWrapper) return;
+    const r = navWrapper.getBoundingClientRect();
+    // Menü sürüklenmiş olabilir; taban değeri hiçbir zaman negatif olmasın
+    const alt = Math.max(12, Math.round(r.bottom) + 10);
+    document.documentElement.style.setProperty('--nav-bottom', alt + 'px');
+  }
+
+  if (navWrapper && typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(updateNavBottom).observe(navWrapper);
+  }
+  window.addEventListener('resize', updateNavBottom);
+  document.addEventListener('packs:changed', updateNavBottom);
+  updateNavBottom();
+
+  // ---------- Başlangıç Yüklemesi ----------
+  (async function bootstrap() {
+    GeoI18n.init();
+    GeoI18n.applyDom();
+
+    const ilkGiris = packManager.isFirstRun();
+    await packManager.boot();          // kurulu paketlerin dosyalarını yükler
+
+    renderCategories();
+    refreshModeLocks();
+    refreshLayerLocks();
+    updateStatsUI();
+
+    if (ilkGiris && packManager.isEmpty()) {
+      // Siteye ilk defa gelen kullanıcı: harita yerine rehber + mağaza
+      packStore.startOnboarding(afterPacksReady);
+      return;
+    }
+    if (packManager.isEmpty()) {
+      // Tüm paketlerini kaldırmış kullanıcı: doğrudan mağaza
+      packStore.openStore(afterPacksReady);
+      return;
+    }
+    afterPacksReady();
+  })();
 });

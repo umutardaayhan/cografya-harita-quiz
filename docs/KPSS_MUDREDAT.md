@@ -1,6 +1,33 @@
-# 📚 KPSS Coğrafya Yer Şekilleri Müfredat Kapsamı
+# 📚 KPSS Coğrafya Müfredat Kapsamı
 
-Bu doküman, uygulamada yer alan yer şekillerinin KPSS Coğrafya soru kalıplarına uygun gruplandırmasını ve püf noktalarını içerir.
+Bu doküman, uygulamada yer alan kayıtların KPSS Coğrafya soru kalıplarına uygun
+gruplandırmasını ve püf noktalarını içerir.
+
+## 🗂️ Kapsam Tablosu
+
+Her müfredat başlığı bir PAKET olarak dağıtılır; ayrıntı için
+[PAKET_SISTEMI.md](PAKET_SISTEMI.md).
+
+| Müfredat Başlığı | Paket | Durum |
+| :--- | :--- | :--- |
+| Yer şekilleri: dağlar | `tr.daglar` | ✅ |
+| Yer şekilleri: ovalar & platolar | `tr.ova_plato` | ✅ |
+| Akarsular & göller | `tr.sular` | ✅ |
+| Geçitler & boğazlar | `tr.gecitler` | ✅ |
+| İklim & bitki örtüsü | `tr.iklim_orman` | ✅ |
+| Toprak tipleri | `tr.toprak` | ✅ |
+| Doğal afetler | `tr.afet` | ✅ |
+| Fay hatları & tektonik yapı | `tr.fay` | ✅ |
+| Kıyılar, adalar & denizler | `tr.kiyilar` | ✅ |
+| Dış kuvvetler & yerşekilleri | `tr.dis_kuvvetler` | ✅ |
+| Nüfus, yerleşme & göç | `tr.nufus` | ✅ |
+| Coğrafi bölgeler & bölümler | `tr.bolgeler` | ✅ |
+| Tarım, hayvancılık & sanayi | `tr.beseri` | ✅ |
+| Madenler & enerji | `tr.madenler` | ✅ |
+| Turizm & kültür mirası | `tr.turizm` | ✅ |
+| Ulaşım & ticaret | `tr.ulasim` | ✅ |
+| Matematiksel konum & hesaplamalar | `tr.mutlak_konum` | ✅ |
+| İlişkili eşleştirmeler | `tr.iliskiler` | ✅ |
 
 ---
 

@@ -32,6 +32,18 @@ class PanelManager {
     window.addEventListener('pointerup', this._onUp);
     window.addEventListener('pointercancel', this._onUp);
     window.addEventListener('resize', () => this.clampAll());
+
+    // Uygulama sabit bir görünüm alanında çalışır; belge asla kaymamalıdır.
+    // Bir panel bir kare boyunca taşarsa tarayıcı (ör. odaklanan düğme için)
+    // sayfayı kaydırıp altta siyah bir şerit bırakabiliyordu. CSS'teki
+    // `overflow: clip` bunu kapatır; bu dinleyici de her ihtimale karşı
+    // kaymayı geri alır ve panelleri içeri çeker.
+    window.addEventListener('scroll', () => {
+      if (window.scrollY !== 0 || window.scrollX !== 0) {
+        window.scrollTo(0, 0);
+        this.clampAll();
+      }
+    }, { passive: true });
   }
 
   // ---------------------------------------------------------------
@@ -73,6 +85,10 @@ class PanelManager {
       handle: null,
       resize: true,
       collapseClass: 'panel-collapsed',
+      // Panelin KENDİ küçültme düğmesi varsa (ör. harita araçlarındaki ◀/▶)
+      // tutamağa ikinci bir düğme eklenmez; aksi halde aynı işi yapan iki
+      // buton yan yana duruyordu.
+      collapseBtn: true,
       minWidth: 180,
       minHeight: 48,
       label: id
@@ -87,7 +103,41 @@ class PanelManager {
     this._buildChrome(panel);
     if (cfg.resize) this._buildResizers(panel);
     this._watchCollapse(panel);
+    this._watchSize(panel);
     this.restore(id);
+  }
+
+  /**
+   * Panelin KENDİ boyutu değiştiğinde de içeri çeker.
+   * Pencere yeniden boyutlanmasını dinlemek yetmiyordu: soru cevaplandığında
+   * panel büyüyor, taşıma sırasında ayarlanan konum artık ekrana sığmıyordu.
+   */
+  _watchSize(panel) {
+    let icerde = false;
+    // `icerde`, clamp'in kendi yazdığı style değişiminin gözlemciyi yeniden
+    // tetiklemesiyle oluşacak sonsuz döngüyü keser.
+    const duzelt = () => {
+      if (!panel.pinned || icerde) return;
+      icerde = true;
+      try { this.clamp(panel); } finally { icerde = false; }
+    };
+
+    if (typeof ResizeObserver !== 'undefined') {
+      panel.sizeObserver = new ResizeObserver(duzelt);
+      panel.sizeObserver.observe(panel.el);
+    }
+
+    // ResizeObserver tarayıcının ÇİZİM döngüsüne bağlıdır; panel bir kare
+    // boyunca ekranın dışında kalabiliyor. MutationObserver ise mikro görev
+    // olarak hemen çalışır: soru cevaplanıp hap bilgi kartı açıldığı anda
+    // panel aynı turda içeri çekilir.
+    if (typeof MutationObserver !== 'undefined') {
+      panel.mutObserver = new MutationObserver(duzelt);
+      panel.mutObserver.observe(panel.el, {
+        childList: true, subtree: true, attributes: true,
+        attributeFilter: ['style', 'class']
+      });
+    }
   }
 
   /** Panelin üstüne taşıma tutamağı + katla/sıfırla düğmeleri ekler */
@@ -99,7 +149,7 @@ class PanelManager {
     bar.innerHTML = `
       <span class="pm-grip" title="Tutup taşı">⠿</span>
       <span class="pm-label">${cfg.label}</span>
-      <button type="button" class="pm-btn pm-collapse" title="Küçült / Aç">▾</button>
+      ${cfg.collapseBtn ? '<button type="button" class="pm-btn pm-collapse" title="Küçült / Aç">▾</button>' : ''}
       <button type="button" class="pm-btn pm-reset" title="Bu panelin konum ve boyutunu sıfırla">⟲</button>
     `;
     el.insertBefore(bar, el.firstChild);
@@ -115,10 +165,13 @@ class PanelManager {
       this._startDrag(panel, e);
     });
 
-    bar.querySelector('.pm-collapse').addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.toggleCollapse(panel.id);
-    });
+    const katlaBtn = bar.querySelector('.pm-collapse');
+    if (katlaBtn) {
+      katlaBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleCollapse(panel.id);
+      });
+    }
     bar.querySelector('.pm-reset').addEventListener('click', (e) => {
       e.stopPropagation();
       this.reset(panel.id);
@@ -334,15 +387,47 @@ class PanelManager {
     this.save();
   }
 
-  /** Ekran küçüldüğünde panel dışarıda kalmasın */
+  /**
+   * Paneli görünüm alanının içinde tutar.
+   *
+   * Eskiden yalnızca panelin KÖŞESİNİN ekranda kalması güvence altındaydı;
+   * panelin kendi içeriği büyüdüğünde (ör. küçültülmüş soru paneli tabana
+   * yakınken bir soru cevaplanınca) alt kenarı ekranın dışına taşıyor ve
+   * sayfanın altında boş bir şerit bırakıyordu. Artık panelin TAMAMI içeri
+   * çekilir; panel ekrandan büyükse üst-sol kenara hizalanır.
+   */
   clamp(panel) {
     if (!panel.pinned) return;
+    const KENAR = 8;
+
+    // Uygulama sabit görünüm alanında çalışır. Bir panel bir kare boyunca
+    // taşarsa tarayıcı belgeyi kaydırabiliyor ve altta siyah bir şerit
+    // kalıyordu. Ölçüm almadan ÖNCE kaymayı sıfırlıyoruz; böylece
+    // getBoundingClientRect (görünüm alanı) ile style.top (belge) aynı
+    // koordinat sisteminde kalır.
+    if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
+
     const r = panel.el.getBoundingClientRect();
     const s = panel.el.style;
-    if (r.left > window.innerWidth - 60) s.left = `${window.innerWidth - 60}px`;
-    if (r.top > window.innerHeight - 40) s.top = `${window.innerHeight - 40}px`;
-    if (r.left < -r.width + 60) s.left = `${-r.width + 60}px`;
-    if (r.top < 0) s.top = '0px';
+
+    let left = r.left;
+    let top = r.top;
+
+    if (r.width <= window.innerWidth - 2 * KENAR) {
+      left = Math.min(Math.max(KENAR, left), window.innerWidth - r.width - KENAR);
+    } else {
+      // Panel ekrandan geniş: sol kenara yasla, kalanı kendi içinde kaysın
+      left = KENAR;
+    }
+
+    if (r.height <= window.innerHeight - 2 * KENAR) {
+      top = Math.min(Math.max(KENAR, top), window.innerHeight - r.height - KENAR);
+    } else {
+      top = KENAR;
+    }
+
+    if (Math.round(left) !== Math.round(r.left)) s.left = `${left}px`;
+    if (Math.round(top) !== Math.round(r.top)) s.top = `${top}px`;
   }
 
   clampAll() {

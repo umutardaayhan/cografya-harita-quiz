@@ -11,8 +11,12 @@
 
   <!-- Uygulama Stili -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/packs.css">
 </head>
 <body>
+
+  <!-- 📦 PAKET KATMANI — rehber ve mağaza tamamen JS ile doldurulur -->
+  <div id="pack-layer"></div>
 
   <!-- 📅 BUGÜNÜN PLANI — Açılış Çalışma Ekranı -->
   <div id="plan-screen" class="plan-screen">
@@ -158,6 +162,11 @@
 
         <button id="mode-toggle-btn" class="nav-btn mode-toggle-btn" title="Test / Keşif Modu Değiştir">
           <span>🧭</span> <span>Keşif Modu</span>
+        </button>
+
+        <!-- 📦 Paket Mağazası Girişi -->
+        <button id="packs-btn" class="nav-btn packs-btn" title="Paket Mağazası">
+          <span>📦</span> <span data-i18n="store.nav">Paketler</span>
         </button>
 
         <!-- ⚙️ İkincil araçlar tek menüde toplandı -->
@@ -836,8 +845,19 @@
   </div>
 
   <!-- Uygulama Scriptleri -->
+  <!-- 1) Çalışma zamanı veri kapları (boş gelir, PackManager doldurur) -->
   <script src="data/cografya_data.js"></script>
   <script src="data/mutlak_konum_data.js"></script>
+
+  <!-- 2) Paket kataloğu + i18n çekirdeği + dil sözlükleri -->
+  <script src="data/packs/catalog.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="locales/tr.js"></script>
+  <script src="locales/en.js"></script>
+
+  <!-- 3) DLC motoru ve mağaza arayüzü (paket dosyaları lazy yüklenir) -->
+  <script src="js/pack_manager.js"></script>
+  <script src="js/pack_store_ui.js"></script>
   <script src="js/custom_draw.js"></script>
   <script src="js/geoguessr.js"></script>
   <script src="js/conqueror.js"></script>

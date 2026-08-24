@@ -4,6 +4,82 @@
  * Desteklenen Quiz Modları: Tek Konum Vurgulama & Çoklu Seçenek (I, II, III, IV, V / A, B, C, D, E) Harita İşaretçileri
  */
 
+/**
+ * 🎨 KONU KATEGORİSİ GÖRSEL SÖZLÜĞÜ
+ *
+ * Dağ / ova / plato / geçit için elle modellenmiş 3B ikonlar var; geri kalan
+ * tüm konu kategorileri buradaki emoji rozetini ve rengi kullanır.
+ * Yeni bir paket kategorisi eklendiğinde tek yapılacak buraya bir satır yazmaktır.
+ */
+const TOPIC_CATEGORY_ICON = {
+  tarim: '🚜', hayvancilik: '🐑', sanayi: '🏭', iklim: '🌡️', orman: '🌲',
+  toprak: '🟫', afet: '⚠️', fay: '💥', madenler: '⛏️', nufus: '👥',
+  bolgeler: '🗺️', kiyilar: '🏖️', dis_kuvvetler: '🌬️', turizm: '🏛️', ulasim: '🚢'
+};
+
+/** Kategori rengi: çokgen/çizgi dolgusu ve rozet arka planı bu tablodan gelir */
+const TOPIC_CATEGORY_COLOR = {
+  tarim: '#84cc16', hayvancilik: '#10b981', sanayi: '#a855f7', iklim: '#06b6d4',
+  orman: '#16a34a', toprak: '#a16207', afet: '#dc2626', fay: '#f97316',
+  madenler: '#78716c', nufus: '#0ea5e9', bolgeler: '#7c3aed', kiyilar: '#06b6d4',
+  dis_kuvvetler: '#14b8a6', turizm: '#eab308', ulasim: '#3b82f6',
+  platolar: '#f59e0b', ovalar: '#22c55e', daglar: '#d97706', su_kaynaklari: '#2563eb'
+};
+
+/**
+ * Alt tür bazında daha isabetli emoji. Anahtarlar paketlerdeki DİLDEN BAĞIMSIZ
+ * `sub` kimlikleridir; bu yüzden veri İngilizceye çevrildiğinde de çalışır.
+ * Yalnızca TOPIC_CATEGORY_ICON'da yer alan kategoriler için sorgulanır, bu
+ * nedenle farklı kategorilerdeki aynı adlı alt türler birbirine karışmaz.
+ */
+const TOPIC_SUB_ICON = {
+  // Doğal afetler
+  deprem: '🏚️', kutle: '⛰️', su_afet: '🌊', erozyon: '🕳️', yangin: '🔥', kuraklik: '🏜️',
+  // Fay & tektonik
+  fay_hatti: '⚡', graben: '🕳️', levha: '🌍', deprem_bolge: '🏚️',
+  // Madenler & enerji
+  metal: '🔩', enerji_ham: '🛢️', endustriyel: '🧱', enerji_tesis: '⚡',
+  // Nüfus & yerleşme
+  yogun: '🏙️', seyrek: '🏔️', goc: '🧳', yerlesme: '🏘️',
+  // Kıyılar
+  yarimada: '🗿', korfez: '🌊', burun: '📌', ada: '🏝️', deniz: '🌐', kiyi_tipi: '〰️',
+  // Dış kuvvetler
+  karstik_dk: '💧', buzul_dk: '❄️', ruzgar_dk: '🌪️', akarsu_dk: '🏞️', dalga_dk: '🏖️',
+  // Turizm
+  unesco: '🏅', tarihi: '🏺', kis_tur: '⛷️', termal_tur: '♨️', kiyi_doga: '🌅',
+  // Ulaşım
+  liman: '⚓', havalimani: '✈️', kopru_tunel: '🌉', boru_hatti: '🛢️',
+  kara_demir: '🛣️', su_yolu: '🚢',
+  // Toprak
+  zonal: '🟫', azonal: '🟤', intrazonal: '🧂',
+  // Bölgeler
+  ana_bolge: '🗺️', bolum: '📍'
+};
+
+/**
+ * Bir öğe birden çok alt türe uyabilir (ör. bir UNESCO alanı hem `unesco` hem
+ * `tarihi`dir). Bu liste hangisinin rozete çıkacağını belirler; burada yer
+ * almayan alt türler kaydın kendi sırasına göre değerlendirilir.
+ */
+const TOPIC_SUB_ONCELIK = ['unesco', 'deprem_bolge', 'enerji_tesis', 'ana_bolge'];
+
+/** Bir öğe için en isabetli emojiyi seç (önce alt tür, sonra kategori) */
+function pickTopicEmoji(item) {
+  const subs = item.sub || [];
+  for (const oncelikli of TOPIC_SUB_ONCELIK) {
+    if (subs.includes(oncelikli) && TOPIC_SUB_ICON[oncelikli]) return TOPIC_SUB_ICON[oncelikli];
+  }
+  for (const s of subs) {
+    if (TOPIC_SUB_ICON[s]) return TOPIC_SUB_ICON[s];
+  }
+  return TOPIC_CATEGORY_ICON[item.category] || '📍';
+}
+
+/** Bir öğenin çizgi/alan rengi (kategori tablosundan, yoksa varsayılan kırmızı) */
+function topicColor(category, fallback = '#ef4444') {
+  return TOPIC_CATEGORY_COLOR[category] || fallback;
+}
+
 class GeographyMap {
   constructor(mapContainerId) {
     this.containerId = mapContainerId;
@@ -135,6 +211,12 @@ class GeographyMap {
 
     this.exploreLayerGroup.addTo(this.map);
     this.multiChoiceLayerGroup.addTo(this.map);
+
+    // Leaflet konteyner boyutunu ÖNBELLEKLER. Harita, kabı henüz ölçülmemişken
+    // kurulduğunda bu önbellek 0x0 kalıyor; sonraki `flyToBounds` çağrıları
+    // NaN koordinat üretip soru render'ını komple çökertiyordu. Kabı izleyip
+    // her boyut değişiminde önbelleği tazeliyoruz.
+    this._watchContainerSize();
     this.drawingLayerGroup.addTo(this.map);
 
     // Zoom kontrolünü sağ üste al
@@ -317,6 +399,7 @@ class GeographyMap {
     const cat = item.category || '';
     const typeStr = (item.type || '').toLowerCase();
 
+    // Elle modellenmiş 3B ikonlar (prizma dağ, ova, plato, geçit)
     if (cat === 'daglar' || typeStr.includes('dağ')) {
       return this.createMountainPrismIcon(item);
     }
@@ -329,10 +412,12 @@ class GeographyMap {
     if (cat === 'gecitler' || typeStr.includes('geçit') || typeStr.includes('boğaz')) {
       return this.createPassOrStraitIcon(item);
     }
-    if (cat === 'tarim')  return this.createTopicBadgeIcon(item, '🚜', 'tarim');
-    if (cat === 'sanayi') return this.createTopicBadgeIcon(item, '🏭', 'sanayi');
-    if (cat === 'iklim')  return this.createTopicBadgeIcon(item, '🌡️', 'iklim');
-    if (cat === 'orman')  return this.createTopicBadgeIcon(item, '🌲', 'orman');
+
+    // Konu kategorileri: önce alt tür, sonra kategori emojisi
+    if (TOPIC_CATEGORY_ICON[cat]) {
+      const emoji = pickTopicEmoji(item);
+      return this.createTopicBadgeIcon(item, emoji, `topic-${cat}`);
+    }
 
     return L.divIcon({
       className: 'pulse-marker-icon',
@@ -393,30 +478,10 @@ class GeographyMap {
       }
     } else if (shapeType === 'polygon') {
       const coords = questionItem.coordinates;
-      const cat = questionItem.category;
-      
-      let polyColor = '#ef4444';
-      let fillCol = '#ef4444';
-
-      if (cat === 'tarim') {
-        polyColor = '#84cc16';
-        fillCol = '#84cc16';
-      } else if (cat === 'hayvancilik') {
-        polyColor = '#10b981';
-        fillCol = '#10b981';
-      } else if (cat === 'sanayi') {
-        polyColor = '#a855f7';
-        fillCol = '#a855f7';
-      } else if (cat === 'iklim') {
-        polyColor = '#06b6d4';
-        fillCol = '#06b6d4';
-      } else if (cat === 'platolar') {
-        polyColor = '#f59e0b';
-        fillCol = '#f59e0b';
-      } else if (cat === 'ovalar') {
-        polyColor = '#22c55e';
-        fillCol = '#22c55e';
-      }
+      // Renk artık kategori tablosundan gelir; yeni bir kategori eklendiğinde
+      // burada değişiklik gerekmez (bkz. TOPIC_CATEGORY_COLOR).
+      const polyColor = topicColor(questionItem.category);
+      const fillCol = polyColor;
 
       this.currentShapeLayer = L.polygon(coords, {
         color: polyColor,
@@ -446,6 +511,15 @@ class GeographyMap {
       const roman = romanNumerals[index] || `${index + 1}`;
       const lat = opt.lat;
       const lng = opt.lng;
+
+      // Koordinatı bozuk tek bir kayıt Leaflet'te istisna fırlatıp SORUNUN
+      // TAMAMININ çizilmesini durduruyordu (panel boş kalıyordu). Paketler
+      // dışarıdan gelebildiği için bozuk kaydı sessizce atlıyoruz.
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        console.warn('Geçersiz koordinat, şık atlandı:', opt && opt.id);
+        return;
+      }
+
       boundsCoords.push([lat, lng]);
 
       const shapeType = opt.shapeType || 'point';
@@ -579,6 +653,7 @@ class GeographyMap {
   }
 
   flySafely(latLng, zoom, options = {}) {
+    this._ensureSize();
     const target = L.latLng(latLng);
     if (this.isLongJump(target, zoom)) {
       this.map.setView(target, zoom, { animate: false });
@@ -587,9 +662,43 @@ class GeographyMap {
     this.map.flyTo(target, zoom, Object.assign({ duration: 0.8 }, options));
   }
 
+  /** Leaflet'in boyut önbelleğini kabın gerçek ölçüsüyle senkron tutar */
+  _watchContainerSize() {
+    const el = this.map.getContainer();
+    if (!el) return;
+
+    const tazele = () => {
+      const boyut = this.map.getSize();
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      if (boyut.x !== Math.round(r.width) || boyut.y !== Math.round(r.height)) {
+        this.map.invalidateSize({ animate: false, pan: false });
+      }
+    };
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this._sizeObserver = new ResizeObserver(tazele);
+      this._sizeObserver.observe(el);
+    }
+    // Gözlemci desteklenmese bile ilk karede bir kez düzeltilsin
+    requestAnimationFrame(tazele);
+  }
+
+  /** Uçuş hesapları kabın ölçüsüne dayanır; ölçü bayatsa önce tazelenir */
+  _ensureSize() {
+    if (this.map.getSize().x === 0 || this.map.getSize().y === 0) {
+      this.map.invalidateSize({ animate: false, pan: false });
+    }
+  }
+
   flyToBoundsSafely(bounds, options = {}) {
+    this._ensureSize();
+    if (this.map.getSize().x === 0) return;   // kap hâlâ ölçüsüz: uçma
     const target = bounds.getCenter();
     const targetZoom = this.map.getBoundsZoom(bounds);
+    if (!Number.isFinite(target.lat) || !Number.isFinite(target.lng) || !Number.isFinite(targetZoom)) {
+      return;   // bozuk sınır: sessizce vazgeç, soru render'ı bölünmesin
+    }
     if (this.isLongJump(target, targetZoom)) {
       this.map.fitBounds(bounds, { animate: false });
       return;
@@ -777,10 +886,9 @@ class GeographyMap {
         marker.bindPopup(popupContent, { maxWidth: 280 });
         this.exploreLayerGroup.addLayer(marker);
       } else if (shapeType === 'polyline') {
-        let polyColor = color;
+        let polyColor = topicColor(item.category, color);
         if (isMountain) polyColor = '#d97706';
         else if (isStrait) polyColor = '#0284c7';
-        else if (item.category === 'su_kaynaklari') polyColor = '#2563eb';
 
         const line = L.polyline(item.coordinates, {
           color: polyColor,
@@ -797,10 +905,11 @@ class GeographyMap {
         this.exploreLayerGroup.addLayer(line);
         // Akarsu ve sıra dağlarda merkez noktası YOK: tıklama hedefi çizginin kendisi.
       } else if (shapeType === 'polygon') {
+        const areaColor = topicColor(item.category, color);
         const polygon = L.polygon(item.coordinates, {
-          color: color,
+          color: areaColor,
           weight: 2,
-          fillColor: color,
+          fillColor: areaColor,
           fillOpacity: 0.3
         });
         const popupContent = `

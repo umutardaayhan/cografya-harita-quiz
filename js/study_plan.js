@@ -22,22 +22,18 @@ const REVIEW_INTERVALS_DAYS = { 0: 0, 1: 1, 2: 3, 3: 7, 4: 14 };
 const REVIEW_INTERVAL_MAX_DAYS = 30;
 
 /**
- * Günlük paket tarifi. Yeni konu eklemek için tek yapılması gereken
- * COGRAFYA_DATA'ya kategoriyi eklemek ve buraya bir satır yazmak.
- * Verisi olmayan satırlar plan ekranında "veri yok" olarak gösterilir.
+ * Günlük paket tarifi ARTIK SABİT DEĞİL: kurulu paketlerden türetilir.
+ *
+ * Her paket manifesti kendi `planRows` satırlarını taşır (bkz. data/packs/catalog.js);
+ * kullanıcı bir paketi kaldırdığında o konu plandan da kendiliğinden düşer.
+ * Yeni konu eklemek = yeni paket yayınlamak; bu dosyada değişiklik gerekmez.
  */
-const DAILY_PLAN_SPEC = [
-  { key: 'daglar',        label: 'Dağ',    icon: '🏔️', count: 20 },
-  { key: 'su_kaynaklari', label: 'Akarsu', icon: '🏞️', count: 15, filter: it => it.shapeType === 'polyline' },
-  { key: 'su_kaynaklari', label: 'Göl',    icon: '💧', count: 10, filter: it => (it.shapeType || 'point') === 'point' },
-  { key: 'ovalar',        label: 'Ova',    icon: '🌾', count: 12 },
-  { key: 'platolar',      label: 'Plato',  icon: '⛰️', count: 10 },
-  { key: 'gecitler',      label: 'Geçit',  icon: '🚪', count: 8 },
-  { key: 'tarim',         label: 'Tarım',  icon: '🚜', count: 15 },
-  { key: 'sanayi',        label: 'Sanayi', icon: '🏭', count: 10 },
-  { key: 'iklim',         label: 'İklim',  icon: '🌡️', count: 10 },
-  { key: 'orman',         label: 'Orman',  icon: '🌲', count: 10 }
-];
+function dailyPlanSpec() {
+  if (typeof window !== 'undefined' && window.geoPackManager) {
+    return window.geoPackManager.planSpec();
+  }
+  return [];
+}
 
 const PHASES = [
   { key: 'yeni',    label: 'Yeni',      icon: '🆕', color: '#38bdf8' },
@@ -194,7 +190,7 @@ class StudyPlanManager {
     }
 
     const now = Date.now();
-    const rows = DAILY_PLAN_SPEC.map(spec => this.buildRow(spec, now, includeWaiting));
+    const rows = dailyPlanSpec().map(spec => this.buildRow(spec, now, includeWaiting));
 
     // Oturum sırası: önce tüm YENİ, sonra TEKRAR, en son YANLIŞLAR
     const queue = [];

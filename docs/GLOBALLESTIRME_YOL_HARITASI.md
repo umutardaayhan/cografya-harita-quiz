@@ -4,6 +4,23 @@ Bu strateji belgesi, **Coğrafya Harita Lab** platformunun yerel bir sınav arac
 
 ---
 
+## 📌 Güncel Durum (Ağustos 2026)
+
+Faz 1 ve Faz 2'nin **altyapısı kuruldu**; ayrıntılar: [PAKET_SISTEMI.md](PAKET_SISTEMI.md).
+
+| Konu | Durum |
+| :--- | :--- |
+| Veri şemasının standartlaştırılması | ✅ Paket şeması dondurulmuş (`id, cat, tier, sub, formation, geom, i18n`) |
+| Ülke kapsamlı veri dağıtımı | ✅ Paket kimlikleri `{ülke}.{konu}`; kategoriler ülkeler arası paylaşımlı |
+| Çift katmanlı i18n motoru | ✅ `GeoI18n.t()` (arayüz) + `GeoI18n.pick()` (varlık) çalışıyor |
+| Dilden bağımsız sınıflandırma | ✅ Alt tür ve oluşum filtreleri Türkçe metin yerine anahtar kullanıyor |
+| Arayüz metinlerinin çevirisi | ⏳ Yalnızca paket/rehber ekranları çevrildi; ana arayüz hâlâ HTML'de sabit |
+| Varlık adlarının İngilizcesi | ⏳ Şema hazır, `i18n.en` blokları henüz doldurulmadı |
+| SQLite master veritabanı | ⏳ `tools/build_packs.js` ara katman olarak çalışıyor; `build_dataset.py` bunun yerini alacak |
+| Yeni ülke paketleri | ⏳ Başlanmadı |
+
+---
+
 ## 🧭 Temel Vizyon ve Faz Sıralaması
 
 ```mermaid
