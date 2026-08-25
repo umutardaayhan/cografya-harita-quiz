@@ -101,3 +101,46 @@ Her müfredat başlığı bir PAKET olarak dağıtılır; ayrıntı için
   - *Sertavul:* Silifke/Mersin - Karaman/İç Anadolu
   - *Gülek:* Adana/Çukurova - Niğde/İç Anadolu
   - *Belen:* İskenderun - Antakya / Suriye
+
+---
+
+## 6. 🚜 Tarım Ürünleri ve Yetişme Alanları
+* **Tahıllar (Hububat):**
+  - *Buğday:* Karasal iklim, ekim alanı en geniş temel besin maddesi ➡️ **Konya**
+  - *Arpa:* Soğuğa ve kuraklığa dayanıklı, yem ve bira sanayisi ➡️ **Konya**
+  - *Çavdar:* Tahıllar içinde soğuğa ve kıraç toprağa en dayanıklı ürün ➡️ **Kayseri**
+  - *Yulaf:* Serin-nemli iklim, bisküvi ve mama sanayisi ➡️ **Sivas**
+  - *Mısır:* Doğal ortamı Karadeniz iken sulama projeleriyle (Mavi Tünel) ➡️ **Konya**
+* **Baklagiller:**
+  - *Kırmızı Mercimek:* Aşırı yaz kuraklığı ve sıcağa en dayanıklı baklagil ➡️ **Şanlıurfa**
+  - *Yeşil Mercimek:* Yarı kurak İç Anadolu iklimi ➡️ **Yozgat**
+  - *Nohut:* Baklagiller içinde ekim alanı en geniş ürün ➡️ **Ankara**
+* **Sanayi Bitkileri:**
+  - *Pirinç (Çeltik):* Sulak/bataklık alan, sıtma riski nedeniyle devlet kontrolünde ➡️ **Edirne**
+  - *Pamuk:* Yetişmede bol su, hasatta sıcaklık, GAP sulamasıyla ➡️ **Şanlıurfa**
+  - *Şeker Pancarı:* Çabuk bozulduğu için fabrika tarlaya yakın (hammaddeye bağlılık) ➡️ **Konya**
+  - *Haşhaş:* Tıbbi alkaloid üretimi, devlet kontrolünde ➡️ **Afyonkarahisar**
+  - *Çay:* Mikroklima, asidik kireçsiz toprak, monokültür ➡️ **Rize**
+  - *Keten:* Liflerinden dokuma ve kağıt para yapımı ➡️ **Uşak**
+* **Yağ Bitkileri:**
+  - *Soya Fasulyesi:* Yüksek protein ve yağ oranı, sanayi bitkisi ➡️ **Adana**
+  - *Aspir:* Karasal iklim kıraç topraklar, biyodizel ➡️ **Kayseri**
+  - *Kanola (Koza):* Kış soğuğuna dayanıklı bitkisel yağ/biyodizel ➡️ **Tekirdağ**
+* **Meyveler & Narenciye:**
+  - *İncir:* Kış ılıklığı, dünya ihracat liderliği ➡️ **Aydın**
+  - *Limon:* Kış donuna en duyarlı turunçgil ➡️ **Mersin**
+  - *Turunçgiller (Portakal, Mandalina, Greyfurt):* Çukurova kış ılıklığı ➡️ **Adana**
+  - *Üzüm:* Soğuğa dayanıklı, Sultaniye çekirdeksiz kuru üzüm ➡️ **Manisa**
+  - *Elma:* Kış soğuklaması isteyen, Göller Yöresi ➡️ **Isparta**
+  - *Muz:* Kış donu olmayan mikroklima ve seralar ➡️ **Antalya** (Alanya)
+  - *Çilek:* Erkenci örtü altı yetiştiricilik ➡️ **Mersin** (Silifke)
+  - *Avokado:* Subtropikal iklim, kış ılıklığı ➡️ **Antalya**
+* **Yumrulu ve Diğer Tarım Ürünleri:**
+  - *Sarımsak:* Taşköprü coğrafi işaretli, yüksek aroma ➡️ **Kastamonu**
+  - *Susam:* Sıcak iklim, tahin/helva hammaddesi ➡️ **Antalya**
+  - *Kiraz:* Kemalpaşa erkenci bahçeleri, ihraç ürünü ➡️ **İzmir**
+  - *Yer Fıstığı:* Kumlu gevşek toprak ➡️ **Adana - Osmaniye**
+  - *Antep Fıstığı:* Taşlı/kireçli toprak, kurakçıl, en çok ağaç ve üretim ➡️ **Şanlıurfa**
+  - *Siirt Fıstığı:* İri taneli, yüksek çıtlama oranlı coğrafi işaretli ➡️ **Siirt**
+  - *Kavun ve Karpuz:* Erkencilik ve devasa üretim miktarı ➡️ **Adana**
+  - *Ceviz:* Çağlayancerit ve kapama bahçe yatırımları ➡️ **Kahramanmaraş**

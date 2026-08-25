@@ -83,7 +83,7 @@ const I18N_FIELDS = {
 };
 
 /** Dilden bağımsız alanlar → kökte kalır */
-const NEUTRAL_FIELDS = ['areaKm2', 'matchType'];
+const NEUTRAL_FIELDS = ['areaKm2', 'matchType', 'groupId'];
 
 /**
  * Kategori kayıt defteri. `canonical` alanı Faz 2'deki SQLite şemasının
@@ -187,7 +187,7 @@ const PACK_DEFS = [
     en: { title: 'Agriculture, Livestock & Industry', desc: 'Crop belts, livestock zones and industrial facilities.' },
     unlocks: ['quiz', 'conqueror', 'speedrun', 'exam'],
     planRows: [
-      { cat: 'tarim',       icon: '🚜', count: 15, tr: 'Tarım',  en: 'Agriculture' },
+      { cat: 'tarim',       icon: '🚜', count: 33, tr: 'Tarım',  en: 'Agriculture' },
       { cat: 'hayvancilik', icon: '🐑', count: 6,  tr: 'Hayvan', en: 'Livestock' },
       { cat: 'sanayi',      icon: '🏭', count: 10, tr: 'Sanayi', en: 'Industry' }
     ],

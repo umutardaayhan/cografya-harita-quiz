@@ -2821,173 +2821,247 @@ const COGRAFYA_DATA = {
 
   // --- 🚜 TARIM: ÜRÜN - YÖRE EŞLEŞMELERİ ---
   tarim: [
+    // --- 1. TAHILLAR (HUBUBAT) ---
     {
-      id: "tarim_findik_giresun", name: "Fındık (Doğu Karadeniz Kıyısı)", shortName: "Fındık Üretim Alanı", category: "tarim",
-      promptTitle: "Türkiye'nin Dünya üretiminde ilk sırada olduğu, kış ılıklığı ve bol nem isteyen fındık üretim alanı haritada neresidir?",
-      type: "Meyvecilik / İhraç Ürünü", lat: 40.91, lng: 38.39, region: "Karadeniz", city: "Giresun - Ordu - Trabzon",
-      shapeType: "polygon",
-      coordinates: [[40.85, 37.4], [41.15, 37.7], [41.1, 39.5], [41.25, 40.8], [40.95, 41.0], [40.65, 39.2], [40.68, 37.5]],
-      kpssNot: "Türkiye dünya fındık üretiminde 1. sıradadır. Doğu Karadeniz kıyı kuşağında, yaz kuraklığı görülmeyen nemli iklim ve eğimli yamaçlarda yetişir. Ordu ve Giresun üretimin merkezidir."
+      id: "tarim_bugday", name: "Buğday", shortName: "Buğday", category: "tarim",
+      promptTitle: "Karasal iklim şartlarına uygun, Türkiye'de ekim alanı en geniş ve en fazla Konya'da üretilen temel tahıl ürünü haritada neresidir?",
+      type: "Tahıl (Hububat)", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
+      groupId: "tarim_grp_konya", shapeType: "point",
+      kpssNot: "Karasal iklim şartlarına uygun bir ürün olup ilkbahar yağışı ve yaz kuraklığı ister. Türkiye'de en geniş ekim alanına sahip temel besin maddesidir; en fazla Konya ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_cay_rize", name: "Çay (Doğu Karadeniz Kıyı Kuşağı)", shortName: "Çay Tarım Alanı", category: "tarim",
-      promptTitle: "Her mevsim bol yağış, yüksek nem ve asidik toprak isteyen, Türkiye'de en dar alanda yetişen monokültür tarım alanı haritada neresidir?",
-      type: "Endüstri Bitkisi", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize - Artvin - Trabzon",
-      shapeType: "polygon",
-      coordinates: [[40.95, 40.1], [41.25, 40.5], [41.48, 41.4], [41.35, 41.6], [41.1, 41.2], [40.85, 40.3]],
-      kpssNot: "Her mevsim yağışlı iklim, yüksek bağıl nem ve kireçsiz asidik toprak ister. Rize merkezli Doğu Karadeniz kıyı şeridinde toplanmıştır; yayılış alanı Türkiye'de çok dardır."
+      id: "tarim_arpa", name: "Arpa", shortName: "Arpa", category: "tarim",
+      promptTitle: "Soğuğa ve kuraklığa buğdaydan daha dayanıklı olan, yem ve bira sanayisinde kullanılan ve en fazla Konya'da üretilen tahıl haritada neresidir?",
+      type: "Tahıl (Hububat / Yem)", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
+      groupId: "tarim_grp_konya", shapeType: "point",
+      kpssNot: "Buğdayla benzer yetişme koşullarına sahiptir ancak soğuğa ve kuraklığa buğdaydan daha dayanıklıdır. Yem ve bira sanayisinde kullanılır; en fazla Konya ilinde üretilmektedir."
     },
     {
-      id: "tarim_pamuk_cukurova", name: "Pamuk (Çukurova Deltası)", shortName: "Pamuk (Çukurova)", category: "tarim",
-      promptTitle: "Yüksek yaz sıcaklığı ve alüvyal delta toprağı isteyen, tekstil sanayisinin hammaddesi olan pamuk alanı haritada neresidir?",
-      type: "Endüstri Bitkisi", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana - Mersin",
-      shapeType: "polygon",
-      coordinates: [[36.75, 34.9], [37.15, 35.1], [37.2, 35.8], [36.85, 36.0], [36.55, 35.4]],
-      kpssNot: "Yüksek sıcaklık ve olgunlaşma döneminde kuraklık ister. Çukurova alüvyal toprakları ve uzun vejetasyon süresiyle klasik pamuk yöresidir; tekstil sanayisini besler."
+      id: "tarim_cavdar", name: "Çavdar", shortName: "Çavdar", category: "tarim",
+      promptTitle: "Tahıllar içinde soğuğa ve kıraç topraklara en dayanıklı olan, yüksek platolarda ve en çok Kayseri'de yetiştirilen tahıl haritada neresidir?",
+      type: "Tahıl (Hububat)", lat: 38.73, lng: 35.48, region: "İç Anadolu", city: "Kayseri",
+      groupId: "tarim_grp_kayseri", shapeType: "point",
+      kpssNot: "Tahıllar içinde soğuğa ve en fakir/kıraç topraklara en dayanıklı üründür. Yüksek ve soğuk platolarda yetişir; en çok Kayseri ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_pamuk_gap", name: "Pamuk (GAP / Harran Ovası)", shortName: "Pamuk (GAP / Şanlıurfa)", category: "tarim",
-      promptTitle: "GAP sulama projeleri sonrasında Türkiye pamuk üretiminde ilk sıraya yerleşen sulu tarım alanı haritada neresidir?",
-      type: "Endüstri Bitkisi", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa (Harran Ovası)",
-      shapeType: "polygon",
-      coordinates: [[37.35, 38.6], [37.35, 39.3], [36.85, 39.4], [36.7, 38.8], [37.0, 38.5]],
-      kpssNot: "GAP sulaması devreye girdikten sonra Güneydoğu Anadolu pamuk üretiminde 1. sıraya yükselmiştir. Sulamanın tarımsal verimi artırma etkisinin en somut örneğidir."
+      id: "tarim_yulaf", name: "Yulaf", shortName: "Yulaf", category: "tarim",
+      promptTitle: "Serin ve nemli iklimi seven, gıda sanayisinde ve hayvan yemi olarak kullanılan, en fazla Sivas'ta üretilen tahıl haritada neresidir?",
+      type: "Tahıl (Hububat / Yem)", lat: 39.75, lng: 37.01, region: "İç Anadolu", city: "Sivas",
+      shapeType: "point",
+      kpssNot: "Serin ve nemli iklimi seven, bisküvi, bebek maması ve hayvan yemi sanayisinde kullanılan yulaf en fazla Sivas ilinde üretilmektedir."
     },
     {
-      id: "tarim_incir_aydin", name: "İncir (Büyük Menderes Grabeni)", shortName: "İncir Üretim Alanı", category: "tarim",
-      promptTitle: "Dünya kuru incir üretim ve ihracatında 1. sırada yer aldığımız Ege graben sahası haritada neresidir?",
-      type: "Meyvecilik / İhraç Ürünü", lat: 37.85, lng: 27.84, region: "Ege", city: "Aydın - Büyük Menderes",
-      shapeType: "polygon",
-      coordinates: [[37.75, 27.2], [37.95, 27.6], [38.0, 28.5], [37.7, 28.6], [37.6, 27.5]],
-      kpssNot: "Türkiye kuru incir üretim ve ihracatında dünyada ilk sıradadır. Akdeniz iklimi ve Büyük Menderes Ovası'nın alüvyal toprakları belirleyicidir."
+      id: "tarim_misir", name: "Mısır", shortName: "Mısır", category: "tarim",
+      promptTitle: "Doğal ortamı Karadeniz olmasına rağmen sulama projelerinin (Mavi Tünel) etkisiyle günümüzde en fazla Konya'da yetiştirilen ürün haritada neresidir?",
+      type: "Tahıl (Sulu Tarım)", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
+      groupId: "tarim_grp_konya", shapeType: "point",
+      kpssNot: "Doğal ortamı Karadeniz iklimi olmasına rağmen, sulama projelerinin (Mavi Tünel / KOP) etkisiyle günümüzde ticari amaçla en fazla Konya ilinde yetiştirilmektedir."
+    },
+
+    // --- 2. BAKLAGİLLER ---
+    {
+      id: "tarim_kirmizi_mercimek", name: "Kırmızı Mercimek", shortName: "Kırmızı Mercimek", category: "tarim",
+      promptTitle: "Aşırı yaz kuraklığına ve yüksek sıcaklığa en dayanıklı baklagil olup Türkiye'de en çok Şanlıurfa'da üretilen ürün haritada neresidir?",
+      type: "Baklagil", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
+      groupId: "tarim_grp_sanliurfa", shapeType: "point",
+      kpssNot: "Kuraklığa ve yüksek sıcaklığa en dayanıklı tarım ürünlerinden biri olup Türkiye üretiminde en çok Şanlıurfa ilinde üretilmektedir."
     },
     {
-      id: "tarim_uzum_manisa", name: "Çekirdeksiz Üzüm (Gediz Grabeni)", shortName: "Çekirdeksiz Kuru Üzüm", category: "tarim",
-      promptTitle: "Kuru üzüm (Sultaniye) üretiminin merkezi olan, Ege'nin güneşli graben ovası haritada neresidir?",
-      type: "Meyvecilik / İhraç Ürünü", lat: 38.61, lng: 27.43, region: "Ege", city: "Manisa - Gediz Ovası",
-      shapeType: "polygon",
-      coordinates: [[38.55, 27.2], [38.75, 27.5], [38.55, 28.6], [38.3, 28.5], [38.4, 27.4]],
-      kpssNot: "Kuru üzüm (sultaniye) üretiminin merkezi Gediz Ovası çevresidir. Akdeniz ikliminin kurak ve güneşli yazı kurutma için elverişlidir."
+      id: "tarim_yesil_mercimek", name: "Yeşil Mercimek", shortName: "Yeşil Mercimek", category: "tarim",
+      promptTitle: "İç Anadolu'nun yarı kurak karasal iklimine uyumlu olan ve Türkiye üretiminde Yozgat'ın ilk sırada yer aldığı baklagil haritada neresidir?",
+      type: "Baklagil", lat: 39.82, lng: 34.81, region: "İç Anadolu", city: "Yozgat",
+      shapeType: "point",
+      kpssNot: "İç Anadolu'nun yarı kurak karasal iklimine uyumlu bir baklagil olup en fazla Yozgat ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_zeytin_ayvalik", name: "Zeytin (Edremit & Güney Marmara)", shortName: "Zeytin Üretim Kuşağı", category: "tarim",
-      promptTitle: "Kış ılıklığı isteyen, sofralık ve yağlık üretimin yoğunlaştığı kıyı kuşağı haritada neresidir?",
-      type: "Meyvecilik / Yağ Bitkisi", lat: 39.32, lng: 26.69, region: "Ege - Marmara", city: "Balıkesir (Ayvalık - Edremit)",
-      shapeType: "polygon",
-      coordinates: [[39.2, 26.5], [39.6, 26.6], [39.7, 27.1], [39.3, 27.0]],
-      kpssNot: "Zeytin, Akdeniz ikliminin tipik bitkisidir; kışın don olmaması şarttır. Ege ve Güney Marmara kıyıları en yoğun üretim sahalarıdır."
+      id: "tarim_nohut", name: "Nohut", shortName: "Nohut", category: "tarim",
+      promptTitle: "Türkiye'de baklagiller içinde ekim alanı en geniş olan, kuraklığa dayanıklı ve en çok Ankara'da üretilen tarım ürünü haritada neresidir?",
+      type: "Baklagil", lat: 39.93, lng: 32.86, region: "İç Anadolu", city: "Ankara",
+      shapeType: "point",
+      kpssNot: "Türkiye'de baklagiller içinde ekim alanı ve üretimi en fazla olan üründür. Kuraklığa dayanıklıdır ve en çok Ankara ilinde üretilmektedir."
+    },
+
+    // --- 3. SANAYİ BİTKİLERİ ---
+    {
+      id: "tarim_pirinc", name: "Pirinç (Çeltik)", shortName: "Pirinç (Çeltik)", category: "tarim",
+      promptTitle: "Akarsu boylarındaki sulak alanlarda yetişen, sıtma riski nedeniyle devlet kontrolünde olup en fazla Edirne'de üretilen ürün haritada neresidir?",
+      type: "Sanayi Bitkisi (Devlet Kontrollü)", lat: 41.68, lng: 26.56, region: "Marmara", city: "Edirne",
+      shapeType: "point",
+      kpssNot: "Akarsu boylarındaki sulak ve bataklık alanlarda yetişen, sıtma hastalığı riski nedeniyle ekim alanları devlet kontrolünde tutulan bu ürün en fazla Edirne (Meriç Nehri havzası) ilinde üretilmektedir."
     },
     {
-      id: "tarim_tutun_akhisar", name: "Tütün (Ege & Karadeniz Kuşağı)", shortName: "Tütün Yetişme Alanı", category: "tarim",
-      promptTitle: "Kıraç ve eğimli arazilerde kaliteli yetiştirilen, devlet kontrolünde üretilen tütün yöresi haritada neresidir?",
-      type: "Endüstri Bitkisi", lat: 38.92, lng: 27.84, region: "Ege", city: "Manisa (Akhisar) - Ege",
-      shapeType: "polygon",
-      coordinates: [[38.7, 27.5], [39.1, 27.7], [39.05, 28.2], [38.65, 28.0]],
-      kpssNot: "Kaliteli tütün, taban suyu az ve eğimli topraklarda yetişir. Ege (Akhisar), Karadeniz (Bafra - Samsun) ve Güneydoğu (Adıyaman) başlıca üretim yöreleridir."
+      id: "tarim_pamuk", name: "Pamuk", shortName: "Pamuk", category: "tarim",
+      promptTitle: "Yetişme döneminde bol su, hasatta yüksek sıcaklık isteyen ve GAP sulamasıyla en fazla Şanlıurfa'da yetiştirilen tekstil hammaddesi haritada neresidir?",
+      type: "Sanayi Bitkisi (Lif / Tekstil)", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
+      groupId: "tarim_grp_sanliurfa", shapeType: "point",
+      kpssNot: "Yetişme döneminde bol su, olgunlaşma döneminde ise yüksek yaz sıcaklığı isteyen pamuk, GAP sulama projelerinin etkisiyle en fazla Şanlıurfa ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_muz_anamur", name: "Muz (Anamur - Alanya Kıyı Şeridi)", shortName: "Muz Yetişme Sahası", category: "tarim",
-      promptTitle: "Torosların kuzeyden gelen soğuğu kesmesiyle kış ılıklığının korunduğu mikroklima muz sahası haritada neresidir?",
-      type: "Meyvecilik / Mikroklima Ürünü", lat: 36.08, lng: 32.84, region: "Akdeniz", city: "Mersin (Anamur) - Antalya (Alanya)",
-      shapeType: "polygon",
-      coordinates: [[36.0, 32.3], [36.3, 32.0], [36.4, 32.5], [36.1, 33.1], [35.95, 32.9]],
-      kpssNot: "Tropikal kökenli bir üründür; kışın dahi düşük sıcaklık görülmeyen mikroklima alanları ister. Anamur - Gazipaşa - Alanya kıyı şeridi uygundur."
+      id: "tarim_sekerpancari", name: "Şeker Pancarı", shortName: "Şeker Pancarı", category: "tarim",
+      promptTitle: "Hasattan sonra çabuk bozulduğu için fabrikaları tarlaların yanına kurulan ve en fazla Konya'da üretilen endüstri bitkisi haritada neresidir?",
+      type: "Sanayi Bitkisi", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
+      groupId: "tarim_grp_konya", shapeType: "point",
+      kpssNot: "Çabuk bozulduğu için fabrikaların yakınına kurulması gereken şeker pancarı (hammaddeye bağlılık), sulanabilen alanlarda en fazla Konya ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_antepfistigi_gaziantep", name: "Antep Fıstığı (Güneydoğu Platoları)", shortName: "Antep Fıstığı Sahası", category: "tarim",
-      promptTitle: "Taşlı, kireçli topraklara ve aşırı yaz kuraklığına dayanıklı fıstık üretim alanı haritada neresidir?",
-      type: "Meyvecilik / İhraç Ürünü", lat: 37.07, lng: 37.38, region: "Güneydoğu Anadolu", city: "Gaziantep - Şanlıurfa",
-      shapeType: "polygon",
-      coordinates: [[36.85, 37.1], [37.35, 37.2], [37.4, 38.2], [36.8, 38.3]],
-      kpssNot: "Kurakçıl bir türdür, sulama gerektirmeden taşlı ve kireçli topraklarda yetişebilir. Güneydoğu Anadolu'nun sıcak ve kurak yazına tam uyum sağlamıştır."
+      id: "tarim_hashas", name: "Haşhaş", shortName: "Haşhaş", category: "tarim",
+      promptTitle: "Tıbbi alkaloid üretimi amacıyla ekimi devlet kontrolünde tutulan ve en çok Afyonkarahisar'da üretilen sanayi bitkisi haritada neresidir?",
+      type: "Sanayi Bitkisi (Devlet Kontrollü)", lat: 38.76, lng: 30.54, region: "Ege", city: "Afyonkarahisar",
+      shapeType: "point",
+      kpssNot: "Uyuşturucu madde elde edilebildiği için ekim alanları devlet kontrolünde olan bu ürün, en çok Afyonkarahisar ilinde üretilmektedir."
     },
     {
-      id: "tarim_kayisi_malatya", name: "Kayısı (Malatya Havzası)", shortName: "Kayısı Üretim Havzası", category: "tarim",
-      promptTitle: "Dünya kuru kayısı üretiminde lider olduğumuz, çöküntü havzası niteliğindeki alan haritada neresidir?",
-      type: "Meyvecilik / İhraç Ürünü", lat: 38.35, lng: 38.31, region: "Doğu Anadolu", city: "Malatya",
-      shapeType: "polygon",
-      coordinates: [[38.15, 38.0], [38.55, 38.1], [38.6, 38.6], [38.2, 38.5]],
-      kpssNot: "Türkiye kuru kayısı üretiminde dünyada ilk sıradadır. Malatya Ovası, Doğu Anadolu içinde çevresine göre daha ılıman ve sulanabilir bir çöküntü alanıdır."
+      id: "tarim_cay", name: "Çay", shortName: "Çay", category: "tarim",
+      promptTitle: "Mikroklima iklim özelliklerinin görüldüğü, bol yağış isteyen ve sadece Doğu Karadeniz'de (Rize) yetiştirilen ürün haritada neresidir?",
+      type: "Sanayi Bitkisi (Mikroklima)", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize",
+      shapeType: "point",
+      kpssNot: "Mikroklima iklim özelliklerinin görüldüğü dar bir alanda yetişen ve çabuk bozulduğu için toplandıktan hemen sonra işlenmesi gereken çay, sadece Doğu Karadeniz (Rize) bölgesinde yetiştirilmektedir."
     },
     {
-      id: "tarim_gul_isparta", name: "Gül (Göller Yöresi / Isparta)", shortName: "Yağ Gülü Tarım Alanı", category: "tarim",
-      promptTitle: "Kozmetik ve parfüm sanayisinin değerli hammaddesi olan yağ gülü üretim sahası haritada neresidir?",
-      type: "Endüstri Bitkisi", lat: 37.76, lng: 30.55, region: "Akdeniz", city: "Isparta - Burdur",
-      shapeType: "polygon",
-      coordinates: [[37.55, 30.2], [37.95, 30.3], [38.0, 31.0], [37.6, 30.9]],
-      kpssNot: "Yağ gülü üretimi Göller Yöresi'nde (Isparta-Burdur) toplanmıştır. Gülyağı, parfüm sanayisinin hammaddesidir ve yüksek katma değerli bir ihraç ürünüdür."
+      id: "tarim_keten", name: "Keten", shortName: "Keten", category: "tarim",
+      promptTitle: "Kağıt para yapımında ve dokumacılıkta liflerinden yararlanılan, en çok Uşak ilinde yetiştirilen sanayi bitkisi haritada neresidir?",
+      type: "Sanayi Bitkisi (Lif / Kağıt Para)", lat: 38.68, lng: 29.41, region: "Ege", city: "Uşak",
+      shapeType: "point",
+      kpssNot: "Kağıt para yapımında ve dokumacılıkta kullanılan keten, en çok Uşak ilinde yetiştirilmektedir."
+    },
+
+    // --- 4. YAĞ BİTKİLERİ ---
+    {
+      id: "tarim_soya_fasulyesi", name: "Soya Fasulyesi", shortName: "Soya Fasulyesi", category: "tarim",
+      promptTitle: "Sanayi amaçlı üretilen, zengin protein ve yağ oranına sahip olup Çukurova'da en çok Adana'da yetiştirilen yağ bitkisi haritada neresidir?",
+      type: "Yağ Bitkisi / Sanayi", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana",
+      groupId: "tarim_grp_adana", shapeType: "point",
+      kpssNot: "Sanayi amaçlı üretilen bir yağ bitkisi olup Çukurova'da ikinci ürün olarak en çok Adana çevresinde yetiştirilmektedir."
     },
     {
-      id: "tarim_hashas_afyon", name: "Haşhaş (İç Batı Anadolu)", shortName: "Haşhaş Ekim Sahası", category: "tarim",
-      promptTitle: "Tıbbi alkaloid üretimi amacıyla ekimi devlet denetiminde yapılan haşhaş bölgesi haritada neresidir?",
-      type: "Endüstri Bitkisi (Devlet Kontrollü)", lat: 38.76, lng: 30.54, region: "Ege", city: "Afyonkarahisar - Uşak",
-      shapeType: "polygon",
-      coordinates: [[38.4, 30.0], [38.9, 30.1], [38.95, 31.1], [38.45, 31.0]],
-      kpssNot: "Ekimi devlet iznine bağlıdır. Afyonkarahisar üretimin merkezidir; Bolvadin'deki tesiste tıbbi alkaloid üretilir."
+      id: "tarim_aspir", name: "Aspir", shortName: "Aspir", category: "tarim",
+      promptTitle: "Karasal iklim bölgelerinde kıraç arazilere uyum sağlayan, biyodizel ve yağ üretiminde kullanılan ve en fazla Kayseri'de üretilen bitki haritada neresidir?",
+      type: "Yağ Bitkisi / Biyodizel", lat: 38.73, lng: 35.48, region: "İç Anadolu", city: "Kayseri",
+      groupId: "tarim_grp_kayseri", shapeType: "point",
+      kpssNot: "Karasal iklim bölgelerinde kıraç arazilere uyum sağlayan bu yağ bitkisi en fazla Kayseri ilinde üretilmektedir."
     },
     {
-      id: "tarim_sekerpancari_konya", name: "Şeker Pancarı (İç Anadolu Havzası)", shortName: "Şeker Pancarı Alanı", category: "tarim",
-      promptTitle: "Hasattan sonra çabuk bozulduğu için fabrikaları üretim sahasına kurulan şeker pancarı havzası haritada neresidir?",
-      type: "Endüstri Bitkisi", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya - Aksaray - Karaman",
-      shapeType: "polygon",
-      coordinates: [[37.3, 32.2], [38.2, 32.4], [38.3, 33.7], [37.4, 33.6]],
-      kpssNot: "Bozulmadan uzağa taşınamadığı için fabrikalar tarlaların yakınına kurulur (hammaddeye bağlılık). Sulanabilen karasal ovalarda yetişir."
+      id: "tarim_kanola", name: "Kanola (Koza)", shortName: "Kanola (Koza)", category: "tarim",
+      promptTitle: "Biyodizel ve bitkisel yağ sanayisinde kullanılan, Trakya'da yaygın olup en çok Tekirdağ'da yetiştirilen yağ bitkisi haritada neresidir?",
+      type: "Yağ Bitkisi", lat: 40.98, lng: 27.51, region: "Marmara", city: "Tekirdağ",
+      shapeType: "point",
+      kpssNot: "Bitkisel yağ ve biyodizel yakıt üretiminde kullanılan kanola (koza), en çok Tekirdağ ilinde yetiştirilmektedir."
+    },
+
+    // --- 5. MEYVELER ---
+    {
+      id: "tarim_incir", name: "İncir", shortName: "İncir", category: "tarim",
+      promptTitle: "Kış ılıklığı isteyen, don olayına duyarlı ve Türkiye'nin dünya ihracatında lider olduğu, en fazla Aydın'da üretilen meyve haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 37.85, lng: 27.84, region: "Ege", city: "Aydın",
+      shapeType: "point",
+      kpssNot: "Kış ılıklığı isteyen ve Türkiye'nin dünya ihracatında lider olduğu incir, en fazla Aydın ilinde üretilmektedir."
     },
     {
-      id: "tarim_celtik_edirne", name: "Çeltik / Pirinç (Meriç & Ergene Havzası)", shortName: "Çeltik (Pirinç) Sahası", category: "tarim",
-      promptTitle: "Bol su ve bataklık ortamı isteyen, sıtma riski nedeniyle yerleşim yerlerinden uzakta devlet kontrolünde ekilen çeltik sahası haritada neresidir?",
-      type: "Tahıl / Sulu Tarım", lat: 41.68, lng: 26.56, region: "Marmara", city: "Edirne (Meriç - Ergene)",
-      shapeType: "polygon",
-      coordinates: [[41.1, 26.3], [41.75, 26.4], [41.8, 26.8], [41.3, 26.8]],
-      kpssNot: "Bol su isteyen bir üründür; Meriç-Ergene havzası Türkiye pirinç üretiminin en büyük bölümünü karşılar. Ekim alanları sıtma riski sebebiyle devlet iznine bağlıdır."
+      id: "tarim_limon", name: "Limon (Turunçgil)", shortName: "Limon", category: "tarim",
+      promptTitle: "Kış donlarına karşı en duyarlı turunçgil türü olup Türkiye üretiminde ilk sırada yer alan Mersin'in sembol meyvesi haritada neresidir?",
+      type: "Meyvecilik (Narenciye)", lat: 36.81, lng: 34.64, region: "Akdeniz", city: "Mersin",
+      groupId: "tarim_grp_mersin", shapeType: "point",
+      kpssNot: "Turunçgiller içinde kış ılıklığı ihtiyacı en yüksek olan limon, Türkiye'de en fazla Mersin ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_turuncgil_antalya", name: "Turunçgil (Akdeniz Kıyı Kuşağı)", shortName: "Turunçgil (Narenciye) Kuşağı", category: "tarim",
-      promptTitle: "Kış donlarına karşı aşırı duyarlı olan, Türkiye üretiminin büyük kısmının yapıldığı Akdeniz kıyı kuşağı haritada neresidir?",
-      type: "Meyvecilik", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya - Mersin - Adana",
-      shapeType: "polygon",
-      coordinates: [[36.3, 30.1], [36.95, 30.6], [36.85, 32.2], [36.4, 34.5], [36.8, 35.8], [36.2, 35.8], [36.1, 30.5]],
-      kpssNot: "Kışın don görmeyen kıyı ovalarında yetişir. Akdeniz kıyı şeridi ile Doğu Karadeniz'de Rize çevresi (mikroklima) başlıca üretim alanlarıdır."
+      id: "tarim_turuncgil_adana", name: "Turunçgiller (Portakal, Mandalina, Greyfurt)", shortName: "Portakal, Mandalina, Greyfurt", category: "tarim",
+      promptTitle: "Kış ılıklığı isteyen; portakal, mandalina ve greyfurt gibi turunçgillerin Türkiye'de en çok üretildiği Çukurova ili haritada neresidir?",
+      type: "Meyvecilik (Narenciye)", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana",
+      groupId: "tarim_grp_adana", shapeType: "point",
+      kpssNot: "Limon en fazla Mersin ilinde yetiştirilirken; portakal, mandalina ve greyfurt gibi diğer turunçgiller en çok Adana ilinde üretilmektedir."
     },
     {
-      id: "tarim_aycicegi_trakya", name: "Ayçiçeği (Ergene / Trakya Havzası)", shortName: "Ayçiçeği Üretim Havzası", category: "tarim",
-      promptTitle: "Türkiye'nin sıvı yağ ihtiyacının karşılanmasında 1. sırada yer alan Trakya tarım havzası haritada neresidir?",
-      type: "Yağ Bitkisi", lat: 40.98, lng: 27.51, region: "Marmara", city: "Tekirdağ - Edirne - Kırklareli",
-      shapeType: "polygon",
-      coordinates: [[41.0, 26.6], [41.55, 26.8], [41.6, 27.6], [41.1, 27.8], [40.85, 27.3]],
-      kpssNot: "Türkiye'nin bitkisel yağ açığını kapatan temel üründür. Ergene Havzası (Tekirdağ - Edirne - Kırklareli) üretimin ağırlık merkezidir."
+      id: "tarim_uzum", name: "Üzüm", shortName: "Üzüm", category: "tarim",
+      promptTitle: "Soğuğa en dayanıklı meyvelerden biri olan ve çekirdeksiz kuru üretimde Manisa'nın ilk sırada yer aldığı meyve haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 38.61, lng: 27.43, region: "Ege", city: "Manisa",
+      shapeType: "point",
+      kpssNot: "Soğuğa en dayanıklı meyvelerden biri olan üzüm, en fazla Manisa ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_bugday_polatli", name: "Buğday (İç Anadolu Tahıl Kuşağı)", shortName: "Buğday Ekim Kuşağı", category: "tarim",
-      promptTitle: "Türkiye'de ekim alanı en geniş olan, ilkbahar yağışı ve yaz kuraklığı isteyen temel tahıl kuşağı haritada neresidir?",
-      type: "Tahıl", lat: 39.58, lng: 32.14, region: "İç Anadolu", city: "Ankara (Polatlı) - Konya",
-      shapeType: "polygon",
-      coordinates: [[39.2, 31.6], [39.9, 31.8], [39.95, 32.9], [39.25, 32.8]],
-      kpssNot: "Türkiye'de en geniş ekim alanına sahip üründür. Karasal iklimin yarı kurak koşullarına uyumludur; İç Anadolu platoları başlıca alandır."
+      id: "tarim_elma", name: "Elma", shortName: "Elma", category: "tarim",
+      promptTitle: "Üzüm gibi soğuğa dayanıklı, geniş ekim alanına sahip olan ve Göller Yöresi'nde en çok Isparta'da üretilen meyve haritada neresidir?",
+      type: "Meyvecilik", lat: 37.76, lng: 30.55, region: "Akdeniz", city: "Isparta",
+      shapeType: "point",
+      kpssNot: "Üzüm gibi soğuğa dayanıklı ve geniş bir ekim alanına sahip olan elma, en çok Isparta ilinde üretilmektedir."
     },
     {
-      id: "tarim_mercimek_diyarbakir", name: "Kırmızı Mercimek (Güneydoğu Platoları)", shortName: "Kırmızı Mercimek Sahası", category: "tarim",
-      promptTitle: "Aşırı kurak ve sıcak iklime uyum sağlamış olan kırmızı mercimek üretim sahası haritada neresidir?",
-      type: "Baklagil", lat: 37.91, lng: 40.24, region: "Güneydoğu Anadolu", city: "Diyarbakır - Şanlıurfa - Mardin",
-      shapeType: "polygon",
-      coordinates: [[37.2, 39.5], [38.0, 39.7], [38.1, 41.0], [37.3, 41.1]],
-      kpssNot: "Kırmızı mercimek üretimi Güneydoğu Anadolu'da yoğunlaşmıştır. Yeşil mercimek ise daha çok İç Anadolu'da (Yozgat - Çorum) yetiştirilir."
+      id: "tarim_muz", name: "Muz", shortName: "Muz", category: "tarim",
+      promptTitle: "Mikroklima şartlarında ve seracılık faaliyetleriyle yetişen, en çok Antalya (Alanya) ve Anamur hattında üretilen tropikal meyve haritada neresidir?",
+      type: "Meyvecilik (Mikroklima / Tropikal)", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya",
+      groupId: "tarim_grp_antalya", shapeType: "point",
+      kpssNot: "Mikroklima şartlarında ve seracılık faaliyetleriyle yetişen muz, en çok Antalya (Alanya) ve Anamur hattında (Antalya ili ön plandadır) üretilmektedir."
     },
     {
-      id: "tarim_sera_kumluca", name: "Örtü Altı (Sera) Sebzeciliği - Kumluca", shortName: "Sera Tarım Alanı", category: "tarim",
-      promptTitle: "Kış ılıklığı ve yüksek güneşlenme süresi sayesinde kış sebzeciliğinin yapıldığı örtü altı tarım merkezi haritada neresidir?",
-      type: "Sera Tarımı", lat: 36.37, lng: 30.29, region: "Akdeniz", city: "Antalya (Kumluca - Finike - Demre)",
-      shapeType: "polygon",
-      coordinates: [[36.2, 29.9], [36.4, 30.1], [36.45, 30.4], [36.25, 30.4]],
-      kpssNot: "Akdeniz kıyısındaki ılık kışlar sayesinde seralar az enerjiyle ısıtılır. Kumluca - Finike - Demre hattı Türkiye'nin sera merkezidir."
+      id: "tarim_cilek", name: "Çilek", shortName: "Çilek", category: "tarim",
+      promptTitle: "Erkenci örtü altı yetiştiriciliği ve Akdeniz iklimiyle en fazla Mersin (Silifke) ilinde üretilen meyve haritada neresidir?",
+      type: "Meyvecilik / Örtü Altı", lat: 36.81, lng: 34.64, region: "Akdeniz", city: "Mersin",
+      groupId: "tarim_grp_mersin", shapeType: "point",
+      kpssNot: "Erkenci örtü altı yetiştiriciliği ve Akdeniz iklimiyle çilek en fazla Mersin (Silifke) ilinde yetiştirilmektedir."
     },
     {
-      id: "tarim_elma_karaman", name: "Elma (İç Anadolu & Göller Yöresi)", shortName: "Elma Yetişme Kuşağı", category: "tarim",
-      promptTitle: "Kış soğuklamasına ihtiyaç duyan, Türkiye üretiminde başı çeken elma bahçeleri kuşağı haritada neresidir?",
-      type: "Meyvecilik", lat: 37.18, lng: 33.22, region: "İç Anadolu - Akdeniz", city: "Karaman - Niğde - Isparta",
-      shapeType: "polygon",
-      coordinates: [[37.0, 30.8], [37.9, 31.0], [38.1, 34.6], [37.1, 34.0], [36.9, 33.1]],
-      kpssNot: "Elma, kış soğuğuna ihtiyaç duyan bir meyvedir. Karaman, Isparta ve Niğde Türkiye elma üretiminin zirvesindedir."
+      id: "tarim_avokado", name: "Avokado", shortName: "Avokado", category: "tarim",
+      promptTitle: "Kış ılıklığı ve subtropikal iklim isteyen, Türkiye'de üretimi hızla artan ve en çok Antalya'da yetiştirilen tropikal meyve haritada neresidir?",
+      type: "Meyvecilik (Tropikal)", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya",
+      groupId: "tarim_grp_antalya", shapeType: "point",
+      kpssNot: "Subtropikal iklim şartları ve kış ılıklığı isteyen avokado, Türkiye'de en çok Antalya ilinde yetiştirilmektedir."
+    },
+
+    // --- 6. YUMRULU VE DİĞER TARIM ÜRÜNLERİ ---
+    {
+      id: "tarim_sarimsak", name: "Sarımsak", shortName: "Sarımsak", category: "tarim",
+      promptTitle: "Coğrafi işaretli Taşköprü üretimiyle ünlü, yüksek aromalı ve en fazla Kastamonu'da yetiştirilen yumrulu ürün haritada neresidir?",
+      type: "Yumrulu Tarım Ürünü (Coğrafi İşaret)", lat: 41.38, lng: 33.78, region: "Karadeniz", city: "Kastamonu",
+      shapeType: "point",
+      kpssNot: "Yüksek aroması ve Taşköprü coğrafi işaretiyle bilinen sarımsak, en fazla Kastamonu ilinde yetiştirilmektedir."
+    },
+    {
+      id: "tarim_susam", name: "Susam", shortName: "Susam", category: "tarim",
+      promptTitle: "Sıcak iklim isteyen, tahin ve helva sanayisinin hammaddesi olan ve en çok Antalya'da üretilen yağlı tohum ürünü haritada neresidir?",
+      type: "Yağlı Tohum / Sanayi", lat: 36.89, lng: 30.71, region: "Akdeniz", city: "Antalya",
+      groupId: "tarim_grp_antalya", shapeType: "point",
+      kpssNot: "Sıcak ve güneşli iklim isteyen, tahin ve helva sanayisinde kullanılan susam en çok Antalya ilinde üretilmektedir."
+    },
+    {
+      id: "tarim_kiraz", name: "Kiraz", shortName: "Kiraz", category: "tarim",
+      promptTitle: "Türkiye'nin önemli bir ihraç meyvesi olan, Kemalpaşa bahçeleriyle ünlü ve en fazla İzmir'de yetiştirilen meyve haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 38.42, lng: 27.14, region: "Ege", city: "İzmir",
+      shapeType: "point",
+      kpssNot: "Türkiye'nin önemli bir ihraç meyvesi olan kiraz (Kemalpaşa bahçeleri), en fazla İzmir ilinde yetiştirilmektedir."
+    },
+    {
+      id: "tarim_yer_fistigi", name: "Yer Fıstığı", shortName: "Yer Fıstığı", category: "tarim",
+      promptTitle: "Gevşek kumlu toprak isteyen, Çukurova ve Osmaniye havzasıyla en fazla Adana ve Osmaniye hattında yetiştirilen ürün haritada neresidir?",
+      type: "Yağlı Tohum / Çerezlik", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana",
+      groupId: "tarim_grp_adana", shapeType: "point",
+      kpssNot: "Gevşek kumlu toprak isteyen yer fıstığı, en fazla Adana ve Osmaniye hattında yetiştirilmektedir."
+    },
+    {
+      id: "tarim_antep_fistigi", name: "Antep Fıstığı", shortName: "Antep Fıstığı", category: "tarim",
+      promptTitle: "Adı komşu ille anılmasına rağmen günümüzde ağaç sayısı ve toplam üretimde en fazla Şanlıurfa'da üretilen kurakçıl meyve haritada neresidir?",
+      type: "Meyvecilik / İhraç Ürünü", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
+      groupId: "tarim_grp_sanliurfa", shapeType: "point",
+      kpssNot: "Aşırı yaz kuraklığına ve kireçli topraklara dayanıklıdır. Adı Gaziantep ile anılsa da ağaç sayısı ve üretim miktarıyla en fazla Şanlıurfa ilinde üretilmektedir."
+    },
+    {
+      id: "tarim_siirt_fistigi", name: "Siirt Fıstığı", shortName: "Siirt Fıstığı", category: "tarim",
+      promptTitle: "Antep fıstığına göre daha iri taneli ve yüksek çıtlama oranına sahip, en çok Siirt'te yetiştirilen fıstık türü haritada neresidir?",
+      type: "Meyvecilik (Coğrafi İşaret)", lat: 37.93, lng: 41.94, region: "Güneydoğu Anadolu", city: "Siirt",
+      shapeType: "point",
+      kpssNot: "Antep fıstığına göre daha iri taneli ve yüksek çıtlama oranına sahip olan Siirt fıstığı en çok Siirt ilinde yetiştirilmektedir."
+    },
+    {
+      id: "tarim_kavun_karpuz", name: "Kavun ve Karpuz", shortName: "Kavun ve Karpuz", category: "tarim",
+      promptTitle: "Erkencilik avantajı ve devasa rekoltesiyle Türkiye'de en yoğun olarak Adana'da üretilen bostan ürünleri haritada neresidir?",
+      type: "Bostan / Tarım", lat: 37.00, lng: 35.32, region: "Akdeniz", city: "Adana",
+      groupId: "tarim_grp_adana", shapeType: "point",
+      kpssNot: "Erkencilik avantajı ve geniş ekim alanlarıyla Türkiye'de en yoğun olarak Adana'da üretilmektedir."
+    },
+    {
+      id: "tarim_ceviz", name: "Ceviz", shortName: "Ceviz", category: "tarim",
+      promptTitle: "Kapama bahçe yatırımları ve Çağlayancerit üretimiyle detay bir bilgi olarak öne çıkan Kahramanmaraş'ın meyvesi haritada neresidir?",
+      type: "Meyvecilik (Sert Kabuklu)", lat: 37.58, lng: 36.93, region: "Akdeniz / Doğu Anadolu", city: "Kahramanmaraş",
+      shapeType: "point",
+      kpssNot: "Kapama bahçe yatırımları ve Çağlayancerit ceviziyle detay bir bilgi olarak Kahramanmaraş ilinde ön plana çıktığı belirtilmiştir."
     }
   ],
 

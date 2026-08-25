@@ -1504,6 +1504,31 @@ class GeographyMap {
     `;
   }
 
+  /** Keşif modundaki çoklu kayıt balonu (Aynı konumda veya bağlı grupta birden fazla ürün/varlık olduğunda) */
+  _multiItemPopupHtml(items, cityName = null) {
+    if (!items || items.length === 0) return '';
+    if (items.length === 1) return this._popupHtml(items[0]);
+
+    const title = cityName || items[0].city || items[0].region || 'Bu Konumdaki Varlıklar';
+    return `
+      <div class="multi-popup-header">
+        <span class="multi-popup-city-icon">📍</span>
+        <span class="multi-popup-city-name">${title}</span>
+        <span class="multi-popup-badge">${items.length} Varlık</span>
+      </div>
+      <div class="multi-item-popup-container">
+        ${items.map((it) => `
+          <div class="multi-popup-card">
+            <div class="popup-title">${it.name}</div>
+            <div class="popup-type">${it.type} (${it.region || ''})</div>
+            <div class="popup-text">${it.kpssNot || ''}</div>
+            ${this._popupActions(it)}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
   /**
    * Balon içindeki düzenle/sil düğmeleri Leaflet tarafından her açılışta
    * yeniden üretilir; tek tek dinleyici bağlamak yerine harita kabında bir
@@ -1661,8 +1686,66 @@ class GeographyMap {
       }
     });
 
-    // 2. Elemanları haritaya çiz ve sürükle-bırak bağlama dinleyicilerini bağla
+    // 2. Noktasal elemanları koordinatlarına göre grupla (Aynı il/konumdaki çoklu varlıklar için)
+    const pointCoordMap = new Map();
+    const otherItems = [];
+
     flatItems.forEach(item => {
+      if (item.category === 'sehirler') {
+        otherItems.push(item);
+        return;
+      }
+
+      const shapeType = item.shapeType || 'point';
+      const isPoint = shapeType === 'point' || !item.coordinates || !Array.isArray(item.coordinates[0]);
+
+      if (isPoint && Number.isFinite(item.lat) && Number.isFinite(item.lng)) {
+        const key = `${item.lat.toFixed(3)},${item.lng.toFixed(3)}`;
+        if (!pointCoordMap.has(key)) pointCoordMap.set(key, []);
+        pointCoordMap.get(key).push(item);
+      } else {
+        otherItems.push(item);
+      }
+    });
+
+    // 3. Noktasal elemanları haritaya bas (Tekil veya Çoklu Rozetli)
+    pointCoordMap.forEach((groupItems) => {
+      const firstItem = groupItems[0];
+      const count = groupItems.length;
+
+      if (count === 1) {
+        const customIcon = this.getCustomCategoryIcon(firstItem);
+        const popupContent = this._popupHtml(firstItem);
+        const marker = this.isLakePoint(firstItem)
+          ? this.createLakeCircle(firstItem, false)
+          : L.marker([firstItem.lat, firstItem.lng], { icon: customIcon });
+        marker.bindPopup(popupContent, { maxWidth: 280 });
+        this._enableDragLinking(marker, firstItem, flatItems);
+        this.exploreLayerGroup.addLayer(marker);
+      } else {
+        // Çoklu eleman: Üst üste binmeyi önlemek için tekil rozetli marker ve birleşik popup
+        const baseIcon = this.getCustomCategoryIcon(firstItem);
+        const origHtml = (baseIcon.options && baseIcon.options.html) || '<div class="pulse-circle"></div>';
+        const badgeHtml = `<span class="marker-count-badge" title="${count} Varlık / Ürün">${count}</span>`;
+        const multiIcon = L.divIcon({
+          className: ((baseIcon.options && baseIcon.options.className) || '') + ' multi-item-marker-icon',
+          html: `<div class="multi-point-marker-wrapper">${origHtml}${badgeHtml}</div>`,
+          iconSize: (baseIcon.options && baseIcon.options.iconSize) || [32, 32],
+          iconAnchor: (baseIcon.options && baseIcon.options.iconAnchor) || [16, 32],
+          popupAnchor: (baseIcon.options && baseIcon.options.popupAnchor) || [0, -32]
+        });
+
+        const cityName = this.findCityName(firstItem) || firstItem.city || firstItem.region;
+        const popupContent = this._multiItemPopupHtml(groupItems, cityName);
+        const marker = L.marker([firstItem.lat, firstItem.lng], { icon: multiIcon });
+        marker.bindPopup(popupContent, { maxWidth: 340, maxHeight: 420, className: 'multi-item-leaflet-popup' });
+        groupItems.forEach(it => this._enableDragLinking(marker, it, flatItems));
+        this.exploreLayerGroup.addLayer(marker);
+      }
+    });
+
+    // 4. Çizgisel, Alansal ve Şehir sınırlarını haritaya bas
+    otherItems.forEach(item => {
       // 81 İl (Şehirler) için gerçek GeoJSON sınırlarını ve interaktif glow efektini çiz
       if (item.category === 'sehirler') {
         const feat = this.getCityFeature(item);
@@ -1726,15 +1809,7 @@ class GeographyMap {
 
       const customIcon = this.getCustomCategoryIcon(item);
 
-      if (shapeType === 'point' || !item.coordinates || !Array.isArray(item.coordinates[0])) {
-        const popupContent = this._popupHtml(item);
-        const marker = this.isLakePoint(item)
-          ? this.createLakeCircle(item, false)
-          : L.marker([item.lat, item.lng], { icon: customIcon });
-        marker.bindPopup(popupContent, { maxWidth: 280 });
-        this._enableDragLinking(marker, item, flatItems);
-        this.exploreLayerGroup.addLayer(marker);
-      } else if (shapeType === 'polyline') {
+      if (shapeType === 'polyline') {
         let polyColor = topicColor(item.category, color);
         if (isMountain) polyColor = '#d97706';
         else if (isStrait) polyColor = '#0284c7';

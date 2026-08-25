@@ -45,7 +45,7 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 ### 🏭 Ekonomik Coğrafya
 | Paket | id | Az / Orta / Tam |
 | :--- | :--- | :--- |
-| 🚜 Tarım, Hayvancılık & Sanayi | `tr.beseri` | 19 / 30 / 41 |
+| 🚜 Tarım, Hayvancılık & Sanayi | `tr.beseri` | 24 / 39 / 53 |
 | ⛏️ Madenler & Enerji Kaynakları | `tr.madenler` | 23 / 43 / 65 |
 | 🏛️ Turizm & Kültür Mirası | `tr.turizm` | 13 / 20 / 31 |
 | 🚢 Ulaşım & Ticaret Koridorları | `tr.ulasim` | 10 / 18 / 26 |

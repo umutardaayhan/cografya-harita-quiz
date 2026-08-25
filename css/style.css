@@ -5154,3 +5154,131 @@ html, body {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* ============================================================
+   🏙️ ÇOKLU KONUM / BİRLEŞİK POPUP VE ROZET STİLLERİ
+   ============================================================ */
+.multi-point-marker-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-count-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  min-width: 19px;
+  height: 19px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  border: 1.5px solid #ffffff;
+  z-index: 10;
+  animation: pulse-badge 2s infinite ease-in-out;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.14); }
+}
+
+.multi-popup-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #38bdf8;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+  padding-bottom: 7px;
+  margin-bottom: 8px;
+}
+
+.multi-popup-city-icon {
+  font-size: 1.1rem;
+}
+
+.multi-popup-city-name {
+  flex: 1;
+  color: #f1f5f9;
+  font-size: 0.96rem;
+  font-weight: 800;
+}
+
+.multi-popup-badge {
+  background: rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.multi-item-popup-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.multi-item-popup-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.multi-item-popup-container::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 2px;
+}
+
+.multi-popup-card {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.multi-popup-card:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.multi-popup-card .popup-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 2px;
+}
+
+.multi-popup-card .popup-type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.multi-popup-card .popup-text {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #cbd5e1;
+}
+
+.multi-popup-card .popup-actions {
+  margin-top: 6px;
+  padding-top: 6px;
+}
+
+

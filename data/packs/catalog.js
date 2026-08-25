@@ -2044,14 +2044,14 @@ const GEO_CATALOG = {
         "sanayi"
       ],
       "tiers": {
-        "1": 19,
-        "2": 30,
-        "3": 41
+        "1": 24,
+        "2": 39,
+        "3": 53
       },
       "sizeKb": {
-        "1": 12,
-        "2": 19,
-        "3": 26
+        "1": 14,
+        "2": 23,
+        "3": 30
       },
       "unlocks": [
         "quiz",
@@ -2064,7 +2064,7 @@ const GEO_CATALOG = {
         {
           "cat": "tarim",
           "icon": "🚜",
-          "count": 15,
+          "count": 33,
           "tr": "Tarım",
           "en": "Agriculture"
         },
