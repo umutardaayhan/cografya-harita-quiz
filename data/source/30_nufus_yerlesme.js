@@ -52,6 +52,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "nuf_cukurova",
+    groupId: 'grp_cukurova_deltasi_havza',
       name: "Çukurova Nüfus Yoğunluğu",
       shortName: "Çukurova Yoğunluğu",
       category: "nufus",
@@ -85,6 +86,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "nuf_hakkari_seyrek",
+    groupId: 'grp_hakkari_daglik_bolum',
       name: "Hakkâri - Şırnak Seyrek Nüfus Alanı",
       shortName: "Hakkâri Seyrek Nüfus",
       category: "nufus",
@@ -99,6 +101,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "nuf_erzurum_kars_seyrek",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
       name: "Erzurum - Kars Platoları Seyrek Nüfus",
       shortName: "Erzurum-Kars Seyrekliği",
       category: "nufus",
@@ -112,6 +115,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "nuf_menteşe_seyrek",
+    groupId: 'grp_mentese_ekosistemi',
       name: "Menteşe - Teke Yöresi Seyrek Nüfus",
       shortName: "Menteşe Seyrekliği",
       category: "nufus",
@@ -134,6 +138,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "nuf_yildiz_seyrek",
+    groupId: 'grp_yildiz_daglari',
       name: "Yıldız (Istranca) Dağları Seyrek Nüfus",
       shortName: "Istranca Seyrekliği",
       category: "nufus",

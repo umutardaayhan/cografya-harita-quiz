@@ -17,6 +17,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "kiy_kapidag",
+    groupId: 'grp_kapidag_tombolo',
       name: "Kapıdağ Yarımadası",
       category: "kiyilar",
       type: "Yarımada / Kıyı Şekli",
@@ -68,6 +69,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "kiy_bodrum",
+    groupId: 'grp_bodrum_kiyi_turizm',
       name: "Bodrum Yarımadası",
       category: "kiyilar",
       type: "Yarımada / Kıyı Şekli",

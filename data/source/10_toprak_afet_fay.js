@@ -22,6 +22,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
   toprak: [
     {
       id: "top_cernozyom",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
       name: "Çernozyom (Kara Toprak)",
       shortName: "Çernozyom Sahası",
       category: "toprak",
@@ -239,6 +240,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "afet_2023_maras",
+    groupId: 'grp_batman_petrol_kompleksi',
       name: "2023 Kahramanmaraş Depremleri Alanı",
       shortName: "2023 Maraş Depremleri",
       category: "afet",
@@ -289,6 +291,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "afet_yusufeli_heyelan",
+    groupId: 'grp_yusufeli_artvin',
       name: "Artvin - Yusufeli Heyelan Sahası",
       shortName: "Yusufeli Heyelan Sahası",
       category: "afet",
@@ -339,6 +342,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "afet_karapinar_obruk",
+    groupId: 'grp_karapinar_havzasi',
       name: "Karapınar Obruk Sahası",
       shortName: "Karapınar Obruk Sahası",
       category: "afet",
@@ -417,6 +421,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "afet_ergene_taskin",
+    groupId: 'grp_ergene_havzasi',
       name: "Ergene Havzası Taşkın Sahası",
       shortName: "Ergene Taşkın Sahası",
       category: "afet",
@@ -428,6 +433,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "afet_igdir_don",
+    groupId: 'grp_igdir_mikroklima',
       name: "Iğdır - Aras Don Riski Sahası",
       shortName: "Don Riski Sahası",
       category: "afet",
@@ -587,6 +593,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "fay_tuzgolu",
+    groupId: 'grp_tuz_golu_havzasi',
       name: "Tuz Gölü Fay Zonu",
       shortName: "Tuz Gölü Fayı",
       category: "fay",

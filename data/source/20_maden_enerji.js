@@ -50,6 +50,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_krom_fethiye",
+    groupId: 'grp_koycegiz_dalyan',
       name: "Krom (Fethiye - Köyceğiz)",
       category: "madenler",
       type: "Metalik Maden / İhraç",
@@ -60,6 +61,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_demir_divrigi",
+    groupId: 'grp_divrigi_sivas',
       name: "Demir (Divriği - Sivas)",
       shortName: "Demir Yatakları",
       category: "madenler",
@@ -113,6 +115,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_boksit_seydisehir",
+    groupId: 'grp_seydisehir_aluminyum',
       name: "Boksit & Alüminyum (Seydişehir - Konya)",
       shortName: "Boksit Yatağı",
       category: "madenler",
@@ -125,6 +128,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_taskomuru_zonguldak",
+    groupId: 'grp_bati_karadeniz_demircelik',
       name: "Taşkömürü (Zonguldak Havzası)",
       shortName: "Taşkömürü Havzası",
       category: "madenler",
@@ -191,6 +195,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_petrol_batman",
+    groupId: 'grp_batman_petrol_kompleksi',
       name: "Petrol (Batman - Raman)",
       shortName: "Petrol Sahaları",
       category: "madenler",
@@ -224,6 +229,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_tuz_golu",
+    groupId: 'grp_tuz_golu_havzasi',
       name: "Kaya & Göl Tuzu (Tuz Gölü)",
       shortName: "Tuz Üretim Sahası",
       category: "madenler",
@@ -378,6 +384,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "enerji_ges_karapinar",
+    groupId: 'grp_karapinar_havzasi',
       name: "Karapınar Güneş Enerjisi Santrali",
       shortName: "Karapınar GES",
       category: "madenler",
@@ -608,6 +615,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "enerji_yusufeli_baraji",
+    groupId: 'grp_yusufeli_artvin',
       name: "Yusufeli Barajı & HES",
       shortName: "Yusufeli Barajı",
       category: "madenler",

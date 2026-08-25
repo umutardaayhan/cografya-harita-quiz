@@ -8,6 +8,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // ---------------- KARSTİK ŞEKİLLER ----------------
     {
       id: "dk_pamukkale_traverten",
+    groupId: 'grp_pamukkale_hierapolis',
       name: "Pamukkale Travertenleri",
       shortName: "Traverten (Karstik Birikim)",
       category: "dis_kuvvetler",
@@ -42,6 +43,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "dk_damlatas_magara",
+    groupId: 'grp_damlatas_alanya',
       name: "Damlataş Mağarası",
       shortName: "Mağara (Karstik)",
       category: "dis_kuvvetler",
@@ -88,6 +90,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // ---------------- BUZUL ŞEKİLLERİ ----------------
     {
       id: "dk_cilo_buzul",
+    groupId: 'grp_cilo_buzul',
       name: "Cilo Dağı Güncel Buzulu",
       shortName: "Güncel Buzul",
       category: "dis_kuvvetler",
@@ -100,6 +103,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "dk_kackar_sirk",
+    groupId: 'grp_kackar_masifi',
       name: "Kaçkar Sirk Gölleri",
       shortName: "Sirk (Buzul Çukuru)",
       category: "dis_kuvvetler",
@@ -135,6 +139,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // ---------------- RÜZGÂR ŞEKİLLERİ ----------------
     {
       id: "dk_peribacalari",
+    groupId: 'grp_kapadokya_goreme',
       name: "Kapadokya Peribacaları",
       shortName: "Peribacası",
       category: "dis_kuvvetler",
@@ -149,6 +154,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "dk_karapinar_kumul",
+    groupId: 'grp_karapinar_havzasi',
       name: "Karapınar Kum Tepeleri (Barkan)",
       shortName: "Barkan (Kumul)",
       category: "dis_kuvvetler",
@@ -287,6 +293,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "dk_tombolo",
+    groupId: 'grp_kapidag_tombolo',
       name: "Tombolo (Bağlanmış Ada)",
       shortName: "Tombolo",
       category: "dis_kuvvetler",

@@ -59,6 +59,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_trabzon_liman",
+    groupId: 'grp_trabzon_zigana_koridoru',
       name: "Trabzon Limanı",
       category: "ulasim",
       type: "Liman / Deniz Ulaşımı",
@@ -69,6 +70,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_aliaga_liman",
+    groupId: 'grp_aliaga_petrokimya_liman',
       name: "Aliağa Limanı & Petrokimya Tesisleri",
       category: "ulasim",
       type: "Liman / Deniz Ulaşımı",
@@ -123,6 +125,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_dalaman_hava",
+    groupId: 'grp_bodrum_kiyi_turizm',
       name: "Dalaman & Milas-Bodrum Havalimanları",
       category: "ulasim",
       type: "Havalimanı / Hava Ulaşımı",
@@ -135,6 +138,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // ---------------- KÖPRÜLER & TÜNELLER ----------------
     {
       id: "ula_1915_canakkale",
+    groupId: 'grp_canakkale_bogazi_koprusu',
       name: "1915 Çanakkale Köprüsü",
       shortName: "1915 Çanakkale Köprüsü",
       category: "ulasim",
@@ -178,6 +182,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_ovit_tuneli",
+    groupId: 'grp_ovit_koridoru',
       name: "Ovit Tüneli",
       category: "ulasim",
       type: "Köprü & Tünel / Kara Ulaşımı",
@@ -188,6 +193,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_zigana_tuneli",
+    groupId: 'grp_trabzon_zigana_koridoru',
       name: "Yeni Zigana Tüneli",
       category: "ulasim",
       type: "Köprü & Tünel / Kara Ulaşımı",

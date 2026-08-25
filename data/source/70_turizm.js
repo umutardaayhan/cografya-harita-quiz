@@ -7,6 +7,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // ---------------- TARİHÎ & KÜLTÜREL ----------------
     {
       id: "tur_kapadokya",
+    groupId: 'grp_kapadokya_goreme',
       name: "Kapadokya (Göreme Millî Parkı)",
       shortName: "Kapadokya",
       category: "turizm",
@@ -19,6 +20,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_efes",
+    groupId: 'grp_efes_selcuk',
       name: "Efes Antik Kenti",
       category: "turizm",
       type: "Tarihî & Kültürel Turizm / UNESCO",
@@ -29,6 +31,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_pamukkale_hierapolis",
+    groupId: 'grp_pamukkale_hierapolis',
       name: "Pamukkale - Hierapolis",
       category: "turizm",
       type: "Tarihî & Kültürel Turizm / UNESCO",
@@ -60,6 +63,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_nemrut_adiyaman",
+    groupId: 'grp_nemrut_kommagene_adiyaman',
       name: "Nemrut Dağı Tümülüsü",
       category: "turizm",
       type: "Tarihî & Kültürel Turizm / UNESCO",
@@ -90,6 +94,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_safranbolu",
+    groupId: 'grp_safranbolu_unesco',
       name: "Safranbolu Evleri",
       category: "turizm",
       type: "Tarihî & Kültürel Turizm / UNESCO",
@@ -140,6 +145,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_divrigi_ulu_cami",
+    groupId: 'grp_divrigi_sivas',
       name: "Divriği Ulu Camii ve Darüşşifası",
       category: "turizm",
       type: "Tarihî & Kültürel Turizm / UNESCO",
@@ -172,6 +178,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // ---------------- KIŞ TURİZMİ ----------------
     {
       id: "tur_uludag",
+    groupId: 'grp_uludag_masifi',
       name: "Uludağ Kayak Merkezi",
       shortName: "Uludağ (Kış Turizmi)",
       category: "turizm",
@@ -194,6 +201,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_erciyes_kayak",
+    groupId: 'grp_erciyes_volkani',
       name: "Erciyes Kayak Merkezi",
       category: "turizm",
       type: "Kış Turizmi / Kayak Merkezi",
@@ -300,6 +308,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_bodrum_kiyi",
+    groupId: 'grp_bodrum_kiyi_turizm',
       name: "Bodrum & Çeşme Kıyı Turizmi",
       category: "turizm",
       type: "Kıyı & Doğa Turizmi / Sahil",
@@ -310,6 +319,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_alanya",
+    groupId: 'grp_damlatas_alanya',
       name: "Alanya & Side Kıyı Turizmi",
       category: "turizm",
       type: "Kıyı & Doğa Turizmi / Sahil",
@@ -320,6 +330,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_nemrut_kraterr",
+    groupId: 'grp_nemrut_kommagene_adiyaman',
       name: "Nemrut Krater Gölü (Bitlis)",
       category: "turizm",
       type: "Kıyı & Doğa Turizmi / Doğal Alan",

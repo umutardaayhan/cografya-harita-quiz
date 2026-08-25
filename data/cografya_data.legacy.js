@@ -34,6 +34,7 @@ const COGRAFYA_DATA = {
     // --- VOLKANİK DAĞLAR ---
     {
       id: "dag_agri",
+    groupId: 'grp_agri_dagi_zirve',
       name: "Ağrı Dağı (Büyük Ağrı)",
       category: "daglar",
       type: "Volkanik Dağ",
@@ -45,6 +46,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_kucuk_agri",
+    groupId: 'grp_agri_dagi_zirve',
       name: "Küçük Ağrı Dağı",
       category: "daglar",
       type: "Volkanik Dağ",
@@ -78,6 +80,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_nemrut",
+    groupId: 'grp_nemrut_kommagene_adiyaman',
       name: "Nemrut Dağı (Bitlis)",
       category: "daglar",
       type: "Volkanik Dağ",
@@ -89,6 +92,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_erciyes",
+    groupId: 'grp_erciyes_volkani',
       name: "Erciyes Dağı",
       category: "daglar",
       type: "Volkanik Dağ",
@@ -133,6 +137,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_karadag",
+    groupId: 'grp_batman_petrol_kompleksi',
       name: "Karadağ (Karaman)",
       category: "daglar",
       type: "Volkanik Dağ",
@@ -252,6 +257,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_mentese",
+    groupId: 'grp_mentese_ekosistemi',
       name: "Menteşe Dağları",
       category: "daglar",
       shapeType: "polyline",
@@ -287,6 +293,7 @@ const COGRAFYA_DATA = {
     // --- KIVRIM DAĞLARI (SIRADAĞ SİLSİLELERİ) ---
     {
       id: "dag_kackar",
+    groupId: 'grp_kackar_masifi',
       name: "Kaçkar Dağları",
       category: "daglar",
       shapeType: "polyline",
@@ -338,6 +345,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_ilgaz",
+    groupId: 'grp_ilgaz_koridoru',
       name: "Ilgaz Dağları",
       category: "daglar",
       shapeType: "polyline",
@@ -371,6 +379,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_cilo_hakkari",
+    groupId: 'grp_cilo_buzul',
       name: "Cilo (Buzul) Dağı / Reşko",
       category: "daglar",
       shapeType: "polyline",
@@ -505,6 +514,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_yildiz",
+    groupId: 'grp_yildiz_daglari',
       name: "Yıldız (Istranca) Dağları",
       category: "daglar",
       shapeType: "polyline",
@@ -521,6 +531,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "dag_uludag",
+    groupId: 'grp_uludag_masifi',
       name: "Uludağ",
       category: "daglar",
       lat: 40.07,
@@ -600,6 +611,7 @@ const COGRAFYA_DATA = {
     // --- DELTA OVALARI ---
     {
       id: "ova_cukurova",
+    groupId: 'grp_cukurova_deltasi_havza',
       name: "Çukurova Deltası",
       category: "ovalar",
       type: "Delta Ovası",
@@ -611,6 +623,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "ova_bafra",
+    groupId: 'grp_bafra_deltasi',
       name: "Bafra Ovası",
       category: "ovalar",
       type: "Delta Ovası",
@@ -622,6 +635,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "ova_carsamba",
+    groupId: 'grp_carsamba_deltasi',
       name: "Çarşamba Ovası",
       category: "ovalar",
       type: "Delta Ovası",
@@ -633,6 +647,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "ova_silifke",
+    groupId: 'grp_silifke_deltasi',
       name: "Silifke Ovası",
       category: "ovalar",
       type: "Delta Ovası",
@@ -666,6 +681,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "ova_selcuk",
+    groupId: 'grp_efes_selcuk',
       name: "Selçuk Ovası",
       category: "ovalar",
       type: "Delta Ovası",
@@ -780,6 +796,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "ova_igdir",
+    groupId: 'grp_igdir_mikroklima',
       name: "Iğdır Ovası",
       category: "ovalar",
       type: "Tektonik / Çöküntü Ovası",
@@ -1150,6 +1167,7 @@ const COGRAFYA_DATA = {
     // --- VOLKANİK (LAV) PLATOLARI ---
     {
       id: "plato_erzurum_kars",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
       name: "Erzurum - Kars Platosu",
       category: "platolar",
       type: "Volkanik (Lav Örtüsü) Platosu",
@@ -1209,6 +1227,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "plato_safranbolu",
+    groupId: 'grp_safranbolu_unesco',
       name: "Safranbolu (Perşembe) Platosu",
       category: "platolar",
       type: "Aşınım Platosu",
@@ -1582,6 +1601,7 @@ const COGRAFYA_DATA = {
     // 1. TEKTONİK GÖLLER
     {
       id: "gol_tuz",
+    groupId: 'grp_tuz_golu_havzasi',
       name: "Tuz Gölü",
       category: "su_kaynaklari",
       type: "Tektonik Göl (Kapalı Havza)",
@@ -1778,6 +1798,7 @@ const COGRAFYA_DATA = {
     // 3. VOLKANİK GÖLLER (KRATER / KALDERA / MAAR)
     {
       id: "gol_nemrut",
+    groupId: 'grp_nemrut_volkani_bitlis',
       name: "Nemrut Kaldera Gölü",
       category: "su_kaynaklari",
       type: "Volkanik Kaldera Gölü (Ramsar)",
@@ -1790,6 +1811,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gol_meke",
+    groupId: 'grp_meke_tuzlasi',
       name: "Meke Tuzlası (Maar)",
       category: "su_kaynaklari",
       type: "Volkanik Patlama Gölü (Maar)",
@@ -1890,6 +1912,7 @@ const COGRAFYA_DATA = {
     // 5. HEYELAN SET GÖLLERİ (KARADENİZ VE DOĞU ANADOLU)
     {
       id: "gol_abant",
+    groupId: 'grp_abant_yedigoller_bolu',
       name: "Abant Gölü",
       category: "su_kaynaklari",
       type: "Heyelan Set Gölü",
@@ -1902,6 +1925,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gol_yedigoller",
+    groupId: 'grp_abant_yedigoller_bolu',
       name: "Yedigöller",
       category: "su_kaynaklari",
       type: "Heyelan Set Gölleri",
@@ -2014,6 +2038,7 @@ const COGRAFYA_DATA = {
     // 7. ALÜVYAL SET GÖLLERİ
     {
       id: "gol_koycegiz",
+    groupId: 'grp_koycegiz_dalyan',
       name: "Köyceğiz Gölü",
       category: "su_kaynaklari",
       type: "Alüvyal Set Gölü",
@@ -2076,6 +2101,7 @@ const COGRAFYA_DATA = {
     // 8. BUZUL (SİRK) GÖLLERİ
     {
       id: "gol_kackar_deniz",
+    groupId: 'grp_kackar_masifi',
       name: "Kaçkar Deniz Gölü (Buzul Sirk)",
       category: "su_kaynaklari",
       type: "Buzul (Sirk) Gölü",
@@ -2088,6 +2114,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gol_uludag_aynali",
+    groupId: 'grp_uludag_masifi',
       name: "Uludağ Aynalıgöl (Buzul Sirk)",
       category: "su_kaynaklari",
       type: "Buzul (Sirk) Gölü",
@@ -2140,6 +2167,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "nehir_ergene",
+    groupId: 'grp_ergene_havzasi',
       name: "Ergene Nehri",
       category: "su_kaynaklari",
       type: "Akarsu",
@@ -2330,6 +2358,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gol_uludag_kilimli",
+    groupId: 'grp_uludag_masifi',
       name: "Uludağ Kilimligöl (Buzul Sirk)",
       category: "su_kaynaklari",
       type: "Buzul (Sirk) Gölü",
@@ -2342,6 +2371,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gol_cilo_karagol",
+    groupId: 'grp_cilo_buzul',
       name: "Cilo Karagöl (Buzul Sirk)",
       category: "su_kaynaklari",
       type: "Buzul (Sirk) Gölü",
@@ -2406,6 +2436,7 @@ const COGRAFYA_DATA = {
     // --- AKDENİZ GEÇİTLERİ ---
     {
       id: "gecit_gulek",
+    groupId: 'grp_gulek_bogazi',
       name: "Gülek Boğazı / Geçidi",
       category: "gecitler",
       type: "Dağ Geçidi",
@@ -2452,6 +2483,7 @@ const COGRAFYA_DATA = {
     // --- KARADENİZ GEÇİTLERİ ---
     {
       id: "gecit_zigana",
+    groupId: 'grp_trabzon_zigana_koridoru',
       name: "Zigana (Kalkanlı) Geçidi",
       category: "gecitler",
       type: "Dağ Geçidi",
@@ -2474,6 +2506,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gecit_ovit",
+    groupId: 'grp_ovit_koridoru',
       name: "Ovit Geçidi",
       category: "gecitler",
       type: "Dağ Geçidi",
@@ -2485,6 +2518,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gecit_ilgaz",
+    groupId: 'grp_ilgaz_koridoru',
       name: "Ilgaz Geçidi",
       category: "gecitler",
       type: "Dağ Geçidi",
@@ -2536,6 +2570,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "bogaz_canakkale",
+    groupId: 'grp_canakkale_bogazi_koprusu',
       name: "Çanakkale Boğazı (Dardanelles)",
       category: "gecitler",
       shapeType: "polyline",
@@ -2557,6 +2592,7 @@ const COGRAFYA_DATA = {
   iliskili_cografya: [
     {
       id: "match_kizilirmak_bafra",
+    groupId: 'grp_bafra_deltasi',
       name: "Bafra Deltası",
       matchSource: "Kızılırmak Nehri",
       category: "iliskili_cografya",
@@ -2575,6 +2611,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_yesilirmak_carsamba",
+    groupId: 'grp_carsamba_deltasi',
       name: "Çarşamba Deltası",
       matchSource: "Yeşilırmak Nehri",
       category: "iliskili_cografya",
@@ -2593,6 +2630,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_seyhan_ceyhan_cukurova",
+    groupId: 'grp_cukurova_deltasi_havza',
       name: "Çukurova Deltası",
       matchSource: "Seyhan & Ceyhan Nehirleri",
       category: "iliskili_cografya",
@@ -2607,6 +2645,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_goksu_silifke",
+    groupId: 'grp_silifke_deltasi',
       name: "Silifke Deltası",
       matchSource: "Göksu Nehri",
       category: "iliskili_cografya",
@@ -2661,6 +2700,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_kmenderes_selcuk",
+    groupId: 'grp_efes_selcuk',
       name: "Selçuk Deltası",
       matchSource: "Küçük Menderes Nehri",
       category: "iliskili_cografya",
@@ -2693,6 +2733,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_toros_gulek",
+    groupId: 'grp_gulek_bogazi',
       name: "Gülek Boğazı / Geçidi",
       matchSource: "Orta Toroslar (Bolkar Dağları)",
       category: "iliskili_cografya",
@@ -2711,6 +2752,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_dogu_karadeniz_zigana",
+    groupId: 'grp_trabzon_zigana_koridoru',
       name: "Zigana (Kalkanlı) Geçidi",
       matchSource: "Doğu Karadeniz Dağları",
       category: "iliskili_cografya",
@@ -2725,6 +2767,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_kackar_ovit",
+    groupId: 'grp_ovit_koridoru',
       name: "Ovit Geçidi / Tüneli",
       matchSource: "Kaçkar Dağları",
       category: "iliskili_cografya",
@@ -2761,6 +2804,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_ilgaz_ilgazgecit",
+    groupId: 'grp_ilgaz_koridoru',
       name: "Ilgaz Geçidi",
       matchSource: "Ilgaz Dağları",
       category: "iliskili_cografya",
@@ -2778,6 +2822,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_erciyes_kapadokya",
+    groupId: 'grp_kapadokya_goreme',
       name: "Kapadokya Peri Bacaları",
       matchSource: "Erciyes ve Hasan Dağı Volkanizması",
       category: "iliskili_cografya",
@@ -2805,6 +2850,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_karapinar_meke",
+    groupId: 'grp_meke_tuzlasi',
       name: "Meke Maar Gölü",
       matchSource: "Karapınar Gaz Patlaması",
       category: "iliskili_cografya",
@@ -3067,7 +3113,8 @@ const COGRAFYA_DATA = {
 
   hayvancilik: [
     {
-      id: "hayvan_buyukbas_erzurum_kars", name: "Büyükbaş Mera Hayvancılığı (Erzurum - Kars)", shortName: "Büyükbaş (Mera / Çayır)", category: "hayvancilik",
+      id: "hayvan_buyukbas_erzurum_kars",
+    groupId: 'grp_erzurum_kars_plato_ekosistem', name: "Büyükbaş Mera Hayvancılığı (Erzurum - Kars)", shortName: "Büyükbaş (Mera / Çayır)", category: "hayvancilik",
       promptTitle: "Yaz yağışlarıyla yeşeren gür Alpin çayırları sayesinde büyükbaş mera hayvancılığının geliştiği yüksek plato sahası haritada neresidir?",
       type: "Büyükbaş (Mera)", lat: 40.50, lng: 42.60, region: "Doğu Anadolu", city: "Erzurum - Kars - Ardahan",
       shapeType: "polygon",
@@ -3107,7 +3154,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Kümes hayvancılığı kapalı modern tesislerde yapıldığı için iklimden etkilenmez. Kuruluşunda tek belirleyici etken tüketim merkezlerine (pazara) yakınlıktır."
     },
     {
-      id: "hayvan_aricilik_mentese_mugla", name: "Arıcılık / Çam Balı (Menteşe Yöresi)", shortName: "Arıcılık (Çam Balı / Menteşe)", category: "hayvancilik",
+      id: "hayvan_aricilik_mentese_mugla",
+    groupId: 'grp_mentese_ekosistemi', name: "Arıcılık / Çam Balı (Menteşe Yöresi)", shortName: "Arıcılık (Çam Balı / Menteşe)", category: "hayvancilik",
       promptTitle: "Zengin kızılçam ormanları ve basra böceği sayesinde dünya çam balı üretiminin merkezi olan engebeli kıyı sahası haritada neresidir?",
       type: "Arıcılık", lat: 37.05, lng: 28.25, region: "Ege", city: "Muğla (Menteşe Yöresi)",
       shapeType: "polygon",
@@ -3126,7 +3174,8 @@ const COGRAFYA_DATA = {
 
   sanayi: [
     {
-      id: "sanayi_eregli_demircelik", name: "Ereğli Demir-Çelik (Erdemir)", shortName: "Ereğli Demir-Çelik Tesisleri", category: "sanayi",
+      id: "sanayi_eregli_demircelik",
+    groupId: 'grp_bati_karadeniz_demircelik', name: "Ereğli Demir-Çelik (Erdemir)", shortName: "Ereğli Demir-Çelik Tesisleri", category: "sanayi",
       promptTitle: "Taşkömürü havzasına (enerji kaynağına) yakınlık ve liman avantajıyla kurulan entegre demir-çelik sahası haritada neresidir?",
       type: "Demir-Çelik (Enerjiye Yakınlık)", lat: 41.28, lng: 31.42, region: "Karadeniz", city: "Zonguldak (Kdz. Ereğli)",
       shapeType: "polygon",
@@ -3134,7 +3183,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Zonguldak taşkömürü havzasının hemen yanına, enerji kaynağına yakınlık ilkesiyle kurulmuştur. Liman avantajıyla cevher ithal eder."
     },
     {
-      id: "sanayi_karabuk_demircelik", name: "Karabük Demir-Çelik (Kardemir)", shortName: "Karabük Demir-Çelik", category: "sanayi",
+      id: "sanayi_karabuk_demircelik",
+    groupId: 'grp_bati_karadeniz_demircelik', name: "Karabük Demir-Çelik (Kardemir)", shortName: "Karabük Demir-Çelik", category: "sanayi",
       promptTitle: "Türkiye'nin ilk entegre demir-çelik tesisi olan, iç kesimde güvenli konum amacıyla vadi içine kurulan tesis haritada neresidir?",
       type: "Demir-Çelik (Tarihî İlk Tesis)", lat: 41.20, lng: 32.63, region: "Karadeniz", city: "Karabük",
       shapeType: "polygon",
@@ -3166,7 +3216,8 @@ const COGRAFYA_DATA = {
       kpssNot: "İç bölgelerin akaryakıt ihtiyacını karşılamak için kurulmuştur; Ceyhan'dan gelen ham petrol boru hattıyla taşınır."
     },
     {
-      id: "sanayi_batman_rafineri", name: "Batman Petrol Rafinerisi", shortName: "Batman Rafinerisi", category: "sanayi",
+      id: "sanayi_batman_rafineri",
+    groupId: 'grp_batman_petrol_kompleksi', name: "Batman Petrol Rafinerisi", shortName: "Batman Rafinerisi", category: "sanayi",
       promptTitle: "Türkiye'nin ilk rafinerisi olup yerli petrol çıkarım sahalarının yanına (hammaddeye yakınlık) kurulan tesis haritada neresidir?",
       type: "Petrol Rafinerisi (Hammaddeye Yakınlık)", lat: 37.88, lng: 41.13, region: "Güneydoğu Anadolu", city: "Batman",
       shapeType: "polygon",
@@ -3174,7 +3225,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Türkiye'nin ilk rafinerisidir ve ülkedeki petrol çıkarım sahalarının (Raman, Garzan) yanı başındadır — hammaddeye bağlı kuruluş örneğidir."
     },
     {
-      id: "sanayi_aliaga_petrokimya", name: "Aliağa Rafineri ve Petrokimya (Petkim / Star)", shortName: "Aliağa Petrokimya Kompleksi", category: "sanayi",
+      id: "sanayi_aliaga_petrokimya",
+    groupId: 'grp_aliaga_petrokimya_liman', name: "Aliağa Rafineri ve Petrokimya (Petkim / Star)", shortName: "Aliağa Petrokimya Kompleksi", category: "sanayi",
       promptTitle: "Liman avantajı, rafineri entegrasyonu ve gemi söküm tesislerinin bir arada bulunduğu Ege petrokimya kompleksi haritada neresidir?",
       type: "Rafineri / Petrokimya", lat: 38.80, lng: 26.97, region: "Ege", city: "İzmir (Aliağa)",
       shapeType: "polygon",
@@ -3182,7 +3234,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Rafineri ile Petkim tesisleri yan yanadır; rafineri çıktısı doğrudan petrokimyaya hammadde olur. Ayrıca ülkenin en büyük gemi söküm tesisleri buradadır."
     },
     {
-      id: "sanayi_seydisehir_aluminyum", name: "Seydişehir Alüminyum Tesisleri", shortName: "Seydişehir Alüminyum", category: "sanayi",
+      id: "sanayi_seydisehir_aluminyum",
+    groupId: 'grp_seydisehir_aluminyum', name: "Seydişehir Alüminyum Tesisleri", shortName: "Seydişehir Alüminyum", category: "sanayi",
       promptTitle: "Yakın çevresindeki boksit maden yataklarına bağlı olarak kurulan Türkiye'nin tek birincil alüminyum tesisi haritada neresidir?",
       type: "Metalurji (Boksit / Alüminyum)", lat: 37.42, lng: 31.85, region: "İç Anadolu", city: "Konya (Seydişehir)",
       shapeType: "polygon",
@@ -3257,7 +3310,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Etrafı dağlarla çevrili iç çanaklarda görülür. Yağış azdır (~300-400 mm), en çok ilkbaharda (kırkikindi yağışları) düşer. Bitki örtüsü bozkırdır."
     },
     {
-      id: "iklim_erzurum_sert_kis", name: "Sert Karasal İklim (Erzurum-Kars)", shortName: "Sert Karasal İklim", category: "iklim",
+      id: "iklim_erzurum_sert_kis",
+    groupId: 'grp_erzurum_kars_plato_ekosistem', name: "Sert Karasal İklim (Erzurum-Kars)", shortName: "Sert Karasal İklim", category: "iklim",
       promptTitle: "Türkiye'de kışların en sert ve uzun geçtiği, donlu gün sayısının en fazla olduğu, yaz yağışlarıyla çayırların yeşerdiği iklim alanı haritada neresidir?",
       type: "Uç Değer / İklim Kuşağı", lat: 39.91, lng: 41.28, region: "Doğu Anadolu", city: "Erzurum - Kars - Ardahan",
       shapeType: "polygon",
@@ -3273,7 +3327,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Doğu Karadeniz dağlarının kıyıya paralel ve çok yüksek olması nemli havanın hızla yükselip soğumasını sağlar (orografik yağış). Türkiye yağış şampiyonudur."
     },
     {
-      id: "iklim_igdir_enaz_yagis", name: "Iğdır Ovası Mikrokliması (En Az Yağış)", shortName: "Iğdır Çukur Mikrokliması", category: "iklim",
+      id: "iklim_igdir_enaz_yagis",
+    groupId: 'grp_igdir_mikroklima', name: "Iğdır Ovası Mikrokliması (En Az Yağış)", shortName: "Iğdır Çukur Mikrokliması", category: "iklim",
       promptTitle: "Çevresindeki yüksek dağlar nedeniyle föhn rüzgârları alan, en az yağış alan ve pamuk yetişen çukur mikroklima sahası haritada neresidir?",
       type: "Mikroklima / Az Yağış", lat: 39.92, lng: 44.04, region: "Doğu Anadolu", city: "Iğdır Ovası",
       shapeType: "polygon",
@@ -3281,7 +3336,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Çevresine göre 1000 metre daha alçakta bir çöküntü ovasıdır. Föhn etkisiyle kışları ılık geçer; Türkiye'nin en az yağış alan mikroklima sahasıdır."
     },
     {
-      id: "iklim_karapinar_kuraklik", name: "Karapınar Çölleşme & Kuraklık Alanı", shortName: "Karapınar Kuraklık Alanı", category: "iklim",
+      id: "iklim_karapinar_kuraklik",
+    groupId: 'grp_karapinar_havzasi', name: "Karapınar Çölleşme & Kuraklık Alanı", shortName: "Karapınar Kuraklık Alanı", category: "iklim",
       promptTitle: "Türkiye'de rüzgâr erozyonunun en şiddetli olduğu, kumul hareketleri ve aşırı kuraklığın görüldüğü saha haritada neresidir?",
       type: "Uç Değer / Kuraklık", lat: 37.72, lng: 33.55, region: "İç Anadolu", city: "Konya (Karapınar)",
       shapeType: "polygon",
@@ -3297,7 +3353,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Yaz mevsiminde Türkiye'nin en yüksek gölge sıcaklıkları (49°C+) burada ölçülür. Basra Alçak Basıncı ve Samyeli rüzgârı etkilidir."
     },
     {
-      id: "iklim_hakkari_kar", name: "Hakkâri Cilo Yöresi (Kar Örtüsü Süresi)", shortName: "En Uzun Kar Örtüsü Yöresi", category: "iklim",
+      id: "iklim_hakkari_kar",
+    groupId: 'grp_hakkari_daglik_bolum', name: "Hakkâri Cilo Yöresi (Kar Örtüsü Süresi)", shortName: "En Uzun Kar Örtüsü Yöresi", category: "iklim",
       promptTitle: "Aşırı yükselti ve sarp dağlık yapı nedeniyle karın yerde kalma süresinin en uzun olduğu yöre haritada neresidir?",
       type: "Uç Değer / Kar Örtüsü", lat: 37.57, lng: 43.74, region: "Doğu Anadolu", city: "Hakkâri - Cilo Dağları",
       shapeType: "polygon",
@@ -3348,7 +3405,8 @@ const COGRAFYA_DATA = {
       kpssNot: "İstanbul'un kuzeyindeki nemli yayvan yapraklı ormandır. Tarihî su kemerleri ve bentleriyle kent su kaynağı olarak kullanılmıştır; kent içi orman baskısının örneğidir."
     },
     {
-      id: "orman_yedigoller_mp", name: "Yedigöller Milli Parkı", category: "orman",
+      id: "orman_yedigoller_mp",
+    groupId: 'grp_abant_yedigoller_bolu', name: "Yedigöller Milli Parkı", category: "orman",
       type: "Milli Park", lat: 40.94, lng: 31.75, region: "Karadeniz", city: "Bolu",
       kpssNot: "Heyelan set gölleriyle ormanın iç içe geçtiği milli parktır. Sonbahar renkleriyle ekoturizmde öne çıkar."
     },
@@ -3358,7 +3416,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Karstik kanyonları ve el değmemiş ormanlarıyla Avrupa'nın korunacak sıcak noktalarından sayılır. Ilgarini Mağarası ve Valla Kanyonu bu alandadır."
     },
     {
-      id: "orman_ilgaz_mp", name: "Ilgaz Dağı Milli Parkı", category: "orman",
+      id: "orman_ilgaz_mp",
+    groupId: 'grp_ilgaz_koridoru', name: "Ilgaz Dağı Milli Parkı", category: "orman",
       type: "Milli Park", lat: 40.90, lng: 33.70, region: "Karadeniz", city: "Kastamonu - Çankırı",
       kpssNot: "Karadeniz ile İç Anadolu arasında bitki örtüsü geçişinin izlenebildiği alandır: kuzey yamaçlar ormanlık, güney yamaçlar bozkıra yakındır."
     },
@@ -3373,7 +3432,8 @@ const COGRAFYA_DATA = {
       kpssNot: "Sığla ağacı yalnızca Güneybatı Anadolu'da (Köyceğiz - Dalaman - Fethiye) doğal olarak yetişen endemik bir türdür. Sığla yağı için korumaya alınmıştır."
     },
     {
-      id: "orman_alpin_kackar", name: "Alpin Çayırlar (Kaçkarlar)", category: "orman",
+      id: "orman_alpin_kackar",
+    groupId: 'grp_kackar_masifi', name: "Alpin Çayırlar (Kaçkarlar)", category: "orman",
       type: "Ot Formasyonu / Yayla", lat: 40.85, lng: 41.15, region: "Karadeniz", city: "Rize - Artvin",
       kpssNot: "Orman üst sınırının (yaklaşık 2000-2200 m) üzerinde ağaç yetişemez; yerini yaz aylarında yeşeren gür çayırlar alır. Yaylacılık bu kuşakta yapılır."
     }

@@ -1875,7 +1875,7 @@ const GEO_CATALOG = {
       "sizeKb": {
         "1": 15,
         "2": 23,
-        "3": 32
+        "3": 33
       },
       "unlocks": [
         "quiz",
@@ -1996,7 +1996,7 @@ const GEO_CATALOG = {
       },
       "sizeKb": {
         "1": 2,
-        "2": 3,
+        "2": 4,
         "3": 4
       },
       "unlocks": [
@@ -2049,9 +2049,9 @@ const GEO_CATALOG = {
         "3": 53
       },
       "sizeKb": {
-        "1": 14,
+        "1": 15,
         "2": 23,
-        "3": 30
+        "3": 31
       },
       "unlocks": [
         "quiz",
@@ -2171,7 +2171,7 @@ const GEO_CATALOG = {
       "sizeKb": {
         "1": 6,
         "2": 8,
-        "3": 8
+        "3": 9
       },
       "unlocks": [
         "quiz",
@@ -2367,8 +2367,8 @@ const GEO_CATALOG = {
         "3": 65
       },
       "sizeKb": {
-        "1": 10,
-        "2": 19,
+        "1": 11,
+        "2": 20,
         "3": 28
       },
       "unlocks": [
@@ -2731,7 +2731,7 @@ const GEO_CATALOG = {
         "3": 26
       },
       "sizeKb": {
-        "1": 4,
+        "1": 5,
         "2": 7,
         "3": 11
       },

@@ -142,6 +142,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_yildiz",
+    groupId: 'grp_yildiz_daglari',
       name: "Yıldız (Istranca) Dağları Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -152,6 +153,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_ergene",
+    groupId: 'grp_ergene_havzasi',
       name: "Ergene Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -272,6 +274,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_erzurum_kars",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
       name: "Erzurum - Kars Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -292,6 +295,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_hakkari",
+    groupId: 'grp_hakkari_daglik_bolum',
       name: "Hakkâri Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
