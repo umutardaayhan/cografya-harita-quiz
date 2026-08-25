@@ -483,15 +483,10 @@ class GeographyQuiz {
       questionText = this.currentQuestion.questionText;
       questionTypeTitle = 'İLİŞKİLİ EŞLEŞTİRME';
     } else if (this.currentActualFormat === 'find_on_map') {
-      if (this.currentQuestion.promptTitle) {
-        questionText = `<span style="color: #60a5fa; font-weight:700;">${this.currentQuestion.promptTitle}</span>`;
-        questionTypeTitle = 'HARİTADA BUL';
-      } else {
-        // Şehir/yöre ipucu içeren parantezleri temizle (ör. "Fındık (Giresun - Ordu)" -> "Fındık")
-        const safeName = this.currentQuestion.shortName || this.currentQuestion.name.replace(/\s*\([^)]*\)/g, '').trim();
-        questionText = `📍 <span style="color: #60a5fa; font-weight:800;">${safeName}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${this.currentQuestion.type})</span>`;
-        questionTypeTitle = 'HARİTADA BUL';
-      }
+      // Şehir/yöre ipucu içeren parantezleri temizle (ör. "Fındık (Giresun - Ordu)" -> "Fındık")
+      const safeName = this.currentQuestion.shortName || this.currentQuestion.name.replace(/\s*\([^)]*\)/g, '').trim();
+      questionText = `📍 <span style="color: #60a5fa; font-weight:800; font-size: 1.15rem;">${safeName} ?</span>`;
+      questionTypeTitle = 'HARİTADA BUL';
     } else {
       const cat = this.currentQuestion.category;
       if (this.currentQuestion.shapeType === 'polyline') {
