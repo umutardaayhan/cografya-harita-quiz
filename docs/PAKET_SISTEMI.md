@@ -336,6 +336,18 @@ zaten küçük ve her zaman yüklüdür), yalnızca 5 matematiksel konum modunun
 
 ---
 
+## 🎮 Oyun Modları ve Kapsam Seçimi (Scope)
+
+Oyun modları (Kör Atış/GeoGuessr, Harita Fatihi, Şimşek Turu, Genel Deneme, Oluşum Alıştırması, Harita Boyama, Şekil Yapbozu) **kesinlikle yalnızca kurulu olan paketlerden** beslenir:
+
+- Eğer bir paket kurulu değilse (örn. `tr.daglar` kurulu değilse), o pakete ait hiçbir yer şekli (örn. Ağrı Dağı) hiçbir oyun modunda sorulmaz.
+- Oyun başlatılırken kullanıcıya modern bir **Kapsam Seçim Modalı** (`#game-scope-modal`) sunulur:
+  1. 📍 **Yalnızca Mevcut Kategori**: Yalnızca o an seçili olan konunun/paketin soruları sorulur.
+  2. 🗺️ **Kurulu Tüm Kategoriler**: Yalnızca indirilmiş/kurulu paketlerin tamamından karma sorular sorulur.
+- Böylece kullanıcı tek bir konuyu pekiştirmek istediğinde veya kurulu tüm konuları sınamak istediğinde tam kontrole sahip olur.
+
+---
+
 ## 🧭 Mağaza Gezinmesi (yüzlerce pakete ölçeklenir)
 
 Katalog büyüdükçe kartları tek listede basmak sürdürülemez. Gezinme üç katmanlıdır:

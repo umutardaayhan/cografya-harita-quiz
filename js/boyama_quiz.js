@@ -338,7 +338,15 @@ class MapPaintGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   buildTargets() {
     const adaylar = [];
-    Object.keys(OLUSUM_TAKSONOMISI).forEach(grupKey => {
+    const hedefler = Object.keys(OLUSUM_TAKSONOMISI).filter(grupKey => {
+      if (!this.categoryFilter) return true;
+      const grup = OLUSUM_TAKSONOMISI[grupKey];
+      return grupKey === this.categoryFilter || (grup.kaynak && grup.kaynak === this.categoryFilter);
+    });
+
+    const aktifGruplar = hedefler.length > 0 ? hedefler : Object.keys(OLUSUM_TAKSONOMISI);
+
+    aktifGruplar.forEach(grupKey => {
       const grup = OLUSUM_TAKSONOMISI[grupKey];
       let items = (COGRAFYA_DATA[grup.kaynak || grupKey] || []).slice();
       if (typeof grup.onFiltre === 'function') items = items.filter(grup.onFiltre);
@@ -362,8 +370,9 @@ class MapPaintGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   // AKIŞ
   // ---------------------------------------------------------------
-  start() {
+  start(categoryFilter = null) {
     this.resetProgress();
+    this.categoryFilter = categoryFilter;
     this.applySettings();
     this.buildTargets();
     this.kullanilan = [];

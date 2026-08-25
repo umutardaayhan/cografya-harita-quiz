@@ -16,9 +16,10 @@ class MatchGame {
     this.lastBoardIds = [];
     this.selectedLeft = null;
     this.selectedRight = null;
+    this.customPool = null;
   }
 
-  start() {
+  start(customPool = null) {
     this.isActive = true;
     this.score = 0;
     this.combo = 1;
@@ -27,6 +28,7 @@ class MatchGame {
     this.lastBoardIds = [];
     this.selectedLeft = null;
     this.selectedRight = null;
+    this.customPool = (customPool && customPool.length) ? [...customPool] : null;
     this.geoMap.clearAll();
     this.geoMap.resetView();
 
@@ -36,7 +38,12 @@ class MatchGame {
   }
 
   generateBoard() {
-    const all = (COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) ? COGRAFYA_DATA.iliskili_cografya.slice(0) : [];
+    let all = [];
+    if (this.customPool && this.customPool.length > 0) {
+      all = this.customPool.slice(0);
+    } else {
+      all = (COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) ? COGRAFYA_DATA.iliskili_cografya.slice(0) : [];
+    }
 
     // Yeni tahtada bir önceki turun kartlarını tekrar etme (havuz yetiyorsa)
     let pool = all.filter(p => !this.lastBoardIds.includes(p.id));

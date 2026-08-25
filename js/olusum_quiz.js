@@ -116,7 +116,16 @@ class FormationTypeGame extends MutlakKonumGameBase {
   /** Tüm kategoriler için { grupKey: { sinifKey: [item...] } } tablosu kurar */
   buildPool() {
     const havuz = {};
-    Object.keys(OLUSUM_TAKSONOMISI).forEach(grupKey => {
+    const hedefler = Object.keys(OLUSUM_TAKSONOMISI).filter(grupKey => {
+      if (!this.categoryFilter) return true;
+      const grup = OLUSUM_TAKSONOMISI[grupKey];
+      return grupKey === this.categoryFilter || (grup.kaynak && grup.kaynak === this.categoryFilter);
+    });
+
+    // Eğer filtreye uygun grup bulunamadıysa tüm kurulu taksonomiye dön
+    const aktifGruplar = hedefler.length > 0 ? hedefler : Object.keys(OLUSUM_TAKSONOMISI);
+
+    aktifGruplar.forEach(grupKey => {
       const grup = OLUSUM_TAKSONOMISI[grupKey];
       const kaynak = grup.kaynak || grupKey;
       let items = (COGRAFYA_DATA[kaynak] || []).slice();
@@ -165,8 +174,9 @@ class FormationTypeGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   // OYUN AKIŞI
   // ---------------------------------------------------------------
-  start() {
+  start(categoryFilter = null) {
     this.resetProgress();
+    this.categoryFilter = categoryFilter;
     this.buildPool();
     this.geoMap.clearAll();
     this.geoMap.resetView();

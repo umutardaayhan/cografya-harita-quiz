@@ -201,6 +201,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const examRestartBtn = document.getElementById('exam-restart-btn');
   const examCloseModalBtn = document.getElementById('exam-close-modal-btn');
 
+  // 🎮 Oyun Kapsam Seçim Modalı DOM Elemanları
+  const gameScopeModal = document.getElementById('game-scope-modal');
+  const gameScopeTitle = document.getElementById('game-scope-title');
+  const gameScopeSubtitle = document.getElementById('game-scope-subtitle');
+  const gameScopeCloseBtn = document.getElementById('game-scope-close-btn');
+  const gameScopeCurrentBtn = document.getElementById('game-scope-current-btn');
+  const gameScopeAllBtn = document.getElementById('game-scope-all-btn');
+  const gameScopeCurrentIcon = document.getElementById('game-scope-current-icon');
+  const gameScopeCurrentName = document.getElementById('game-scope-current-name');
+  const gameScopeCurrentCount = document.getElementById('game-scope-current-count');
+  const gameScopeAllCount = document.getElementById('game-scope-all-count');
+  let gameScopeCallback = null;
+
   // Uygulama Durumu
   let currentMode = 'quiz'; // 'quiz', 'explore', 'drawing', 'geoguessr', 'conqueror', 'match'
   let matchBoardLocked = false; // Eşleşme/hata animasyonu oynarken tıklamaları kilitler
@@ -754,7 +767,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- 📝 GENEL DENEME SINAVI (18 SORU & KRONOMETRE) MOTORU ---
-  function startExam() {
+  let lastExamScope = 'all';
+
+  function startExam(scope = 'all') {
+    lastExamScope = scope;
     closeGamesDropdown();
     exitAllGameModes();
     if (currentMode === 'drawing') closeDrawingToolbar();
@@ -784,17 +800,19 @@ document.addEventListener('DOMContentLoaded', () => {
     examCorrectText.textContent = '0';
     examWrongText.textContent = '0';
 
-    // Tüm kategorilerden (Dağ, Ova, Plato, Su Kaynakları, Geçitler) rastgele 18 adet soru topla
-    const allGlobal = [];
-    Object.keys(COGRAFYA_DATA).forEach(cat => {
-      allGlobal.push(...COGRAFYA_DATA[cat]);
-    });
-    if (customDrawManager && customDrawManager.drawings) {
-      allGlobal.push(...customDrawManager.drawings);
+    let pool = [];
+    if (scope === 'current') {
+      if (activeCategory === 'ozel_cizimler') {
+        pool = customDrawManager ? customDrawManager.getQuizItems() : [];
+      } else {
+        pool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      }
+    } else {
+      pool = buildGlobalQuizPool();
     }
 
-    // Karıştır ve 18 soru seç
-    examQuestions = [...allGlobal].sort(() => 0.5 - Math.random()).slice(0, 18);
+    // Karıştır ve en fazla 18 soru seç
+    examQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 18);
 
     if (examInterval) clearInterval(examInterval);
     examInterval = setInterval(() => {
@@ -819,14 +837,17 @@ document.addEventListener('DOMContentLoaded', () => {
     geoQuiz.isAnswered = false;
 
     // Seçili şık sayısı kadar şık üret
-    const allGlobal = [];
-    Object.keys(COGRAFYA_DATA).forEach(cat => {
-      allGlobal.push(...COGRAFYA_DATA[cat]);
-    });
-    if (customDrawManager && customDrawManager.drawings) {
-      allGlobal.push(...customDrawManager.drawings);
+    let candidatePool = [];
+    if (lastExamScope === 'current') {
+      if (activeCategory === 'ozel_cizimler') {
+        candidatePool = customDrawManager ? customDrawManager.getQuizItems() : [];
+      } else {
+        candidatePool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      }
+    } else {
+      candidatePool = buildGlobalQuizPool();
     }
-    const candidatePool = allGlobal.filter(i => i.id !== qItem.id);
+    candidatePool = candidatePool.filter(i => i && i.id !== qItem.id);
 
     const currentOptCount = geoQuiz.getOptionCount();
     let options = [];
@@ -844,7 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
       question: qItem,
       options: options,
       questionText: `📍 <span style="color: #c084fc; font-weight:800;">${qItem.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${qItem.type})</span>`,
-      questionTypeTitle: `DENEME [${examCurrentIndex + 1}/18]`,
+      questionTypeTitle: `DENEME [${examCurrentIndex + 1}/${examQuestions.length}]`,
       actualFormat: 'find_on_map',
       isProblematic: false,
       isMastered: false,
@@ -854,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
       difficultyLevel: geoQuiz.getDifficultyLevel()
     });
 
-    nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
+    nextBtn.textContent = (examCurrentIndex === examQuestions.length - 1) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
   }
 
   function endExam(showModal = true) {
@@ -889,14 +910,14 @@ document.addEventListener('DOMContentLoaded', () => {
       closeGamesDropdown();
       endExam();
     } else {
-      startExam();
+      openGameScopeModal('Genel Deneme (18 Soru)', '📝', (scope) => startExam(scope));
     }
   });
 
   examAbortBtn.addEventListener('click', () => endExam());
   examRestartBtn.addEventListener('click', () => {
     examModal.style.display = 'none';
-    startExam();
+    startExam(lastExamScope);
   });
   examCloseModalBtn.addEventListener('click', () => {
     examModal.style.display = 'none';
@@ -904,7 +925,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- ⚡ ŞİMŞEK TURU (SPEEDRUN) MOTORU ---
-  function startSpeedrun() {
+  let lastSpeedrunScope = 'all';
+
+  function startSpeedrun(scope = 'all') {
+    lastSpeedrunScope = scope;
     closeGamesDropdown();
     exitAllGameModes();
     if (currentMode === 'drawing') closeDrawingToolbar();
@@ -937,6 +961,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Şıkları 4 şıkka sabitle
     geoQuiz.setOptionCount(4);
     optCountBtns.forEach(b => b.classList.toggle('active', b.dataset.count === '4'));
+
+    if (scope === 'current') {
+      geoQuiz.clearCustomPool();
+      geoQuiz.reloadCategoryItems();
+    } else {
+      geoQuiz.setCustomPool(buildGlobalQuizPool());
+    }
 
     if (speedrunInterval) clearInterval(speedrunInterval);
     speedrunInterval = setInterval(() => {
@@ -989,14 +1020,14 @@ document.addEventListener('DOMContentLoaded', () => {
       closeGamesDropdown();
       endSpeedrun();
     } else {
-      startSpeedrun();
+      openGameScopeModal('Şimşek Turu (60s)', '⚡', (scope) => startSpeedrun(scope));
     }
   });
 
   speedrunAbortBtn.addEventListener('click', () => endSpeedrun());
   speedrunRestartBtn.addEventListener('click', () => {
     speedrunModal.style.display = 'none';
-    startSpeedrun();
+    startSpeedrun(lastSpeedrunScope);
   });
   speedrunCloseModalBtn.addEventListener('click', () => {
     speedrunModal.style.display = 'none';
@@ -1209,19 +1240,102 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function hideGameModals() {
-    [geoguessrModal, conquerorModal, matchModal, document.getElementById('mk-modal')].forEach(m => {
+    [geoguessrModal, conquerorModal, matchModal, document.getElementById('mk-modal'), gameScopeModal].forEach(m => {
       if (m) m.style.display = 'none';
     });
   }
 
-  // Fetih modu tum Turkiye'yi kapsar: sorular tek kategoriden degil global havuzdan gelir.
+  // --- 🎮 OYUN KAPSAM SEÇİM MODALI YÖNETİMİ ---
+  function openGameScopeModal(gameTitle, gameIcon, onSelectScope) {
+    if (!gameScopeModal) {
+      if (typeof onSelectScope === 'function') onSelectScope('all');
+      return;
+    }
+
+    closeGamesDropdown();
+    gameScopeCallback = onSelectScope;
+
+    if (gameScopeTitle) {
+      gameScopeTitle.innerHTML = `<span>${gameIcon || '🎮'}</span> <span>${gameTitle || 'Oyun Modu Başlat'}</span>`;
+    }
+
+    // Aktif kategori bilgilerini çek
+    let currentCatIcon = '📍';
+    let currentCatTitle = 'Seçili Kategori';
+    let currentCatCount = 0;
+
+    if (activeCategory === 'ozel_cizimler') {
+      const activeMap = customDrawManager ? customDrawManager.getActiveMap() : null;
+      currentCatIcon = '🎨';
+      currentCatTitle = activeMap ? `Çizimlerim (${activeMap.name})` : 'Çizimlerim';
+      currentCatCount = activeMap ? activeMap.drawings.length : 0;
+    } else {
+      const catObj = CATEGORIES.find(c => c.id === activeCategory);
+      if (catObj) {
+        currentCatIcon = catObj.icon || '📍';
+        currentCatTitle = catObj.title || activeCategory;
+      }
+      const items = (typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      currentCatCount = items.length;
+    }
+
+    if (gameScopeCurrentIcon) gameScopeCurrentIcon.textContent = currentCatIcon;
+    if (gameScopeCurrentName) gameScopeCurrentName.textContent = currentCatTitle;
+    if (gameScopeCurrentCount) gameScopeCurrentCount.textContent = `${currentCatCount} Soru`;
+
+    // Kurulu tüm kategorilerin toplam bilgisi
+    const globalPool = buildGlobalQuizPool();
+    const installedCatsCount = CATEGORIES.filter(c => !c.isCustom).length;
+    if (gameScopeAllCount) {
+      gameScopeAllCount.textContent = `${installedCatsCount} Konu · ${globalPool.length} Soru`;
+    }
+
+    gameScopeModal.style.display = 'flex';
+  }
+
+  function closeGameScopeModal() {
+    if (gameScopeModal) gameScopeModal.style.display = 'none';
+    gameScopeCallback = null;
+  }
+
+  if (gameScopeCloseBtn) {
+    gameScopeCloseBtn.addEventListener('click', closeGameScopeModal);
+  }
+
+  if (gameScopeCurrentBtn) {
+    gameScopeCurrentBtn.addEventListener('click', () => {
+      const cb = gameScopeCallback;
+      closeGameScopeModal();
+      if (typeof cb === 'function') cb('current');
+    });
+  }
+
+  if (gameScopeAllBtn) {
+    gameScopeAllBtn.addEventListener('click', () => {
+      const cb = gameScopeCallback;
+      closeGameScopeModal();
+      if (typeof cb === 'function') cb('all');
+    });
+  }
+
+  if (gameScopeModal) {
+    gameScopeModal.addEventListener('click', (e) => {
+      if (e.target === gameScopeModal) closeGameScopeModal();
+    });
+  }
+
+  // Fetih modu ve oyun modlari tum Turkiye'yi kapsarken: yalnizca KURULU paketlerin havuzundan gelir.
   function buildGlobalQuizPool() {
     const pool = [];
-    Object.keys(COGRAFYA_DATA).forEach(cat => {
-      // Iliskili eslestirme kartlarinin kendi soru formati var, fetihte kullanilmaz
-      if (cat === 'iliskili_cografya') return;
-      pool.push(...COGRAFYA_DATA[cat]);
-    });
+    if (typeof COGRAFYA_DATA !== 'undefined') {
+      Object.keys(COGRAFYA_DATA).forEach(cat => {
+        // Iliskili eslestirme kartlarinin kendi soru formati var, fetihte kullanilmaz
+        if (cat === 'iliskili_cografya') return;
+        if (Array.isArray(COGRAFYA_DATA[cat])) {
+          pool.push(...COGRAFYA_DATA[cat]);
+        }
+      });
+    }
     if (customDrawManager && customDrawManager.drawings) {
       pool.push(...customDrawManager.drawings);
     }
@@ -1276,7 +1390,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- 🎯 1. KÖR ATIŞ (GEOGUESSR) MODU ---
-  function startGeoGuessrMode() {
+  let lastGeoguessrScope = 'all';
+
+  function startGeoGuessrMode(scope = 'all') {
+    lastGeoguessrScope = scope;
     prepareGameMode('geoguessr');
 
     // Standart test arayüzünü ve çubuklarını tamamen kapat
@@ -1287,7 +1404,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (geoguessrHud) geoguessrHud.style.display = 'flex';
     if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
 
-    const roundData = geoGuessrGame.start();
+    let pool = null;
+    if (scope === 'current') {
+      if (activeCategory === 'ozel_cizimler') {
+        pool = customDrawManager ? customDrawManager.getQuizItems() : [];
+      } else {
+        pool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      }
+    } else {
+      pool = buildGlobalQuizPool();
+    }
+
+    const roundData = geoGuessrGame.start(pool);
     updateLabelsBtnUI(); // Oyun dilsiz haritayi zorluyor, buton durumu senkron kalsin
     updateGeoGuessrUI(roundData);
   }
@@ -1303,7 +1431,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
   }
 
-  if (btnGeoguessrMode) btnGeoguessrMode.addEventListener('click', startGeoGuessrMode);
+  if (btnGeoguessrMode) {
+    btnGeoguessrMode.addEventListener('click', () => {
+      openGameScopeModal('Kör Atış (GeoGuessr)', '🎯', (scope) => startGeoGuessrMode(scope));
+    });
+  }
 
   if (geoguessrNextBtn) {
     geoguessrNextBtn.addEventListener('click', () => {
@@ -1351,12 +1483,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (geoguessrRestartBtn) {
     geoguessrRestartBtn.addEventListener('click', () => {
       if (geoguessrModal) geoguessrModal.style.display = 'none';
-      startGeoGuessrMode();
+      startGeoGuessrMode(lastGeoguessrScope);
     });
   }
 
   // --- ⚔️ 2. HARİTA FATİHİ (CONQUEROR) MODU ---
-  function startConquerorMode() {
+  let lastConquerorScope = 'all';
+
+  function startConquerorMode(scope = 'all') {
+    lastConquerorScope = scope;
     prepareGameMode('conqueror');
 
     if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
@@ -1364,9 +1499,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (standardQuizBody) standardQuizBody.style.display = '';
     if (subCategoriesBar) subCategoriesBar.style.display = 'none';
 
-    // Havuzu hem quiz motoruna hem de fetih motoruna ver:
-    // hedefler bu havuza gore kuruldugu icin %100 daima ulasilabilir olur.
-    const pool = buildGlobalQuizPool();
+    let pool = [];
+    if (scope === 'current') {
+      if (activeCategory === 'ozel_cizimler') {
+        pool = customDrawManager ? customDrawManager.getQuizItems() : [];
+      } else {
+        pool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      }
+      pool = pool.filter(i => i && typeof i.lat === 'number' && typeof i.lng === 'number');
+    } else {
+      pool = buildGlobalQuizPool();
+    }
+
     geoQuiz.setCustomPool(pool);
 
     const status = conquerorGame.start(pool);
@@ -1402,7 +1546,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (btnConquerorMode) btnConquerorMode.addEventListener('click', startConquerorMode);
+  if (btnConquerorMode) {
+    btnConquerorMode.addEventListener('click', () => {
+      openGameScopeModal('Harita Fatihi', '⚔️', (scope) => startConquerorMode(scope));
+    });
+  }
 
   if (conquerorAbortBtn) {
     conquerorAbortBtn.addEventListener('click', returnToQuizMode);
@@ -1417,12 +1565,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (conquerorRestartBtn) {
     conquerorRestartBtn.addEventListener('click', () => {
       if (conquerorModal) conquerorModal.style.display = 'none';
-      startConquerorMode();
+      startConquerorMode(lastConquerorScope);
     });
   }
 
   // --- 🧩 3. ŞEKİL YAPBOZU (MATCH & BLAST) MODU ---
-  function startMatchMode() {
+  let lastMatchScope = 'all';
+
+  function startMatchMode(scope = 'all') {
+    lastMatchScope = scope;
     prepareGameMode('match');
 
     // Standart test arayüzünü ve çubuklarını tamamen kapat
@@ -1445,7 +1596,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (matchModal) matchModal.style.display = 'flex';
     };
 
-    const boardState = matchGame.start();
+    let pool = null;
+    if (scope === 'current' && COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) {
+      const filtered = COGRAFYA_DATA.iliskili_cografya.filter(p => p.category === activeCategory);
+      if (filtered.length >= 6) {
+        pool = filtered;
+      }
+    }
+
+    const boardState = matchGame.start(pool);
     renderMatchBoard(boardState);
   }
 
@@ -1526,8 +1685,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (matchTimerVal) matchTimerVal.textContent = res.boardState.timeLeft;
 
     if (res.status === 'match') {
-      flashMatchCards(res.matchedId, res.matchedId, 'matched', 300, () => {
-        if (matchGame.isActive) renderMatchBoard(matchGame.getBoardState());
+      flashMatchCards(res.matchedId, res.matchedId, 'matched', 320, () => {
+        renderMatchBoard(res.boardState);
       });
       return;
     }
@@ -1660,9 +1819,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mkTimerChip) mkTimerChip.classList.toggle('critical', seconds <= 2);
   }
 
-  function startMutlakKonumMode(key) {
+  let lastMkScope = 'all';
+
+  function startMutlakKonumMode(key, scope = 'all') {
     if (!mkGames[key]) return;
 
+    lastMkScope = scope;
     prepareGameMode('mk_' + key);
     activeMkKey = key;
 
@@ -1688,7 +1850,12 @@ document.addEventListener('DOMContentLoaded', () => {
     game.onTick = (secondsLeft) => mkUpdateTimer(secondsLeft);
     game.onTimeout = (view) => mkRender(view);
 
-    mkRender(game.start());
+    const filterCat = (scope === 'current') ? activeCategory : null;
+    const initialView = (key === 'olusum' || key === 'boyama')
+      ? game.start(filterCat)
+      : game.start();
+
+    mkRender(initialView);
 
     // Koordinat avcısı dilsiz haritayı zorluyor, buton durumu senkron kalsın
     if (key === 'coord') updateLabelsBtnUI();
@@ -1766,40 +1933,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // Geri bildirim paneli
     if (mkFeedbackEl) {
       if (view.feedback) {
-        const fb = view.feedback;
         mkFeedbackEl.style.display = 'block';
-        mkFeedbackEl.className = 'mk-feedback ' + (fb.ok ? 'ok' : 'bad');
-        if (mkFeedbackTitle) mkFeedbackTitle.textContent = fb.title || '';
+        mkFeedbackEl.className = 'mk-feedback-panel ' + (view.feedback.ok ? 'correct' : 'wrong');
+        if (mkFeedbackTitle) mkFeedbackTitle.textContent = view.feedback.title || '';
+
         if (mkFeedbackRows) {
-          mkFeedbackRows.innerHTML = (fb.rows || []).map(r => `
+          mkFeedbackRows.innerHTML = (view.feedback.rows || []).map(r => `
             <div class="mk-feedback-row ${r.highlight ? 'highlight' : ''}">
-              <span>${r.label}</span>
-              <span class="mk-row-val">${r.value}</span>
+              <span class="mk-feedback-label">${r.label}</span>
+              <span class="mk-feedback-value">${r.value}</span>
             </div>
           `).join('');
         }
-        if (mkFeedbackNote) mkFeedbackNote.textContent = fb.note || '';
-        if (mkNextBtn) {
-          mkNextBtn.textContent = (view.round >= view.maxRounds)
-            ? 'Sonuçları Gör → (Boşluk)'
-            : 'Sonraki Tur → (Boşluk)';
+
+        if (mkFeedbackNote) {
+          mkFeedbackNote.textContent = view.feedback.note || '';
+          mkFeedbackNote.style.display = view.feedback.note ? 'block' : 'none';
         }
       } else {
         mkFeedbackEl.style.display = 'none';
       }
     }
+
+    if (mkNextBtn) {
+      mkNextBtn.style.display = view.showNext ? 'block' : 'none';
+      if (view.showNext) mkNextBtn.focus();
+    }
   }
 
-  function mkSelect(optionId) {
+  function mkSelect(choiceId) {
     const game = mkActiveGame();
-    if (!game || typeof game.select !== 'function') return;
-    mkRender(game.select(optionId));
+    if (!game) return;
+    const view = game.select(choiceId);
+    mkRender(view);
   }
 
   function mkNext() {
     const game = mkActiveGame();
     if (!game) return;
-    mkRender(game.next());
+    const view = game.next();
+    mkRender(view);
   }
 
   /** Zorluk / sik sayisi oyun ortasinda degisirse turu yeni ayarlarla yeniden kurar */
@@ -1812,16 +1985,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function mkShowResults(summary) {
     if (!summary || !mkModal) return;
-
-    if (mkResBadge) mkResBadge.textContent = summary.badge;
-    if (mkResTitle) mkResTitle.textContent = summary.title;
-    if (mkResSubtitle) mkResSubtitle.textContent = summary.subtitle;
+    if (mkResBadge) mkResBadge.textContent = summary.badge || '🏆';
+    if (mkResTitle) mkResTitle.textContent = summary.title || 'Tamamlandı!';
+    if (mkResSubtitle) mkResSubtitle.textContent = summary.subtitle || 'Karneniz:';
 
     if (mkResStats) {
-      mkResStats.innerHTML = summary.stats.map(st => `
-        <div class="speedrun-stat-box ${st.cls === 'record' ? 'best' : ''}">
-          <span class="speedrun-stat-val ${st.cls}">${st.val}</span>
-          <span class="speedrun-stat-lbl">${st.label}</span>
+      mkResStats.innerHTML = (summary.stats || []).map(s => `
+        <div class="speedrun-stat-box ${s.cls || ''}">
+          <span class="speedrun-stat-val ${s.cls || ''}">${s.val}</span>
+          <span class="speedrun-stat-lbl">${s.label}</span>
         </div>
       `).join('');
     }
@@ -1830,9 +2002,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mkResRounds.innerHTML = (summary.rows || []).map(r => `
         <div class="geoguessr-round-row">
           <span>${r.left}</span>
-          <span style="color: ${r.ok ? '#4ade80' : '#f87171'}; font-weight: 800;">
-            ${r.ok ? '✓' : '✗'} ${r.right}
-          </span>
+          <span style="color: ${r.ok ? '#4ade80' : '#f87171'}; font-weight: 800;">${r.right}</span>
         </div>
       `).join('');
     }
@@ -1854,10 +2024,11 @@ document.addEventListener('DOMContentLoaded', () => {
     mkRestartBtn.addEventListener('click', () => {
       const key = activeMkKey; // startMutlakKonumMode içindeki temizlik bunu sıfırlar
       if (mkModal) mkModal.style.display = 'none';
-      if (key) startMutlakKonumMode(key);
+      if (key) startMutlakKonumMode(key, lastMkScope);
     });
   }
 
+  // Mutlak konum ve oluşum/boyama mod butonları
   Object.entries({
     'btn-mk-sun': 'sun',
     'btn-mk-temp': 'temp',
@@ -2535,16 +2706,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ, ESC İLE ODAKTAN ÇIKIŞ) ---
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (gameScopeModal && gameScopeModal.style.display === 'flex') {
+        closeGameScopeModal();
+        return;
+      }
+      if (isFocusMode) {
+        toggleFocusMode(false);
+        return;
+      }
+    }
+
     // Herhangi bir modal aciksa tuslar arkadaki siklara gitmemeli.
     // (Eskiden conqueror ve speedrun modallari bu listede yoktu.)
     const anyModalOpen = Array.from(document.querySelectorAll('.modal-overlay'))
       .some(m => m.style.display === 'flex');
     if (anyModalOpen) return;
-
-    if (e.key === 'Escape' && isFocusMode) {
-      toggleFocusMode(false);
-      return;
-    }
 
     // Kör Atış modunda Space / Enter ile sonraki tur
     if ((e.key === ' ' || e.key === 'Enter') && geoGuessrGame.isActive && geoGuessrGame.hasGuessedThisRound) {

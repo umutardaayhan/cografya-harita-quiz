@@ -41,11 +41,12 @@ class GeoGuessrGame {
     return 0;
   }
 
-  start() {
+  start(customPool = null) {
     this.isActive = true;
     this.currentRound = 1;
     this.totalScore = 0;
     this.roundResults = [];
+    this.customPool = (customPool && customPool.length) ? [...customPool] : null;
 
     if (this.geoMap && this.geoMap.map && !this.geoMap.map.hasLayer(this.guessLayerGroup)) {
       this.guessLayerGroup.addTo(this.geoMap.map);
@@ -71,12 +72,34 @@ class GeoGuessrGame {
     // Önceki turun cevabına uçmuş kamerayı Türkiye geneline geri al
     this.geoMap.resetView();
 
-    const allCategories = ['daglar', 'ovalar', 'platolar', 'su_kaynaklari', 'gecitler'];
-    const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
-    const items = (COGRAFYA_DATA && COGRAFYA_DATA[randomCat]) ? COGRAFYA_DATA[randomCat] : [];
-    
-    const pool = items.filter(it => !this.roundResults.some(r => r.target.id === it.id));
-    this.currentTarget = (pool.length > 0 ? pool : items)[Math.floor(Math.random() * (pool.length > 0 ? pool.length : items.length))];
+    let pool = [];
+    if (this.customPool && this.customPool.length > 0) {
+      pool = this.customPool;
+    } else {
+      // Yalnızca KURULU paketlerin kategorilerini topla (iliskili_cografya haric)
+      const allItems = [];
+      if (typeof COGRAFYA_DATA !== 'undefined') {
+        Object.keys(COGRAFYA_DATA).forEach(cat => {
+          if (cat === 'iliskili_cografya') return;
+          if (Array.isArray(COGRAFYA_DATA[cat])) {
+            allItems.push(...COGRAFYA_DATA[cat]);
+          }
+        });
+      }
+      pool = allItems;
+    }
+
+    // Koordinatı olan ve daha önce bu oyunda sorulmamış öğeleri filtrele
+    const validItems = pool.filter(it => it && typeof it.lat === 'number' && typeof it.lng === 'number');
+    const unaskedPool = validItems.filter(it => !this.roundResults.some(r => r.target && r.target.id === it.id));
+    const finalPool = unaskedPool.length > 0 ? unaskedPool : validItems;
+
+    if (finalPool.length === 0) {
+      this.currentTarget = null;
+      return null;
+    }
+
+    this.currentTarget = finalPool[Math.floor(Math.random() * finalPool.length)];
 
     return {
       round: this.currentRound,
