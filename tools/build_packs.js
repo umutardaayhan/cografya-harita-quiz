@@ -188,8 +188,8 @@ const PACK_DEFS = [
     unlocks: ['quiz', 'conqueror', 'speedrun', 'exam'],
     planRows: [
       { cat: 'tarim',       icon: '🚜', count: 33, tr: 'Tarım',  en: 'Agriculture' },
-      { cat: 'hayvancilik', icon: '🐑', count: 6,  tr: 'Hayvan', en: 'Livestock' },
-      { cat: 'sanayi',      icon: '🏭', count: 10, tr: 'Sanayi', en: 'Industry' }
+      { cat: 'hayvancilik', icon: '🐑', count: 8,  tr: 'Hayvan', en: 'Livestock' },
+      { cat: 'sanayi',      icon: '🏭', count: 13, tr: 'Sanayi', en: 'Industry' }
     ],
     recommends: []
   },

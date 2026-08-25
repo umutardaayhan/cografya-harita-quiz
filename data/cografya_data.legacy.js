@@ -2866,109 +2866,109 @@ const COGRAFYA_DATA = {
   ],
 
   // --- 🚜 TARIM: ÜRÜN - YÖRE EŞLEŞMELERİ ---
-  tarim: [
+    tarim: [
     // --- 1. TAHILLAR (HUBUBAT) ---
     {
       id: "tarim_bugday", name: "Buğday", shortName: "Buğday", category: "tarim",
-      promptTitle: "Karasal iklim şartlarına uygun, Türkiye'de ekim alanı en geniş ve en fazla Konya'da üretilen temel tahıl ürünü haritada neresidir?",
+      promptTitle: "Karasal iklim şartlarına uygun, Türkiye'de ekim alanı en geniş olup en fazla Konya'da yetiştirilen temel tahıl haritada neresidir?",
       type: "Tahıl (Hububat)", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
       groupId: "tarim_grp_konya", shapeType: "point",
-      kpssNot: "Karasal iklim şartlarına uygun bir ürün olup ilkbahar yağışı ve yaz kuraklığı ister. Türkiye'de en geniş ekim alanına sahip temel besin maddesidir; en fazla Konya ilinde yetiştirilmektedir."
+      kpssNot: "Karasal iklim şartlarına uygun bir ürün olup Türkiye'de en fazla Konya ilinde yetiştirilmektedir."
     },
     {
       id: "tarim_arpa", name: "Arpa", shortName: "Arpa", category: "tarim",
-      promptTitle: "Soğuğa ve kuraklığa buğdaydan daha dayanıklı olan, yem ve bira sanayisinde kullanılan ve en fazla Konya'da üretilen tahıl haritada neresidir?",
+      promptTitle: "Buğdayla benzer yetişme koşullarına sahip, soğuğa daha dayanıklı ve en fazla Konya'da üretilen tahıl haritada neresidir?",
       type: "Tahıl (Hububat / Yem)", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
       groupId: "tarim_grp_konya", shapeType: "point",
-      kpssNot: "Buğdayla benzer yetişme koşullarına sahiptir ancak soğuğa ve kuraklığa buğdaydan daha dayanıklıdır. Yem ve bira sanayisinde kullanılır; en fazla Konya ilinde üretilmektedir."
+      kpssNot: "Buğdayla benzer yetişme koşullarına sahiptir ve en fazla Konya ilinde üretilmektedir."
     },
     {
       id: "tarim_cavdar", name: "Çavdar", shortName: "Çavdar", category: "tarim",
-      promptTitle: "Tahıllar içinde soğuğa ve kıraç topraklara en dayanıklı olan, yüksek platolarda ve en çok Kayseri'de yetiştirilen tahıl haritada neresidir?",
+      promptTitle: "Soğuğa ve kıraç topraklara en dayanıklı tahıl olup en çok Kayseri ilinde yetiştirilen ürün haritada neresidir?",
       type: "Tahıl (Hububat)", lat: 38.73, lng: 35.48, region: "İç Anadolu", city: "Kayseri",
       groupId: "tarim_grp_kayseri", shapeType: "point",
-      kpssNot: "Tahıllar içinde soğuğa ve en fakir/kıraç topraklara en dayanıklı üründür. Yüksek ve soğuk platolarda yetişir; en çok Kayseri ilinde yetiştirilmektedir."
+      kpssNot: "Tahıllar içinde soğuğa en dayanıklı ürünlerden biri olup en çok Kayseri ilinde yetiştirilmektedir."
     },
     {
       id: "tarim_yulaf", name: "Yulaf", shortName: "Yulaf", category: "tarim",
-      promptTitle: "Serin ve nemli iklimi seven, gıda sanayisinde ve hayvan yemi olarak kullanılan, en fazla Sivas'ta üretilen tahıl haritada neresidir?",
-      type: "Tahıl (Hububat / Yem)", lat: 39.75, lng: 37.01, region: "İç Anadolu", city: "Sivas",
+      promptTitle: "Bisküvi sanayisi ve hayvan yemi olarak kullanılan, en fazla Sivas ilinde üretilen tahıl haritada neresidir?",
+      type: "Tahıl (Hububat)", lat: 39.75, lng: 37.01, region: "İç Anadolu", city: "Sivas",
       shapeType: "point",
-      kpssNot: "Serin ve nemli iklimi seven, bisküvi, bebek maması ve hayvan yemi sanayisinde kullanılan yulaf en fazla Sivas ilinde üretilmektedir."
+      kpssNot: "Bisküvi sanayisi ve yem bitkisi olarak kullanılan yulaf, en fazla Sivas ilinde üretilmektedir."
     },
     {
       id: "tarim_misir", name: "Mısır", shortName: "Mısır", category: "tarim",
-      promptTitle: "Doğal ortamı Karadeniz olmasına rağmen sulama projelerinin (Mavi Tünel) etkisiyle günümüzde en fazla Konya'da yetiştirilen ürün haritada neresidir?",
+      promptTitle: "Doğal ortamı Karadeniz olmasına rağmen sulama projeleriyle (Mavi Tünel) günümüzde en fazla Konya'da yetiştirilen ürün haritada neresidir?",
       type: "Tahıl (Sulu Tarım)", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
       groupId: "tarim_grp_konya", shapeType: "point",
-      kpssNot: "Doğal ortamı Karadeniz iklimi olmasına rağmen, sulama projelerinin (Mavi Tünel / KOP) etkisiyle günümüzde ticari amaçla en fazla Konya ilinde yetiştirilmektedir."
+      kpssNot: "Doğal ortamı Karadeniz iklimi olmasına rağmen, sulama projelerinin (Mavi Tünel - KOP) etkisiyle günümüzde en fazla Konya ilinde yetiştirilmektedir."
     },
 
     // --- 2. BAKLAGİLLER ---
     {
       id: "tarim_kirmizi_mercimek", name: "Kırmızı Mercimek", shortName: "Kırmızı Mercimek", category: "tarim",
-      promptTitle: "Aşırı yaz kuraklığına ve yüksek sıcaklığa en dayanıklı baklagil olup Türkiye'de en çok Şanlıurfa'da üretilen ürün haritada neresidir?",
-      type: "Baklagil", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
+      promptTitle: "Kuraklığa ve yüksek sıcaklığa en dayanıklı baklagil olup en çok Şanlıurfa'da üretilen ürün haritada neresidir?",
+      type: "Baklagil (Kurakçıl)", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
       groupId: "tarim_grp_sanliurfa", shapeType: "point",
-      kpssNot: "Kuraklığa ve yüksek sıcaklığa en dayanıklı tarım ürünlerinden biri olup Türkiye üretiminde en çok Şanlıurfa ilinde üretilmektedir."
+      kpssNot: "Kuraklığa en dayanıklı tarım ürünlerinden biri olup en çok Şanlıurfa ilinde üretilmektedir."
     },
     {
       id: "tarim_yesil_mercimek", name: "Yeşil Mercimek", shortName: "Yeşil Mercimek", category: "tarim",
-      promptTitle: "İç Anadolu'nun yarı kurak karasal iklimine uyumlu olan ve Türkiye üretiminde Yozgat'ın ilk sırada yer aldığı baklagil haritada neresidir?",
+      promptTitle: "İç Anadolu şartlarına uyum sağlamış, en fazla Yozgat ilinde yetiştirilen baklagil haritada neresidir?",
       type: "Baklagil", lat: 39.82, lng: 34.81, region: "İç Anadolu", city: "Yozgat",
       shapeType: "point",
-      kpssNot: "İç Anadolu'nun yarı kurak karasal iklimine uyumlu bir baklagil olup en fazla Yozgat ilinde yetiştirilmektedir."
+      kpssNot: "İç Anadolu karasal ikliminde yetiştirilen yeşil mercimek, en fazla Yozgat ilinde yetiştirilmektedir."
     },
     {
       id: "tarim_nohut", name: "Nohut", shortName: "Nohut", category: "tarim",
-      promptTitle: "Türkiye'de baklagiller içinde ekim alanı en geniş olan, kuraklığa dayanıklı ve en çok Ankara'da üretilen tarım ürünü haritada neresidir?",
+      promptTitle: "Türkiye'de ekim alanı en yaygın baklagil olup en çok Ankara ilinde üretilen ürün haritada neresidir?",
       type: "Baklagil", lat: 39.93, lng: 32.86, region: "İç Anadolu", city: "Ankara",
-      shapeType: "point",
-      kpssNot: "Türkiye'de baklagiller içinde ekim alanı ve üretimi en fazla olan üründür. Kuraklığa dayanıklıdır ve en çok Ankara ilinde üretilmektedir."
+      groupId: "tarim_grp_ankara", shapeType: "point",
+      kpssNot: "Baklagiller içinde Türkiye genelinde ekim alanı en yaygın ürün olup en çok Ankara ilinde üretilmektedir."
     },
 
     // --- 3. SANAYİ BİTKİLERİ ---
     {
       id: "tarim_pirinc", name: "Pirinç (Çeltik)", shortName: "Pirinç (Çeltik)", category: "tarim",
-      promptTitle: "Akarsu boylarındaki sulak alanlarda yetişen, sıtma riski nedeniyle devlet kontrolünde olup en fazla Edirne'de üretilen ürün haritada neresidir?",
+      promptTitle: "Akarsu boylarındaki sulak alanlarda yetişen, sıtma riski nedeniyle devlet kontrolünde olup en çok Edirne'de yetiştirilen ürün haritada neresidir?",
       type: "Sanayi Bitkisi (Devlet Kontrollü)", lat: 41.68, lng: 26.56, region: "Marmara", city: "Edirne",
       shapeType: "point",
-      kpssNot: "Akarsu boylarındaki sulak ve bataklık alanlarda yetişen, sıtma hastalığı riski nedeniyle ekim alanları devlet kontrolünde tutulan bu ürün en fazla Edirne (Meriç Nehri havzası) ilinde üretilmektedir."
+      kpssNot: "Akarsu boylarındaki sulak ve bataklık alanlarda yetişen, sıtma hastalığı riski nedeniyle üretimi devlet kontrolünde olan pirinç, en çok Edirne (Meriç-Ergene havzası) ilinde üretilmektedir."
     },
     {
       id: "tarim_pamuk", name: "Pamuk", shortName: "Pamuk", category: "tarim",
-      promptTitle: "Yetişme döneminde bol su, hasatta yüksek sıcaklık isteyen ve GAP sulamasıyla en fazla Şanlıurfa'da yetiştirilen tekstil hammaddesi haritada neresidir?",
-      type: "Sanayi Bitkisi (Lif / Tekstil)", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
+      promptTitle: "GAP sulama projeleri sonrasında Türkiye üretiminde açık ara ilk sıraya yerleşen Şanlıurfa'nın beyaz altını haritada neresidir?",
+      type: "Sanayi Bitkisi (Dokuma Hammaddesi)", lat: 37.16, lng: 38.79, region: "Güneydoğu Anadolu", city: "Şanlıurfa",
       groupId: "tarim_grp_sanliurfa", shapeType: "point",
-      kpssNot: "Yetişme döneminde bol su, olgunlaşma döneminde ise yüksek yaz sıcaklığı isteyen pamuk, GAP sulama projelerinin etkisiyle en fazla Şanlıurfa ilinde yetiştirilmektedir."
+      kpssNot: "GAP ile sulama imkânlarının artması sonucu günümüzde Türkiye pamuk üretiminde açık ara en fazla Şanlıurfa ilinde üretilmektedir."
     },
     {
       id: "tarim_sekerpancari", name: "Şeker Pancarı", shortName: "Şeker Pancarı", category: "tarim",
-      promptTitle: "Hasattan sonra çabuk bozulduğu için fabrikaları tarlaların yanına kurulan ve en fazla Konya'da üretilen endüstri bitkisi haritada neresidir?",
+      promptTitle: "Hasattan sonra çabuk bozulduğu için fabrikaları tarlaya yakın kurulan, en fazla Konya'da üretilen sanayi bitkisi haritada neresidir?",
       type: "Sanayi Bitkisi", lat: 37.87, lng: 32.48, region: "İç Anadolu", city: "Konya",
       groupId: "tarim_grp_konya", shapeType: "point",
-      kpssNot: "Çabuk bozulduğu için fabrikaların yakınına kurulması gereken şeker pancarı (hammaddeye bağlılık), sulanabilen alanlarda en fazla Konya ilinde yetiştirilmektedir."
+      kpssNot: "Hasat edildikten sonra çabuk bozulduğu için fabrikaları tarlalara yakın kurulan şeker pancarı, en fazla Konya ilinde yetiştirilmektedir."
     },
     {
       id: "tarim_hashas", name: "Haşhaş", shortName: "Haşhaş", category: "tarim",
-      promptTitle: "Tıbbi alkaloid üretimi amacıyla ekimi devlet kontrolünde tutulan ve en çok Afyonkarahisar'da üretilen sanayi bitkisi haritada neresidir?",
+      promptTitle: "Uyuşturucu yapımında kullanıldığı için ekimi devlet denetiminde olan ve en fazla Afyonkarahisar'da üretilen bitki haritada neresidir?",
       type: "Sanayi Bitkisi (Devlet Kontrollü)", lat: 38.76, lng: 30.54, region: "Ege", city: "Afyonkarahisar",
       shapeType: "point",
-      kpssNot: "Uyuşturucu madde elde edilebildiği için ekim alanları devlet kontrolünde olan bu ürün, en çok Afyonkarahisar ilinde üretilmektedir."
+      kpssNot: "Uyuşturucu yapımında kullanılması sebebiyle ekimi devlet denetiminde olan haşhaş, en fazla Afyonkarahisar ilinde üretilmektedir."
     },
     {
       id: "tarim_cay", name: "Çay", shortName: "Çay", category: "tarim",
-      promptTitle: "Mikroklima iklim özelliklerinin görüldüğü, bol yağış isteyen ve sadece Doğu Karadeniz'de (Rize) yetiştirilen ürün haritada neresidir?",
-      type: "Sanayi Bitkisi (Mikroklima)", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize",
+      promptTitle: "Bol yağış ve asidik toprak isteyen, Doğu Karadeniz mikroklimasında ve en çok Rize'de yetiştirilen monokültür bitkisi haritada neresidir?",
+      type: "Sanayi Bitkisi (Monokültür)", lat: 41.02, lng: 40.52, region: "Karadeniz", city: "Rize",
       shapeType: "point",
-      kpssNot: "Mikroklima iklim özelliklerinin görüldüğü dar bir alanda yetişen ve çabuk bozulduğu için toplandıktan hemen sonra işlenmesi gereken çay, sadece Doğu Karadeniz (Rize) bölgesinde yetiştirilmektedir."
+      kpssNot: "Bol yağış, nem ve asidik toprak isteyen çay, Türkiye'de en dar alanda yetişen monokültür bitkisidir; en çok Rize ve çevresinde üretilmektedir."
     },
     {
       id: "tarim_keten", name: "Keten", shortName: "Keten", category: "tarim",
-      promptTitle: "Kağıt para yapımında ve dokumacılıkta liflerinden yararlanılan, en çok Uşak ilinde yetiştirilen sanayi bitkisi haritada neresidir?",
-      type: "Sanayi Bitkisi (Lif / Kağıt Para)", lat: 38.68, lng: 29.41, region: "Ege", city: "Uşak",
+      promptTitle: "Lifleri dokuma ve kâğıt para yapımında kullanılan, tohumundan bezir yağı elde edilen ve en çok Uşak'ta yetiştirilen bitki haritada neresidir?",
+      type: "Sanayi Bitkisi (Lif / Yağ)", lat: 38.68, lng: 29.41, region: "Ege", city: "Uşak",
       shapeType: "point",
-      kpssNot: "Kağıt para yapımında ve dokumacılıkta kullanılan keten, en çok Uşak ilinde yetiştirilmektedir."
+      kpssNot: "Lifleri dokuma ve kâğıt para yapımında kullanılan, tohumundan bezir yağı elde edilen keten, en çok Uşak ilinde üretilmektedir."
     },
 
     // --- 4. YAĞ BİTKİLERİ ---
@@ -3020,7 +3020,7 @@ const COGRAFYA_DATA = {
       id: "tarim_uzum", name: "Üzüm", shortName: "Üzüm", category: "tarim",
       promptTitle: "Soğuğa en dayanıklı meyvelerden biri olan ve çekirdeksiz kuru üretimde Manisa'nın ilk sırada yer aldığı meyve haritada neresidir?",
       type: "Meyvecilik / İhraç Ürünü", lat: 38.61, lng: 27.43, region: "Ege", city: "Manisa",
-      shapeType: "point",
+      groupId: "tarim_grp_manisa", shapeType: "point",
       kpssNot: "Soğuğa en dayanıklı meyvelerden biri olan üzüm, en fazla Manisa ilinde yetiştirilmektedir."
     },
     {
@@ -3113,62 +3113,116 @@ const COGRAFYA_DATA = {
 
   hayvancilik: [
     {
-      id: "hayvan_buyukbas_erzurum_kars",
-    groupId: 'grp_erzurum_kars_plato_ekosistem', name: "Büyükbaş Mera Hayvancılığı (Erzurum - Kars)", shortName: "Büyükbaş (Mera / Çayır)", category: "hayvancilik",
-      promptTitle: "Yaz yağışlarıyla yeşeren gür Alpin çayırları sayesinde büyükbaş mera hayvancılığının geliştiği yüksek plato sahası haritada neresidir?",
-      type: "Büyükbaş (Mera)", lat: 40.50, lng: 42.60, region: "Doğu Anadolu", city: "Erzurum - Kars - Ardahan",
-      shapeType: "polygon",
-      coordinates: [[39.7, 41.0], [41.2, 41.5], [41.4, 43.2], [40.4, 43.5], [39.6, 42.2]],
-      kpssNot: "Yaz yağışları -> gür çayırlar -> büyükbaş mera hayvancılığı bağlantısı KPSS'nin en klasik nedensellik sorularındandır. Et ve süt kombinaları gelişmiştir."
+      id: "hayvan_buyukbas_konya",
+      groupId: 'tarim_grp_konya',
+      name: "Büyükbaş Hayvancılık (Sığır / Ahır & Besi)",
+      shortName: "Büyükbaş Hayvancılık",
+      category: "hayvancilik",
+      type: "Büyükbaş (Ahır & Besi Hayvancılığı)",
+      lat: 37.87,
+      lng: 32.48,
+      region: "İç Anadolu",
+      city: "Konya",
+      shapeType: "point",
+      kpssNot: "TÜİK güncel verilerine göre Türkiye'de büyükbaş sığır sayısında ve modern ahır/besi hayvancılığında 1. sırada Konya yer alır. Şeker pancarı küspesi, yem bitkileri üretimi ve modern entegre et-süt tesisleri gelişmesinde belirleyicidir."
     },
     {
-      id: "hayvan_kil_kecisi_teke_taseli", name: "Kıl Keçisi (Teke & Taşeli Karstik Platoları)", shortName: "Kıl Keçisi Yetiştiriciliği", category: "hayvancilik",
-      promptTitle: "Engebeli karstik araziye ve maki bitki örtüsüne uyum sağlamış kıl keçisi yetiştiriciliğinin merkezi olan platolar haritada neresidir?",
-      type: "Küçükbaş (Kıl Keçisi)", lat: 36.55, lng: 31.50, region: "Akdeniz", city: "Teke ve Taşeli Platoları",
-      shapeType: "polygon",
-      coordinates: [[36.2, 29.3], [37.1, 29.8], [37.0, 33.4], [36.0, 33.2], [36.0, 30.5]],
-      kpssNot: "Kıl keçisi dağlık ve kayalık alanlara çok iyi tırmanır; maki çalılarıyla beslenir. Ormanlara zarar verdiği için otlatılması devlet kontrolündedir."
+      id: "hayvan_kucukbas_van",
+      groupId: 'grp_van_golu_ekosistemi',
+      name: "Küçükbaş Hayvancılık (Koyun)",
+      shortName: "Küçükbaş Hayvancılık",
+      category: "hayvancilik",
+      type: "Küçükbaş (Koyun)",
+      lat: 38.50,
+      lng: 43.38,
+      region: "Doğu Anadolu",
+      city: "Van",
+      shapeType: "point",
+      kpssNot: "TÜİK güncel verilerine göre Türkiye'de küçükbaş ve koyun varlığında 1. sırada Van ili yer alır. Geniş mera alanları ve karasal iklimin bozkır (step) bitki örtüsü koyun yetiştiriciliğine oldukça uygundur."
     },
     {
-      id: "hayvan_tiftik_ankara", name: "Tiftik Keçisi (Ankara & İç Batı Anadolu)", shortName: "Tiftik (Ankara) Keçisi", category: "hayvancilik",
-      promptTitle: "Yünü (Moher) dokuma sanayisinde değerli olan tiftik keçisinin anavatanı ve yetiştirme alanı haritada neresidir?",
-      type: "Küçükbaş (Tiftik Keçisi)", lat: 39.93, lng: 32.85, region: "İç Anadolu", city: "Ankara - Eskişehir - Çankırı",
-      shapeType: "polygon",
-      coordinates: [[39.3, 31.5], [40.4, 31.8], [40.5, 33.7], [39.4, 33.5]],
-      kpssNot: "Ankara keçisi olarak da bilinir. İnce, parlak ve dayanıklı tiftik (moher) yünü için beslenir; bozkır alanlarına uyumludur."
+      id: "hayvan_kil_kecisi_mersin",
+      groupId: 'tarim_grp_mersin',
+      name: "Kıl Keçisi Yetiştiriciliği",
+      shortName: "Kıl Keçisi",
+      category: "hayvancilik",
+      type: "Küçükbaş (Kıl Keçisi)",
+      lat: 36.81,
+      lng: 34.64,
+      region: "Akdeniz",
+      city: "Mersin",
+      shapeType: "point",
+      kpssNot: "TÜİK güncel verilerine göre Türkiye'de kıl keçisi sayısında 1. sırada Mersin ili yer alır. Engebeli karstik araziye, sarp kayalıklara ve maki bitki örtüsüne tam uyum sağlamıştır; ormanlara ve fidanlara zarar verdiği için devlet kontrolünde otlatılır."
     },
     {
-      id: "hayvan_kucukbas_koyun_ic_anadolu", name: "Küçükbaş Koyun Hayvancılığı (İç Anadolu)", shortName: "Koyun (Step / Bozkır)", category: "hayvancilik",
-      promptTitle: "İlkbaharda yeşerip yazın kuruyan bozkır (step) otlarıyla beslenen koyun yetiştiriciliğinin en yaygın olduğu düzlükler haritada neresidir?",
-      type: "Küçükbaş (Koyun)", lat: 38.60, lng: 33.50, region: "İç Anadolu", city: "Konya - Aksaray - Karaman - Kırşehir",
-      shapeType: "polygon",
-      coordinates: [[37.5, 32.0], [39.3, 32.3], [39.5, 34.5], [37.6, 34.2]],
-      kpssNot: "Türkiye'de sayıca en fazla beslenen hayvan koyundur. Düz araziler ve kısa boylu bozkır otları küçükbaş koyun için idealdir."
+      id: "hayvan_tiftik_kecisi_ankara",
+      groupId: 'tarim_grp_ankara',
+      name: "Tiftik (Ankara) Keçisi",
+      shortName: "Tiftik Keçisi",
+      category: "hayvancilik",
+      type: "Küçükbaş (Tiftik Keçisi)",
+      lat: 39.93,
+      lng: 32.86,
+      region: "İç Anadolu",
+      city: "Ankara",
+      shapeType: "point",
+      kpssNot: "Ankara keçisi olarak da bilinir. İnce, parlak ve dokuma sanayisinde son derece değerli olan tiftik (moher) yünü için yetiştirilir. Türkiye üretiminde açık ara 1. sırada Ankara yer alır."
     },
     {
-      id: "hayvan_kumes_marmara_bolu", name: "Kümes Hayvancılığı (Marmara & Bolu Kuşağı)", shortName: "Kümes Hayvancılığı Kuşağı", category: "hayvancilik",
-      promptTitle: "İklimden bağımsız olarak büyük şehirlerin et ve yumurta tüketim ihtiyacını karşılamak amacıyla kurulan tesisler kuşağı haritada neresidir?",
-      type: "Kümes Hayvancılığı (Pazara Yakınlık)", lat: 40.73, lng: 31.60, region: "Marmara - Karadeniz", city: "Bolu - Sakarya - Manisa - Balıkesir",
-      shapeType: "polygon",
-      coordinates: [[40.3, 29.5], [40.9, 30.2], [40.9, 32.1], [40.2, 31.9]],
-      kpssNot: "Kümes hayvancılığı kapalı modern tesislerde yapıldığı için iklimden etkilenmez. Kuruluşunda tek belirleyici etken tüketim merkezlerine (pazara) yakınlıktır."
+      id: "hayvan_manda_samsun",
+      groupId: 'grp_samsun_limani',
+      name: "Manda Yetiştiriciliği",
+      shortName: "Manda Yetiştiriciliği",
+      category: "hayvancilik",
+      type: "Büyükbaş (Manda)",
+      lat: 41.29,
+      lng: 36.33,
+      region: "Karadeniz",
+      city: "Samsun",
+      shapeType: "point",
+      kpssNot: "Sulak, bataklık ve akarsu boylarını seven manda yetiştiriciliğinde Kızılırmak Deltası (Bafra) sayesinde Türkiye 1.si Samsun ilidir. Yağ oranı yüksek sütü ve meşhur manda kaymağı üretiminde değerlendirilir."
     },
     {
-      id: "hayvan_aricilik_mentese_mugla",
-    groupId: 'grp_mentese_ekosistemi', name: "Arıcılık / Çam Balı (Menteşe Yöresi)", shortName: "Arıcılık (Çam Balı / Menteşe)", category: "hayvancilik",
-      promptTitle: "Zengin kızılçam ormanları ve basra böceği sayesinde dünya çam balı üretiminin merkezi olan engebeli kıyı sahası haritada neresidir?",
-      type: "Arıcılık", lat: 37.05, lng: 28.25, region: "Ege", city: "Muğla (Menteşe Yöresi)",
-      shapeType: "polygon",
-      coordinates: [[36.6, 27.4], [37.3, 27.6], [37.4, 28.8], [36.7, 28.7]],
-      kpssNot: "Muğla - Menteşe yöresi Türkiye ve dünya çam balı üretiminin kalbidir. Arıcılık ayrıca bitki örtüsü zengin Doğu Karadeniz (Rize-Anzer) ve Hakkâri'de de gelişmiştir."
+      id: "hayvan_kumes_manisa",
+      groupId: 'tarim_grp_manisa',
+      name: "Kümes Hayvancılığı (Tavuk / Beyaz Et)",
+      shortName: "Kümes Hayvancılığı",
+      category: "hayvancilik",
+      type: "Kümes Hayvancılığı (Pazara Yakınlık)",
+      lat: 38.61,
+      lng: 27.43,
+      region: "Ege",
+      city: "Manisa",
+      shapeType: "point",
+      kpssNot: "Modern, kapalı ve klimalı entegre tesislerde yapıldığı için iklimden etkilenmez. Ege ve Marmara metropol tüketim merkezlerine (pazara) yakınlığıyla Türkiye kümes hayvancılığı, tavuk eti ve yumurta üretiminde 1. sırada Manisa yer alır."
     },
     {
-      id: "hayvan_ipekbocegi_diyarbakir_bursa", name: "İpek Böcekçiliği (Diyarbakır & Güney Marmara)", shortName: "İpek Böcekçiliği", category: "hayvancilik",
-      promptTitle: "Dut yaprağı ile beslenen tırtıllardan doğal ipek lifi elde edilen tarihî yetiştiricilik alanı haritada neresidir?",
-      type: "İpek Böcekçiliği", lat: 37.91, lng: 40.24, region: "Güneydoğu & Marmara", city: "Diyarbakır (Kulp) - Bursa",
-      shapeType: "polygon",
-      coordinates: [[38.1, 40.5], [38.5, 40.8], [38.6, 41.3], [38.0, 41.1]],
-      kpssNot: "Geleneksel merkezi Bursa iken, günümüzde yaş koza üretiminde Diyarbakır (Kulp) ilk sıraya yükselmiştir."
+      id: "hayvan_aricilik_ordu",
+      groupId: 'grp_ordu_aricilik',
+      name: "Arıcılık (Bal Üretimi)",
+      shortName: "Arıcılık",
+      category: "hayvancilik",
+      type: "Arıcılık (Bal / Gezginci)",
+      lat: 40.98,
+      lng: 37.88,
+      region: "Karadeniz",
+      city: "Ordu",
+      shapeType: "point",
+      kpssNot: "Zengin kır çiçeği florası ve Türkiye'nin dört bir yanına yayılan köklü gezginci arıcılık kültürü sayesinde Türkiye bal üretiminde 1. sırada Ordu ili yer alır."
+    },
+    {
+      id: "hayvan_ipekbocegi_diyarbakir",
+      groupId: 'grp_diyarbakir_ipek',
+      name: "İpek Böcekçiliği (Yaş Koza)",
+      shortName: "İpek Böcekçiliği",
+      category: "hayvancilik",
+      type: "İpek Böcekçiliği",
+      lat: 37.91,
+      lng: 40.24,
+      region: "Güneydoğu Anadolu",
+      city: "Diyarbakır",
+      shapeType: "point",
+      kpssNot: "Tarihî ve geleneksel merkezi Bursa olmasına rağmen, günümüzde dut yaprağıyla beslenen ipek böceğinden yaş koza üretiminde Türkiye 1.si Diyarbakır (özellikle Kulp ilçesi) ilidir."
     }
   ],
 

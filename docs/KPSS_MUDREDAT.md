@@ -144,3 +144,23 @@ Her müfredat başlığı bir PAKET olarak dağıtılır; ayrıntı için
   - *Siirt Fıstığı:* İri taneli, yüksek çıtlama oranlı coğrafi işaretli ➡️ **Siirt**
   - *Kavun ve Karpuz:* Erkencilik ve devasa üretim miktarı ➡️ **Adana**
   - *Ceviz:* Çağlayancerit ve kapama bahçe yatırımları ➡️ **Kahramanmaraş**
+
+---
+
+## 7. 🐑 Hayvancılık Türleri ve Yetiştirilme Alanları (TÜİK Lider İller)
+* **Büyükbaş Hayvancılık (Sığır / Ahır & Besi):**
+  - Modern ahır ve besi hayvancılığı, şeker pancarı küspesi ve yem sanayisi ile büyükbaş hayvan sayısında 1. sıra ➡️ **Konya**
+* **Küçükbaş Hayvancılık (Koyun):**
+  - Bozkır (step) bitki örtüsü ve geniş mera varlığı ile Türkiye küçükbaş ve koyun sayısında 1. sıra ➡️ **Van**
+* **Kıl Keçisi:**
+  - Engebeli karstik araziye ve makiye uyum, dağlık arazi; kıl keçisi varlığında 1. sıra ➡️ **Mersin** (Toroslar / Taşeli)
+* **Tiftik (Ankara) Keçisi:**
+  - Değerli ve parlak moher/tiftik yünü üretimi, anavatanı ve 1. sıra ➡️ **Ankara**
+* **Manda Yetiştiriciliği:**
+  - Sulak/bataklık alan ve akarsu boyları, Kızılırmak Deltası (Bafra) sayesinde manda sayısında 1. sıra ➡️ **Samsun**
+* **Kümes Hayvancılığı (Tavuk / Beyaz Et):**
+  - İklimden bağımsız modern kapalı tesisler, büyük pazarlara yakınlık; beyaz et ve yumurta üretiminde 1. sıra ➡️ **Manisa**
+* **Arıcılık (Bal Üretimi):**
+  - Zengin kır çiçeği florası ve köklü gezginci arıcılık kültürü ile bal üretiminde 1. sıra ➡️ **Ordu**
+* **İpek Böcekçiliği (Yaş Koza):**
+  - Dut yaprağıyla beslenen ipek böceğinden yaş koza üretiminde güncel Türkiye 1.si ➡️ **Diyarbakır** (Kulp)

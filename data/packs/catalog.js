@@ -2045,13 +2045,13 @@ const GEO_CATALOG = {
       ],
       "tiers": {
         "1": 24,
-        "2": 39,
-        "3": 53
+        "2": 40,
+        "3": 54
       },
       "sizeKb": {
-        "1": 15,
-        "2": 23,
-        "3": 31
+        "1": 13,
+        "2": 22,
+        "3": 29
       },
       "unlocks": [
         "quiz",
@@ -2071,14 +2071,14 @@ const GEO_CATALOG = {
         {
           "cat": "hayvancilik",
           "icon": "🐑",
-          "count": 6,
+          "count": 8,
           "tr": "Hayvan",
           "en": "Livestock"
         },
         {
           "cat": "sanayi",
           "icon": "🏭",
-          "count": 10,
+          "count": 13,
           "tr": "Sanayi",
           "en": "Industry"
         }
