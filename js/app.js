@@ -607,9 +607,21 @@ document.addEventListener('DOMContentLoaded', () => {
           const letter = optionLetters[index] || `${index + 1}`;
           const roman = romanNumerals[index] || `${index + 1}`;
 
+          const isLinear = opt.shapeType === 'polyline';
+          const isArea = opt.shapeType === 'polygon' || opt.category === 'sehirler' || opt.category === 'bolgeler';
+          const isPoint = !isLinear && !isArea;
+
+          let labelTitle = `${roman}. Konum`;
+          if (geoMap.pinCityEnabled && isPoint) {
+            const cityName = geoMap.findCityName(opt);
+            if (cityName) {
+              labelTitle = cityName;
+            }
+          }
+
           optBtn.innerHTML = `
             <span class="option-key">${letter}</span>
-            <span class="option-name"><strong>${roman}. Konum</strong> <span style="font-size:0.74rem; color:var(--text-muted); margin-left:4px;">(${letter} Pini)</span></span>
+            <span class="option-name"><strong>${labelTitle}</strong> <span style="font-size:0.74rem; color:var(--text-muted); margin-left:4px;">(${letter} Pini)</span></span>
           `;
           optBtn.addEventListener('click', () => handleAnswer(opt.id));
           optionsGrid.appendChild(optBtn);
@@ -2616,6 +2628,71 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBadgesBtn.addEventListener('click', () => {
       geoMap.toggleBadges();
       updateBadgesBtnUI();
+    });
+  }
+
+  // --- NOKTASAL KONUMLAR İÇİN ŞEHİR İSİMLERİ GÖSTERGE BUTONU ---
+  const togglePinCityBtn = document.getElementById('toggle-pin-city-btn');
+  const pinCityBtnLabel = document.getElementById('pin-city-btn-label');
+
+  function refreshOptionButtonsLabels() {
+    if (!geoQuiz || !geoQuiz.currentQuestion) return;
+    const qData = geoQuiz.currentQuestion;
+    if (qData.actualFormat !== 'find_on_map') return;
+    const isCelalAll = geoQuiz.getOptionCount() === 'all';
+    if (isCelalAll) return;
+
+    const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+    const btns = optionsGrid.querySelectorAll('.option-btn');
+    btns.forEach((btn, index) => {
+      const optId = btn.dataset.id;
+      const opt = qData.options.find(o => o.id === optId);
+      if (!opt) return;
+
+      const letter = optionLetters[index] || `${index + 1}`;
+      const roman = romanNumerals[index] || `${index + 1}`;
+
+      const isLinear = opt.shapeType === 'polyline';
+      const isArea = opt.shapeType === 'polygon' || opt.category === 'sehirler' || opt.category === 'bolgeler';
+      const isPoint = !isLinear && !isArea;
+
+      let labelTitle = `${roman}. Konum`;
+      if (geoMap.pinCityEnabled && isPoint) {
+        const cityName = geoMap.findCityName(opt);
+        if (cityName) {
+          labelTitle = cityName;
+        }
+      }
+
+      const nameEl = btn.querySelector('.option-name');
+      if (nameEl) {
+        nameEl.innerHTML = `<strong>${labelTitle}</strong> <span style="font-size:0.74rem; color:var(--text-muted); margin-left:4px;">(${letter} Pini)</span>`;
+      }
+    });
+  }
+
+  function updatePinCityBtnUI() {
+    if (!togglePinCityBtn) return;
+    const isCityOn = !!geoMap.pinCityEnabled;
+    if (isCityOn) {
+      togglePinCityBtn.classList.add('active');
+      togglePinCityBtn.title = "Noktasal pinlerde şehir isimleri açık. Sayı göstergesine dönmek için tıklayın.";
+      if (pinCityBtnLabel) pinCityBtnLabel.textContent = "Şehirler (Açık)";
+    } else {
+      togglePinCityBtn.classList.remove('active');
+      togglePinCityBtn.title = "Noktasal konum pinlerinde sayı yerine bulundukları şehrin adını gösterir.";
+      if (pinCityBtnLabel) pinCityBtnLabel.textContent = "Şehirler";
+    }
+  }
+
+  if (togglePinCityBtn) {
+    updatePinCityBtnUI();
+    togglePinCityBtn.addEventListener('click', () => {
+      geoMap.togglePinCity();
+      updatePinCityBtnUI();
+      refreshOptionButtonsLabels();
     });
   }
 

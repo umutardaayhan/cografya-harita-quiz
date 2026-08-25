@@ -132,6 +132,10 @@ class GeographyMap {
     // Soru İçi Şık Göstergelerini Gizle/Küçült (LocalStorage destekli)
     this.badgesEnabled = this.loadBadgesSetting();
 
+    // Noktasal Konumlar İçin Şehir İsimleri Göstergesi (LocalStorage destekli)
+    this.pinCityEnabled = this.loadPinCitySetting();
+    this._cityCoordCache = new Map();
+
     // Keşif balonlarındaki "Düzenle / Sil" şeridi (yalnızca Keşif Modunda açılır)
     this.editingEnabled = false;
     this._popupActionsBound = false;
@@ -247,6 +251,46 @@ class GeographyMap {
   toggleBadges() {
     this.setBadgesEnabled(!this.badgesEnabled);
     return this.badgesEnabled;
+  }
+
+  loadPinCitySetting() {
+    const saved = localStorage.getItem('kpss_cografya_pin_city_enabled');
+    return saved !== null ? JSON.parse(saved) : false;
+  }
+
+  setPinCityEnabled(enabled, persist = true) {
+    this.pinCityEnabled = !!enabled;
+    if (persist) {
+      localStorage.setItem('kpss_cografya_pin_city_enabled', JSON.stringify(this.pinCityEnabled));
+    }
+    this.refreshChoicePinLabels();
+  }
+
+  togglePinCity() {
+    this.setPinCityEnabled(!this.pinCityEnabled);
+    return this.pinCityEnabled;
+  }
+
+  refreshChoicePinLabels() {
+    const pins = document.querySelectorAll('.choice-pin-container.shape-point');
+    pins.forEach(pin => {
+      const badge = pin.querySelector('.choice-pin-badge');
+      const romanEl = pin.querySelector('.choice-pin-roman');
+      if (!badge || !romanEl) return;
+
+      const cityName = pin.dataset.city;
+      const roman = pin.dataset.roman || 'I';
+
+      if (this.pinCityEnabled && cityName) {
+        badge.classList.add('choice-pin-city-badge');
+        romanEl.classList.add('choice-pin-city-name');
+        romanEl.textContent = cityName;
+      } else {
+        badge.classList.remove('choice-pin-city-badge');
+        romanEl.classList.remove('choice-pin-city-name');
+        romanEl.textContent = roman;
+      }
+    });
   }
 
   initMap() {
@@ -505,7 +549,7 @@ class GeographyMap {
     });
   }
 
-  // --- 81 İL GEOJSON YARDIMCISI ---
+  // --- 81 İL GEOJSON VE IŞIN KAYDIRMA (RAY-CASTING) İL BULUCU ---
   getCityFeature(itemOrId) {
     if (typeof window.TR_CITIES_GEOJSON === 'undefined' || !window.TR_CITIES_GEOJSON.features) return null;
     const id = typeof itemOrId === 'string' ? itemOrId : (itemOrId && itemOrId.id);
@@ -515,6 +559,109 @@ class GeographyMap {
       const p = f.properties;
       return p.id === id || p.name === name || (plate && p.plate === plate);
     }) || null;
+  }
+
+  _pointInRing(lng, lat, ring) {
+    let inside = false;
+    const n = ring.length;
+    let j = n - 1;
+    for (let i = 0; i < n; i++) {
+      const xi = ring[i][0], yi = ring[i][1];
+      const xj = ring[j][0], yj = ring[j][1];
+      const intersect = ((yi > lat) !== (yj > lat)) &&
+        (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+      j = i;
+    }
+    return inside;
+  }
+
+  _pointInPoly(lng, lat, poly) {
+    if (!this._pointInRing(lng, lat, poly[0])) return false;
+    for (let h = 1; h < poly.length; h++) {
+      if (this._pointInRing(lng, lat, poly[h])) return false; // İç delik (hole)
+    }
+    return true;
+  }
+
+  findCityByCoordinate(lat, lng) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    const cacheKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+    if (this._cityCoordCache && this._cityCoordCache.has(cacheKey)) {
+      return this._cityCoordCache.get(cacheKey);
+    }
+
+    if (typeof window.TR_CITIES_GEOJSON === 'undefined' || !Array.isArray(window.TR_CITIES_GEOJSON.features)) {
+      return null;
+    }
+
+    const features = window.TR_CITIES_GEOJSON.features;
+
+    // 1. Ray-casting ile poligon sınırları testi
+    for (let f of features) {
+      const geom = f.geometry;
+      if (!geom) continue;
+      const coords = geom.coordinates;
+      if (geom.type === 'Polygon') {
+        if (this._pointInPoly(lng, lat, coords)) {
+          const name = f.properties && f.properties.name;
+          if (name) {
+            if (this._cityCoordCache) this._cityCoordCache.set(cacheKey, name);
+            return name;
+          }
+        }
+      } else if (geom.type === 'MultiPolygon') {
+        for (let poly of coords) {
+          if (this._pointInPoly(lng, lat, poly)) {
+            const name = f.properties && f.properties.name;
+            if (name) {
+              if (this._cityCoordCache) this._cityCoordCache.set(cacheKey, name);
+              return name;
+            }
+          }
+        }
+      }
+    }
+
+    // 2. Kıyı/sınır kaymalarında en yakın il merkezine (centroid) fallback
+    let bestDist = Infinity;
+    let bestName = null;
+    for (let f of features) {
+      const p = f.properties;
+      if (!p || !Number.isFinite(p.lat) || !Number.isFinite(p.lng)) continue;
+      const d = (p.lat - lat) ** 2 + (p.lng - lng) ** 2;
+      if (d < bestDist) {
+        bestDist = d;
+        bestName = p.name;
+      }
+    }
+
+    if (bestName && this._cityCoordCache) {
+      this._cityCoordCache.set(cacheKey, bestName);
+    }
+    return bestName;
+  }
+
+  findCityName(optOrLatLng) {
+    if (!optOrLatLng) return '';
+    // Eğer doğrudan şehir nesnesi ise kendi adı şehirdir
+    if (optOrLatLng.category === 'sehirler' && optOrLatLng.name) {
+      return optOrLatLng.name;
+    }
+
+    const lat = typeof optOrLatLng.lat === 'number' ? optOrLatLng.lat : (Array.isArray(optOrLatLng) ? optOrLatLng[0] : null);
+    const lng = typeof optOrLatLng.lng === 'number' ? optOrLatLng.lng : (Array.isArray(optOrLatLng) ? optOrLatLng[1] : null);
+
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      const detected = this.findCityByCoordinate(lat, lng);
+      if (detected) return detected;
+    }
+
+    if (optOrLatLng.city && typeof optOrLatLng.city === 'string') {
+      return optOrLatLng.city.split(/[\/\-–]/)[0].trim().replace(/\s*\(.*?\)/, '');
+    }
+
+    return '';
   }
 
   // --- KLASİK MOD: TEK SORU VURGULAMA MOTORU ---
@@ -724,11 +871,20 @@ class GeographyMap {
             rozetSabit ? 'rozet-sabit' : ''
           ].filter(Boolean).join(' ');
 
+          let subCityName = '';
+          if (subIsPoint) {
+            subCityName = this.findCityName(subItem);
+          }
+          const subUseCity = this.pinCityEnabled && subIsPoint && !!subCityName;
+          const subLabelDisplay = subUseCity ? subCityName : roman;
+          const subCityBadgeClass = subUseCity ? 'choice-pin-city-badge' : '';
+          const subCityNameClass = subUseCity ? 'choice-pin-city-name' : '';
+
           const subBadgeHtml = `
-            <div class="choice-pin-container ${subDurumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}">
-              <div class="choice-pin-badge">
+            <div class="choice-pin-container ${subDurumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}" data-roman="${escAttr(roman)}" data-city="${escAttr(subCityName)}">
+              <div class="choice-pin-badge ${subCityBadgeClass}">
                 <span class="choice-pin-letter">${letter}</span>
-                <span class="choice-pin-roman">${roman}</span>
+                <span class="choice-pin-roman ${subCityNameClass}">${subLabelDisplay}</span>
               </div>
               <div class="choice-pin-point"></div>
               ${subExploreIconHtml}
@@ -859,12 +1015,21 @@ class GeographyMap {
         rozetSabit ? 'rozet-sabit' : ''
       ].filter(Boolean).join(' ');
 
-      // Harfli ve Roma rakamlı şık pini
+      let cityName = '';
+      if (isPoint) {
+        cityName = this.findCityName(opt);
+      }
+      const useCity = this.pinCityEnabled && isPoint && !!cityName;
+      const labelDisplay = useCity ? cityName : roman;
+      const cityBadgeClass = useCity ? 'choice-pin-city-badge' : '';
+      const cityNameClass = useCity ? 'choice-pin-city-name' : '';
+
+      // Harfli ve Roma rakamlı veya şehir isimli şık pini
       const badgeHtml = `
-        <div class="choice-pin-container ${durumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}">
-          <div class="choice-pin-badge">
+        <div class="choice-pin-container ${durumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}" data-roman="${escAttr(roman)}" data-city="${escAttr(cityName)}">
+          <div class="choice-pin-badge ${cityBadgeClass}">
             <span class="choice-pin-letter">${letter}</span>
-            <span class="choice-pin-roman">${roman}</span>
+            <span class="choice-pin-roman ${cityNameClass}">${labelDisplay}</span>
           </div>
           <div class="choice-pin-point"></div>
           ${exploreIconHtml}

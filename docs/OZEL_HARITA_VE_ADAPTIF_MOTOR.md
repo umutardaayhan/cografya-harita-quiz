@@ -168,6 +168,22 @@ Kullanıcının coğrafi olarak birbiriyle teması olmayan ayrık bölgeleri (ö
 - Keşif balonundaki `✏️ Düzenle` butonu ile özel çizimlerin adı, kategorisi, türü, yöresi, KPSS notu ve koordinatları güncellenebilir.
 - `🖉 Haritadan Yeniden Çiz` butonuyla şekil doğrudan harita üzerinden yeniden çizilip kaydedilebilir.
 
+---
+
+## 13. 🏙️ Şehir Göstergesi (Pin Şehir İsimleri Modu)
+
+KPSS ve coğrafya harita sorularında görsel il-konum pekiştirmesini hızlandırmak için geliştirilen şehir gösterge motoru:
+
+- **Hedef:** Haritadaki noktasal soru göstergelerinde (rozetlerde) "1, 2, 3" veya "I, II, III" gibi soyut numaralar yerine o noktanın üzerinde yer aldığı **şehri (İl Adını)** göstermek.
+- **Çalışma Prensibi:**
+  - `Harita Araçları` menüsündeki **🏙️ Şehir İsimleri** butonu (`#toggle-pin-city-btn`) ile açılıp kapatılır.
+  - **Noktasal Varlıklar (Point Pins):** Tek dağlar, göller, geçitler, madenler, turizm mekanları ve nüfus merkezlerinde pin rozetinde sayı yerine il adı (`Kayseri`, `Rize`, `Adana` vb.) yazılır (`.choice-pin-city-badge`).
+  - **Çizgisel & Poligon Varlıklar (Polyline & Polygon):** Birden fazla şehre uzanan akarsular, sıra dağlar ve geniş alanlar (ovalar, platolar, bölgeler) eski usul roma rakamları/sayılarıyla ifade edilmeye devam eder.
+  - **Ray-Casting Algoritması:** `data/tr_cities_geojson.js` üzerindeki 81 ilin poligon sınırları Işın Kaydırma (Ray-Casting) yöntemiyle taranır; koordinatların hangi il sınırına düştüğü anında belirlenir ve O(1) önbelleğe alınır.
+  - **Panel Entegrasyonu:** Test panelindeki şık butonlarında da noktasal konumlar için ilgili şehrin adı görüntülenir.
+  - **Kalıcılık:** Tercih `localStorage` (`kpss_cografya_pin_city_enabled`) üzerinde kalıcı olarak saklanır.
+
+
 
 
 

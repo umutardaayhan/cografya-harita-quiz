@@ -2941,6 +2941,21 @@ body.game-mode-active .tools-selector {
   font-size: 0.8rem;
 }
 
+.choice-pin-badge.choice-pin-city-badge {
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.choice-pin-roman.choice-pin-city-name {
+  color: #bae6fd;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .choice-pin-point {
   width: 0;
   height: 0;
