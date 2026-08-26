@@ -83,7 +83,7 @@ const I18N_FIELDS = {
 };
 
 /** Dilden bağımsız alanlar → kökte kalır */
-const NEUTRAL_FIELDS = ['areaKm2', 'matchType', 'groupId'];
+const NEUTRAL_FIELDS = ['areaKm2', 'matchType', 'groupId', 'groupName'];
 
 /**
  * Kategori kayıt defteri. `canonical` alanı Faz 2'deki SQLite şemasının

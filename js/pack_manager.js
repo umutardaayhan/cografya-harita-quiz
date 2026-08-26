@@ -287,6 +287,8 @@ class PackManager {
     if (packItem.formation) out.olusumKey = packItem.formation;
     if (packItem.areaKm2 !== undefined) out.areaKm2 = packItem.areaKm2;
     if (packItem.matchType) out.matchType = packItem.matchType;
+    if (packItem.groupId) out.groupId = packItem.groupId;
+    if (packItem.groupName) out.groupName = packItem.groupName;
     if (tr.shortName) out.shortName = tr.shortName;
     if (tr.matchSource) out.matchSource = tr.matchSource;
     if (tr.questionText) out.questionText = tr.questionText;
