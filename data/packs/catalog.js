@@ -244,6 +244,21 @@ const GEO_CATALOG = {
         }
       }
     },
+    "maden_bolgeleri": {
+      "canonical": "mineral_regions",
+      "icon": "⛏️",
+      "color": "#d97706",
+      "i18n": {
+        "tr": {
+          "title": "Madenler Bölge Haritası",
+          "short": "Maden Bölge"
+        },
+        "en": {
+          "title": "Mineral Regions",
+          "short": "Minerals"
+        }
+      }
+    },
     "nufus": {
       "canonical": "population",
       "icon": "👥",
@@ -1277,6 +1292,68 @@ const GEO_CATALOG = {
           },
           "en": {
             "label": "Enerji Santralleri"
+          }
+        }
+      }
+    ],
+    "maden_bolgeleri": [
+      {
+        "id": "all",
+        "icon": "⛏️",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Maden Havzaları"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "metal",
+        "icon": "🔩",
+        "i18n": {
+          "tr": {
+            "label": "Metalik Maden Kuşakları"
+          },
+          "en": {
+            "label": "Metalik Maden Kuşakları"
+          }
+        }
+      },
+      {
+        "id": "endustriyel",
+        "icon": "🧱",
+        "i18n": {
+          "tr": {
+            "label": "Endüstriyel Hammaddeler"
+          },
+          "en": {
+            "label": "Endüstriyel Hammaddeler"
+          }
+        }
+      },
+      {
+        "id": "enerji_ham",
+        "icon": "🛢️",
+        "i18n": {
+          "tr": {
+            "label": "Enerji & Fosil Yakıtlar"
+          },
+          "en": {
+            "label": "Enerji & Fosil Yakıtlar"
+          }
+        }
+      },
+      {
+        "id": "kiymetli",
+        "icon": "💎",
+        "i18n": {
+          "tr": {
+            "label": "Kıymetli Maden & Taşlar"
+          },
+          "en": {
+            "label": "Kıymetli Maden & Taşlar"
           }
         }
       }
@@ -2398,6 +2475,59 @@ const GEO_CATALOG = {
         "en": {
           "title": "Minerals & Energy Resources",
           "desc": "Boron, chromium, iron, lignite, oil; dams, nuclear, geothermal and wind plants."
+        }
+      }
+    },
+    {
+      "id": "tr.maden_bolgeleri",
+      "country": "tr",
+      "group": "ekonomik",
+      "version": 1,
+      "icon": "⛏️",
+      "color": "#d97706",
+      "file": "data/packs/pack.tr.maden_bolgeleri.js",
+      "virtual": false,
+      "categories": [
+        "maden_bolgeleri"
+      ],
+      "tiers": {
+        "1": 9,
+        "2": 15,
+        "3": 23
+      },
+      "sizeKb": {
+        "1": 7,
+        "2": 12,
+        "3": 19
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "conqueror",
+        "speedrun",
+        "exam"
+      ],
+      "recommends": [
+        "tr.madenler"
+      ],
+      "planRows": [
+        {
+          "cat": "maden_bolgeleri",
+          "icon": "⛏️",
+          "count": 23,
+          "tr": "Maden Havzası",
+          "en": "Mining Basin",
+          "geom": "polygon"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Madenler Bölge Haritası",
+          "desc": "Demir, bakır, krom, bor, boksit ve 23 madenin Türkiye genelindeki bölgesel poligon havzaları."
+        },
+        "en": {
+          "title": "Mining Regional Basins",
+          "desc": "Regional polygon basins for iron, copper, chromium, boron, bauxite and 23 mineral zones."
         }
       }
     },

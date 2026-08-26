@@ -13,6 +13,7 @@ const CATEGORIES_EXT = [
   { id: "afet",           title: "Doğal Afet Bölgeleri",    short: "Afet",    icon: "⚠️", color: "#dc2626" },
   { id: "fay",            title: "Fay Hatları & Tektonik",  short: "Fay",     icon: "💥", color: "#f97316" },
   { id: "madenler",       title: "Madenler & Enerji",       short: "Maden",   icon: "⛏️", color: "#78716c" },
+  { id: "maden_bolgeleri", title: "Madenler Bölge Haritası", short: "Maden Bölge", icon: "⛏️", color: "#d97706" },
   { id: "nufus",          title: "Nüfus & Yerleşme",        short: "Nüfus",   icon: "👥", color: "#0ea5e9" },
   { id: "bolgeler",       title: "Bölgeler & Bölümler",     short: "Bölge",   icon: "🗺️", color: "#7c3aed" },
   { id: "kiyilar",        title: "Kıyılar, Adalar & Denizler", short: "Kıyı", icon: "🏖️", color: "#06b6d4" },
@@ -60,6 +61,13 @@ const SUB_TYPES_EXT = {
     { id: "enerji_ham",  label: "Enerji Hammaddeleri",    icon: "🛢️", filter: (i) => ic(i, "enerji hammaddesi") },
     { id: "endustriyel", label: "Endüstriyel Hammadde",   icon: "🧱", filter: (i) => ic(i, "endustriyel hammadde") },
     { id: "enerji_tesis", label: "Enerji Santralleri",    icon: "⚡", filter: (i) => ic(i, "enerji tesisi") }
+  ],
+  maden_bolgeleri: [
+    { id: "all",         label: "Tüm Maden Havzaları",    icon: "⛏️" },
+    { id: "metal",       label: "Metalik Maden Kuşakları", icon: "🔩", filter: (i) => ic(i, "metalik maden") },
+    { id: "endustriyel", label: "Endüstriyel Hammaddeler", icon: "🧱", filter: (i) => ic(i, "endustriyel hammadde") },
+    { id: "enerji_ham",  label: "Enerji & Fosil Yakıtlar", icon: "🛢️", filter: (i) => ic(i, "enerji hammaddesi") },
+    { id: "kiymetli",    label: "Kıymetli Maden & Taşlar", icon: "💎", filter: (i) => ic(i, "kiymetli maden") || ic(i, "yoresel el sanatlari") }
   ],
   nufus: [
     { id: "all",         label: "Tüm Nüfus Konuları",     icon: "👥" },

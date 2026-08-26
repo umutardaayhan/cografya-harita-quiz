@@ -164,3 +164,31 @@ Her müfredat başlığı bir PAKET olarak dağıtılır; ayrıntı için
   - Zengin kır çiçeği florası ve köklü gezginci arıcılık kültürü ile bal üretiminde 1. sıra ➡️ **Ordu**
 * **İpek Böcekçiliği (Yaş Koza):**
   - Dut yaprağıyla beslenen ipek böceğinden yaş koza üretiminde güncel Türkiye 1.si ➡️ **Diyarbakır** (Kulp)
+
+---
+
+## 8. ⛏️ Madenler Bölge Haritası (Havzalar & Kuşaklar)
+* **Demir Havzaları:** Sivas (Divriği), Malatya (Hekimhan-Hasançelebi), Maraş, Adana, Sakarya (Çamdağı), Balıkesir (Eymir), İzmir (Torbalı).
+* **Bakır Havzaları:** Artvin (Murgul), Rize (Çayeli), Giresun, Kastamonu (Küre), Elazığ (Maden), Diyarbakır (Ergani), Siirt (Madenköy), Balıkesir. (Samsun & Elazığ izabe tesisleri).
+* **Krom Havzaları:** Elazığ (Guleman), Muğla (Köyceğiz-Fethiye), Bursa (Orhaneli), Eskişehir, Adana (Pozantı), Kop Dağı. (Antalya & Elazığ ferrokrom).
+* **Boksit (Alüminyum) Havzaları:** Konya (Seydişehir - Entegre tesis), Antalya (Akseki), Muğla (Milas), Adana (Saimbeyli), Hatay (Payas), Zonguldak.
+* **Bor Havzası:** Balıkesir (Bigadiç, Susurluk), Bursa (Kestelek), Kütahya (Emet), Eskişehir (Kırka). (Dünya rezervinin %73'ü).
+* **Bentonit Havzaları:** Edirne, Konya, Çankırı, Tokat (Reşadiye), Ordu (Ünye-Fatsa), Giresun.
+* **Kükürt Sahası:** Isparta (Keçiborlu).
+* **Fosfat Havzası:** Mardin (Mazıdağı), Adıyaman, Şanlıurfa, Bitlis, Bingöl.
+* **Cıva Sahaları:** İzmir (Ödemiş, Karaburun), Konya (Sarayönü).
+* **Kurşun-Çinko Havzaları:** Çanakkale (Yenice), Balıkesir (Balya), Yozgat (Akdağmadeni), Kayseri (Yahyalı), Niğde, Giresun, Elazığ (Keban).
+* **Manganez Havzaları:** Denizli (Tavas), Zonguldak (Ereğli), Adana (Ceyhan), Trabzon, Artvin (Borçka).
+* **Tuz Havzaları:** İzmir (Çamaltı deniz tuzu), Tuz Gölü (göl tuzu), Çankırı, Nevşehir, Yozgat, Seyfe/Palas gölleri, Sivas, Erzincan, Erzurum, Kars, Iğdır (kaya tuzu).
+* **Mermer Havzaları:** Afyonkarahisar, Bursa (Marmara Adası), Bilecik, Muğla, Elazığ. (Dünya rezervinin %40'ı, 1. ihraç madeni).
+* **Zımpara Taşı Kuşağı:** İzmir (Tire), Aydın (Söke, Karacasu), Muğla (Milas, Yatağan), Denizli.
+* **Lüle & Oltu Taşı:** Eskişehir (Lületaşı / Beyaz altın), Erzurum (Oltu taşı / Siyah kehribar).
+* **Volfram (Tungsten):** Bursa (Uludağ), Ankara, Kırıkkale (Keskin), Sivas.
+* **Feldispat Sahası:** Muğla (Milas), Aydın (Çine), Manisa (Demirci), Kütahya (Simav). (Dünya ihracat lideri).
+* **Asfaltit Havzası:** Şırnak (Silopi - Harbul), Mardin. (Silopi Termik Santrali).
+* **Molibden Sahaları:** Kırklareli (Demirköy), Trabzon (Maçka), Erzurum (İspir), Elazığ (Keban).
+* **Nikel Havzaları:** Manisa (Gördes Çaldağ), Bursa, Eskişehir (Mihalıççık), Sivas (Kangal), Bitlis (Pancarlı).
+* **Trona (Doğal Soda Külü):** Ankara (Beypazarı, Kazan). (Dünya 2.si).
+* **Altın Kuşakları:** Uşak (Kışladağ), İzmir (Ovacık), Balıkesir (Havran), Çanakkale, Bilecik (Söğüt), Eskişehir, Gümüşhane (Mastra), Artvin (Cerattepe).
+* **Dolomit Havzası:** Adana, Kahramanmaraş. (İskenderun Demir-Çelik eritken & refrakter girdisi).
+

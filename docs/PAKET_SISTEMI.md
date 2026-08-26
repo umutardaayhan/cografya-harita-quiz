@@ -47,6 +47,7 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 | :--- | :--- | :--- |
 | 🚜 Tarım, Hayvancılık & Sanayi | `tr.beseri` | 24 / 40 / 54 |
 | ⛏️ Madenler & Enerji Kaynakları | `tr.madenler` | 23 / 43 / 65 |
+| ⛏️ Madenler Bölge Haritası | `tr.maden_bolgeleri` | 9 / 15 / 23 |
 | 🏛️ Turizm & Kültür Mirası | `tr.turizm` | 13 / 20 / 31 |
 | 🚢 Ulaşım & Ticaret Koridorları | `tr.ulasim` | 10 / 18 / 26 |
 

@@ -109,6 +109,7 @@ const CATEGORY_META = {
   afet:          { canonical: 'hazards',      en: { title: 'Natural Hazard Zones',    short: 'Hazard' } },
   fay:           { canonical: 'tectonics',    en: { title: 'Faults & Tectonics',      short: 'Fault' } },
   madenler:      { canonical: 'minerals',     en: { title: 'Minerals & Energy',       short: 'Mineral' } },
+  maden_bolgeleri: { canonical: 'mineral_regions', en: { title: 'Mineral Regions',       short: 'Minerals' } },
   nufus:         { canonical: 'population',   en: { title: 'Population & Settlement', short: 'Pop.' } },
   bolgeler:      { canonical: 'regions',      en: { title: 'Regions & Subregions',    short: 'Region' } },
   kiyilar:       { canonical: 'coasts',       en: { title: 'Coasts, Islands & Seas',  short: 'Coast' } },
@@ -127,7 +128,7 @@ const PACK_GROUPS = {
   'tr.gecitler': 'fiziki', 'tr.iklim_orman': 'fiziki', 'tr.toprak': 'fiziki',
   'tr.afet': 'fiziki', 'tr.fay': 'fiziki', 'tr.kiyilar': 'fiziki',
   'tr.dis_kuvvetler': 'fiziki',
-  'tr.beseri': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.turizm': 'ekonomik',
+  'tr.beseri': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.maden_bolgeleri': 'ekonomik', 'tr.turizm': 'ekonomik',
   'tr.ulasim': 'ekonomik',
   'tr.sehirler': 'beseri', 'tr.nufus': 'beseri', 'tr.bolgeler': 'beseri', 'tr.iliskiler': 'beseri',
   'tr.mutlak_konum': 'modul'
@@ -249,6 +250,15 @@ const PACK_DEFS = [
     unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
     planRows: [{ cat: 'madenler', icon: '⛏️', count: 15, tr: 'Maden', en: 'Mineral' }],
     recommends: ['tr.beseri']
+  },
+  {
+    id: 'tr.maden_bolgeleri', country: 'tr', categories: ['maden_bolgeleri'],
+    icon: '⛏️', color: '#d97706',
+    tr: { title: 'Madenler Bölge Haritası', desc: 'Demir, bakır, krom, bor, boksit ve 23 madenin Türkiye genelindeki bölgesel poligon havzaları.' },
+    en: { title: 'Mining Regional Basins', desc: 'Regional polygon basins for iron, copper, chromium, boron, bauxite and 23 mineral zones.' },
+    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
+    planRows: [{ cat: 'maden_bolgeleri', icon: '⛏️', count: 23, tr: 'Maden Havzası', en: 'Mining Basin', geom: 'polygon' }],
+    recommends: ['tr.madenler']
   },
   {
     id: 'tr.sehirler', country: 'tr', categories: ['sehirler'],
