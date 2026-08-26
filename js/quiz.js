@@ -327,55 +327,148 @@ class GeographyQuiz {
     return pool[pool.length - 1];
   }
 
-  // Zorluğa Göre Çeldirici Seçimi
-  selectDistractorsByProximity(targetQuestion, candidatePool, count) {
-    if (candidatePool.length <= count) {
-      return [...candidatePool];
+  // 📍 Coğrafi Konum Çıkarıcı & Merkez Hesaplayıcı
+  getItemCoord(item) {
+    if (!item) return null;
+    if (typeof item.lat === 'number' && typeof item.lng === 'number') {
+      return { lat: item.lat, lng: item.lng };
+    }
+    if (item.geom && typeof item.geom.lat === 'number' && typeof item.geom.lng === 'number') {
+      return { lat: item.geom.lat, lng: item.geom.lng };
+    }
+    const coords = item.coordinates || item.points || (item.geom && item.geom.c);
+    if (Array.isArray(coords) && coords.length > 0) {
+      let sumLat = 0, sumLng = 0, count = 0;
+      coords.forEach(p => {
+        if (Array.isArray(p) && p.length >= 2) {
+          sumLat += p[0];
+          sumLng += p[1];
+          count++;
+        }
+      });
+      if (count > 0) {
+        return { lat: sumLat / count, lng: sumLng / count };
+      }
+    }
+    return null;
+  }
+
+  // 📍 Benzersiz Konum Anahtarı
+  getItemLocationKey(item) {
+    if (!item) return '';
+    if (item.groupId) return `grp:${item.groupId}`;
+    const coord = this.getItemCoord(item);
+    if (coord) {
+      return `loc:${coord.lat.toFixed(2)},${coord.lng.toFixed(2)}`;
+    }
+    return `id:${item.id}`;
+  }
+
+  // 🛡️ Çakışma Kontrolü: İki varlık aynı konumu / şehri mi temsil ediyor?
+  areLocationsSame(itemA, itemB) {
+    if (!itemA || !itemB) return false;
+    if (itemA.id === itemB.id) return true;
+
+    // Ortak bir groupId paylaşımı
+    if (itemA.groupId && itemB.groupId && itemA.groupId === itemB.groupId) {
+      return true;
     }
 
-    const withDistance = candidatePool.map(item => ({
-      item,
-      distance: this.getDistanceInKm(targetQuestion.lat, targetQuestion.lng, item.lat, item.lng)
-    })).sort((a, b) => a.distance - b.distance);
+    const coordA = this.getItemCoord(itemA);
+    const coordB = this.getItemCoord(itemB);
+    if (!coordA || !coordB) return false;
+
+    // Birebir aynı koordinat veya ~1.5 km içi çakışma (0.015 derece)
+    const latDiff = Math.abs(coordA.lat - coordB.lat);
+    const lngDiff = Math.abs(coordA.lng - coordB.lng);
+    return (latDiff < 0.015 && lngDiff < 0.015);
+  }
+
+  // Zorluğa Göre Çeldirici Seçimi (Çakışan Konum ve Çift Şık Korumalı)
+  selectDistractorsByProximity(targetQuestion, candidatePool, count) {
+    // 1. targetQuestion ile aynı konumdaki tüm adayları kesinlikle ele
+    let validCandidates = candidatePool.filter(item => 
+      item.id !== targetQuestion.id && !this.areLocationsSame(item, targetQuestion)
+    );
+
+    const tCoord = this.getItemCoord(targetQuestion) || { lat: targetQuestion.lat || 0, lng: targetQuestion.lng || 0 };
+
+    const withDistance = validCandidates.map(item => {
+      const coord = this.getItemCoord(item) || { lat: item.lat || 0, lng: item.lng || 0 };
+      const dist = this.getDistanceInKm(tCoord.lat, tCoord.lng, coord.lat, coord.lng);
+      return { item, distance: dist };
+    }).sort((a, b) => a.distance - b.distance);
 
     const totalCandidates = withDistance.length;
-    let selected = [];
+    let poolSlice = [];
 
-    if (this.difficultyLevel === 6) {
-      // 🌋 6. Seviye: Celal Şengör Modu (En yakın Türkiye geneli dip dibe komşular)
-      const sliceSize = Math.max(count, Math.min(count + 2, totalCandidates));
-      const nearestSlice = withDistance.slice(0, sliceSize);
-      selected = nearestSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
-    }
-    else if (this.difficultyLevel === 5) {
-      const sliceSize = Math.max(count, Math.min(count + 2, totalCandidates));
-      const nearestSlice = withDistance.slice(0, sliceSize);
-      selected = nearestSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+    if (this.difficultyLevel === 6 || this.difficultyLevel === 5) {
+      const sliceSize = Math.max(count * 3, Math.min(count * 4, totalCandidates));
+      poolSlice = withDistance.slice(0, sliceSize).map(d => d.item);
     } 
     else if (this.difficultyLevel === 4) {
-      const sliceSize = Math.max(count, Math.ceil(totalCandidates * 0.45));
-      const nearSlice = withDistance.slice(0, sliceSize);
-      selected = nearSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+      const sliceSize = Math.max(count * 3, Math.ceil(totalCandidates * 0.5));
+      poolSlice = withDistance.slice(0, sliceSize).map(d => d.item);
     } 
     else if (this.difficultyLevel === 3) {
-      const start = Math.floor(totalCandidates * 0.2);
-      const end = Math.ceil(totalCandidates * 0.8);
-      const midSlice = withDistance.slice(start, Math.max(start + count, end));
-      selected = midSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+      const start = Math.floor(totalCandidates * 0.15);
+      const end = Math.ceil(totalCandidates * 0.85);
+      poolSlice = withDistance.slice(start, Math.max(start + count * 3, end)).map(d => d.item);
     } 
     else if (this.difficultyLevel === 2) {
-      const start = Math.floor(totalCandidates * 0.45);
-      const farSlice = withDistance.slice(start);
-      selected = farSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+      const start = Math.floor(totalCandidates * 0.4);
+      poolSlice = withDistance.slice(start).map(d => d.item);
     } 
     else {
-      const farSlice = withDistance.slice(Math.max(0, totalCandidates - count - 3));
-      selected = farSlice.sort(() => 0.5 - Math.random()).slice(0, count).map(d => d.item);
+      const start = Math.max(0, totalCandidates - count * 4);
+      poolSlice = withDistance.slice(start).map(d => d.item);
     }
 
+    poolSlice.sort(() => 0.5 - Math.random());
+
+    // Konum tekilleştirme: Hem targetQuestion hem de daha önce seçilen çeldiricilerle aynı konumda olanları engelle
+    const selected = [];
+    for (const item of poolSlice) {
+      if (selected.length >= count) break;
+      const conflictsWithSelected = selected.some(s => this.areLocationsSame(s, item));
+      const conflictsWithTarget = this.areLocationsSame(targetQuestion, item);
+      if (!conflictsWithSelected && !conflictsWithTarget) {
+        selected.push(item);
+      }
+    }
+
+    // Yeterli çeldirici bulunamadıysa kalan adaylardan konum çakışması yapmayanları ekle
     if (selected.length < count) {
-      const remaining = candidatePool.filter(c => !selected.some(s => s.id === c.id));
-      selected.push(...remaining.slice(0, count - selected.length));
+      for (const d of withDistance) {
+        if (selected.length >= count) break;
+        const item = d.item;
+        if (!selected.some(s => s.id === item.id)) {
+          const conflictsWithSelected = selected.some(s => this.areLocationsSame(s, item));
+          const conflictsWithTarget = this.areLocationsSame(targetQuestion, item);
+          if (!conflictsWithSelected && !conflictsWithTarget) {
+            selected.push(item);
+          }
+        }
+      }
+    }
+
+    // Kategori havuzunda yeterli benzersiz konum yoksa genel veri havuzundan takviye et
+    if (selected.length < count && typeof COGRAFYA_DATA !== 'undefined') {
+      const allGlobalItems = [];
+      Object.keys(COGRAFYA_DATA).forEach(cat => {
+        allGlobalItems.push(...COGRAFYA_DATA[cat]);
+      });
+      allGlobalItems.sort(() => 0.5 - Math.random());
+
+      for (const item of allGlobalItems) {
+        if (selected.length >= count) break;
+        if (item.id === targetQuestion.id) continue;
+        const conflictsWithSelected = selected.some(s => this.areLocationsSame(s, item));
+        const conflictsWithTarget = this.areLocationsSame(targetQuestion, item);
+        if (!conflictsWithSelected && !conflictsWithTarget) {
+          selected.push(item);
+        }
+      }
     }
 
     return selected;
@@ -437,18 +530,35 @@ class GeographyQuiz {
 
     if (this.optionCount === 'all') {
       if (this.currentActualFormat === 'find_on_map') {
-        // 🌋 CELAL ŞENGÖR HARİTADA BUL: Bu kategorideki TÜM yer şekilleri haritada yer alır!
-        this.currentOptions = [...this.items].sort(() => 0.5 - Math.random());
+        // 🌋 CELAL ŞENGÖR HARİTADA BUL: Bu kategorideki TÜM benzersiz konumlar haritada yer alır!
+        // Doğru cevabın üstüne binen tüm diğer varlıklar elenir; her benzersiz konumdan sadece 1 temsilci gösterilir.
+        const uniqueOptions = [this.currentQuestion];
+        const usedLocKeys = new Set();
+        usedLocKeys.add(this.getItemLocationKey(this.currentQuestion));
+
+        const shuffledPool = [...this.items].sort(() => 0.5 - Math.random());
+        for (const item of shuffledPool) {
+          if (item.id === this.currentQuestion.id) continue;
+          if (this.areLocationsSame(item, this.currentQuestion)) continue;
+          const locKey = this.getItemLocationKey(item);
+          if (!usedLocKeys.has(locKey)) {
+            usedLocKeys.add(locKey);
+            uniqueOptions.push(item);
+          }
+        }
+        this.currentOptions = uniqueOptions.sort(() => 0.5 - Math.random());
       } else {
         // 🌋 CELAL ŞENGÖR KONUMDAN İSİM BUL: Tam 10 adet zorlu şık üretilir!
-        let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+        let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id && !this.areLocationsSame(item, this.currentQuestion));
         if (candidatePool.length < 9) {
           const allGlobalItems = [];
           Object.keys(COGRAFYA_DATA).forEach(cat => {
             allGlobalItems.push(...COGRAFYA_DATA[cat]);
           });
           const additionalOthers = allGlobalItems.filter(
-            item => item.id !== this.currentQuestion.id && !candidatePool.some(o => o.id === item.id)
+            item => item.id !== this.currentQuestion.id && 
+                    !this.areLocationsSame(item, this.currentQuestion) && 
+                    !candidatePool.some(o => o.id === item.id)
           );
           candidatePool = [...candidatePool, ...additionalOthers];
         }
@@ -458,7 +568,9 @@ class GeographyQuiz {
       }
     } else {
       const targetDistractorCount = parseInt(this.optionCount, 10) - 1;
-      let candidatePool = this.items.filter(item => item.id !== this.currentQuestion.id);
+      let candidatePool = this.items.filter(item => 
+        item.id !== this.currentQuestion.id && !this.areLocationsSame(item, this.currentQuestion)
+      );
 
       if (candidatePool.length < targetDistractorCount) {
         const allGlobalItems = [];
@@ -466,7 +578,9 @@ class GeographyQuiz {
           allGlobalItems.push(...COGRAFYA_DATA[cat]);
         });
         const additionalOthers = allGlobalItems.filter(
-          item => item.id !== this.currentQuestion.id && !candidatePool.some(o => o.id === item.id)
+          item => item.id !== this.currentQuestion.id && 
+                  !this.areLocationsSame(item, this.currentQuestion) && 
+                  !candidatePool.some(o => o.id === item.id)
         );
         candidatePool = [...candidatePool, ...additionalOthers];
       }
