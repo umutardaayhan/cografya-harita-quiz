@@ -1483,10 +1483,16 @@ class GeographyMap {
       ? `<div class="popup-group-tag" title="Diğer bir elemana sürükleyip bırakarak bağlayabilir veya bağı koparabilirsiniz">🔗 Birleşik Grup Üyesi</div>`
       : '';
 
+    const groupBtn = item.groupId
+      ? `<button type="button" class="popup-act unlink-btn" data-pop-act="unlink"
+                data-pop-id="${escAttr(item.id)}" title="Bu elemanın grup bağlantısını koparır">🔗 Bağı Kopar</button>`
+      : '';
+
     return `
       <div class="popup-actions">
         ${rozet}
         ${groupTag}
+        ${groupBtn}
         <button type="button" class="popup-act" data-pop-act="edit"
                 data-pop-id="${escAttr(item.id)}" data-pop-pack="${escAttr(targetPackId)}">✏️ Düzenle</button>
         <button type="button" class="popup-act danger" data-pop-act="delete"
@@ -1567,23 +1573,45 @@ class GeographyMap {
   _enableDragLinking(layer, item, allItems) {
     if (!layer || !layer.on) return;
 
+    // Helper: Bir elemanın temsilci merkez koordinatını döndür
+    const getTargetLatLng = (it) => {
+      if (!it) return null;
+      if (Number.isFinite(it.lat) && Number.isFinite(it.lng)) return [it.lat, it.lng];
+      if (it.geom && Number.isFinite(it.geom.lat) && Number.isFinite(it.geom.lng)) return [it.geom.lat, it.geom.lng];
+      const coords = it.coordinates || it.points || (it.geom && it.geom.c);
+      if (Array.isArray(coords) && coords.length > 0) {
+        let sumLat = 0, sumLng = 0, count = 0;
+        coords.forEach(p => {
+          if (Array.isArray(p) && p.length >= 2) {
+            sumLat += p[0];
+            sumLng += p[1];
+            count++;
+          }
+        });
+        if (count > 0) return [sumLat / count, sumLng / count];
+      }
+      return null;
+    };
+
     layer.on('mousedown', (e) => {
       if (e.originalEvent && e.originalEvent.button !== 0) return; // Yalnızca sol tık
       
       const startX = e.originalEvent.clientX;
       const startY = e.originalEvent.clientY;
-      const startLatLng = e.latlng || [item.lat, item.lng];
+      const startCoord = getTargetLatLng(item) || (e.latlng ? [e.latlng.lat, e.latlng.lng] : null);
+      if (!startCoord) return;
+
       let isDragging = false;
       let hoveredTarget = null;
       let laserLine = null;
 
       const onMouseMove = (ev) => {
         const dist = Math.hypot(ev.clientX - startX, ev.clientY - startY);
-        if (dist > 10 && !isDragging) {
+        if (dist > 8 && !isDragging) {
           isDragging = true;
           this.map.dragging.disable();
           this.map.getContainer().classList.add('linking-drag-mode');
-          laserLine = L.polyline([startLatLng, this.map.mouseEventToLatLng(ev)], {
+          laserLine = L.polyline([startCoord, this.map.mouseEventToLatLng(ev)], {
             color: '#8b5cf6',
             weight: 3.5,
             dashArray: '6, 6',
@@ -1594,20 +1622,29 @@ class GeographyMap {
 
         if (isDragging && laserLine) {
           const currentLatLng = this.map.mouseEventToLatLng(ev);
-          laserLine.setLatLngs([startLatLng, currentLatLng]);
+          laserLine.setLatLngs([startCoord, currentLatLng]);
 
           // En yakın hedef elemanı bul
           hoveredTarget = null;
-          let minPixelDist = 45;
-          allItems.forEach(other => {
+          let minPixelDist = 55;
+          (allItems || []).forEach(other => {
             if (other.id === item.id) return;
-            const otherPt = this.map.latLngToContainerPoint([other.lat, other.lng]);
+            const otherCoord = getTargetLatLng(other);
+            if (!otherCoord) return;
+
+            const otherPt = this.map.latLngToContainerPoint(otherCoord);
             const pDist = Math.hypot(ev.clientX - otherPt.x, ev.clientY - otherPt.y);
             if (pDist < minPixelDist) {
               minPixelDist = pDist;
               hoveredTarget = other;
             }
           });
+
+          if (hoveredTarget) {
+            laserLine.setStyle({ color: '#10b981', weight: 4.5, dashArray: null });
+          } else {
+            laserLine.setStyle({ color: '#8b5cf6', weight: 3.5, dashArray: '6, 6' });
+          }
         }
       };
 
@@ -1657,6 +1694,25 @@ class GeographyMap {
       }
     });
 
+    const getCenterLatLng = (it) => {
+      if (!it) return null;
+      if (Number.isFinite(it.lat) && Number.isFinite(it.lng)) return [it.lat, it.lng];
+      if (it.geom && Number.isFinite(it.geom.lat) && Number.isFinite(it.geom.lng)) return [it.geom.lat, it.geom.lng];
+      const coords = it.coordinates || it.points || (it.geom && it.geom.c);
+      if (Array.isArray(coords) && coords.length > 0) {
+        let sumLat = 0, sumLng = 0, count = 0;
+        coords.forEach(p => {
+          if (Array.isArray(p) && p.length >= 2) {
+            sumLat += p[0];
+            sumLng += p[1];
+            count++;
+          }
+        });
+        if (count > 0) return [sumLat / count, sumLng / count];
+      }
+      return null;
+    };
+
     // 1. Birleşik / Gruplanmış elemanlar arasında zarif bağlantı çizgileri çiz
     const groupMap = new Map();
     flatItems.forEach(it => {
@@ -1669,9 +1725,9 @@ class GeographyMap {
     groupMap.forEach((members, gId) => {
       if (members.length >= 2) {
         for (let i = 0; i < members.length - 1; i++) {
-          const p1 = [members[i].lat, members[i].lng];
-          const p2 = [members[i + 1].lat, members[i + 1].lng];
-          if (Number.isFinite(p1[0]) && Number.isFinite(p1[1]) && Number.isFinite(p2[0]) && Number.isFinite(p2[1])) {
+          const p1 = getCenterLatLng(members[i]);
+          const p2 = getCenterLatLng(members[i + 1]);
+          if (p1 && p2 && Number.isFinite(p1[0]) && Number.isFinite(p1[1]) && Number.isFinite(p2[0]) && Number.isFinite(p2[1])) {
             const groupLine = L.polyline([p1, p2], {
               color: '#a855f7',
               weight: 2.8,
@@ -1679,7 +1735,7 @@ class GeographyMap {
               opacity: 0.85,
               className: 'group-connection-line'
             });
-            groupLine.bindTooltip(`🔗 Birleşik Saha: <b>${members[0].name}</b>`, { sticky: true });
+            groupLine.bindTooltip(`🔗 Birleşik Grup: <b>${members[0].name}</b> & <b>${members[1].name}</b>`, { sticky: true });
             this.exploreLayerGroup.addLayer(groupLine);
           }
         }
@@ -1739,7 +1795,7 @@ class GeographyMap {
         const popupContent = this._multiItemPopupHtml(groupItems, cityName);
         const marker = L.marker([firstItem.lat, firstItem.lng], { icon: multiIcon });
         marker.bindPopup(popupContent, { maxWidth: 340, maxHeight: 420, className: 'multi-item-leaflet-popup' });
-        groupItems.forEach(it => this._enableDragLinking(marker, it, flatItems));
+        this._enableDragLinking(marker, firstItem, flatItems);
         this.exploreLayerGroup.addLayer(marker);
       }
     });

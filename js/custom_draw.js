@@ -195,9 +195,17 @@ class CustomDrawManager {
   }
 
   findDrawing(id) {
-    for (const m of this.state.maps) {
-      const found = m.drawings.find(d => d.id === id);
+    if (!id) return null;
+    for (const map of this.state.maps) {
+      const found = map.drawings.find(d => d.id === id);
       if (found) return found;
+    }
+    if (typeof COGRAFYA_DATA !== 'undefined') {
+      const cats = Object.keys(COGRAFYA_DATA);
+      for (let i = 0; i < cats.length; i++) {
+        const found = (COGRAFYA_DATA[cats[i]] || []).find(d => d.id === id);
+        if (found) return found;
+      }
     }
     return null;
   }
@@ -239,6 +247,9 @@ class CustomDrawManager {
    * @returns {object} { action: 'linked'|'unlinked', item1, item2, groupId }
    */
   toggleLink(id1, id2) {
+    if (typeof toggleUniversalLink === 'function') {
+      return toggleUniversalLink(id1, id2);
+    }
     const item1 = this.findDrawing(id1);
     const item2 = this.findDrawing(id2);
     if (!item1 || !item2 || id1 === id2) return null;

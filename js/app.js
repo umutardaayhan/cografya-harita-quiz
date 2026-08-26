@@ -3736,12 +3736,131 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
+  // --- Evrensel Eleman Birleştirme & Ayırma Motoru (Universal Link / Group Engine) ---
+  function toggleUniversalLink(id1, id2) {
+    if (!id1 || !id2 || id1 === id2) return null;
+
+    const item1 = runtimeItem(id1);
+    const item2 = runtimeItem(id2);
+    if (!item1 || !item2) return null;
+
+    // Helper: Bir öğeyi grup kimliğiyle kaydet (özel çizim veya DLC paketi fark etmeksizin)
+    function saveItemGroupId(item, newGroupId) {
+      item.groupId = newGroupId || null;
+
+      // A. Özel çizim ise
+      if (customDrawManager && customDrawManager.findDrawing(item.id)) {
+        customDrawManager.updateDrawing(item.id, { groupId: newGroupId || null });
+        return;
+      }
+
+      // B. DLC / Standart paket kaydı ise
+      if (typeof packManager !== 'undefined' && typeof packEdits !== 'undefined') {
+        const packId = item._packId || packManager.packForItem(item.id);
+        if (packId) {
+          if (newGroupId) {
+            packEdits.patchItem(packId, item.id, { groupId: newGroupId });
+          } else {
+            const kaynak = packManager.sourceItem(packId, item.id);
+            if (kaynak && kaynak.groupId) {
+              packEdits.patchItem(packId, item.id, { groupId: '' });
+            } else {
+              packEdits.patchItem(packId, item.id, {}, null, ['groupId']);
+            }
+          }
+        }
+      }
+    }
+
+    // Helper: Bu gruptaki tüm çalışma zamanı üyelerini bul
+    function getAllGroupMembers(gid) {
+      if (!gid) return [];
+      const members = [];
+      const seen = new Set();
+
+      if (typeof COGRAFYA_DATA !== 'undefined') {
+        Object.keys(COGRAFYA_DATA).forEach(cat => {
+          (COGRAFYA_DATA[cat] || []).forEach(it => {
+            if (it.groupId === gid && !seen.has(it.id)) {
+              seen.add(it.id);
+              members.push(it);
+            }
+          });
+        });
+      }
+
+      if (typeof customDrawManager !== 'undefined' && customDrawManager.state) {
+        (customDrawManager.state.maps || []).forEach(m => {
+          (m.drawings || []).forEach(d => {
+            if (d.groupId === gid && !seen.has(d.id)) {
+              seen.add(d.id);
+              members.push(d);
+            }
+          });
+        });
+      }
+
+      return members;
+    }
+
+    // DURUM 1: İkisi zaten aynı grupta -> BAĞI KOPAR (Unlink)
+    if (item1.groupId && item2.groupId && item1.groupId === item2.groupId) {
+      const gid = item1.groupId;
+      const groupMembers = getAllGroupMembers(gid);
+
+      if (groupMembers.length <= 2) {
+        groupMembers.forEach(m => saveItemGroupId(m, null));
+      } else {
+        saveItemGroupId(item2, null);
+      }
+
+      return { action: 'unlinked', item1, item2, groupId: null };
+    }
+
+    // DURUM 2: Birleştir (Link / Group)
+    let targetGroupId = item1.groupId || item2.groupId;
+    if (!targetGroupId) {
+      targetGroupId = 'grp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    }
+
+    const oldGid2 = item2.groupId;
+    saveItemGroupId(item1, targetGroupId);
+    saveItemGroupId(item2, targetGroupId);
+
+    if (oldGid2 && oldGid2 !== targetGroupId) {
+      const oldMembers = getAllGroupMembers(oldGid2);
+      oldMembers.forEach(m => saveItemGroupId(m, targetGroupId));
+    }
+
+    return { action: 'linked', item1, item2, groupId: targetGroupId };
+  }
+
   // --- Harita balonundaki düğmeler -----------------------------------------
   document.addEventListener('pack:item-action', (e) => {
     const d = e.detail || {};
-    if (!d.itemId || !d.packId) return;
-    if (d.action === 'edit') openPackEditModal(d.packId, d.itemId);
-    else if (d.action === 'delete') deletePackItem(d.packId, d.itemId);
+    if (!d.itemId) return;
+    if (d.action === 'edit' && d.packId) openPackEditModal(d.packId, d.itemId);
+    else if (d.action === 'delete' && d.packId) deletePackItem(d.packId, d.itemId);
+    else if (d.action === 'unlink') {
+      const item = runtimeItem(d.itemId);
+      if (item && item.groupId) {
+        const gid = item.groupId;
+        item.groupId = null;
+        if (customDrawManager && customDrawManager.findDrawing(item.id)) {
+          customDrawManager.updateDrawing(item.id, { groupId: null });
+        } else if (typeof packManager !== 'undefined' && typeof packEdits !== 'undefined') {
+          const packId = item._packId || packManager.packForItem(item.id);
+          if (packId) {
+            packEdits.patchItem(packId, item.id, { groupId: '' });
+          }
+        }
+        packEditsChanged();
+        if (typeof geoQuiz !== 'undefined' && geoQuiz.reloadCategoryItems) geoQuiz.reloadCategoryItems();
+        if (typeof renderCategories === 'function') renderCategories();
+        if (currentMode === 'explore') loadExploreMode();
+        showEditToast(`🔗 "${item.name}" öğesinin grup bağlantısı koparıldı.`);
+      }
+    }
   });
 
   // --- Keşif Modunda Sürükle-Bırak ile Eleman Birleştirme / Ayırma Dinleyicisi ---
@@ -3749,11 +3868,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const d = e.detail || {};
     if (!d.sourceId || !d.targetId) return;
 
-    const res = customDrawManager.toggleLink(d.sourceId, d.targetId);
+    const res = toggleUniversalLink(d.sourceId, d.targetId);
     if (!res) return;
 
-    geoQuiz.reloadCategoryItems();
-    renderCategories();
+    packEditsChanged();
+    if (typeof geoQuiz !== 'undefined' && geoQuiz.reloadCategoryItems) {
+      geoQuiz.reloadCategoryItems();
+    }
+    if (typeof renderCategories === 'function') {
+      renderCategories();
+    }
     if (currentMode === 'explore') {
       loadExploreMode();
     } else {

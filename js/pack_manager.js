@@ -402,6 +402,25 @@ class PackManager {
     return PackManager.project(Object.assign({ _packId: packId }, raw));
   }
 
+  /** Bir kaydın ait olduğu paket ID'sini bulur */
+  packForItem(itemId) {
+    if (!itemId) return null;
+    const installed = this.installedIds();
+    for (let i = 0; i < installed.length; i++) {
+      const packId = installed[i];
+      const payload = GeoPacks.get(packId);
+      if (payload && Array.isArray(payload.items)) {
+        if (payload.items.some(it => it.id === itemId)) {
+          return packId;
+        }
+      }
+      if (typeof packEdits !== 'undefined' && packEdits.addedItem(packId, itemId)) {
+        return packId;
+      }
+    }
+    return null;
+  }
+
   /** Kurulu paketlerden bu kategoriye kayıt sağlayanların id listesi */
   packsForCategory(catId) {
     return this.installedIds().filter(packId => {

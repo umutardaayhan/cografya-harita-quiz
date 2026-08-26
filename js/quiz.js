@@ -653,9 +653,24 @@ class GeographyQuiz {
     this.isAnswered = true;
 
     const q = this.currentQuestion;
+
+    // Seçilen elemanı bul (çapraz grup kimliği eşleşmesi için)
+    let selectedItem = null;
+    if (this.currentOptions) {
+      selectedItem = this.currentOptions.find(o => o.id === selectedId);
+    }
+    if (!selectedItem && typeof COGRAFYA_DATA !== 'undefined') {
+      const cats = Object.keys(COGRAFYA_DATA);
+      for (let i = 0; i < cats.length; i++) {
+        selectedItem = (COGRAFYA_DATA[cats[i]] || []).find(it => it.id === selectedId);
+        if (selectedItem) break;
+      }
+    }
+
     const isCorrect = (selectedId === q.id) || 
                       (q.isGroup && Array.isArray(q.memberIds) && q.memberIds.includes(selectedId)) ||
-                      (q.groupId && (selectedId === q.groupId));
+                      (q.groupId && (selectedId === q.groupId)) ||
+                      (q.groupId && selectedItem && selectedItem.groupId && (q.groupId === selectedItem.groupId));
     const qId = q.id;
 
     if (!this.analytics[qId]) {
