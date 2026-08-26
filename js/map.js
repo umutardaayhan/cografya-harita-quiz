@@ -803,10 +803,13 @@ class GeographyMap {
     this.clearQuestionHighlight();
     if (!options || options.length === 0) return;
 
-    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
-    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     const boundsCoords = [];
     const rozetSabit = !!ayarlar.rozetSabit;
+
+    // Aynı koordinata birden fazla kez pin basılmasını kesinlikle engelle
+    const placedMarkerCoords = new Set();
 
     options.forEach((opt, index) => {
       const letter = letters[index] || `${index + 1}`;
@@ -847,6 +850,11 @@ class GeographyMap {
           }
 
           if (!Number.isFinite(subLat) || !Number.isFinite(subLng)) return;
+
+          // Aynı koordinatta zaten bir şık pini basıldıysa mükerrer basmayı atla
+          const coordKey = `${subLat.toFixed(3)},${subLng.toFixed(3)}`;
+          if (placedMarkerCoords.has(coordKey)) return;
+          placedMarkerCoords.add(coordKey);
 
           const subIsLinear = subItem.shapeType === 'polyline';
           const subIsArea = subItem.shapeType === 'polygon' || subItem.category === 'sehirler' || subItem.category === 'bolgeler';
@@ -920,6 +928,11 @@ class GeographyMap {
       }
 
       boundsCoords.push([lat, lng]);
+
+      // Aynı koordinata birden fazla kez pin basılmasını kesinlikle engelle
+      const singleCoordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+      if (placedMarkerCoords.has(singleCoordKey)) return;
+      placedMarkerCoords.add(singleCoordKey);
 
       const shapeType = opt.shapeType || 'point';
 
@@ -1724,9 +1737,11 @@ class GeographyMap {
 
     groupMap.forEach((members, gId) => {
       if (members.length >= 2) {
-        for (let i = 0; i < members.length - 1; i++) {
+        for (let i = 0; i < members.length; i++) {
+          if (members.length === 2 && i === 1) break; // 2 üye için tek çizgi yeterli
+          const nextIdx = (i + 1) % members.length;
           const p1 = getCenterLatLng(members[i]);
-          const p2 = getCenterLatLng(members[i + 1]);
+          const p2 = getCenterLatLng(members[nextIdx]);
           if (p1 && p2 && Number.isFinite(p1[0]) && Number.isFinite(p1[1]) && Number.isFinite(p2[0]) && Number.isFinite(p2[1])) {
             const groupLine = L.polyline([p1, p2], {
               color: '#a855f7',
@@ -1735,7 +1750,7 @@ class GeographyMap {
               opacity: 0.85,
               className: 'group-connection-line'
             });
-            groupLine.bindTooltip(`🔗 Birleşik Grup: <b>${members[0].name}</b> & <b>${members[1].name}</b>`, { sticky: true });
+            groupLine.bindTooltip(`🔗 Birleşik Grup (${members.length} Üye): <b>${members[i].name}</b> ↔ <b>${members[nextIdx].name}</b>`, { sticky: true });
             this.exploreLayerGroup.addLayer(groupLine);
           }
         }

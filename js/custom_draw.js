@@ -316,7 +316,22 @@ class CustomDrawManager {
    * Tüm çizimleri Quiz motorunun anlayacağı formata çevirir.
    * Aynı groupId'ye sahip olan elemanları tek bir BİRLEŞİK (composite) soru olarak sunar.
    */
+  /** Ham çizim listesi — birleştirme YAPILMAZ (motor dışarıda uygular) */
+  getRawQuizItems() {
+    return this.drawings.map(d => ({ ...d }));
+  }
+
+  /**
+   * Geriye dönük uyumluluk: eskiden birleştirmeyi bu metot yapıyordu.
+   * Artık evrensel motora devrediyor; böylece özel çizimler ve standart
+   * paketler AYNI kurallarla birleşiyor.
+   */
   getQuizItems() {
+    if (typeof gruplaHavuz === 'function') return gruplaHavuz(this.getRawQuizItems());
+    return this._eskiGetQuizItems();
+  }
+
+  _eskiGetQuizItems() {
     const rawDrawings = this.drawings;
     const processedGroupIds = new Set();
     const result = [];

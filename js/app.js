@@ -814,11 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let pool = [];
     if (scope === 'current') {
-      if (activeCategory === 'ozel_cizimler') {
-        pool = customDrawManager ? customDrawManager.getQuizItems() : [];
-      } else {
-        pool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
-      }
+      pool = buildCategoryQuizPool(activeCategory);
     } else {
       pool = buildGlobalQuizPool();
     }
@@ -851,11 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Seçili şık sayısı kadar şık üret
     let candidatePool = [];
     if (lastExamScope === 'current') {
-      if (activeCategory === 'ozel_cizimler') {
-        candidatePool = customDrawManager ? customDrawManager.getQuizItems() : [];
-      } else {
-        candidatePool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
-      }
+      candidatePool = buildCategoryQuizPool(activeCategory);
     } else {
       candidatePool = buildGlobalQuizPool();
     }
@@ -1351,7 +1343,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (customDrawManager && customDrawManager.drawings) {
       pool.push(...customDrawManager.drawings);
     }
-    return pool.filter(i => i && typeof i.lat === 'number' && typeof i.lng === 'number');
+    // Aynı cevabı temsil eden kayıtlar tek ortak cevaba indirgenir.
+    // Genel havuzda TÜM kategoriler bir arada olduğu için kategoriler arası
+    // bağlar (ör. Karapınar: obruk + kumul + kuraklık + GES) burada birleşir.
+    const birlesik = typeof gruplaHavuz === 'function' ? gruplaHavuz(pool) : pool;
+    return birlesik.filter(i => i && typeof i.lat === 'number' && typeof i.lng === 'number');
+  }
+
+  /**
+   * Tek kategori kapsamındaki havuz. Genel havuzla aynı birleştirme kuralına
+   * tabidir; aksi halde "Bu kategori" seçeneğiyle oynayan kullanıcı grupsuz,
+   * yani aynı yeri iki kez soran bir havuzla karşılaşıyordu.
+   */
+  function buildCategoryQuizPool(categoryKey) {
+    let pool;
+    if (categoryKey === 'ozel_cizimler') {
+      pool = customDrawManager ? customDrawManager.getRawQuizItems() : [];
+    } else {
+      const varsayilan = (typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[categoryKey]) || [];
+      const kullanici = customDrawManager ? customDrawManager.getDrawingsByCategory(categoryKey) : [];
+      pool = [...varsayilan, ...kullanici];
+    }
+    return typeof gruplaHavuz === 'function' ? gruplaHavuz(pool) : pool;
   }
 
   // Calisan HER oyun motorunu ve zamanlayiciyi kapatan tek giris noktasi.
@@ -1418,11 +1431,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let pool = null;
     if (scope === 'current') {
-      if (activeCategory === 'ozel_cizimler') {
-        pool = customDrawManager ? customDrawManager.getQuizItems() : [];
-      } else {
-        pool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
-      }
+      pool = buildCategoryQuizPool(activeCategory);
     } else {
       pool = buildGlobalQuizPool();
     }
@@ -1513,11 +1522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let pool = [];
     if (scope === 'current') {
-      if (activeCategory === 'ozel_cizimler') {
-        pool = customDrawManager ? customDrawManager.getQuizItems() : [];
-      } else {
-        pool = (COGRAFYA_DATA && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
-      }
+      pool = buildCategoryQuizPool(activeCategory);
       pool = pool.filter(i => i && typeof i.lat === 'number' && typeof i.lng === 'number');
     } else {
       pool = buildGlobalQuizPool();
@@ -3803,36 +3808,36 @@ document.addEventListener('DOMContentLoaded', () => {
       return members;
     }
 
-    // DURUM 1: İkisi zaten aynı grupta -> BAĞI KOPAR (Unlink)
+    // DURUM 1: İkisi zaten aynı grupta -> Zaten bağlı olduğunu bildir (Grup yapısını koru)
     if (item1.groupId && item2.groupId && item1.groupId === item2.groupId) {
       const gid = item1.groupId;
       const groupMembers = getAllGroupMembers(gid);
-
-      if (groupMembers.length <= 2) {
-        groupMembers.forEach(m => saveItemGroupId(m, null));
-      } else {
-        saveItemGroupId(item2, null);
-      }
-
-      return { action: 'unlinked', item1, item2, groupId: null };
+      return { action: 'already_linked', item1, item2, members: groupMembers, groupId: gid };
     }
 
-    // DURUM 2: Birleştir (Link / Group)
+    // DURUM 2: Birleştir (Link / Group Merge)
     let targetGroupId = item1.groupId || item2.groupId;
     if (!targetGroupId) {
       targetGroupId = 'grp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
     }
 
+    const oldGid1 = item1.groupId;
     const oldGid2 = item2.groupId;
     saveItemGroupId(item1, targetGroupId);
     saveItemGroupId(item2, targetGroupId);
 
+    // Eğer gruplardan birinin önceden başka üyeleri varsa tüm üyeleri ortak grupta birleştir
+    if (oldGid1 && oldGid1 !== targetGroupId) {
+      const oldMembers1 = getAllGroupMembers(oldGid1);
+      oldMembers1.forEach(m => saveItemGroupId(m, targetGroupId));
+    }
     if (oldGid2 && oldGid2 !== targetGroupId) {
-      const oldMembers = getAllGroupMembers(oldGid2);
-      oldMembers.forEach(m => saveItemGroupId(m, targetGroupId));
+      const oldMembers2 = getAllGroupMembers(oldGid2);
+      oldMembers2.forEach(m => saveItemGroupId(m, targetGroupId));
     }
 
-    return { action: 'linked', item1, item2, groupId: targetGroupId };
+    const allMembers = getAllGroupMembers(targetGroupId);
+    return { action: 'linked', item1, item2, members: allMembers, groupId: targetGroupId };
   }
 
   // --- Harita balonundaki düğmeler -----------------------------------------
@@ -3885,7 +3890,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (res.action === 'linked') {
-      showEditToast(`✨ "${res.item1.name}" ve "${res.item2.name}" BİRLEŞTİRİLDİ! Artık testlerde tek bir ortak cevap sayılacak.`);
+      const count = (res.members && res.members.length) || 2;
+      showEditToast(`✨ "${res.item1.name}" ve "${res.item2.name}" BİRLEŞTİRİLDİ! (${count} elemanlı ortak grup oluşturuldu).`);
+    } else if (res.action === 'already_linked') {
+      const count = (res.members && res.members.length) || 2;
+      showEditToast(`🔗 "${res.item1.name}" ve "${res.item2.name}" zaten aynı birleşik grupta yer alıyor (${count} üye). Grubu ayırmak için balondaki "Bağı Kopar" butonunu kullanabilirsiniz.`);
     } else {
       showEditToast(`🔗 "${res.item1.name}" ve "${res.item2.name}" arasındaki bağlantı KOPARILDI (Ayrıldı).`);
     }

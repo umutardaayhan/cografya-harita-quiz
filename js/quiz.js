@@ -212,7 +212,10 @@ class GeographyQuiz {
 
   reloadCategoryItems() {
     if (this.customPool) {
-      this.items = [...this.customPool];
+      // Özel havuzlar (fatih, deneme, şimşek, yanlışlarım) da birleştirilir
+      this.items = typeof gruplaHavuz === 'function'
+        ? gruplaHavuz(this.customPool)
+        : [...this.customPool];
       this.remainingPool = [...this.items];
       this.wrongPool = [];
       this.recentQuestionIds = [];
@@ -221,19 +224,24 @@ class GeographyQuiz {
 
     let source = [];
     if (this.categoryKey === 'ozel_cizimler') {
-      source = this.customDrawManager ? this.customDrawManager.getQuizItems() : [];
+      source = this.customDrawManager ? this.customDrawManager.getRawQuizItems() : [];
     } else {
       const defaultItems = COGRAFYA_DATA[this.categoryKey] || [];
       const userAddedItems = this.customDrawManager ? this.customDrawManager.getDrawingsByCategory(this.categoryKey) : [];
       source = [...defaultItems, ...userAddedItems];
     }
 
+    // Alt tür süzgeci BİRLEŞTİRMEDEN ÖNCE uygulanır: aksi halde "Volkanik
+    // Dağlar" filtresi, grubun volkanik olmayan üyesini de içeri sokardı.
     if (this.activeSubType && this.activeSubType !== 'all' && typeof SUB_TYPES !== 'undefined' && SUB_TYPES[this.categoryKey]) {
       const subObj = SUB_TYPES[this.categoryKey].find(s => s.id === this.activeSubType);
       if (subObj && typeof subObj.filter === 'function') {
         source = source.filter(subObj.filter);
       }
     }
+
+    // Aynı cevabı temsil eden kayıtlar tek bir ortak cevaba indirgenir
+    if (typeof gruplaHavuz === 'function') source = gruplaHavuz(source);
 
     this.items = source;
     this.remainingPool = [...this.items];
@@ -374,14 +382,41 @@ class GeographyQuiz {
       return true;
     }
 
+    // Grup üyeleri listesi kontrolü (composite grup)
+    const membersA = itemA.memberIds || (itemA.groupItems && itemA.groupItems.map(m => m.id)) || [itemA.id];
+    const membersB = itemB.memberIds || (itemB.groupItems && itemB.groupItems.map(m => m.id)) || [itemB.id];
+    if (membersA.some(id => membersB.includes(id))) {
+      return true;
+    }
+
     const coordA = this.getItemCoord(itemA);
     const coordB = this.getItemCoord(itemB);
     if (!coordA || !coordB) return false;
 
-    // Birebir aynı koordinat veya ~1.5 km içi çakışma (0.015 derece)
+    // Mesafe kontrolü: 30 km altındaki veya aynı koordinattaki tüm noktalar aynı konumu temsil eder
+    const distKm = this.getDistanceInKm(coordA.lat, coordA.lng, coordB.lat, coordB.lng);
+    if (distKm <= 30) {
+      return true;
+    }
+
     const latDiff = Math.abs(coordA.lat - coordB.lat);
     const lngDiff = Math.abs(coordA.lng - coordB.lng);
-    return (latDiff < 0.015 && lngDiff < 0.015);
+    if (latDiff < 0.25 && lngDiff < 0.25) {
+      return true;
+    }
+
+    // Aynı il/şehir ismi taşıyan noktasal varlıklar
+    const isPointA = (itemA.shapeType === 'point' || !itemA.coordinates || itemA.coordinates.length <= 1);
+    const isPointB = (itemB.shapeType === 'point' || !itemB.coordinates || itemB.coordinates.length <= 1);
+    if (isPointA && isPointB && itemA.city && itemB.city) {
+      const cityA = itemA.city.toLowerCase().trim();
+      const cityB = itemB.city.toLowerCase().trim();
+      if (cityA === cityB && cityA.length > 2 && !cityA.includes('-') && !cityA.includes('&')) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // Zorluğa Göre Çeldirici Seçimi (Çakışan Konum ve Çift Şık Korumalı)
@@ -670,7 +705,8 @@ class GeographyQuiz {
     const isCorrect = (selectedId === q.id) || 
                       (q.isGroup && Array.isArray(q.memberIds) && q.memberIds.includes(selectedId)) ||
                       (q.groupId && (selectedId === q.groupId)) ||
-                      (q.groupId && selectedItem && selectedItem.groupId && (q.groupId === selectedItem.groupId));
+                      (q.groupId && selectedItem && selectedItem.groupId && (q.groupId === selectedItem.groupId)) ||
+                      (selectedItem && this.areLocationsSame(selectedItem, q));
     const qId = q.id;
 
     if (!this.analytics[qId]) {
