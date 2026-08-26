@@ -844,8 +844,11 @@ class GeographyMap {
               color: '#3b82f6',
               weight: 2,
               fillColor: '#3b82f6',
-              fillOpacity: 0.25
+              fillOpacity: 0.25,
+              className: 'polygon-choice-shape'
             }).addTo(this.multiChoiceLayerGroup);
+            poly.optionId = opt.id;
+            poly.subItemId = subItem.id;
             poly.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
           } else if (subItem.shapeType === 'polyline' && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
             subGeometriVar = true;
@@ -853,8 +856,11 @@ class GeographyMap {
               color: '#3b82f6',
               weight: 4,
               opacity: 0.7,
-              dashArray: '4, 4'
+              dashArray: '4, 4',
+              className: 'polyline-choice-shape'
             }).addTo(this.multiChoiceLayerGroup);
+            line.optionId = opt.id;
+            line.subItemId = subItem.id;
             line.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
           }
 
@@ -964,10 +970,12 @@ class GeographyMap {
               className: 'city-choice-polygon'
             },
             onEachFeature: (feature, layer) => {
+              layer.optionId = opt.id;
               layer.on('click', () => {
                 if (onSelectOption) onSelectOption(opt.id);
               });
               layer.on('mouseover', () => {
+                if (this._isAnsweredQuestion) return;
                 layer.setStyle({
                   weight: 3.2,
                   color: '#60a5fa',
@@ -975,10 +983,12 @@ class GeographyMap {
                 });
               });
               layer.on('mouseout', () => {
+                if (this._isAnsweredQuestion) return;
                 geoLayer.resetStyle(layer);
               });
             }
           }).addTo(this.multiChoiceLayerGroup);
+          geoLayer.optionId = opt.id;
         }
       } else if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
         geometriVar = true;
@@ -986,8 +996,10 @@ class GeographyMap {
           color: '#3b82f6',
           weight: 4,
           opacity: 0.7,
-          dashArray: '4, 4'
+          dashArray: '4, 4',
+          className: 'polyline-choice-shape'
         }).addTo(this.multiChoiceLayerGroup);
+        polyline.optionId = opt.id;
         
         polyline.on('click', () => {
           if (onSelectOption) onSelectOption(opt.id);
@@ -998,8 +1010,10 @@ class GeographyMap {
           color: '#3b82f6',
           weight: 2,
           fillColor: '#3b82f6',
-          fillOpacity: 0.2
+          fillOpacity: 0.2,
+          className: 'polygon-choice-shape'
         }).addTo(this.multiChoiceLayerGroup);
+        polygon.optionId = opt.id;
 
         polygon.on('click', () => {
           if (onSelectOption) onSelectOption(opt.id);
@@ -1081,8 +1095,11 @@ class GeographyMap {
     }
   }
 
-  // Çoklu Seçenek Cevap Renklendirmesi
+  // Çoklu Seçenek Cevap Renklendirmesi (Pinler ve Şehir/Geometri Poligonları)
   highlightMultiChoiceAnswer(correctId, selectedId) {
+    this._isAnsweredQuestion = true;
+
+    // 1. Harita üzerindeki şık rozetleri (pinler)
     const pins = document.querySelectorAll('.choice-pin-container');
     pins.forEach(pin => {
       const id = pin.dataset.id;
@@ -1096,10 +1113,115 @@ class GeographyMap {
         pin.classList.add('dimmed-pin');
       }
     });
+
+    // 2. Harita üzerindeki şehir poligonları ve çizim şekilleri (Glow Efektleri)
+    if (this.multiChoiceLayerGroup) {
+      this.multiChoiceLayerGroup.eachLayer(layer => {
+        const updateVectorStyle = (l) => {
+          const id = l.optionId || (l.feature && l.feature.properties && (l.feature.properties.id || l.feature.properties.name));
+          if (!id) return;
+
+          const isCorrect = (id === correctId);
+          const isSelectedWrong = (id === selectedId && selectedId !== correctId);
+
+          if (isCorrect) {
+            if (typeof l.setStyle === 'function') {
+              l.setStyle({
+                color: '#10b981',
+                weight: 4.5,
+                fillColor: '#10b981',
+                fillOpacity: 0.72
+              });
+            }
+            if (l._path) {
+              l._path.classList.remove('wrong-choice-polygon', 'glow-red-polygon', 'dimmed-choice-polygon', 'city-choice-polygon');
+              l._path.classList.add('correct-choice-polygon', 'glow-green-polygon');
+            }
+            if (l.bringToFront) l.bringToFront();
+          } else if (isSelectedWrong) {
+            if (typeof l.setStyle === 'function') {
+              l.setStyle({
+                color: '#ef4444',
+                weight: 4.5,
+                fillColor: '#ef4444',
+                fillOpacity: 0.72
+              });
+            }
+            if (l._path) {
+              l._path.classList.remove('correct-choice-polygon', 'glow-green-polygon', 'dimmed-choice-polygon', 'city-choice-polygon');
+              l._path.classList.add('wrong-choice-polygon', 'glow-red-polygon');
+            }
+            if (l.bringToFront) l.bringToFront();
+          } else {
+            if (typeof l.setStyle === 'function') {
+              l.setStyle({
+                color: 'rgba(148, 163, 184, 0.25)',
+                weight: 1.2,
+                fillColor: 'rgba(15, 23, 42, 0.35)',
+                fillOpacity: 0.12
+              });
+            }
+            if (l._path) {
+              l._path.classList.remove('correct-choice-polygon', 'glow-green-polygon', 'wrong-choice-polygon', 'glow-red-polygon');
+              l._path.classList.add('dimmed-choice-polygon');
+            }
+          }
+        };
+
+        if (typeof layer.eachLayer === 'function') {
+          layer.eachLayer(updateVectorStyle);
+        } else {
+          updateVectorStyle(layer);
+        }
+      });
+    }
+  }
+
+  // Tekil Konum Sorusu Cevap Renklendirmesi (Konumdan İsim Bul Modu)
+  highlightSingleChoiceAnswer(isCorrect) {
+    this._isAnsweredQuestion = true;
+
+    if (this.currentShapeLayer) {
+      const updateSingleStyle = (l) => {
+        if (isCorrect) {
+          if (typeof l.setStyle === 'function') {
+            l.setStyle({
+              color: '#10b981',
+              weight: 4.5,
+              fillColor: '#10b981',
+              fillOpacity: 0.72
+            });
+          }
+          if (l._path) {
+            l._path.classList.remove('animated-pulse-polygon', 'glow-red-polygon', 'wrong-choice-polygon');
+            l._path.classList.add('correct-choice-polygon', 'glow-green-polygon');
+          }
+        } else {
+          if (typeof l.setStyle === 'function') {
+            l.setStyle({
+              color: '#ef4444',
+              weight: 4.5,
+              fillColor: '#ef4444',
+              fillOpacity: 0.72
+            });
+          }
+          if (l._path) {
+            l._path.classList.remove('animated-pulse-polygon', 'glow-green-polygon', 'correct-choice-polygon');
+            l._path.classList.add('wrong-choice-polygon', 'glow-red-polygon');
+          }
+        }
+      };
+
+      if (typeof this.currentShapeLayer.eachLayer === 'function') {
+        this.currentShapeLayer.eachLayer(updateSingleStyle);
+      } else {
+        updateSingleStyle(this.currentShapeLayer);
+      }
+    }
   }
 
   /**
-   * Sik pinlerini panel butonlariyla AYNI duruma getirir.
+   * Sik pinlerini ve poligonlarini panel butonlariyla AYNI duruma getirir.
    * states: { <id>: { state: 'correct'|'wrong'|'dim'|'picked'|'', order: <n>|null } }
    * Boylece harita ve panel tek kaynaktan beslenir, ikisi ayrisamaz.
    */
@@ -1123,9 +1245,34 @@ class GeographyMap {
         letterEl.textContent = info.order ? info.order : (pin.dataset.letter || letterEl.textContent);
       }
     });
+
+    if (this.multiChoiceLayerGroup) {
+      this.multiChoiceLayerGroup.eachLayer(layer => {
+        const updateVectorState = (l) => {
+          const id = l.optionId || (l.feature && l.feature.properties && (l.feature.properties.id || l.feature.properties.name));
+          if (!id || !states[id]) return;
+          const st = states[id].state;
+          if (st === 'correct') {
+            if (typeof l.setStyle === 'function') l.setStyle({ color: '#10b981', weight: 4.5, fillColor: '#10b981', fillOpacity: 0.72 });
+            if (l._path) { l._path.classList.remove('glow-red-polygon', 'dimmed-choice-polygon'); l._path.classList.add('glow-green-polygon'); }
+            if (l.bringToFront) l.bringToFront();
+          } else if (st === 'wrong') {
+            if (typeof l.setStyle === 'function') l.setStyle({ color: '#ef4444', weight: 4.5, fillColor: '#ef4444', fillOpacity: 0.72 });
+            if (l._path) { l._path.classList.remove('glow-green-polygon', 'dimmed-choice-polygon'); l._path.classList.add('glow-red-polygon'); }
+            if (l.bringToFront) l.bringToFront();
+          } else if (st === 'dim') {
+            if (typeof l.setStyle === 'function') l.setStyle({ color: 'rgba(148, 163, 184, 0.25)', weight: 1.2, fillColor: 'rgba(15, 23, 42, 0.35)', fillOpacity: 0.12 });
+            if (l._path) { l._path.classList.remove('glow-green-polygon', 'glow-red-polygon'); l._path.classList.add('dimmed-choice-polygon'); }
+          }
+        };
+        if (typeof layer.eachLayer === 'function') layer.eachLayer(updateVectorState);
+        else updateVectorState(layer);
+      });
+    }
   }
 
   clearQuestionHighlight() {
+    this._isAnsweredQuestion = false;
     if (this.currentMarker) {
       this.map.removeLayer(this.currentMarker);
       this.currentMarker = null;

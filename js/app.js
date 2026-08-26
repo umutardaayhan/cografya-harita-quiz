@@ -690,9 +690,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Harita üzerindeki çoklu pinleri renklendir
+    // Harita üzerindeki çoklu pinleri ve poligonları renklendir
     if (result.actualFormat === 'find_on_map') {
       geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
+    } else {
+      geoMap.highlightSingleChoiceAnswer(result.isCorrect);
     }
 
     // 🔗 Bağlı Grup / Maden Ağı: Soru cevaplandığında tüm maden noktalarını ve bağlantı ağını göster
