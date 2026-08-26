@@ -333,37 +333,251 @@ class MapPaintGame extends MutlakKonumGameBase {
     return noktalar;
   }
 
-  // ---------------------------------------------------------------
-  // HEDEF SINIFLAR
-  // ---------------------------------------------------------------
-  buildTargets() {
-    const adaylar = [];
-    const hedefler = Object.keys(OLUSUM_TAKSONOMISI).filter(grupKey => {
-      if (!this.categoryFilter) return true;
-      const grup = OLUSUM_TAKSONOMISI[grupKey];
-      return grupKey === this.categoryFilter || (grup.kaynak && grup.kaynak === this.categoryFilter);
-    });
-
-    const aktifGruplar = hedefler.length > 0 ? hedefler : Object.keys(OLUSUM_TAKSONOMISI);
-
-    aktifGruplar.forEach(grupKey => {
-      const grup = OLUSUM_TAKSONOMISI[grupKey];
-      let items = (COGRAFYA_DATA[grup.kaynak || grupKey] || []).slice();
-      if (typeof grup.onFiltre === 'function') items = items.filter(grup.onFiltre);
-
-      const kova = {};
-      items.forEach(it => {
-        const s = FormationTypeGame.siniflandir(it, grup);
-        if (s && typeof it.lat === 'number') (kova[s.key] || (kova[s.key] = [])).push(it);
-      });
-
-      Object.keys(kova).forEach(k => {
-        if (kova[k].length >= 3) {
-          adaylar.push({ grupKey, grup, sinif: grup.siniflar.find(x => x.key === k), items: kova[k] });
+  _getItemSamplePoints(item) {
+    if (!item) return [];
+    const pts = [];
+    if (typeof item.lat === 'number' && typeof item.lng === 'number') {
+      pts.push({ lat: item.lat, lng: item.lng });
+    }
+    if (item.coordinates && Array.isArray(item.coordinates)) {
+      const flattenCoords = (arr) => {
+        if (!Array.isArray(arr)) return;
+        if (arr.length >= 2 && typeof arr[0] === 'number' && typeof arr[1] === 'number') {
+          pts.push({ lat: arr[0], lng: arr[1] });
+        } else {
+          arr.forEach(flattenCoords);
+        }
+      };
+      flattenCoords(item.coordinates);
+    }
+    if (item.groupItems && Array.isArray(item.groupItems)) {
+      item.groupItems.forEach(sub => {
+        if (typeof sub.lat === 'number' && typeof sub.lng === 'number') {
+          pts.push({ lat: sub.lat, lng: sub.lng });
         }
       });
-    });
+    }
+    return pts;
+  }
+
+  _isItemCovered(item, boyaliOrnekler, tol) {
+    const pts = this._getItemSamplePoints(item);
+    if (!pts.length) return false;
+    for (const pt of pts) {
+      if (this.boyaliMi(pt.lat, pt.lng)) return true;
+      if (boyaliOrnekler && boyaliOrnekler.some(b => this.kmMesafe(b.lat, b.lng, pt.lat, pt.lng) <= tol)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  _isNearItem(lat, lng, item, tol) {
+    const pts = this._getItemSamplePoints(item);
+    if (!pts.length) return false;
+    return pts.some(pt => this.kmMesafe(lat, lng, pt.lat, pt.lng) <= tol);
+  }
+
+  // ---------------------------------------------------------------
+  // HEDEF SINIFLAR & HAVZALAR (EVRENSEL MOD)
+  // ---------------------------------------------------------------
+  buildTargets(categoryFilter = null) {
+    this.categoryFilter = categoryFilter;
+    const adaylar = [];
+
+    const buildCategoryTargets = (catKey) => {
+      // 1. ÖZEL ÇİZİMLER HARİTASI
+      if (catKey === 'ozel_cizimler') {
+        let drawings = [];
+        if (typeof customDrawManager !== 'undefined' && customDrawManager) {
+          const activeMap = customDrawManager.getActiveMap ? customDrawManager.getActiveMap() : null;
+          drawings = activeMap ? (activeMap.drawings || []) : (customDrawManager.drawings || []);
+        }
+        if (drawings.length) {
+          const groupMap = {};
+          const nonGrouped = [];
+          drawings.forEach(d => {
+            if (d.groupId) {
+              (groupMap[d.groupId] || (groupMap[d.groupId] = [])).push(d);
+            } else {
+              nonGrouped.push(d);
+            }
+          });
+          Object.keys(groupMap).forEach(gId => {
+            const gItems = groupMap[gId];
+            const gName = gItems[0].groupName || gItems[0].name || 'Çizim Grubu';
+            adaylar.push({
+              grupKey: 'ozel_cizimler',
+              grup: { label: 'Özel Çizimler', soruAdi: 'özel çizim', cogulIn: 'çizimlerin' },
+              sinif: { key: gId, label: gName, icon: '🎨' },
+              items: gItems
+            });
+          });
+          if (nonGrouped.length > 0) {
+            if (nonGrouped.length <= 4) {
+              nonGrouped.forEach(d => {
+                adaylar.push({
+                  grupKey: 'ozel_cizimler',
+                  grup: { label: 'Özel Çizim', soruAdi: 'çizim', cogulIn: 'çizimin' },
+                  sinif: { key: d.id, label: d.name || 'Özel Çizim', icon: '🎨' },
+                  items: [d]
+                });
+              });
+            } else {
+              const byType = {};
+              nonGrouped.forEach(d => {
+                const k = d.type || d.category || 'Özel Çizimler';
+                (byType[k] || (byType[k] = [])).push(d);
+              });
+              Object.keys(byType).forEach(k => {
+                adaylar.push({
+                  grupKey: 'ozel_cizimler',
+                  grup: { label: 'Özel Çizimler', soruAdi: 'çizim', cogulIn: 'çizimlerin' },
+                  sinif: { key: k, label: k, icon: '🎨' },
+                  items: byType[k]
+                });
+              });
+            }
+          }
+        }
+        return;
+      }
+
+      // 2. STANDART KATEGORİLER
+      let items = (typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[catKey]) ? COGRAFYA_DATA[catKey].slice() : [];
+      if (!items.length) return;
+
+      const catMeta = (typeof CATEGORIES !== 'undefined') ? CATEGORIES.find(c => c.id === catKey) : null;
+      const catTitle = catMeta ? catMeta.title : catKey;
+      const catIcon = catMeta ? (catMeta.icon || '📍') : '📍';
+
+      // A. groupId bağlantıları (Maden havzaları, Enerji havzaları vb.)
+      const groupMap = {};
+      items.forEach(it => {
+        if (it.groupId) {
+          (groupMap[it.groupId] || (groupMap[it.groupId] = [])).push(it);
+        }
+      });
+      if (Object.keys(groupMap).length >= 1) {
+        Object.keys(groupMap).forEach(gId => {
+          const gItems = groupMap[gId];
+          const gName = gItems[0].groupName || gItems[0].name || gId;
+          adaylar.push({
+            grupKey: catKey,
+            grup: { label: catTitle, soruAdi: 'havza', cogulIn: 'çıkarım/üretim merkezlerinin' },
+            sinif: { key: gId, label: gName, icon: catIcon },
+            items: gItems
+          });
+        });
+        return;
+      }
+
+      // B. Oluşum Taksonomisi (Dağlar, Ovalar, Platolar, Göller)
+      if (typeof OLUSUM_TAKSONOMISI !== 'undefined') {
+        const olusumGrup = OLUSUM_TAKSONOMISI[catKey] || Object.values(OLUSUM_TAKSONOMISI).find(g => g.kaynak === catKey);
+        if (olusumGrup) {
+          let oItems = items;
+          if (typeof olusumGrup.onFiltre === 'function') oItems = oItems.filter(olusumGrup.onFiltre);
+          const kova = {};
+          oItems.forEach(it => {
+            const s = (typeof FormationTypeGame !== 'undefined' && FormationTypeGame.siniflandir)
+              ? FormationTypeGame.siniflandir(it, olusumGrup) : null;
+            if (s) (kova[s.key] || (kova[s.key] = [])).push(it);
+          });
+          const matchedClasses = Object.keys(kova);
+          if (matchedClasses.length > 0) {
+            matchedClasses.forEach(k => {
+              const sinifObj = olusumGrup.siniflar.find(x => x.key === k) || { key: k, label: k, icon: catIcon };
+              adaylar.push({
+                grupKey: catKey,
+                grup: olusumGrup,
+                sinif: sinifObj,
+                items: kova[k]
+              });
+            });
+            return;
+          }
+        }
+      }
+
+      // C. Alt Türler (SUB_TYPES)
+      const subList = (typeof SUB_TYPES !== 'undefined' && SUB_TYPES[catKey]) ? SUB_TYPES[catKey].filter(s => s.id !== 'all') : [];
+      let subMatched = false;
+      if (subList.length > 0) {
+        subList.forEach(st => {
+          let matched = [];
+          if (typeof st.filter === 'function') {
+            matched = items.filter(st.filter);
+          } else if (st.id) {
+            matched = items.filter(it => it.sub === st.id || (it.type && it.type.toLowerCase().includes(st.id)));
+          }
+          if (matched.length >= 1) {
+            subMatched = true;
+            adaylar.push({
+              grupKey: catKey,
+              grup: { label: catTitle, soruAdi: 'öğe', cogulIn: 'alanların' },
+              sinif: { key: st.id, label: st.label, icon: st.icon || catIcon },
+              items: matched
+            });
+          }
+        });
+      }
+      if (subMatched) return;
+
+      // D. Tür (type) bazında gruplama
+      const typeMap = {};
+      items.forEach(it => {
+        const rawType = (it.type || 'Diğer').split('/')[0].split('(')[0].trim();
+        (typeMap[rawType] || (typeMap[rawType] = [])).push(it);
+      });
+      const typeKeys = Object.keys(typeMap).filter(k => typeMap[k].length >= 1);
+      if (typeKeys.length > 1) {
+        typeKeys.forEach(tKey => {
+          adaylar.push({
+            grupKey: catKey,
+            grup: { label: catTitle, soruAdi: 'tür', cogulIn: 'alanların' },
+            sinif: { key: tKey, label: `${tKey} Alanları`, icon: catIcon },
+            items: typeMap[tKey]
+          });
+        });
+        return;
+      }
+
+      // E. Bölge (region) bazında gruplama fallback
+      const regMap = {};
+      items.forEach(it => {
+        const reg = it.region || 'Türkiye Geneli';
+        (regMap[reg] || (regMap[reg] = [])).push(it);
+      });
+      Object.keys(regMap).forEach(reg => {
+        adaylar.push({
+          grupKey: catKey,
+          grup: { label: catTitle, soruAdi: 'bölge', cogulIn: 'yerlerin' },
+          sinif: { key: reg, label: `${reg} (${catTitle})`, icon: catIcon },
+          items: regMap[reg]
+        });
+      });
+    };
+
+    if (this.categoryFilter) {
+      buildCategoryTargets(this.categoryFilter);
+    } else {
+      // Tüm kategoriler
+      if (typeof CATEGORIES !== 'undefined') {
+        CATEGORIES.forEach(c => {
+          if (c.id) buildCategoryTargets(c.id);
+        });
+      }
+      if (typeof customDrawManager !== 'undefined' && customDrawManager && customDrawManager.drawings && customDrawManager.drawings.length) {
+        buildCategoryTargets('ozel_cizimler');
+      }
+      if (!adaylar.length && typeof COGRAFYA_DATA !== 'undefined') {
+        Object.keys(COGRAFYA_DATA).forEach(k => buildCategoryTargets(k));
+      }
+    }
+
     this.hedefler = adaylar;
+    this.maxRounds = Math.max(1, Math.min(5, adaylar.length));
     return adaylar;
   }
 
@@ -374,7 +588,7 @@ class MapPaintGame extends MutlakKonumGameBase {
     this.resetProgress();
     this.categoryFilter = categoryFilter;
     this.applySettings();
-    this.buildTargets();
+    this.buildTargets(categoryFilter);
     this.kullanilan = [];
     this.boyamaSkorlari = [];
     this.quizDogru = 0;
@@ -390,7 +604,15 @@ class MapPaintGame extends MutlakKonumGameBase {
     this.quizKuyrugu = [];
     this.quizIdx = 0;
     this.applySettings();
-    if (!this.hedefler || !this.hedefler.length) this.buildTargets();
+    if (!this.hedefler || !this.hedefler.length) this.buildTargets(this.categoryFilter);
+
+    if (!this.hedefler || !this.hedefler.length) {
+      return this.baseView({
+        badge: '🖌️ Harita Boyama',
+        prompt: 'Bu harita için boyama hedefi bulunamadı.',
+        options: [{ id: '__bitir__', label: 'Çıkış', sub: 'Oyun modundan çık' }]
+      });
+    }
 
     let havuz = this.hedefler.filter(h => !this.kullanilan.includes(h.sinif.key + h.grupKey));
     if (!havuz.length) { this.kullanilan = []; havuz = this.hedefler; }
@@ -403,10 +625,18 @@ class MapPaintGame extends MutlakKonumGameBase {
     this.geoMap.clearAll();
     this.geoMap.resetView();
 
+    let promptText = '';
+    const sinifAdi = hedef.sinif.label;
+    if (sinifAdi.toLowerCase().includes('alan') || sinifAdi.toLowerCase().includes('havza') || sinifAdi.toLowerCase().includes('kuşak') || sinifAdi.toLowerCase().includes('bölge') || sinifAdi.toLowerCase().includes('santral') || sinifAdi.toLowerCase().includes('çizim')) {
+      promptText = `<strong>${trUpper(sinifAdi)}</strong> alanlarını harita üzerinde boya.`;
+    } else {
+      promptText = `<strong>${trUpper(sinifAdi)}</strong> sınıfına giren ${hedef.grup.cogulIn || 'yerlerin'} bulunduğu alanları boya.`;
+    }
+
     return this.baseView({
       badge: `🖌️ ${hedef.grup.label} · Alan Boyama`,
-      prompt: `<strong>${trUpper(hedef.sinif.label)}</strong> sınıfına giren ${hedef.grup.cogulIn} bulunduğu alanları boya.`,
-      hint: `Haritada sürükleyerek serbestçe boya. Türkiye'de ${hedef.items.length} adet ${hedef.sinif.label.toLowerCase()} var · ${this.toleransKm} km yakınlık doğru sayılır`,
+      prompt: promptText,
+      hint: `Haritada sürükleyerek serbestçe boya. Türkiye'de ${hedef.items.length} nokta/bölge var · ${this.toleransKm} km yakınlık doğru sayılır`,
       options: [{ id: '__bitir__', label: '✅ Boyamayı Bitir', sub: 'Değerlendir ve puanı gör' }],
       paintMode: true,
       mapPins: null
@@ -419,21 +649,16 @@ class MapPaintGame extends MutlakKonumGameBase {
     const hedefler = this.aktifHedef.items;
 
     const yakinHedefVar = (lat, lng) =>
-      hedefler.some(h => this.kmMesafe(lat, lng, h.lat, h.lng) <= tol);
+      hedefler.some(h => this._isNearItem(lat, lng, h, tol));
 
     const isabetli = boyali.filter(p => yakinHedefVar(p.lat, p.lng)).length;
-    const kapsanan = hedefler.filter(h =>
-      this.boyaliMi(h.lat, h.lng) ||
-      boyali.some(p => this.kmMesafe(p.lat, p.lng, h.lat, h.lng) <= tol)
-    ).length;
+    const kapsanan = hedefler.filter(h => this._isItemCovered(h, boyali, tol)).length;
 
     const isabet = boyali.length ? isabetli / boyali.length : 0;
     const kapsama = hedefler.length ? kapsanan / hedefler.length : 0;
     const f1 = (isabet + kapsama) > 0 ? (2 * isabet * kapsama) / (isabet + kapsama) : 0;
 
-    // AŞIRI BOYAMA CEZASI: yalnızca tolerans kullanılsaydı "tüm haritayı boya"
-    // stratejisi yüksek puan alırdı. Boyanan alan, hedeflerin tolerans kadar
-    // genişletilmiş "kabul bölgesi"nin kaç katıysa puan o oranda kırpılır.
+    // AŞIRI BOYAMA CEZASI
     let kabul = 0;
     for (let lat = BOYAMA_ALANI.latMin; lat <= BOYAMA_ALANI.latMax; lat += ORNEKLEME_ADIMI) {
       for (let lng = BOYAMA_ALANI.lngMin; lng <= BOYAMA_ALANI.lngMax; lng += ORNEKLEME_ADIMI) {
@@ -462,18 +687,35 @@ class MapPaintGame extends MutlakKonumGameBase {
     const boyali = this.boyaliOrnekler();
 
     this.aktifHedef.items.forEach(it => {
-      const bulundu = this.boyaliMi(it.lat, it.lng) ||
-        boyali.some(p => this.kmMesafe(p.lat, p.lng, it.lat, it.lng) <= tol);
-      this.hedefLayer.addLayer(L.circle([it.lat, it.lng], {
-        radius: tol * 1000,
-        color: bulundu ? '#10b981' : '#ef4444',
-        fillColor: bulundu ? '#10b981' : '#ef4444',
-        fillOpacity: 0.1, weight: 1.5, dashArray: '4, 6', interactive: false
-      }));
-      this.hedefLayer.addLayer(L.circleMarker([it.lat, it.lng], {
-        radius: 6, fillColor: bulundu ? '#10b981' : '#ef4444',
-        color: '#fff', weight: 2, fillOpacity: 1
-      }).bindTooltip(it.name, { direction: 'top' }));
+      const bulundu = this._isItemCovered(it, boyali, tol);
+      const color = bulundu ? '#10b981' : '#ef4444';
+      const label = it.name || it.groupName || 'Hedef';
+
+      if (it.shapeType === 'polygon' && it.coordinates) {
+        this.hedefLayer.addLayer(L.polygon(it.coordinates, {
+          color, fillColor: color, fillOpacity: 0.35, weight: 2
+        }).bindTooltip(label, { direction: 'top' }));
+      } else if (it.shapeType === 'polyline' && it.coordinates) {
+        this.hedefLayer.addLayer(L.polyline(it.coordinates, {
+          color, weight: 4
+        }).bindTooltip(label, { direction: 'top' }));
+      } else if (it.shapeType === 'circle' && typeof it.lat === 'number') {
+        this.hedefLayer.addLayer(L.circle([it.lat, it.lng], {
+          radius: it.radius || (tol * 1000),
+          color, fillColor: color, fillOpacity: 0.25, weight: 2
+        }).bindTooltip(label, { direction: 'top' }));
+      } else if (typeof it.lat === 'number' && typeof it.lng === 'number') {
+        this.hedefLayer.addLayer(L.circle([it.lat, it.lng], {
+          radius: tol * 1000,
+          color,
+          fillColor: color,
+          fillOpacity: 0.1, weight: 1.5, dashArray: '4, 6', interactive: false
+        }));
+        this.hedefLayer.addLayer(L.circleMarker([it.lat, it.lng], {
+          radius: 6, fillColor: color,
+          color: '#fff', weight: 2, fillOpacity: 1
+        }).bindTooltip(label, { direction: 'top' }));
+      }
     });
   }
 
@@ -513,7 +755,7 @@ class MapPaintGame extends MutlakKonumGameBase {
             { label: 'İsabet (boyadığının ne kadarı doğru)', value: `%${s.isabet}` },
             { label: 'Boyadığın alan', value: s.asim > 1.05 ? `uygun alanın ${s.asim}× katı — puan kırpıldı` : 'ölçülü' }
           ],
-          note: `Yeşil daireler bulduğun örnekler, kırmızılar kaçırdıkların. Daire yarıçapı ${this.toleransKm} km — doğru sayılan yakınlık.` +
+          note: `Yeşil daireler/şekiller bulduğun örnekler, kırmızılar kaçırdıkların. Daire yarıçapı ${this.toleransKm} km — doğru sayılan yakınlık.` +
                 (this.sorularAcik
                   ? ` Şimdi ${this.quizKuyrugu.length} tanesi tek tek sorulacak.`
                   : ' Sorular kapalı; sonraki alana geçiliyor.')
@@ -531,7 +773,7 @@ class MapPaintGame extends MutlakKonumGameBase {
     if (dogru) { this.score += 100; this.quizDogru++; }
 
     this.history.push({
-      left: `${this.round}.${this.quizIdx + 1} ${soru.name}`,
+      left: `${this.round}.${this.quizIdx + 1} ${soru.name || soru.groupName || 'Öğe'}`,
       right: dogru ? '+100' : 'yanlış',
       ok: dogru
     });
@@ -540,14 +782,14 @@ class MapPaintGame extends MutlakKonumGameBase {
       badge: `🖌️ ${this.aktifHedef.sinif.label} · Soru ${this.quizIdx + 1}/${this.quizKuyrugu.length}`,
       prompt: this._quizMetni(),
       options: this.quizSecenekler.map(it => ({
-        id: it.id, label: it.name, sub: it.region || '',
+        id: it.id, label: it.name || it.groupName || 'İsimsiz', sub: it.region || it.type || '',
         state: it.id === soru.id ? 'correct' : (it.id === secilenId ? 'wrong' : 'dim')
       })),
       feedback: {
         ok: dogru,
-        title: dogru ? `✓ Doğru — ${soru.name}` : `✗ Yanlış — Doğrusu: ${soru.name}`,
+        title: dogru ? `✓ Doğru — ${soru.name || soru.groupName || 'Tebrikler'}` : `✗ Yanlış — Doğrusu: ${soru.name || soru.groupName || 'Cevap'}`,
         rows: [
-          { label: soru.name, value: soru.type, highlight: true },
+          { label: soru.name || soru.groupName || 'Öğe', value: soru.type || soru.category || '—', highlight: true },
           { label: 'Bölge', value: soru.region || '—' }
         ],
         note: soru.kpssNot || ''
@@ -564,8 +806,22 @@ class MapPaintGame extends MutlakKonumGameBase {
     this.answered = false;
     const soru = this.quizKuyrugu[this.quizIdx];
     const h = this.aktifHedef;
-    const havuz = (COGRAFYA_DATA[h.grup.kaynak || h.grupKey] || [])
-      .filter(x => x.id !== soru.id && typeof x.lat === 'number');
+
+    // Çeldirici havuzu
+    let havuz = [];
+    if (h.grupKey === 'ozel_cizimler' && typeof customDrawManager !== 'undefined' && customDrawManager) {
+      havuz = (customDrawManager.getRawQuizItems ? customDrawManager.getRawQuizItems() : (customDrawManager.drawings || []))
+        .filter(x => x.id !== soru.id);
+    } else {
+      const kaynak = h.grup.kaynak || h.grupKey;
+      havuz = ((typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[kaynak]) || [])
+        .filter(x => x.id !== soru.id);
+    }
+    if (havuz.length < 3 && typeof COGRAFYA_DATA !== 'undefined') {
+      const globalPool = Object.values(COGRAFYA_DATA).flat().filter(x => x && x.id !== soru.id);
+      havuz = havuz.concat(globalPool);
+    }
+
     const celdirici = MK.shuffle(havuz).slice(0, Math.max(1, this.optionCount - 1));
     this.quizSecenekler = MK.shuffle([soru, ...celdirici]);
 
@@ -576,9 +832,9 @@ class MapPaintGame extends MutlakKonumGameBase {
 
     return this.baseView({
       badge: `🖌️ ${h.sinif.label} · Soru ${this.quizIdx + 1}/${this.quizKuyrugu.length}`,
-      prompt: this._quizMetni(),
+      prompt: `Haritada işaretli <strong>${soru.name || h.sinif.label}</strong> hangisidir?`,
       hint: 'Boyadığın alandaki örnekler tek tek soruluyor.',
-      options: this.quizSecenekler.map(it => ({ id: it.id, label: it.name, sub: it.region || '' })),
+      options: this.quizSecenekler.map(it => ({ id: it.id, label: it.name || it.groupName || 'İsimsiz', sub: it.region || it.type || '' })),
       mapPins: null
     });
   }

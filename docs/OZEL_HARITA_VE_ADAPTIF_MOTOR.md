@@ -202,10 +202,20 @@ KPSS ve coğrafya harita sorularında görsel il-konum pekiştirmesini hızland�
 - Her üye noktanın üzerinde parıldayan halka (`network-pulse-ring`) ve il/ilçe adı (`network-item-label`) belirir.
 - Harita tüm ağı kapsayacak şekilde otomatik kadrajlanır; böylece öğrenci o madenin Türkiye genelindeki tüm çıkarım koridorunu ve coğrafi yayılımını her soruda pekiştirir.
 
+---
 
+## 15. 🖌️ Harita Boyama Modu: Harita Harita Çalışma & Özel Çizim Haritaları Entegrasyonu
 
+Kullanıcının harita üzerinde fırça ve silgiyle serbestçe coğrafi alanları boyadığı **Harita Boyama Modu (`MapPaintGame`)**, tüm DLC paketleriyle ve kullanıcının kendi çizim haritalarıyla tam uyumlu hale getirilmiştir:
 
+### 15.1 🎯 Kapsam Seçimi (Scope Selection)
+- Oyun modları menüsünden `🖌️ Harita Boyama` seçildiğinde diğer modlarda olduğu gibi **Kapsam Seçim Modalı (`openGameScopeModal`)** açılır.
+- **Tüm Paketler:** Kurulu tüm standart paketlerin ve çizim haritalarının hedefleri karma bir havuzda sunulur.
+- **Yalnızca Seçili Harita:** Kullanıcının aktif çalıştığı kategori (örn. `maden_bolgeleri`, `enerji_bolgeleri`, `daglar`, `toprak`, `sehirler` vb.) veya **Özel Çizim Haritası (`ozel_cizimler`)** üzerinden hedefler derlenir.
 
-
-
+### 15.2 📐 Çoklu Geometri & Çizim Desteği (Multi-Geometry Engine)
+- **Noktasal Varlıklar (Point):** Tolerans dairesi (`toleransKm`) ile boyama kapsama ve aşırı boyama cezası ($F_1 / \text{aşım}$) hesaplanır.
+- **Alansal & Çizgisel Çizimler (Polygon & Polyline):** Poligon köşe noktaları, ağırlık merkezi ve çizgi segmentleri örneklenerek boyama isabeti ölçülür.
+- **Dairesel Çizimler (Circle):** Kendi yarıçapı ve merkez koordinatları üzerinden boyama kabul alanı oluşturulur.
+- **Cevap Aydınlatması (`cevabiGoster`):** Boyama bittiğinde doğru boyanan şekiller zümrüt yeşili (`#10b981`), kaçırılan yerler mercan kırmızısı (`#ef4444`) renk tonuyla haritada netleştirilir.
 

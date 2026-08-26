@@ -2050,19 +2050,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mutlak konum ve oluşum/boyama mod butonları
+  // Mutlak konum ve oluşum mod butonları
   Object.entries({
     'btn-mk-sun': 'sun',
     'btn-mk-temp': 'temp',
     'btn-mk-daynight': 'daynight',
     'btn-mk-coord': 'coord',
     'btn-mk-duel': 'duel',
-    'btn-olusum-mode': 'olusum',
-    'btn-boyama-mode': 'boyama'
+    'btn-olusum-mode': 'olusum'
   }).forEach(([btnId, key]) => {
     const btn = document.getElementById(btnId);
     if (btn) btn.addEventListener('click', () => startMutlakKonumMode(key));
   });
+
+  const btnBoyamaMode = document.getElementById('btn-boyama-mode');
+  if (btnBoyamaMode) {
+    btnBoyamaMode.addEventListener('click', () => {
+      openGameScopeModal('Harita Boyama', '🖌️', (scope) => startMutlakKonumMode('boyama', scope));
+    });
+  }
   // Soru formatı artık Araçlar menüsünün içinde; ayrı bir açılır düğmesi yok.
   // Eski elemanlara yapılan atıflar null olabilir, bu yüzden hepsi korumalı.
   if (formatToggleBtn && formatDropdown) {
