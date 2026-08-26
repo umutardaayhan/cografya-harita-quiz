@@ -14,6 +14,7 @@ const CATEGORIES_EXT = [
   { id: "fay",            title: "Fay Hatları & Tektonik",  short: "Fay",     icon: "💥", color: "#f97316" },
   { id: "madenler",       title: "Madenler & Enerji",       short: "Maden",   icon: "⛏️", color: "#78716c" },
   { id: "maden_bolgeleri", title: "Madenler Bölge Haritası", short: "Maden Bölge", icon: "⛏️", color: "#d97706" },
+  { id: "enerji_bolgeleri", title: "Enerji Kaynakları Bölge Haritası", short: "Enerji Bölge", icon: "⚡", color: "#f59e0b" },
   { id: "nufus",          title: "Nüfus & Yerleşme",        short: "Nüfus",   icon: "👥", color: "#0ea5e9" },
   { id: "bolgeler",       title: "Bölgeler & Bölümler",     short: "Bölge",   icon: "🗺️", color: "#7c3aed" },
   { id: "kiyilar",        title: "Kıyılar, Adalar & Denizler", short: "Kıyı", icon: "🏖️", color: "#06b6d4" },
@@ -68,6 +69,12 @@ const SUB_TYPES_EXT = {
     { id: "endustriyel", label: "Endüstriyel Hammaddeler", icon: "🧱", filter: (i) => ic(i, "endustriyel hammadde") },
     { id: "enerji_ham",  label: "Enerji & Fosil Yakıtlar", icon: "🛢️", filter: (i) => ic(i, "enerji hammaddesi") },
     { id: "kiymetli",    label: "Kıymetli Maden & Taşlar", icon: "💎", filter: (i) => ic(i, "kiymetli maden") || ic(i, "yoresel el sanatlari") }
+  ],
+  enerji_bolgeleri: [
+    { id: "all",           label: "Tüm Enerji Havzaları",    icon: "⚡" },
+    { id: "fosil_yakit",   label: "Fosil Yakıtlar & Termik", icon: "🔥", filter: (i) => ic(i, "fosil") || ic(i, "komur") || ic(i, "linyit") || ic(i, "petrol") || ic(i, "dogal gaz") || ic(i, "asfaltit") },
+    { id: "yenilenebilir", label: "Yenilenebilir Enerji (HES/RES/GES/JES)", icon: "🌱", filter: (i) => ic(i, "yenilenebilir") || ic(i, "hidroelektrik") || ic(i, "ruzgar") || ic(i, "gunes") || ic(i, "jeotermal") || ic(i, "biyoenerji") },
+    { id: "nukleer",       label: "Nükleer Enerji & Yakıt",  icon: "⚛️", filter: (i) => ic(i, "nukleer") || ic(i, "uranyum") || ic(i, "toryum") }
   ],
   nufus: [
     { id: "all",         label: "Tüm Nüfus Konuları",     icon: "👥" },

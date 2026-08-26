@@ -192,3 +192,20 @@ Her müfredat başlığı bir PAKET olarak dağıtılır; ayrıntı için
 * **Altın Kuşakları:** Uşak (Kışladağ), İzmir (Ovacık), Balıkesir (Havran), Çanakkale, Bilecik (Söğüt), Eskişehir, Gümüşhane (Mastra), Artvin (Cerattepe).
 * **Dolomit Havzası:** Adana, Kahramanmaraş. (İskenderun Demir-Çelik eritken & refrakter girdisi).
 
+---
+
+## 9. ⚡ Enerji Kaynakları Bölge Haritası (Havzalar, Santraller & Kuşaklar)
+* **Taş Kömürü Havzası (1. Zaman):** Zonguldak (Çatalağzı ÇATES, Kozlu/Üzülmez), Bartın (Amasra), Karabük (Kardemir).
+* **Linyit Havzaları ve Santralleri (3. Zaman):** Kahramanmaraş (Afşin-Elbistan - En büyük rezerv), Manisa (Soma), Kütahya (Tunçbilek/Seyitömer), Muğla (Yatağan/Yeniköy/Kemerköy), Ankara (Çayırhan), Çanakkale (Çan), Sivas (Kangal), Bursa (Orhaneli), Şırnak (Silopi - Asfaltit).
+* **Petrol Sahaları & Rafinerileri:** Batman (Raman/Garzan & İlk Rafineri), Adıyaman (Kahta), Diyarbakır (Ergani/Bismil), Şırnak (Gabar Dağı - 41 API hafif petrol), Kırıkkale (Orta Anadolu Rafinerisi), İzmir (Aliağa/STAR), Kocaeli (İPRAŞ).
+* **Doğal Gaz Sahaları & Çevrim Santralleri:** Karadeniz Sakarya Gaz Sahası (Filyos), Kırklareli (Hamitabat - İlk çevrim), Tekirdağ (Hayrabolu), Mardin (Çamurlu), İstanbul (Ambarlı), Bursa (Ovaakça), İzmir (Aliağa).
+* **Fırat Havzası HES:** Atatürk Barajı (En büyük HES), Karakaya Barajı, Keban Barajı (İlk mega baraj), Birecik Barajı.
+* **Çoruh Havzası HES Kuşağı:** Yusufeli Barajı (275 m - TR'nin en yüksek barajı), Deriner Barajı (249 m), Borçka Barajı, Muratlı Barajı, Artvin Barajı.
+* **Dicle & Kızılırmak HES:** Ilısu Barajı (Veysel Eroğlu - Dicle'nin en büyüğü), Batman Barajı, Altınkaya Barajı (Kızılırmak'ın en büyüğü), Hirfanlı Barajı.
+* **Rüzgar Enerjisi Santralleri (RES):** Balıkesir (Kurulu güç Lideri), İzmir (Alaçatı - İLK RES), Çanakkale (Bozcaada), Manisa (Soma RES), Hatay (Belen Geçidi RES), Afyonkarahisar (Dinar RES).
+* **Güneş Enerjisi Sahaları (GES):** Konya (Karapınar Kalyon GES - 1350 MW TR ve Avrupa'nın en büyüğü), Şanlıurfa (GAP Güneş Kuşağı - En yüksek güneşlenme), Van (Tuşba GES - Temiz atmosfer/yüksek rakım), Kayseri (İncesu), Mardin, Antalya.
+* **Jeotermal Enerji Santralleri (JES):** Aydın (Büyük Menderes Grabeni - Kurulu güç Lideri), Denizli (Sarayköy/Kızıldere - İLK JES), Manisa (Gediz Grabeni / Alaşehir), Çanakkale (Tuzla), Afyonkarahisar (Sandıklı - Şehir ısıtması ve seracılık).
+* **Biyokütle & Çöp Gazı Tesisleri:** İstanbul (Odayeri & Kömürcüoda - Avrupa'nın en büyük çöp gazı santrali), Ankara (Mamak & Sincan), Konya (Aslım), İzmir (Harmandalı), Adana (Sofulu), Samsun (Avdan).
+* **Nükleer Enerji & Hammaddeleri:** Mersin (Akkuyu NGS - İLK nükleer santral), Sinop (İnceburun NGS - 2. santral sahası), Eskişehir (Sivrihisar/Beylikova - Dünyanın 2. büyük Toryum rezervi), Yozgat (Sorgun - Uranyum), Manisa (Köprübaşı - Uranyum).
+
+

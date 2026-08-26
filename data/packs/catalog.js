@@ -259,6 +259,21 @@ const GEO_CATALOG = {
         }
       }
     },
+    "enerji_bolgeleri": {
+      "canonical": "energy_regions",
+      "icon": "⚡",
+      "color": "#f59e0b",
+      "i18n": {
+        "tr": {
+          "title": "Enerji Kaynakları Bölge Haritası",
+          "short": "Enerji Bölge"
+        },
+        "en": {
+          "title": "Energy Regions",
+          "short": "Energy"
+        }
+      }
+    },
     "nufus": {
       "canonical": "population",
       "icon": "👥",
@@ -1354,6 +1369,56 @@ const GEO_CATALOG = {
           },
           "en": {
             "label": "Kıymetli Maden & Taşlar"
+          }
+        }
+      }
+    ],
+    "enerji_bolgeleri": [
+      {
+        "id": "all",
+        "icon": "⚡",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Enerji Havzaları"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "fosil_yakit",
+        "icon": "🔥",
+        "i18n": {
+          "tr": {
+            "label": "Fosil Yakıtlar & Termik"
+          },
+          "en": {
+            "label": "Fosil Yakıtlar & Termik"
+          }
+        }
+      },
+      {
+        "id": "yenilenebilir",
+        "icon": "🌱",
+        "i18n": {
+          "tr": {
+            "label": "Yenilenebilir Enerji (HES/RES/GES/JES)"
+          },
+          "en": {
+            "label": "Yenilenebilir Enerji (HES/RES/GES/JES)"
+          }
+        }
+      },
+      {
+        "id": "nukleer",
+        "icon": "⚛️",
+        "i18n": {
+          "tr": {
+            "label": "Nükleer Enerji & Yakıt"
+          },
+          "en": {
+            "label": "Nükleer Enerji & Yakıt"
           }
         }
       }
@@ -2516,18 +2581,70 @@ const GEO_CATALOG = {
           "icon": "⛏️",
           "count": 23,
           "tr": "Maden Havzası",
-          "en": "Mining Basin",
-          "geom": "polygon"
+          "en": "Mining Basin"
         }
       ],
       "i18n": {
         "tr": {
           "title": "Madenler Bölge Haritası",
-          "desc": "Demir, bakır, krom, bor, boksit ve 23 madenin Türkiye genelindeki bölgesel poligon havzaları."
+          "desc": "Demir, bakır, krom, bor, boksit ve 23 madenin Türkiye genelindeki bölgesel havzaları ve pin grupları."
         },
         "en": {
           "title": "Mining Regional Basins",
-          "desc": "Regional polygon basins for iron, copper, chromium, boron, bauxite and 23 mineral zones."
+          "desc": "Regional basins and pin groups for iron, copper, chromium, boron, bauxite and 23 mineral zones."
+        }
+      }
+    },
+    {
+      "id": "tr.enerji_bolgeleri",
+      "country": "tr",
+      "group": "ekonomik",
+      "version": 1,
+      "icon": "⚡",
+      "color": "#f59e0b",
+      "file": "data/packs/pack.tr.enerji_bolgeleri.js",
+      "virtual": false,
+      "categories": [
+        "enerji_bolgeleri"
+      ],
+      "tiers": {
+        "1": 24,
+        "2": 44,
+        "3": 68
+      },
+      "sizeKb": {
+        "1": 16,
+        "2": 29,
+        "3": 44
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "conqueror",
+        "speedrun",
+        "exam"
+      ],
+      "recommends": [
+        "tr.madenler",
+        "tr.maden_bolgeleri"
+      ],
+      "planRows": [
+        {
+          "cat": "enerji_bolgeleri",
+          "icon": "⚡",
+          "count": 12,
+          "tr": "Enerji Havzası",
+          "en": "Energy Basin"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Enerji Kaynakları Bölge Haritası",
+          "desc": "Taş kömürü, linyit, petrol, doğal gaz, HES, RES, GES, JES, biyoenerji ve nükleer enerji havzaları."
+        },
+        "en": {
+          "title": "Energy Regional Basins",
+          "desc": "Regional basins and pin groups for coal, lignite, oil, gas, hydro, wind, solar, geothermal, biomass and nuclear."
         }
       }
     },

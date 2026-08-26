@@ -110,6 +110,7 @@ const CATEGORY_META = {
   fay:           { canonical: 'tectonics',    en: { title: 'Faults & Tectonics',      short: 'Fault' } },
   madenler:      { canonical: 'minerals',     en: { title: 'Minerals & Energy',       short: 'Mineral' } },
   maden_bolgeleri: { canonical: 'mineral_regions', en: { title: 'Mineral Regions',       short: 'Minerals' } },
+  enerji_bolgeleri: { canonical: 'energy_regions', en: { title: 'Energy Regions',         short: 'Energy' } },
   nufus:         { canonical: 'population',   en: { title: 'Population & Settlement', short: 'Pop.' } },
   bolgeler:      { canonical: 'regions',      en: { title: 'Regions & Subregions',    short: 'Region' } },
   kiyilar:       { canonical: 'coasts',       en: { title: 'Coasts, Islands & Seas',  short: 'Coast' } },
@@ -128,7 +129,7 @@ const PACK_GROUPS = {
   'tr.gecitler': 'fiziki', 'tr.iklim_orman': 'fiziki', 'tr.toprak': 'fiziki',
   'tr.afet': 'fiziki', 'tr.fay': 'fiziki', 'tr.kiyilar': 'fiziki',
   'tr.dis_kuvvetler': 'fiziki',
-  'tr.beseri': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.maden_bolgeleri': 'ekonomik', 'tr.turizm': 'ekonomik',
+  'tr.beseri': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.maden_bolgeleri': 'ekonomik', 'tr.enerji_bolgeleri': 'ekonomik', 'tr.turizm': 'ekonomik',
   'tr.ulasim': 'ekonomik',
   'tr.sehirler': 'beseri', 'tr.nufus': 'beseri', 'tr.bolgeler': 'beseri', 'tr.iliskiler': 'beseri',
   'tr.mutlak_konum': 'modul'
@@ -254,11 +255,20 @@ const PACK_DEFS = [
   {
     id: 'tr.maden_bolgeleri', country: 'tr', categories: ['maden_bolgeleri'],
     icon: '⛏️', color: '#d97706',
-    tr: { title: 'Madenler Bölge Haritası', desc: 'Demir, bakır, krom, bor, boksit ve 23 madenin Türkiye genelindeki bölgesel poligon havzaları.' },
-    en: { title: 'Mining Regional Basins', desc: 'Regional polygon basins for iron, copper, chromium, boron, bauxite and 23 mineral zones.' },
+    tr: { title: 'Madenler Bölge Haritası', desc: 'Demir, bakır, krom, bor, boksit ve 23 madenin Türkiye genelindeki bölgesel havzaları ve pin grupları.' },
+    en: { title: 'Mining Regional Basins', desc: 'Regional basins and pin groups for iron, copper, chromium, boron, bauxite and 23 mineral zones.' },
     unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
-    planRows: [{ cat: 'maden_bolgeleri', icon: '⛏️', count: 23, tr: 'Maden Havzası', en: 'Mining Basin', geom: 'polygon' }],
+    planRows: [{ cat: 'maden_bolgeleri', icon: '⛏️', count: 23, tr: 'Maden Havzası', en: 'Mining Basin' }],
     recommends: ['tr.madenler']
+  },
+  {
+    id: 'tr.enerji_bolgeleri', country: 'tr', categories: ['enerji_bolgeleri'],
+    icon: '⚡', color: '#f59e0b',
+    tr: { title: 'Enerji Kaynakları Bölge Haritası', desc: 'Taş kömürü, linyit, petrol, doğal gaz, HES, RES, GES, JES, biyoenerji ve nükleer enerji havzaları.' },
+    en: { title: 'Energy Regional Basins', desc: 'Regional basins and pin groups for coal, lignite, oil, gas, hydro, wind, solar, geothermal, biomass and nuclear.' },
+    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam'],
+    planRows: [{ cat: 'enerji_bolgeleri', icon: '⚡', count: 12, tr: 'Enerji Havzası', en: 'Energy Basin' }],
+    recommends: ['tr.madenler', 'tr.maden_bolgeleri']
   },
   {
     id: 'tr.sehirler', country: 'tr', categories: ['sehirler'],
