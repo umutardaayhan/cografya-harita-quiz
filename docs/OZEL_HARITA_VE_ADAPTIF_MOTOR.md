@@ -183,6 +183,26 @@ KPSS ve coğrafya harita sorularında görsel il-konum pekiştirmesini hızland�
   - **Panel Entegrasyonu:** Test panelindeki şık butonlarında da noktasal konumlar için ilgili şehrin adı görüntülenir.
   - **Kalıcılık:** Tercih `localStorage` (`kpss_cografya_pin_city_enabled`) üzerinde kalıcı olarak saklanır.
 
+---
+
+## 14. 🎲 Bağlı Elemanlar İçin Rastgele Alt Küme Örneklemesi ve Tam Ağ Gösterimi (Random Subset & Full Network Reveal)
+
+Çok merkezli maden havzaları, tarım-sanayi kuşakları ve birbirine bağlanmış kompozit yer şekilleri için geliştirilen dinamik test motoru özelliği:
+
+### 14.1 🎲 Rastgele Alt Küme Örneklemesi (Random Subset Sampling)
+- **Problem:** Çok üyeli bir maden havzası (örneğin 6 merkezli Krom, 9 merkezli Altın veya 12 merkezli Tuz) her sorulduğunda tüm üyelerin sabit olarak haritaya konması, testin tahmin edilebilir ve ezbere dönüşmesine yol açıyordu.
+- **Çözüm:** Bir grup sorulduğunda; o grubun üye sayısına göre **en az 2 adet (tekli gruplarda 1 adet)** rastgele sayıda alt küme seçilir:
+  $$2 \le k \le \text{Toplam Üye Sayısı}$$
+- Seçilen $k$ adet nokta `displayGroupItems` olarak haritaya yansıtılır. Örneğin bir soruda Krom Elazığ + Muğla olarak sorulurken, diğer soruda Bursa + Adana + Kop Dağı olarak sorulabilir.
+- **Çift Yönlü Uyumluluk:** Hem `identify` (konumdan isim bul) hem de `find_on_map` (isimden haritada bul) modlarında şık pinleri bu dinamik alt kümeler üzerinden üretilir.
+
+### 14.2 🌐 Cevap Sonrası Tam Ağ Aydınlatması (Full Network & Line Reveal)
+- Soru cevaplandığında (doğru veya yanlış); soru esnasında sadece 2-3 nokta gösterilmiş olsa bile haritada o madene/gruba ait **TÜM noktalar** (`groupItems`) anında aydınlatılır.
+- Üye noktalar arasında en kısa tur (TSP / MST döngüsü) üzerinden akan yeşil/parıldayan bağlantı çizgileri (`animated-network-line`) çizilir.
+- Her üye noktanın üzerinde parıldayan halka (`network-pulse-ring`) ve il/ilçe adı (`network-item-label`) belirir.
+- Harita tüm ağı kapsayacak şekilde otomatik kadrajlanır; böylece öğrenci o madenin Türkiye genelindeki tüm çıkarım koridorunu ve coğrafi yayılımını her soruda pekiştirir.
+
+
 
 
 

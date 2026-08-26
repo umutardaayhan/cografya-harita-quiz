@@ -695,6 +695,11 @@ document.addEventListener('DOMContentLoaded', () => {
       geoMap.highlightMultiChoiceAnswer(result.correctId, result.selectedId);
     }
 
+    // 🔗 Bağlı Grup / Maden Ağı: Soru cevaplandığında tüm maden noktalarını ve bağlantı ağını göster
+    if (result.currentQuestion && (result.currentQuestion.isGroup || (result.currentQuestion.groupItems && result.currentQuestion.groupItems.length > 1))) {
+      geoMap.revealFullGroupNetwork(result.currentQuestion, result.isCorrect);
+    }
+
     // 📅 Plan Oturumu Aktifse: sonucu kaydet, HUD'u tazele
     if (planSessionActive) {
       studyPlan.recordAnswer(result.isCorrect, result.correctId);

@@ -419,6 +419,23 @@ class GeographyQuiz {
     return false;
   }
 
+  // 🎲 Birleşik / Bağlı Grup Elemanları İçin Rastgele Alt Küme Örneklemesi (En az 2, tekli 1)
+  sampleGroupItems(item) {
+    if (!item) return item;
+    if (!item.isGroup || !Array.isArray(item.groupItems) || item.groupItems.length <= 1) {
+      if (item.isGroup && Array.isArray(item.groupItems)) {
+        item.displayGroupItems = [...item.groupItems];
+      }
+      return item;
+    }
+    const total = item.groupItems.length;
+    // 2 ile total arasında rastgele k eleman seç
+    const k = Math.floor(Math.random() * (total - 2 + 1)) + 2;
+    const shuffled = [...item.groupItems].sort(() => 0.5 - Math.random());
+    item.displayGroupItems = shuffled.slice(0, k);
+    return item;
+  }
+
   // Zorluğa Göre Çeldirici Seçimi (Çakışan Konum ve Çift Şık Korumalı)
   selectDistractorsByProximity(targetQuestion, candidatePool, count) {
     // 1. targetQuestion ile aynı konumdaki tüm adayları kesinlikle ele
@@ -623,6 +640,10 @@ class GeographyQuiz {
       const distractors = this.selectDistractorsByProximity(this.currentQuestion, candidatePool, targetDistractorCount);
       this.currentOptions = [this.currentQuestion, ...distractors].sort(() => 0.5 - Math.random());
     }
+
+    // 🎲 Birleşik / Bağlı Grup Elemanları İçin Rastgele Alt Küme Örneklemesi
+    this.currentQuestion = this.sampleGroupItems(this.currentQuestion);
+    this.currentOptions = (this.currentOptions || []).map(opt => this.sampleGroupItems(opt));
 
     // SADE, NET VE LAF KALABALIĞINDAN ARINDIRILMIŞ SORU BAŞLIKLARI (Cevap Spoil Önleme Korumalı)
     let questionText = '';

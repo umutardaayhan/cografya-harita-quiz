@@ -119,6 +119,7 @@ class GeographyMap {
     this.multiChoiceLayerGroup = L.layerGroup();
     this.exploreLayerGroup = L.layerGroup();
     this.drawingLayerGroup = L.layerGroup();
+    this.networkLayerGroup = L.layerGroup();
     // Çizim yaparken seçili konunun mevcut şekilleri solgun bir referans olarak
     // haritada kalır; kendi pane'inde ve TIKLANAMAZ durur (bkz. showReferenceLayer)
     this.referenceLayerGroup = L.layerGroup();
@@ -325,6 +326,7 @@ class GeographyMap {
 
     this.exploreLayerGroup.addTo(this.map);
     this.multiChoiceLayerGroup.addTo(this.map);
+    this.networkLayerGroup.addTo(this.map);
 
     // Leaflet konteyner boyutunu ÖNBELLEKLER. Harita, kabı henüz ölçülmemişken
     // kurulduğunda bu önbellek 0x0 kalıyor; sonraki `flyToBounds` çağrıları
@@ -690,12 +692,15 @@ class GeographyMap {
       }
     }
 
-    // Birleşik / Grup Şekiller (Composite Group): Tüm alt şekilleri aynı anda parıldat
+    // Birleşik / Grup Şekiller (Composite Group): Örneklenmiş alt şekilleri parıldat
     if (questionItem.isGroup && Array.isArray(questionItem.groupItems)) {
       const groupLayer = L.featureGroup();
       const polyColor = topicColor(questionItem.category);
+      const itemsToRender = (questionItem.displayGroupItems && questionItem.displayGroupItems.length > 0)
+        ? questionItem.displayGroupItems
+        : questionItem.groupItems;
 
-      questionItem.groupItems.forEach(subItem => {
+      itemsToRender.forEach(subItem => {
         const sType = subItem.shapeType || 'point';
         if (sType === 'point' || !subItem.coordinates || !Array.isArray(subItem.coordinates[0])) {
           const icon = this.getCustomCategoryIcon(subItem, { isimsiz: true });
@@ -821,7 +826,11 @@ class GeographyMap {
       // Grubun her bir üyesinin (İzmir'deki dağ ve Van'daki dağ) tam kendi konumunda
       // AYNI şık pini (örn. A Pini) ve kendi geometrisi (poligon/çizgi/nokta) gösterilir.
       if (opt.isGroup && Array.isArray(opt.groupItems) && opt.groupItems.length > 0) {
-        opt.groupItems.forEach(subItem => {
+        const itemsToRender = (opt.displayGroupItems && opt.displayGroupItems.length > 0)
+          ? opt.displayGroupItems
+          : opt.groupItems;
+
+        itemsToRender.forEach(subItem => {
           const subLat = subItem.lat;
           const subLng = subItem.lng;
           if (Number.isFinite(subLat) && Number.isFinite(subLng)) {
@@ -1127,6 +1136,124 @@ class GeographyMap {
     }
     this.multiChoiceLayerGroup.clearLayers();
     this.exploreLayerGroup.clearLayers(); // Keşif modundan test moduna geçince keşif noktalarını temizle
+    if (this.networkLayerGroup) {
+      this.networkLayerGroup.clearLayers();
+    }
+  }
+
+  /**
+   * Soru cevaplandığında (doğru veya yanlış) o madene/gruba bağlı TÜM noktaları
+   * ve bağlantı ağını (network) haritada aydınlatır ve gösterir.
+   */
+  revealFullGroupNetwork(item, isCorrect = true) {
+    if (!item) return;
+    const members = (item.isGroup && Array.isArray(item.groupItems) && item.groupItems.length > 0)
+      ? item.groupItems
+      : null;
+
+    if (!members || members.length <= 1) return;
+
+    if (this.networkLayerGroup) {
+      this.networkLayerGroup.clearLayers();
+    }
+
+    const points = [];
+    const boundsCoords = [];
+    const netColor = isCorrect ? '#22c55e' : '#38bdf8';
+    const badgeClass = isCorrect ? 'network-correct' : 'network-highlight';
+
+    members.forEach(member => {
+      const lat = member.lat;
+      const lng = member.lng;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      points.push([lat, lng]);
+      boundsCoords.push([lat, lng]);
+
+      const customIcon = this.getCustomCategoryIcon(member);
+      const origHtml = (customIcon.options && customIcon.options.html) || '<div class="pulse-circle"></div>';
+      const memberCity = this.findCityName(member) || member.city || member.region || member.name;
+
+      const revealIcon = L.divIcon({
+        className: 'network-reveal-icon',
+        html: `
+          <div class="network-reveal-wrapper ${badgeClass}">
+            <div class="network-pulse-ring"></div>
+            ${origHtml}
+            <span class="network-item-label">${memberCity}</span>
+          </div>
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+      });
+
+      const marker = L.marker([lat, lng], { icon: revealIcon });
+      marker.bindTooltip(`<b>${member.name}</b><br><small style="color:#cbd5e1">${member.city || ''} (${member.region || ''})</small>`, { sticky: true });
+      this.networkLayerGroup.addLayer(marker);
+
+      // Ek poligon/çizgisel koordinatı varsa çiz
+      if (member.shapeType === 'polygon' && Array.isArray(member.coordinates) && Array.isArray(member.coordinates[0])) {
+        L.polygon(member.coordinates, {
+          color: netColor,
+          weight: 2.5,
+          fillColor: netColor,
+          fillOpacity: 0.35,
+          className: 'animated-pulse-polygon'
+        }).addTo(this.networkLayerGroup);
+      } else if (member.shapeType === 'polyline' && Array.isArray(member.coordinates) && Array.isArray(member.coordinates[0])) {
+        L.polyline(member.coordinates, {
+          color: netColor,
+          weight: 4.5,
+          opacity: 0.85,
+          className: 'animated-pulse-polyline'
+        }).addTo(this.networkLayerGroup);
+      }
+    });
+
+    // Noktalar arası bağlantı ağı (TSP döngüsü)
+    if (points.length === 2) {
+      const line = L.polyline(points, {
+        color: netColor,
+        weight: 3.5,
+        opacity: 0.9,
+        dashArray: '6, 6',
+        className: 'animated-network-line'
+      });
+      this.networkLayerGroup.addLayer(line);
+    } else if (points.length >= 3) {
+      const visited = [0];
+      const remaining = [];
+      for (let i = 1; i < points.length; i++) remaining.push(i);
+      while (remaining.length > 0) {
+        const last = visited[visited.length - 1];
+        let bestDist = Infinity, bestIdx = 0, bestRemIdx = 0;
+        for (let r = 0; r < remaining.length; r++) {
+          const cand = remaining[r];
+          const d = Math.hypot(points[last][0] - points[cand][0], points[last][1] - points[cand][1]);
+          if (d < bestDist) {
+            bestDist = d;
+            bestIdx = cand;
+            bestRemIdx = r;
+          }
+        }
+        visited.push(bestIdx);
+        remaining.splice(bestRemIdx, 1);
+      }
+      visited.push(visited[0]);
+      const orderedPoints = visited.map(i => points[i]);
+      const line = L.polyline(orderedPoints, {
+        color: netColor,
+        weight: 3.5,
+        opacity: 0.9,
+        dashArray: '6, 6',
+        className: 'animated-network-line'
+      });
+      this.networkLayerGroup.addLayer(line);
+    }
+
+    if (this.autoZoomEnabled && boundsCoords.length > 0) {
+      this.flyToBoundsSafely(L.latLngBounds(boundsCoords).pad(0.35));
+    }
   }
 
   highlightQuestionLocation(lat, lng) {
