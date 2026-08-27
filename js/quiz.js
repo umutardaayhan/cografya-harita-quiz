@@ -25,6 +25,7 @@ class GeographyQuiz {
     this.optionCount = this.loadOptionCount(); // 2, 3, 4, 5, 6, 8, 'all'
     this.difficultyLevel = this.loadDifficultyLevel(); // 1, 2, 3, 4, 5
     this.homogeneityLevel = this.loadHomogeneityLevel(); // 1 (Bilinmeyen/Yanlışlar ön planda) - 5 (Tam homojen / eşit)
+    this.dynamicGroupSampling = this.loadDynamicGroupSampling(); // Çok merkezli maden/grup havzalarında dinamik alt küme (true/false)
     this.quizFormat = this.loadQuizFormat(); // 'identify', 'find_on_map', 'mixed'
     this.currentActualFormat = 'identify';
 
@@ -149,6 +150,25 @@ class GeographyQuiz {
 
   getHomogeneityLevel() {
     return this.homogeneityLevel;
+  }
+
+  loadDynamicGroupSampling() {
+    const saved = localStorage.getItem('kpss_dynamic_group_sampling');
+    return saved !== null ? (saved === 'true') : true; // Varsayılan: açık (true)
+  }
+
+  setDynamicGroupSampling(enabled) {
+    this.dynamicGroupSampling = !!enabled;
+    localStorage.setItem('kpss_dynamic_group_sampling', this.dynamicGroupSampling.toString());
+  }
+
+  getDynamicGroupSampling() {
+    return this.dynamicGroupSampling;
+  }
+
+  toggleDynamicGroupSampling() {
+    this.setDynamicGroupSampling(!this.dynamicGroupSampling);
+    return this.dynamicGroupSampling;
   }
 
   loadOptionCount() {
@@ -426,6 +446,11 @@ class GeographyQuiz {
       if (item.isGroup && Array.isArray(item.groupItems)) {
         item.displayGroupItems = [...item.groupItems];
       }
+      return item;
+    }
+    // Eğer dinamik alt küme örneklemesi kapalıysa tüm elemanları havuza/gösterime dahil et
+    if (!this.dynamicGroupSampling) {
+      item.displayGroupItems = [...item.groupItems];
       return item;
     }
     const total = item.groupItems.length;

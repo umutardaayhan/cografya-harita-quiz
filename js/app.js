@@ -2714,6 +2714,65 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- ÇOK MERKEZLİ HAVZALARDA DİNAMİK ALT KÜME ÖRNEKLEME BUTONU ---
+  const toggleDynamicGroupBtn = document.getElementById('toggle-dynamic-group-btn');
+  const dynamicGroupBtnLabel = document.getElementById('dynamic-group-btn-label');
+  const btnDynamicGroupTools = document.getElementById('btn-dynamic-group-tools');
+  const dynamicGroupToolsLabel = document.getElementById('dynamic-group-tools-label');
+
+  function updateDynamicGroupBtnUI() {
+    const isDynamicOn = geoQuiz ? geoQuiz.getDynamicGroupSampling() : true;
+    if (toggleDynamicGroupBtn) {
+      if (isDynamicOn) {
+        toggleDynamicGroupBtn.classList.add('active');
+        toggleDynamicGroupBtn.title = "Dinamik havza örneklemesi açık (rastgele alt küme sorulur). Tüm noktaları aynı anda sormak için tıklayın.";
+        if (dynamicGroupBtnLabel) dynamicGroupBtnLabel.textContent = "Dinamik Havza";
+      } else {
+        toggleDynamicGroupBtn.classList.remove('active');
+        toggleDynamicGroupBtn.title = "Dinamik havza örneklemesi kapalı (tüm çıkarım noktaları sorulur). Rastgele alt küme için tıklayın.";
+        if (dynamicGroupBtnLabel) dynamicGroupBtnLabel.textContent = "Tüm Havza";
+      }
+    }
+    if (btnDynamicGroupTools) {
+      if (isDynamicOn) {
+        btnDynamicGroupTools.classList.add('active');
+        if (dynamicGroupToolsLabel) dynamicGroupToolsLabel.textContent = "Dinamik Havza Modu (Açık)";
+      } else {
+        btnDynamicGroupTools.classList.remove('active');
+        if (dynamicGroupToolsLabel) dynamicGroupToolsLabel.textContent = "Dinamik Havza Modu (Kapalı / Tümü)";
+      }
+    }
+  }
+
+  function handleDynamicGroupToggle() {
+    if (!geoQuiz) return;
+    geoQuiz.toggleDynamicGroupSampling();
+    updateDynamicGroupBtnUI();
+
+    // Eğer aktif soru henüz cevaplanmamışsa ve grup sorusuysa canlı yenile
+    if (geoQuiz.currentQuestion && !geoQuiz.isAnswered) {
+      geoQuiz.currentQuestion = geoQuiz.sampleGroupItems(geoQuiz.currentQuestion);
+      if (geoQuiz.currentOptions && Array.isArray(geoQuiz.currentOptions)) {
+        geoQuiz.currentOptions = geoQuiz.currentOptions.map(opt => geoQuiz.sampleGroupItems(opt));
+      }
+
+      if (geoQuiz.currentActualFormat === 'find_on_map') {
+        geoMap.showMultipleChoiceLocations(geoQuiz.currentOptions, geoQuiz.currentQuestion, handleAnswer);
+      } else {
+        geoMap.highlightSingleChoiceLocation(geoQuiz.currentQuestion);
+      }
+    }
+  }
+
+  if (toggleDynamicGroupBtn) {
+    updateDynamicGroupBtnUI();
+    toggleDynamicGroupBtn.addEventListener('click', handleDynamicGroupToggle);
+  }
+
+  if (btnDynamicGroupTools) {
+    btnDynamicGroupTools.addEventListener('click', handleDynamicGroupToggle);
+  }
+
   resetViewBtn.addEventListener('click', () => {
     geoMap.resetView();
   });

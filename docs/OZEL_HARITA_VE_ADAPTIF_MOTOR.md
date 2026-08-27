@@ -202,6 +202,13 @@ KPSS ve coğrafya harita sorularında görsel il-konum pekiştirmesini hızland�
 - Her üye noktanın üzerinde parıldayan halka (`network-pulse-ring`) ve il/ilçe adı (`network-item-label`) belirir.
 - Harita tüm ağı kapsayacak şekilde otomatik kadrajlanır; böylece öğrenci o madenin Türkiye genelindeki tüm çıkarım koridorunu ve coğrafi yayılımını her soruda pekiştirir.
 
+### 14.3 ⚙️ Açılır-Kapanır Dinamik Havza Modu (Toggle & Live Refresh)
+- **Harita Araçları & Menü Erişimi:** Sol alt harita araç çubuğundaki **🎲 Dinamik Havza** butonu (`#toggle-dynamic-group-btn`) veya üstteki ⚙️ Araçlar menüsünden (`#btn-dynamic-group-tools`) açılıp kapatılabilir.
+- **Açıkken (🎲 Dinamik Havza):** Çok merkezli havzalarda dinamik $2 \le k \le n$ rastgele alt küme örneklemesi devrededir.
+- **Kapalıyken (🌐 Tüm Havza):** Grubun tüm çıkarım noktaları ($k = n$) eksiksiz olarak soru havuzuna ve haritaya düşer, tüm noktalar aynı anda gösterilir.
+- **Canlı Yenileme (Live Refresh):** Mod değiştirildiğinde ekranda henüz cevaplanmamış aktif bir soru varsa, haritadaki şık pinleri ve soru işaretçileri sayfa yenilenmeden anında güncellenir.
+- **Kalıcılık:** Tercih `localStorage` (`kpss_dynamic_group_sampling`) üzerinde saklanır.
+
 ---
 
 ## 15. 🖌️ Harita Boyama Modu: Harita Harita Çalışma & Özel Çizim Haritaları Entegrasyonu
