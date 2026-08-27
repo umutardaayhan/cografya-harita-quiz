@@ -1321,7 +1321,22 @@ document.addEventListener('DOMContentLoaded', () => {
         currentCatIcon = catObj.icon || '📍';
         currentCatTitle = catObj.title || activeCategory;
       }
-      const items = (typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      // Kart, aktif alt tür rozetini de yansıtır: "Dağlar" yazıp Volkanik
+      // süzgeciyle başlamak kullanıcıyı yanıltıyordu.
+      let items = (typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[activeCategory]) ? COGRAFYA_DATA[activeCategory] : [];
+      const aktifAltTur = geoQuiz.getSubType();
+      if (aktifAltTur && aktifAltTur !== 'all' && typeof altTurSuz === 'function') {
+        const suzulmus = altTurSuz(items, activeCategory, aktifAltTur);
+        if (suzulmus.length !== items.length) {
+          items = suzulmus;
+          const stDef = (typeof SUB_TYPES !== 'undefined' && SUB_TYPES[activeCategory] || [])
+            .find(x => x.id === aktifAltTur);
+          if (stDef) {
+            currentCatIcon = stDef.icon || currentCatIcon;
+            currentCatTitle = `${currentCatTitle} › ${stDef.label}`;
+          }
+        }
+      }
       currentCatCount = items.length;
     }
 
@@ -1406,6 +1421,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const kullanici = customDrawManager ? customDrawManager.getDrawingsByCategory(categoryKey) : [];
       pool = [...varsayilan, ...kullanici];
     }
+
+    // Aktif alt tür rozeti (ör. "Volkanik Dağlar") oyun modlarına da yansır.
+    // Eskiden yalnızca standart test süzgeçten haberdardı; "Bu kategori"
+    // kapsamıyla başlatılan Kör Atış / Fatih / Eşleştirme daima kategorinin
+    // TAMAMINI kapsıyordu. Süzgeç birleştirmeden ÖNCE uygulanır.
+    if (categoryKey === activeCategory && typeof altTurSuz === 'function') {
+      pool = altTurSuz(pool, categoryKey, geoQuiz.getSubType());
+    }
+
     return typeof gruplaHavuz === 'function' ? gruplaHavuz(pool) : pool;
   }
 
@@ -1488,8 +1512,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (geoguessrRoundIdx) geoguessrRoundIdx.textContent = roundData.round;
     if (geoguessrScoreVal) geoguessrScoreVal.textContent = roundData.totalScore;
     if (geoguessrTargetName) {
+      // Hedef adı ham basılırsa parantez içindeki yöre ipucu cevabı ele verir:
+      // Kör Atış'ta "📍 Demir (Divriği)" yazan hedef zaten Sivas'ı söylüyordu.
+      const safeName = (typeof haritadaBulEtiketi === 'function')
+        ? haritadaBulEtiketi(roundData.target)
+        : roundData.target.name;
       const typeText = roundData.target.type ? ` (${roundData.target.type})` : '';
-      geoguessrTargetName.textContent = `📍 ${roundData.target.name}${typeText}`;
+      geoguessrTargetName.textContent = `📍 ${safeName}${typeText}`;
     }
     if (geoguessrFeedbackBox) geoguessrFeedbackBox.style.display = 'none';
   }
@@ -1655,15 +1684,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (matchModal) matchModal.style.display = 'flex';
     };
 
-    let pool = null;
-    if (scope === 'current' && COGRAFYA_DATA && COGRAFYA_DATA.iliskili_cografya) {
-      const filtered = COGRAFYA_DATA.iliskili_cografya.filter(p => p.category === activeCategory);
-      if (filtered.length >= 6) {
-        pool = filtered;
-      }
-    }
-
-    const boardState = matchGame.start(pool);
+    // Yapboz'un tek veri kaynağı İlişkili Eşleştirmeler paketidir; bütün
+    // kayıtların `category` alanı 'iliskili_cografya'dır. Eski kod bunları
+    // `activeCategory` ile karşılaştırıyor, filtre daima boş dönüyordu —
+    // yani "bu kategori" kapsamı hiçbir zaman çalışmadı. Havuz zaten tek
+    // konudan oluştuğu için kapsam seçimi bu modda anlamsızdır.
+    const boardState = matchGame.start(null);
     renderMatchBoard(boardState);
   }
 
@@ -1760,7 +1786,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMatchBoard(res.boardState);
   }
 
-  if (btnMatchMode) btnMatchMode.addEventListener('click', startMatchMode);
+  // ⚠️ Eskiden `addEventListener('click', startMatchMode)` yazılıydı; böylece
+  // fonksiyona `scope` argümanı olarak TIKLAMA OLAYI (MouseEvent) geçiyor,
+  // `lastMatchScope` bir MouseEvent'e set ediliyordu. Kapsam karşılaştırması
+  // hiçbir zaman tutmuyordu.
+  if (btnMatchMode) btnMatchMode.addEventListener('click', () => startMatchMode('all'));
 
   if (matchAbortBtn) {
     matchAbortBtn.addEventListener('click', returnToQuizMode);
@@ -1776,7 +1806,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (matchRestartBtn) {
     matchRestartBtn.addEventListener('click', () => {
       if (matchModal) matchModal.style.display = 'none';
-      startMatchMode();
+      startMatchMode(lastMatchScope);
     });
   }
 
@@ -1910,8 +1940,10 @@ document.addEventListener('DOMContentLoaded', () => {
     game.onTimeout = (view) => mkRender(view);
 
     const filterCat = (scope === 'current') ? activeCategory : null;
+    // Alt tür rozeti yalnızca "Bu kategori" kapsamında anlamlıdır
+    const filterSub = (scope === 'current') ? geoQuiz.getSubType() : null;
     const initialView = (key === 'olusum' || key === 'boyama')
-      ? game.start(filterCat)
+      ? game.start(filterCat, filterSub)
       : game.start();
 
     mkRender(initialView);
@@ -2093,18 +2125,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mutlak konum ve oluşum mod butonları
+  // Matematiksel konum laboratuvarları: şehir verisiyle çalışırlar,
+  // konu kategorisi kapsamı anlamsızdır; kapsam modalı gösterilmez.
   Object.entries({
     'btn-mk-sun': 'sun',
     'btn-mk-temp': 'temp',
     'btn-mk-daynight': 'daynight',
     'btn-mk-coord': 'coord',
-    'btn-mk-duel': 'duel',
-    'btn-olusum-mode': 'olusum'
+    'btn-mk-duel': 'duel'
   }).forEach(([btnId, key]) => {
     const btn = document.getElementById(btnId);
     if (btn) btn.addEventListener('click', () => startMutlakKonumMode(key));
   });
+
+  // Oluşum Türü oyunu KATEGORİYE bağlı çalışır (`startMutlakKonumMode`
+  // `filterCat` destekler) ama kapsam modalı hiç açılmadığı için `scope` daima
+  // 'all' kalıyor, oyun her seferinde tüm konuları kapsıyordu — Harita
+  // Boyama'daki sorunun aynısı. Artık o da kapsam soruyor.
+  const btnOlusumMode = document.getElementById('btn-olusum-mode');
+  if (btnOlusumMode) {
+    btnOlusumMode.addEventListener('click', () => {
+      openGameScopeModal('Oluşum Türü Oyunu', '🧬', (scope) => startMutlakKonumMode('olusum', scope));
+    });
+  }
 
   const btnBoyamaMode = document.getElementById('btn-boyama-mode');
   if (btnBoyamaMode) {

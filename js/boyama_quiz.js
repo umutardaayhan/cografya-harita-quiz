@@ -427,8 +427,9 @@ class MapPaintGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   // HEDEF SINIFLAR & HAVZALAR (EVRENSEL MOD)
   // ---------------------------------------------------------------
-  buildTargets(categoryFilter = null) {
+  buildTargets(categoryFilter = null, subTypeFilter = null) {
     this.categoryFilter = categoryFilter;
+    this.subTypeFilter = subTypeFilter;
     const adaylar = [];
 
     const buildCategoryTargets = (catKey) => {
@@ -493,21 +494,63 @@ class MapPaintGame extends MutlakKonumGameBase {
       let items = (typeof COGRAFYA_DATA !== 'undefined' && COGRAFYA_DATA[catKey]) ? COGRAFYA_DATA[catKey].slice() : [];
       if (!items.length) return;
 
+      const catMeta0 = (typeof CATEGORIES !== 'undefined') ? CATEGORIES.find(c => c.id === catKey) : null;
+
+      // ⭐ AÇIK ALT TÜR SEÇİMİ: kullanıcı "Kırık Dağlar" rozetiyle başlattıysa
+      // oyunun TEK hedefi odur. Alt sınıflandırmaya sokmak gereksiz — dahası
+      // alt türler örtüşebildiği için (UNESCO'ya girmiş bir cami hem "UNESCO"
+      // hem "İnanç" sınıfına düşer) "UNESCO seçtim ama 3 farklı hedef geliyor"
+      // durumu oluşuyordu.
+      if (this.subTypeFilter && this.subTypeFilter !== 'all' && catKey === this.categoryFilter) {
+        const stDef = (typeof SUB_TYPES !== 'undefined' && SUB_TYPES[catKey] || [])
+          .find(x => x.id === this.subTypeFilter);
+        const suzulmus = (typeof altTurSuz === 'function')
+          ? altTurSuz(items, catKey, this.subTypeFilter) : items;
+        if (stDef && suzulmus.length >= 2 && suzulmus.length !== items.length) {
+          adaylar.push({
+            grupKey: catKey,
+            grup: { label: catMeta0 ? catMeta0.title : catKey, soruAdi: 'öğe', cogulIn: 'yerlerin' },
+            sinif: { key: stDef.id, label: stDef.label, icon: stDef.icon || (catMeta0 && catMeta0.icon) || '📍' },
+            items: suzulmus
+          });
+          return;
+        }
+        items = suzulmus;
+      }
+
       const catMeta = (typeof CATEGORIES !== 'undefined') ? CATEGORIES.find(c => c.id === catKey) : null;
       const catTitle = catMeta ? catMeta.title : catKey;
       const catIcon = catMeta ? (catMeta.icon || '📍') : '📍';
 
-      // A. groupId bağlantıları (Maden havzaları, Enerji havzaları vb.)
+      // A. groupId bağlantıları (Maden havzaları, Enerji havzaları, ulaşım ağları)
+      //
+      // ⚠️ Bu yol eskiden kategoride TEK BİR groupId görmesi yeterken devreye
+      // giriyor ve `return` ile oluşum/alt tür sınıflandırmasını tamamen atlıyordu.
+      // Sonuç: 39 kayıtlı Dağlar haritasında "Volkanik / Kırık / Kıvrım" hedefleri
+      // yerine "ERCİYES DAĞI sınıfına giren dağları boya" gibi TEK ÖĞELİ 10 tur
+      // üretiliyordu (Turizm'de 9, Su Kaynakları'nda 7 aynı şekilde).
+      //
+      // Artık iki koşul birden aranır:
+      //   1) en az 2 adet ÇOK ÜYELİ grup (tek üyeli grup boyanacak bir havza değil),
+      //   2) bu gruplar kategorinin en az %60'ını kapsıyor (gruplar kategoriye hakim).
+      // Maden/Enerji/Sanayi (%98-100) ve Ulaşım (%67) bu yoldan geçer;
+      // Dağlar (%5), Su Kaynakları (%5), Turizm (%13) ve Tarım (%55) sınıflandırmaya düşer.
       const groupMap = {};
       items.forEach(it => {
         if (it.groupId) {
           (groupMap[it.groupId] || (groupMap[it.groupId] = [])).push(it);
         }
       });
-      if (Object.keys(groupMap).length >= 1) {
-        Object.keys(groupMap).forEach(gId => {
+      const cokUyeliGruplar = Object.keys(groupMap).filter(g => groupMap[g].length >= 2);
+      const grupKapsami = cokUyeliGruplar.reduce((a, g) => a + groupMap[g].length, 0);
+      if (cokUyeliGruplar.length >= 2 && grupKapsami >= items.length * 0.6) {
+        cokUyeliGruplar.forEach(gId => {
           const gItems = groupMap[gId];
-          const gName = gItems[0].groupName || gItems[0].name || gId;
+          // Ad: veri grup adı verdiyse o, yoksa üyelerin birleşimi — tek bir
+          // üyenin adını grubun adı saymak yanıltıcı olur.
+          const gName = gItems.find(x => x.groupName)?.groupName
+            || gItems.map(x => x.shortName || x.name).filter(Boolean).slice(0, 3).join(' & ')
+            || gId;
           adaylar.push({
             grupKey: catKey,
             grup: { label: catTitle, soruAdi: 'havza', cogulIn: 'çıkarım/üretim merkezlerinin' },
@@ -557,7 +600,8 @@ class MapPaintGame extends MutlakKonumGameBase {
           } else if (st.id) {
             matched = items.filter(it => it.sub === st.id || (it.type && it.type.toLowerCase().includes(st.id)));
           }
-          if (matched.length >= 1) {
+          // Tek öğeli sınıf boyanacak bir "alan" değildir; en az 2 öğe aranır.
+          if (matched.length >= 2) {
             subMatched = true;
             adaylar.push({
               grupKey: catKey,
@@ -576,7 +620,7 @@ class MapPaintGame extends MutlakKonumGameBase {
         const rawType = (it.type || 'Diğer').split('/')[0].split('(')[0].trim();
         (typeMap[rawType] || (typeMap[rawType] = [])).push(it);
       });
-      const typeKeys = Object.keys(typeMap).filter(k => typeMap[k].length >= 1);
+      const typeKeys = Object.keys(typeMap).filter(k => typeMap[k].length >= 2);
       if (typeKeys.length > 1) {
         typeKeys.forEach(tKey => {
           adaylar.push({
@@ -630,11 +674,12 @@ class MapPaintGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   // AKIŞ
   // ---------------------------------------------------------------
-  start(categoryFilter = null) {
+  start(categoryFilter = null, subTypeFilter = null) {
     this.resetProgress();
     this.categoryFilter = categoryFilter;
+    this.subTypeFilter = subTypeFilter;
     this.applySettings();
-    this.buildTargets(categoryFilter);
+    this.buildTargets(categoryFilter, subTypeFilter);
     this.kullanilan = [];
     this.boyamaSkorlari = [];
     this.quizDogru = 0;
@@ -650,7 +695,7 @@ class MapPaintGame extends MutlakKonumGameBase {
     this.quizKuyrugu = [];
     this.quizIdx = 0;
     this.applySettings();
-    if (!this.hedefler || !this.hedefler.length) this.buildTargets(this.categoryFilter);
+    if (!this.hedefler || !this.hedefler.length) this.buildTargets(this.categoryFilter, this.subTypeFilter);
 
     if (!this.hedefler || !this.hedefler.length) {
       return this.baseView({

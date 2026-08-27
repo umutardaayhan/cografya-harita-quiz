@@ -155,7 +155,7 @@ class GeoGuessrGame {
       color: '#ffffff',
       weight: 2,
       fillOpacity: 1
-    }).bindTooltip(`🎯 ${this.currentTarget.name}`, {
+    }).bindTooltip(`🎯 ${(typeof haritadaBulEtiketi === 'function') ? haritadaBulEtiketi(this.currentTarget) : this.currentTarget.name}`, {
       permanent: true,
       direction: 'bottom',
       className: 'geoguessr-tooltip target'

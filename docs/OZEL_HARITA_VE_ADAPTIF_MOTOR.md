@@ -392,3 +392,58 @@ Dönüştürme örneği:
 > Not: "X olmasına rağmen en fazla Y'de üretilen ürün" gibi **karşıtlık**
 > cümleleri yasak değildir; bunlar var olan bir şeyi tek bir doğru cevapla
 > sorar (ör. Mısır, Antep fıstığı).
+
+---
+
+## 19. 🎮 OYUN MODU KAPSAMI VE ALT TÜR SÜZGECİ
+
+### 19.1 Kapsam seçimi
+
+Oyun başlatılırken **Kapsam Modalı** (`openGameScopeModal`) iki seçenek sunar:
+"Bu kategori" (aktif konu) ya da "Tüm Harita".
+
+| Mod | Kapsam modalı | Havuz |
+| :--- | :--- | :--- |
+| Kör Atış, Harita Fatihi, Şimşek Turu, Deneme | ✓ | `buildCategoryQuizPool` / `buildGlobalQuizPool` |
+| Harita Boyama, Oluşum Türü | ✓ | kategori hedefleri (`buildTargets` / `buildPool`) |
+| Şekil Yapbozu | – | tek veri kaynağı (İlişkili Eşleştirmeler) |
+| Matematiksel Konum laboratuvarları | – | şehir verisi; konu kapsamı anlamsız |
+
+### 19.2 Alt tür rozeti oyunlara da yansır
+
+"Volkanik Dağlar" rozeti seçiliyken başlatılan oyunlar eskiden süzgeçten
+habersizdi ve **daima kategorinin tamamını** kapsıyordu. Artık hepsi
+`altTurSuz(items, categoryKey, subTypeId)` ortak süzgecini kullanır.
+
+- Süzgeç **`gruplaHavuz`dan ÖNCE** uygulanır; aksi halde "Volkanik" filtresi
+  grubun volkanik olmayan üyesini de içeri sokar.
+- Süzgeç hiçbir şey döndürmezse (boş havuz oyunu kilitler) kategorinin
+  tamamına dönülür.
+- Kapsam modalının kartı rozeti gösterir: **"Dağlar › Kırık Dağlar (Horst) · 7 Soru"**.
+
+İki mod süzgeci farklı yorumlar:
+
+| Mod | Yorum | Neden |
+| :--- | :--- | :--- |
+| Harita Boyama | Seçilen alt tür **tek hedef** olur | Alt türler örtüşebilir (UNESCO'daki bir cami hem "UNESCO" hem "İnanç" sınıfına düşer); "UNESCO seçtim, 3 hedef geliyor" durumu oluşuyordu |
+| Oluşum Türü | Havuz **budanmaz**, yalnızca sorulan öğe odaklanır (`odakIdler`) | Oyunun çeldiricileri BAŞKA oluşum sınıflarından gelir; tek sınıfa indirgemek oyunu "soru yok" diyerek kilitler |
+
+### 19.3 Boyama hedeflerinin seçimi (`buildTargets`)
+
+Hedefler sırasıyla şu yollardan üretilir; ilk uyan kazanır:
+
+| Yol | Koşul | Örnek |
+| :--- | :--- | :--- |
+| ⭐ Açık alt tür | Rozet seçili ve ≥ 2 öğe | "Kırık Dağlar (Horst)" |
+| A. `groupId` havzaları | ≥ 2 **çok üyeli** grup **ve** kategorinin ≥ %60'ı | "Demir Havzası", "YHT Ağı" |
+| B. Oluşum taksonomisi | Sınıflandırılabilen öğeler | "Volkanik Dağ", "Tektonik Göl" |
+| C. Alt türler | Sınıf başına ≥ 2 öğe | "UNESCO Dünya Mirası" |
+| D. `type` | Tür başına ≥ 2 öğe | — |
+| E. `region` | Son çare | "Marmara (Şehirler)" |
+
+> ⚠️ **A yolunun eşiği kritiktir.** Eskiden kategoride TEK BİR `groupId`
+> görmesi yetiyor ve `return` ile B/C/D/E'yi tamamen atlıyordu. Sonuç: 39
+> kayıtlı Dağlar haritasında "Volkanik / Kırık / Kıvrım" yerine
+> **"ERCİYES DAĞI sınıfına giren dağları boya"** gibi TEK ÖĞELİ 10 tur
+> üretiliyordu (Turizm'de 9, Su Kaynakları'nda 7). "Tek öğeli sınıf" bir
+> boyama hedefi değildir; C ve D yollarında da eşik ≥ 2'dir.

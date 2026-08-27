@@ -185,6 +185,30 @@ function guvenliSoruKoku(item, format) {
   return null;
 }
 
+/**
+ * 🔎 AKTİF ALT TÜR SÜZGECİ
+ *
+ * "Volkanik Dağlar" rozeti seçiliyken başlatılan oyun modları (Harita Boyama,
+ * Kör Atış, Harita Fatihi, Eşleştirme, Oluşum, Deneme, Şimşek) süzgeçten
+ * habersizdi ve daima kategorinin TAMAMINI kapsıyordu. Artık hepsi bu ortak
+ * süzgeci kullanır.
+ *
+ * ⚠️ Süzgeç `gruplaHavuz`dan ÖNCE uygulanmalıdır; aksi halde "Volkanik"
+ * filtresi, grubun volkanik olmayan üyesini de içeri sokar.
+ */
+function altTurSuz(items, categoryKey, subTypeId) {
+  if (!Array.isArray(items) || !items.length) return items || [];
+  if (!subTypeId || subTypeId === 'all') return items;
+  if (typeof SUB_TYPES === 'undefined' || !SUB_TYPES[categoryKey]) return items;
+
+  const tanim = SUB_TYPES[categoryKey].find(s => s.id === subTypeId);
+  if (!tanim || typeof tanim.filter !== 'function') return items;
+
+  const suzulmus = items.filter(tanim.filter);
+  // Boş havuz oyunu kilitler: süzgeç hiçbir şey döndürmezse tamamına dön
+  return suzulmus.length ? suzulmus : items;
+}
+
 /** Bir kaydın haritadaki temsilî merkezi */
 function grupMerkezi(item) {
   if (typeof item.lat === 'number' && typeof item.lng === 'number') {

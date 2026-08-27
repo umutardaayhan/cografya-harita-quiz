@@ -116,6 +116,7 @@ class FormationTypeGame extends MutlakKonumGameBase {
   /** Tüm kategoriler için { grupKey: { sinifKey: [item...] } } tablosu kurar */
   buildPool() {
     const havuz = {};
+    this.odakIdler = new Set();   // alt tür rozetiyle öne çıkarılan kayıtlar
     const hedefler = Object.keys(OLUSUM_TAKSONOMISI).filter(grupKey => {
       if (!this.categoryFilter) return true;
       const grup = OLUSUM_TAKSONOMISI[grupKey];
@@ -130,6 +131,15 @@ class FormationTypeGame extends MutlakKonumGameBase {
       const kaynak = grup.kaynak || grupKey;
       let items = (COGRAFYA_DATA[kaynak] || []).slice();
       if (typeof grup.onFiltre === 'function') items = items.filter(grup.onFiltre);
+
+      // ⚠️ Alt tür süzgeci havuzu BUDAMAZ. Bu oyunun çeldiricileri BAŞKA
+      // oluşum sınıflarından gelir; "Kırık Dağlar"ı süzmek geriye tek sınıf
+      // bırakır ve oyun "soru yok" diyerek kilitlenirdi. Süzgeç yerine
+      // SORULACAK öğeleri işaretleyen bir odak kümesi kurulur.
+      if (this.subTypeFilter && this.subTypeFilter !== 'all'
+          && kaynak === this.categoryFilter && typeof altTurSuz === 'function') {
+        altTurSuz(items, kaynak, this.subTypeFilter).forEach(it => this.odakIdler.add(it.id));
+      }
 
       const siniflar = {};
       items.forEach(it => {
@@ -148,6 +158,27 @@ class FormationTypeGame extends MutlakKonumGameBase {
     });
     this.havuz = havuz;
     return havuz;
+  }
+
+  /**
+   * Alt tür rozeti seçiliyse sorunun O ROZETTEN gelmesini sağlar; sınıf
+   * listesi (dolayısıyla çeldiriciler) dokunulmadan kalır.
+   */
+  _odakSinifKeys(grupKey) {
+    const tumu = Object.keys(this.havuz[grupKey]);
+    if (!this.odakIdler || !this.odakIdler.size) return tumu;
+    const odakli = tumu.filter(k => this.havuz[grupKey][k].some(it => this.odakIdler.has(it.id)));
+    return odakli.length ? odakli : tumu;
+  }
+
+  /** Sınıf içinden önce odak kümesindeki örneği seçer */
+  _odakOrnek(grupKey, sinifKey) {
+    const liste = this.havuz[grupKey][sinifKey] || [];
+    if (this.odakIdler && this.odakIdler.size) {
+      const odakli = liste.filter(it => this.odakIdler.has(it.id));
+      if (odakli.length) return MK.randomOf(odakli);
+    }
+    return MK.randomOf(liste);
   }
 
   sinifBilgisi(grupKey, sinifKey) {
@@ -174,9 +205,10 @@ class FormationTypeGame extends MutlakKonumGameBase {
   // ---------------------------------------------------------------
   // OYUN AKIŞI
   // ---------------------------------------------------------------
-  start(categoryFilter = null) {
+  start(categoryFilter = null, subTypeFilter = null) {
     this.resetProgress();
     this.categoryFilter = categoryFilter;
+    this.subTypeFilter = subTypeFilter;
     this.buildPool();
     this.geoMap.clearAll();
     this.geoMap.resetView();
@@ -205,9 +237,8 @@ class FormationTypeGame extends MutlakKonumGameBase {
   // --- 1) Yer verilir, türü sorulur ---
   _turSor(grupKey) {
     const grup = OLUSUM_TAKSONOMISI[grupKey];
-    const sinifKeys = Object.keys(this.havuz[grupKey]);
-    const dogruKey = MK.randomOf(sinifKeys);
-    const item = MK.randomOf(this.havuz[grupKey][dogruKey]);
+    const dogruKey = MK.randomOf(this._odakSinifKeys(grupKey));
+    const item = this._odakOrnek(grupKey, dogruKey);
 
     const celdiriciler = this.celdiriciSiniflar(grupKey, dogruKey, this.optionCount - 1);
     const secenekKeys = MK.shuffle([dogruKey, ...celdiriciler]);
@@ -232,10 +263,9 @@ class FormationTypeGame extends MutlakKonumGameBase {
   // --- 2) Tür verilir, örneği sorulur ---
   _ornekSor(grupKey) {
     const grup = OLUSUM_TAKSONOMISI[grupKey];
-    const sinifKeys = Object.keys(this.havuz[grupKey]);
-    const dogruKey = MK.randomOf(sinifKeys);
+    const dogruKey = MK.randomOf(this._odakSinifKeys(grupKey));
     const dogruSinif = this.sinifBilgisi(grupKey, dogruKey);
-    const dogruItem = MK.randomOf(this.havuz[grupKey][dogruKey]);
+    const dogruItem = this._odakOrnek(grupKey, dogruKey);
 
     // Çeldiriciler: başka sınıflardan gerçek örnekler
     const digerKeys = this.celdiriciSiniflar(grupKey, dogruKey, this.optionCount - 1);
@@ -281,7 +311,9 @@ class FormationTypeGame extends MutlakKonumGameBase {
     const uygunlar = sinifKeys.filter(k => this.havuz[grupKey][k].length >= gerekli);
     if (!uygunlar.length) return this._ornekSor(grupKey);   // yetmiyorsa biçim değiştir
 
-    const cogunlukKey = MK.randomOf(uygunlar);
+    // Alt tür rozeti seçiliyse çoğunluk sınıfı o rozetten seçilir
+    const odakli = this._odakSinifKeys(grupKey).filter(k => uygunlar.includes(k));
+    const cogunlukKey = MK.randomOf(odakli.length ? odakli : uygunlar);
     const farkliKey = MK.randomOf(this.celdiriciSiniflar(grupKey, cogunlukKey, 3)) ||
                       MK.randomOf(sinifKeys.filter(k => k !== cogunlukKey));
     if (!farkliKey) return this._ornekSor(grupKey);
