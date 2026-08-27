@@ -170,9 +170,9 @@ class GeographyMap {
     this.layerConfigs = {
       voyager: {
         name: 'Sade / Renkli',
-        withLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-        noLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
+        withLabels: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: '&copy; OpenStreetMap contributors / Esri', maxZoom: 19, minZoom: 2 }
       },
       topo: {
         name: 'Fiziki / Topografik',
@@ -184,13 +184,14 @@ class GeographyMap {
         name: 'Gerçek Uydu',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 19, minZoom: 2 }
+        options: { attribution: '&copy; Esri, Maxar, Earthstar Geographics', maxZoom: 19, minZoom: 2 }
       },
       dark: {
         name: 'Gece / Kontrast',
-        withLabels: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        noLabels: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
+        withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        referenceUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: '&copy; Esri, HERE, Garmin, OpenStreetMap contributors', maxZoom: 19, minZoom: 2 }
       },
       terrain: {
         name: 'Kabartı / Arazi',
@@ -202,6 +203,7 @@ class GeographyMap {
 
     this.activeLayerKey = 'voyager';
     this.currentTileLayer = null;
+    this.currentReferenceLayer = null;
     this.initMap();
   }
 
@@ -374,12 +376,25 @@ class GeographyMap {
 
     if (this.currentTileLayer) {
       this.map.removeLayer(this.currentTileLayer);
+      this.currentTileLayer = null;
+    }
+    if (this.currentReferenceLayer) {
+      this.map.removeLayer(this.currentReferenceLayer);
+      this.currentReferenceLayer = null;
     }
 
     this.currentTileLayer = L.tileLayer(url, config.options).addTo(this.map);
     // Tile layer'ı en alta gönder
     if (this.currentTileLayer.bringToBack) {
       this.currentTileLayer.bringToBack();
+    }
+
+    // Ayrı etiket katmanı varsa ve yazılı mod açıksa ekle
+    if (this.labelsEnabled && config.referenceUrl) {
+      this.currentReferenceLayer = L.tileLayer(config.referenceUrl, Object.assign({}, config.options, {
+        pane: 'overlayPane',
+        zIndex: 500
+      })).addTo(this.map);
     }
   }
 
