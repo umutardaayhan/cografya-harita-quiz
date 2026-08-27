@@ -166,37 +166,37 @@ class GeographyMap {
     this.drawingVertexMarkers = [];
     this.onDrawingComplete = null;
 
-    // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri)
+    // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri - %100 Açık & API Key İstemeyen Güvenilir Sağlayıcılar)
     this.layerConfigs = {
       voyager: {
         name: 'Sade / Renkli',
         withLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         noLabels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 2 }
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
       },
       topo: {
         name: 'Fiziki / Topografik',
-        withLabels: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; OpenStreetMap &copy; OpenTopoMap / Esri', maxZoom: 17, minZoom: 2 }
+        options: { attribution: '&copy; Esri, CGIAR, USGS, NPS', maxZoom: 19, minZoom: 2 }
       },
       satellite: {
         name: 'Gerçek Uydu',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 18, minZoom: 2 }
+        options: { attribution: '&copy; Esri &copy; Earthstar Geographics', maxZoom: 19, minZoom: 2 }
       },
       dark: {
         name: 'Gece / Kontrast',
         withLabels: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         noLabels: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 18, minZoom: 2 }
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
       },
       terrain: {
         name: 'Kabartı / Arazi',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; USGS, NOAA', maxZoom: 13, minZoom: 2 }
+        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: '&copy; Esri &copy; USGS, NOAA', maxZoom: 19, minZoom: 2 }
       }
     };
 
