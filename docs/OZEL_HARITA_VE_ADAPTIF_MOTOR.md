@@ -276,10 +276,24 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
 - **Kritik Geçitler:** Gülek Boğazı (Çukurova-İç Anadolu), Çubuk Geçidi (Antalya-Göller Yöresi), Sertavul Geçidi (Mersin-Karaman), Belen Geçidi (İskenderun-Amik), Ilgaz İstiklal Tüneli, Bolu Dağı Tüneli, Sabuncubeli Tüneli.
 
 ### 17.3 🚆 Demiryolu, YHT & Otoyol Aksları
+- **İlk Demir Yolu Hattı (1856-1866):** İzmir - Aydın hattı (Ege tarım ürünlerini limana taşımak için İngilizler tarafından yapılmıştır).
+- **Demiryolu Bağlantılı Kıyı Limanları & Maden Sevkiyatı:**
+  * **Zonguldak/Ereğli:** Sivas Divriği demir madeni taşınır.
+  * **İskenderun:** Malatya Hekimhan-Hasançelebi demir madeni taşınır.
+  * **Bandırma:** Kütahya Emet ve Balıkesir Bigadiç bor madenleri taşınır.
+  * **Samsun:** Karadeniz'de hinterlandı en geniş demiryolu limanı.
+  * **İzmir, İzmit, İstanbul:** İç kesimlerle demiryolu bağlantılı.
+  * *(Demiryolsuz Limanlar: Antalya, Sinop, Trabzon, Rize, Çanakkale, Gemlik).*
 - **YHT Ağı (Ankara Merkezli):** İstanbul, Konya, Karaman, Eskişehir, Bilecik, Sakarya, İzmit, Kırıkkale, Yozgat, Sivas.
+- **YHT Bağlantısı Bulunmayan Büyük Şehirler:** İzmir, Antalya, Muğla, Trabzon, Kayseri (Ankara-Sivas YHT hattı Kayseri'den geçmez!).
 - **Turistik Tren Hatları:** Doğu Ekspresi (Ankara-Kars), Mezopotamya Ekspresi (Ankara-Diyarbakır - Diyarbakır'da biter, Mardin'e gitmez).
-- **Demiryolu Bulunmayan Merkezler:** Doğu Karadeniz (Trabzon, Rize, Artvin), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari-Şırnak.
-- **Otoyol Aksları:** Batı Otoyol Aksı (Edirne -> İstanbul -> İzmir -> Aydın -> Denizli'ye kadar), Güneydoğu Otoyol Aksı (Ankara -> Niğde -> Adana -> Gaziantep -> Şanlıurfa'da biter).
+- **Demiryolu Bulunmayan Şehirler / Kuşaklar:** Doğu Karadeniz (Trabzon, Rize, Artvin, Gümüşhane, Bayburt), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari-Şırnak.
+- **Otoyol Aksları:**
+  * **TEM Otoyolu:** İstanbul - Bolu Dağı Tüneli - Ankara ana transit omurgası.
+  * **Batı Otoyol Aksı:** Edirne -> İstanbul -> Bursa -> Manisa -> İzmir -> Aydın -> Denizli'ye kadar kesintisiz.
+  * **Güneydoğu Otoyol Aksı:** Ankara -> Niğde (Kırşehir/Nevşehir bağlantıları) -> Adana -> Gaziantep -> Şanlıurfa'da biter.
+  * **Adana - İskenderun Otoyol Kolu:** Hatay merkeze gitmez, İskenderun'da biter.
+- **Otoyol Bağlantısı Bulunmayan Önemli Merkezler:** Eskişehir, Yozgat, Sivas (YHT var ama otoyol yok!), Antalya (Turizm merkezi ama otoyol yok!), Samsun, Erzurum, Mardin.
 
 ### 17.4 🚪 Sınır Kapıları & Demir İpek Yolu
 - **Kapıkule:** En işlek sınır kapısı (Bulgaristan / demiryolu var).
@@ -287,8 +301,9 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
 - **Cambaz İstasyonu:** Bakü-Tiflis-Kars (Demir İpek Yolu) Gürcistan sınır demiryolu istasyonu.
 - **Dilucu (Nahçıvan):** En kısa sınırımız; Zengezur Koridoru demiryolu projesi.
 - **Kapıköy (Van):** İran demiryolu sınır kapısı.
-- **Habur (Irak):** En işlek Orta Doğu kapısı (Demiryolu YOKTUR).
-- **Nusaybin (Mardin):** Suriye demiryolu sınır kapısı.
+- **Akyaka / Doğukapı (Kars):** Ermenistan demiryolu kapısı (Siyasi nedenlerle kapalı).
+- **Habur (Irak):** En işlek Orta Doğu kapısı (Demiryolu YOKTUR, dolaylı Suriye üzerinden).
+- **Nusaybin (Mardin):** Suriye demiryolu sınır kapısı (Bağdat Demiryolu).
 
 ### 17.5 💼 Serbest Ticaret Bölgeleri
 - **İlk Serbest Bölge:** Mersin Serbest Bölgesi (1987).

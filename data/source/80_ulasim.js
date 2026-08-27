@@ -439,8 +439,39 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
 
     // =========================================================================
-    // 3. DEMİRYOLLARI, TRENLER VE DEMİRYOLU OLMAYAN MERKEZLER
+    // 3. DEMİRYOLLARI, TRENLER VE DEMİRYOLU BAĞLANTILARI
     // =========================================================================
+    {
+      id: "ula_demiryolu_ilk_hat",
+      name: "Türkiye'nin İlk Demir Yolu Hattı (İzmir - Aydın)",
+      shortName: "İlk Demiryolu (İzmir-Aydın)",
+      category: "ulasim",
+      type: "Demiryolu / Tarihi İlk Hat (1856-1866)",
+      shapeType: "polyline",
+      coordinates: [
+        [38.42, 27.14], // İzmir (Alsancak Garı)
+        [38.16, 27.36], // Torbalı
+        [37.94, 27.34], // Selçuk
+        [37.85, 27.84]  // Aydın Garı
+      ],
+      lat: 38.15, lng: 27.45,
+      region: "Ege",
+      city: "İzmir (Alsancak) - Aydın",
+      promptTitle: "1856 yılında temeli atılan ve Ege tarım ürünlerini limana taşımak amacıyla açılan TÜRKİYE'NİN İLK DEMİRYOLU HATTI haritada neresidir?",
+      kpssNot: "KPSS Soru Klasiği: Anadolu'nun ve Türkiye'nin İLK DEMİRYOLU HATTI 1856-1866 yılları arasında inşa edilen İZMİR - AYDIN hattıdır. Ege'nin incir, pamuk ve üzüm ürünlerini İzmir Alsancak Limanı'na taşımak amacıyla bir İngiliz şirketi tarafından yapılmıştır."
+    },
+    {
+      id: "ula_demiryolu_limanlar_agi",
+      name: "Demir Yolu Bağlantısı Olan Kıyı Limanları",
+      shortName: "Demiryolu Bağlantılı Limanlar",
+      category: "ulasim",
+      type: "Demiryolu / Liman-Demiryolu Entegrasyonu",
+      lat: 39.50, lng: 34.00,
+      region: "Türkiye Geneli",
+      city: "Samsun, Zonguldak, Mersin, İskenderun, İstanbul, İzmit, Bandırma, İzmir",
+      promptTitle: "Karadeniz'de Samsun ve Zonguldak; Akdeniz'de Mersin ve İskenderun; Ege'de İzmir; Marmara'da Bandırma ve İzmit limanlarının ortak lojistik özelliği nedir?",
+      kpssNot: "KPSS Çok Önemli Not: Demir yolu bağlantısı olan limanlar ve taşınan madenler:\n• Zonguldak/Ereğli: Sivas Divriği demiri buradaki demir-çelik fabrikalarına demiryoluyla taşınır.\n• İskenderun: Malatya Hekimhan-Hasançelebi demiri İskenderun Demir-Çelik'e demiryoluyla taşınır.\n• Bandırma: Kütahya Emet bor madenleri Bandırma Limanı'na demiryoluyla taşınır.\n• Samsun: Canik Dağları geride olduğundan Karadeniz'de hinterlandı en geniş demiryolu limanıdır.\n• İzmir, İzmit, İstanbul: İç kesimlerle demiryolu bağlantısı vardır.\n(Antalya, Sinop, Trabzon, Rize, Çanakkale ve Gemlik limanlarında demiryolu YOKTUR!)."
+    },
     {
       id: "ula_yht_agi",
       name: "Yüksek Hızlı Tren (YHT) Ağı",
@@ -460,7 +491,19 @@ Object.assign(COGRAFYA_DATA_EXT, {
       region: "İç Anadolu",
       city: "Ankara merkezli: İstanbul, Konya, Karaman, Eskişehir, Bilecik, Sakarya, Kocaeli, Kırıkkale, Yozgat, Sivas",
       promptTitle: "Ankara merkezli olarak İstanbul, Konya, Karaman, Eskişehir, Yozgat ve Sivas'a uzanan hızlı demiryolu ağı haritada neresidir?",
-      kpssNot: "Başlangıç noktası Ankara'dır. Konya, Karaman, Eskişehir, Bilecik, Sakarya, İzmit, İstanbul, Kırıkkale, Yozgat ve Sivas'a ulaşır. (İzmir, Antalya, Muğla, Trabzon'da henüz YHT yoktur)."
+      kpssNot: "Başlangıç noktası Ankara'dır. Konya, Karaman, Eskişehir, Bilecik, Sakarya, İzmit, İstanbul, Kırıkkale, Yozgat ve Sivas'a ulaşır. (İzmir, Antalya, Muğla, Trabzon ve Kayseri'de henüz YHT yoktur)."
+    },
+    {
+      id: "ula_yht_olmayan_merkezler",
+      name: "YHT Bağlantısı Bulunmayan Büyük Şehirler",
+      shortName: "YHT Ulaşmayan Büyükşehirler",
+      category: "ulasim",
+      type: "Demiryolu / YHT Olmayan Merkezler",
+      lat: 38.73, lng: 35.48,
+      region: "Türkiye Geneli",
+      city: "İzmir, Antalya, Muğla, Trabzon, Kayseri, Diyarbakır, Adana",
+      promptTitle: "Nüfus veya sanayi bakımından çok büyük olmalarına rağmen günümüzde henüz AKTİF YHT BAĞLANTISI BULUNMAYAN şehirler hangileridir?",
+      kpssNot: "KPSS Soru Tuzağı: İZMİR, ANTALYA, MUĞLA, TRABZON ve KAYSERİ illerine henüz aktif YHT bağlantısı YOKTUR. (Ankara-Sivas YHT hattı Kayseri'den geçmez, Yozgat üzerinden Sivas'a ulaşır!)."
     },
     {
       id: "ula_tren_dogu_ekspresi",
@@ -525,20 +568,42 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_demiryolu_olmayanlar",
-      name: "Demiryolu Bağlantısı Olmayan Önemli Merkezler",
+      name: "Demiryolu Bağlantısı Olmayan Önemli Şehirler / Bölgeler",
       shortName: "Demiryolu Gitmeyen İller",
       category: "ulasim",
       type: "Demiryolu / Kör Noktalar",
       lat: 37.20, lng: 29.50,
       region: "Türkiye Geneli",
-      city: "Doğu Karadeniz (Trabzon, Rize, Artvin), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari, Şırnak",
-      promptTitle: "Doğu Karadeniz, Sinop, Çanakkale, Muğla, Antalya ve Hakkari gibi yer şekilleri engebeli merkezlerin ortak ulaşım özelliği nedir?",
-      kpssNot: "KPSS Soru Klasiği: Doğu Karadeniz (Trabzon, Rize, Artvin, Giresun), Sinop, Çanakkale, Bursa (Gemlik Limanı), Muğla, Antalya ve Hakkari-Şırnak hattında DEMİRYOLU YOKTUR."
+      city: "Doğu Karadeniz (Trabzon, Rize, Artvin, Giresun, Gümüşhane, Bayburt), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari, Şırnak",
+      promptTitle: "Doğu Karadeniz, Sinop, Çanakkale, Muğla, Antalya, Hakkari ve Şırnak gibi merkezlerin ortak ulaşım özelliği nedir?",
+      kpssNot: "KPSS Soru Klasiği: Doğu Karadeniz (Trabzon, Rize, Artvin, Gümüşhane, Bayburt), Sinop, Çanakkale, Bursa (Gemlik Limanı), Muğla, Antalya ve Hakkari-Şırnak hattında DEMİRYOLU YOKTUR."
     },
 
     // =========================================================================
     // 4. OTOYOL AĞLARI VE TRANSİT AKSLAR
     // =========================================================================
+    {
+      id: "ula_otoyol_istanbul_ankara",
+      name: "Anadolu Otoyolu / TEM (İstanbul - Bolu - Ankara)",
+      shortName: "TEM Otoyolu (İstanbul-Ankara)",
+      category: "ulasim",
+      type: "Otoyol / Ana Transit Hat",
+      shapeType: "polyline",
+      coordinates: [
+        [41.00, 28.97], // İstanbul
+        [40.75, 29.83], // İzmit
+        [40.71, 30.36], // Adapazarı / Sakarya
+        [40.84, 31.16], // Düzce
+        [40.73, 31.60], // Bolu Dağı Tüneli
+        [40.45, 32.25], // Kızılcahamam
+        [39.93, 32.86]  // Ankara (Akıncı)
+      ],
+      lat: 40.75, lng: 31.00,
+      region: "Marmara",
+      city: "İstanbul - Kocaeli - Sakarya - Düzce - Bolu - Ankara",
+      promptTitle: "İstanbul'u Kocaeli, Sakarya, Düzce ve Bolu Dağı Tüneli üzerinden başkent Ankara'ya bağlayan Türkiye'nin en işlek otoyolu haritada neresidir?",
+      kpssNot: "İstanbul-Ankara arasındaki ana karayolu omurgasıdır; Bolu Dağı Tüneli ile kış aylarındaki ulaşım aksamaları ortadan kaldırılmıştır."
+    },
     {
       id: "ula_otoyol_bati_aksi",
       name: "Batı Otoyol Aksı (Edirne - İstanbul - İzmir - Aydın - Denizli)",
@@ -568,8 +633,8 @@ Object.assign(COGRAFYA_DATA_EXT, {
       lat: 39.50, lng: 28.00,
       region: "Ege",
       city: "Edirne - İstanbul - Kocaeli - Bursa - Balıkesir - Manisa - İzmir - Aydın - Denizli",
-      promptTitle: "Edirne'den başlayıp İstanbul, İzmir ve Aydın üzerinden yeni açılan kesimle Denizli'ye kadar uzanan otoyol aksı haritada neresidir?",
-      kpssNot: "Avrupa sınırından başlayıp Marmara ve Ege'yi birbirine bağlar; yeni açılan etapla DENİZLİ'YE KADAR uzatılmıştır."
+      promptTitle: "Edirne'den başlayıp İstanbul, İzmir ve Aydın üzerinden yeni açılan kesimle Denizli'ye kadar uzanan kesintisiz otoyol aksı haritada neresidir?",
+      kpssNot: "Avrupa sınırından başlayıp Marmara ve Ege'yi birbirine bağlar; yeni açılan Aydın-Denizli etabıyla DENİZLİ'YE KADAR KESİNTİSİZ otoyol ulaşımı sağlanmıştır."
     },
     {
       id: "ula_otoyol_orta_dogu_aksi",
@@ -581,12 +646,12 @@ Object.assign(COGRAFYA_DATA_EXT, {
       coordinates: [
         [39.93, 32.86], // Ankara
         [39.79, 32.80], // Gölbaşı
-        [38.94, 33.54], // Şereflikoçhisar
+        [38.94, 33.54], // Şereflikoçhisar (Kırşehir/Nevşehir bağlantıları)
         [38.37, 34.03], // Aksaray
         [37.97, 34.68], // Niğde
         [37.42, 34.87], // Pozantı
         [37.21, 34.79], // Gülek Boğazı
-        [36.92, 34.90], // Tarsus
+        [36.92, 34.90], // Tarsus - Mersin
         [37.00, 35.32], // Adana
         [37.03, 35.81], // Ceyhan
         [37.07, 36.25], // Osmaniye
@@ -597,9 +662,41 @@ Object.assign(COGRAFYA_DATA_EXT, {
       ],
       lat: 37.80, lng: 35.80,
       region: "Güneydoğu Anadolu",
-      city: "Ankara - Niğde - Adana - Mersin - İskenderun - Gaziantep - Şanlıurfa",
-      promptTitle: "Ankara'dan başlayıp Niğde, Adana ve Gaziantep üzerinden Şanlıurfa'ya kadar uzanan transit otoyol hattı haritada neresidir?",
-      kpssNot: "Ankara-Niğde akıllı otoyolu üzerinden Çukurova ve Güneydoğu'yu bağlar; ŞANLIURFA'DA BİTER (Urfa'dan daha doğuya otoyol gitmez)."
+      city: "Ankara - Niğde - Adana - Mersin - Gaziantep - Şanlıurfa",
+      promptTitle: "Ankara'dan başlayıp Niğde akıllı otoyolu, Çukurova ve Gaziantep üzerinden Şanlıurfa'ya kadar uzanan transit otoyol hattı haritada neresidir?",
+      kpssNot: "Ankara-Niğde akıllı otoyolu (Kırşehir/Nevşehir kolları ile) üzerinden Çukurova ve Güneydoğu'yu bağlar; ŞANLIURFA'DA BİTER (Urfa'dan sonra Mardin yönüne otoyol gitmez!)."
+    },
+    {
+      id: "ula_otoyol_adana_iskenderun",
+      name: "Adana - İskenderun Otoyol Kolu",
+      shortName: "İskenderun Otoyolu",
+      category: "ulasim",
+      type: "Otoyol / Hatay Kolu (İskenderun'da Biter)",
+      shapeType: "polyline",
+      coordinates: [
+        [37.00, 35.32], // Adana
+        [37.03, 35.81], // Ceyhan
+        [36.93, 35.95], // Erzin
+        [36.75, 36.12], // Dörtyol
+        [36.58, 36.17]  // İskenderun (Son Nokta)
+      ],
+      lat: 36.80, lng: 36.00,
+      region: "Akdeniz",
+      city: "Adana - Ceyhan - Dörtyol - İskenderun",
+      promptTitle: "Adana'dan güneye ayrılan ve Hatay il merkezine (Antakya) gitmeyip İskenderun'da son bulan otoyol kolu haritada neresidir?",
+      kpssNot: "KPSS Çok Önemli Ayrıntı: Adana'dan Hatay yönüne ayrılan otoyol HATAY İL MERKEZİNE (ANTAKYA) GİTMEZ; İskenderun Limanı ve demir-çelik sanayi bölgesinde son bulur."
+    },
+    {
+      id: "ula_otoyol_olmayan_merkezler",
+      name: "Otoyol Bağlantısı Bulunmayan Önemli Merkezler",
+      shortName: "Otoyol Olmayan Şehirler",
+      category: "ulasim",
+      type: "Otoyol / Otoyolsuz Merkezler",
+      lat: 39.80, lng: 36.00,
+      region: "Türkiye Geneli",
+      city: "Eskişehir, Yozgat, Sivas, Antalya, Samsun, Erzurum, Mardin",
+      promptTitle: "Sanayi, turizm veya ulaşım merkezi olmalarına rağmen (örneğin YHT varken otoyolu olmayan) otoyol şebekesine bağlı olmayan şehirler hangileridir?",
+      kpssNot: "KPSS Soru Klasiği: Otoyolu bulunmayan kritik merkezler:\n• Eskişehir, Yozgat ve Sivas (YHT vardır fakat otoyol YOKTUR!).\n• Antalya (Türkiye'nin turizm başkentidir fakat otoyol bağlantısı YOKTUR!).\n• Samsun (Karadeniz'in en gelişmiş kenti olmasına rağmen otoyolu YOKTUR!).\n• Erzurum (Doğu Anadolu'nun merkezi olmasına rağmen otoyol YOKTUR!).\n• Mardin (Otoyol Şanlıurfa'da biter, Mardin'e uzanmaz!)."
     },
 
     // =========================================================================
@@ -792,6 +889,18 @@ Object.assign(COGRAFYA_DATA_EXT, {
       kpssNot: "Irak'a açılan en işlek ticaret kapısıdır. Ancak Irak sınırındaki hiçbir kapıda (Habur, Üzümlü, Derecik) DEMİRYOLU BAĞLANTISI YOKTUR."
     },
     {
+      id: "ula_sinir_akyaka_dogukapi",
+      name: "Akyaka / Doğukapı Sınır Kapısı (Ermenistan)",
+      shortName: "Doğukapı (Ermenistan - Kapalı)",
+      category: "ulasim",
+      type: "Sınır Kapısı / Demiryolu (Kapalı)",
+      lat: 40.75, lng: 43.62,
+      region: "Doğu Anadolu",
+      city: "Kars (Akyaka - Ermenistan Sınırı)",
+      promptTitle: "Ermenistan ile demiryolu bağlantımız olmasına rağmen siyasi nedenlerle fiilen KAPALI TUTULAN sınır kapısı haritada neresidir?",
+      kpssNot: "KPSS Sınır Kapıları Notu: Ermenistan ile Kars Akyaka'da (Doğukapı) demir yolu bağlantısı bulunmaktadır; ancak Karabağ işgali ve siyasi nedenlerle kapı fiilen KAPALI durumdadır."
+    },
+    {
       id: "ula_sinir_nusaybin",
       name: "Nusaybin & Cilvegözü Sınır Kapıları (Suriye)",
       shortName: "Nusaybin & Cilvegözü",
@@ -801,7 +910,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       region: "Güneydoğu Anadolu",
       city: "Mardin (Nusaybin) - Hatay (Cilvegözü / Yayladağı / Zeytin Dalı)",
       promptTitle: "Suriye sınırında DEMİRYOLU BAĞLANTISI bulunan tarihi Bağdat Demiryolu üzerindeki sınır kapısı haritada neresidir?",
-      kpssNot: "Nusaybin (Mardin) ve Çobanbey (Kilis) Suriye ile DEMİRYOLU BAĞLANTISI olan kapılardır. Cilvegözü ve Öncüpınar en işlek karayolu kapılarıdır."
+      kpssNot: "Nusaybin (Mardin) ve Çobanbey (Kilis) Suriye ile DEMİRYOLU BAĞLANTISI olan kapılardır. Cilvegözü ve Öncüpınar en işlek karayolu kapılarıdır. (Irak ile doğrudan demiryolu yoktur; dolaylı olarak Suriye üzerinden bağlantı kurulabilmektedir)."
     },
 
     // =========================================================================
