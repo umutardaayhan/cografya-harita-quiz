@@ -254,3 +254,56 @@ Haritadaki açık, koyu, fiziki ve uydu altlıklarının tümünde yüksek kontr
 - Quiz panelinde bir şık butonunun üzerine gelindiğinde haritadaki ilgili şıkkın tüm pinleri ve geometrileri büyür ve parıldar (`.highlight-hover`).
 - Haritada bir pinin üzerine gelindiğinde paneldeki ilgili şık butonu belirginleşir.
 
+---
+
+## 17. 🚢🏛️ Güncel KPSS Ulaşım, Ticaret & Turizm Veri Mimarisi (2026/2027)
+
+Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret bölgeleri ve turizm mirası en güncel akademik ve sınav verileriyle güncellenmiştir:
+
+### 17.1 🚢 Limanlar & Transit Ticaret Koridorları
+- **İthalat-İhracat 1 Numarası:** Aliağa Limanı (İzmir - Petrokimya).
+- **Kruvaziyer Lideri:** Kuşadası Limanı (1. Kuşadası, 2. Galataport, 3. Bodrum).
+- **Hinterlandı En Geniş Karadeniz Limanı:** Samsun Limanı (Canik Dağları geride, demiryolu bağlantılı).
+- **Doğal Ama Hinterlandı Dar Liman:** Sinop Limanı (Küre Dağları engebeli, demiryolu yok).
+- **Maden & Ağır Sanayi Limanları:** Bandırma (Bor ihracatı, demiryolu var), Zonguldak/Ereğli (Taş kömürü & demir-çelik, demiryolu var), İskenderun (Demir-çelik, demiryolu var).
+- **Demiryolu Olmayan Önemli Limanlar:** Gemlik Limanı (Bursa sanayisi), Antalya Limanı (Turizm ve ferrokrom).
+- **Transit & Konteyner Kapıları:** Mersin Limanı (Orta Doğu transit kapısı), Trabzon & Rize Limanları (İran transit ticareti).
+
+### 17.2 🌉 Geçitler, Tüneller & Mühendislik Yapıları
+- **Türkiye'nin En Uzun Tüneli:** Yeni Zigana Tüneli (14.5 km çift tüp - Trabzon-Gümüşhane).
+- **Ovit Tüneli:** 14 km (Rize İkizdere - Erzurum İspir).
+- **Türkiye'nin İlk Prefabrik Kar Tüneli:** Van - Bahçesaray (Çığ önleme tüneli).
+- **Kritik Geçitler:** Gülek Boğazı (Çukurova-İç Anadolu), Çubuk Geçidi (Antalya-Göller Yöresi), Sertavul Geçidi (Mersin-Karaman), Belen Geçidi (İskenderun-Amik), Ilgaz İstiklal Tüneli, Bolu Dağı Tüneli, Sabuncubeli Tüneli.
+
+### 17.3 🚆 Demiryolu, YHT & Otoyol Aksları
+- **YHT Ağı (Ankara Merkezli):** İstanbul, Konya, Karaman, Eskişehir, Bilecik, Sakarya, İzmit, Kırıkkale, Yozgat, Sivas.
+- **Turistik Tren Hatları:** Doğu Ekspresi (Ankara-Kars), Mezopotamya Ekspresi (Ankara-Diyarbakır - Diyarbakır'da biter, Mardin'e gitmez).
+- **Demiryolu Bulunmayan Merkezler:** Doğu Karadeniz (Trabzon, Rize, Artvin), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari-Şırnak.
+- **Otoyol Aksları:** Batı Otoyol Aksı (Edirne -> İstanbul -> İzmir -> Aydın -> Denizli'ye kadar), Güneydoğu Otoyol Aksı (Ankara -> Niğde -> Adana -> Gaziantep -> Şanlıurfa'da biter).
+
+### 17.4 🚪 Sınır Kapıları & Demir İpek Yolu
+- **Kapıkule:** En işlek sınır kapısı (Bulgaristan / demiryolu var).
+- **Uzunköprü:** Yunanistan demiryolu kapısı.
+- **Cambaz İstasyonu:** Bakü-Tiflis-Kars (Demir İpek Yolu) Gürcistan sınır demiryolu istasyonu.
+- **Dilucu (Nahçıvan):** En kısa sınırımız; Zengezur Koridoru demiryolu projesi.
+- **Kapıköy (Van):** İran demiryolu sınır kapısı.
+- **Habur (Irak):** En işlek Orta Doğu kapısı (Demiryolu YOKTUR).
+- **Nusaybin (Mardin):** Suriye demiryolu sınır kapısı.
+
+### 17.5 💼 Serbest Ticaret Bölgeleri
+- **İlk Serbest Bölge:** Mersin Serbest Bölgesi (1987).
+- **Ankara'da Serbest Bölge YOKTUR:** 15+ ilde serbest bölge varken başkent Ankara'da serbest bölge bulunmaz (KPSS tuzağı).
+
+### 17.6 🏛️ UNESCO Dünya Mirasları, Milli Parklar & İnanç
+- **UNESCO'ya En Son Eklenen Güncel Mekan:** Sardes Antik Kenti ve Bintepe Tümülüsleri (Manisa).
+- **UNESCO'da 2 Farklı Mekana Sahip Tek İl:** İzmir (Bergama & Efes).
+- **İlk UNESCO Mirasımız:** Divriği Ulu Camii ve Darüşşifası (Sivas - 1985).
+- **Karma Miraslar:** Kapadokya (Nevşehir) ve Pamukkale-Hierapolis (Denizli).
+- **Ahşap Destekli Camiler (Ortak Miras):** Eşrefoğlu, Sivrihisar, Mahmut Bey, Arslanhane, Afyon Ulu Camii.
+- **En Son Milli Park:** Geben Vadisi Milli Parkı (Kahramanmaraş).
+- **İlk Milli Park:** Yozgat Çamlığı Milli Parkı (1958).
+- **En Son Sakin Şehir (Cittaslow):** İbradı (Antalya - Düğmeli Evler).
+- **İlk Sakin Şehir (Cittaslow):** Seferihisar (İzmir - 2009).
+- **İnanç Turizmi:** St. Pierre Kilisesi (Dünyanın ilk mağara kilisesi - Hatay), Mor Gabriel Manastırı (Mardin), Meryem Ana Evi (İzmir), Akdamar Kilisesi (Van).
+
+

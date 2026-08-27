@@ -1737,22 +1737,10 @@ const GEO_CATALOG = {
         "icon": "🏛️",
         "i18n": {
           "tr": {
-            "label": "Tüm Turizm Merkezleri"
+            "label": "Tüm Turizm & Kültür Mirası"
           },
           "en": {
             "label": "All"
-          }
-        }
-      },
-      {
-        "id": "tarihi",
-        "icon": "🏺",
-        "i18n": {
-          "tr": {
-            "label": "Tarihî & Kültürel"
-          },
-          "en": {
-            "label": "Tarihî & Kültürel"
           }
         }
       },
@@ -1769,14 +1757,62 @@ const GEO_CATALOG = {
         }
       },
       {
+        "id": "milli_park",
+        "icon": "🌲",
+        "i18n": {
+          "tr": {
+            "label": "Milli Parklar"
+          },
+          "en": {
+            "label": "National Parks"
+          }
+        }
+      },
+      {
+        "id": "inanc_tur",
+        "icon": "🕊️",
+        "i18n": {
+          "tr": {
+            "label": "İnanç Turizmi & Mabetler"
+          },
+          "en": {
+            "label": "İnanç Turizmi & Mabetler"
+          }
+        }
+      },
+      {
+        "id": "cittaslow",
+        "icon": "🐌",
+        "i18n": {
+          "tr": {
+            "label": "Sakin Şehirler (Cittaslow)"
+          },
+          "en": {
+            "label": "Sakin Şehirler (Cittaslow)"
+          }
+        }
+      },
+      {
+        "id": "tarihi",
+        "icon": "🏺",
+        "i18n": {
+          "tr": {
+            "label": "Tarihî & Antik Kentler"
+          },
+          "en": {
+            "label": "Tarihî & Antik Kentler"
+          }
+        }
+      },
+      {
         "id": "kis_tur",
         "icon": "⛷️",
         "i18n": {
           "tr": {
-            "label": "Kış Turizmi"
+            "label": "Kış Turizmi & Kayak"
           },
           "en": {
-            "label": "Kış Turizmi"
+            "label": "Kış Turizmi & Kayak"
           }
         }
       },
@@ -1785,10 +1821,10 @@ const GEO_CATALOG = {
         "icon": "♨️",
         "i18n": {
           "tr": {
-            "label": "Termal Turizm"
+            "label": "Termal & Kaplıcalar"
           },
           "en": {
-            "label": "Termal Turizm"
+            "label": "Termal & Kaplıcalar"
           }
         }
       },
@@ -1797,10 +1833,10 @@ const GEO_CATALOG = {
         "icon": "🏖️",
         "i18n": {
           "tr": {
-            "label": "Kıyı & Doğa Turizmi"
+            "label": "Kıyı, Doğa & Kanyonlar"
           },
           "en": {
-            "label": "Kıyı & Doğa Turizmi"
+            "label": "Kıyı, Doğa & Kanyonlar"
           }
         }
       }
@@ -1811,7 +1847,7 @@ const GEO_CATALOG = {
         "icon": "🚢",
         "i18n": {
           "tr": {
-            "label": "Tüm Ulaşım Yapıları"
+            "label": "Tüm Ulaşım & Ticaret"
           },
           "en": {
             "label": "All"
@@ -1823,10 +1859,70 @@ const GEO_CATALOG = {
         "icon": "⚓",
         "i18n": {
           "tr": {
-            "label": "Limanlar"
+            "label": "Deniz Limanları & Marinalar"
           },
           "en": {
-            "label": "Limanlar"
+            "label": "Deniz Limanları & Marinalar"
+          }
+        }
+      },
+      {
+        "id": "gecit_tunel",
+        "icon": "🌉",
+        "i18n": {
+          "tr": {
+            "label": "Geçitler & Tüneller"
+          },
+          "en": {
+            "label": "Geçitler & Tüneller"
+          }
+        }
+      },
+      {
+        "id": "sinir_kapisi",
+        "icon": "🚪",
+        "i18n": {
+          "tr": {
+            "label": "Sınır Kapıları & Gümrük"
+          },
+          "en": {
+            "label": "Sınır Kapıları & Gümrük"
+          }
+        }
+      },
+      {
+        "id": "demir_yolu",
+        "icon": "🚆",
+        "i18n": {
+          "tr": {
+            "label": "Demiryolları & Tren Hatları"
+          },
+          "en": {
+            "label": "Demiryolları & Tren Hatları"
+          }
+        }
+      },
+      {
+        "id": "otoyol",
+        "icon": "🛣️",
+        "i18n": {
+          "tr": {
+            "label": "Otoyollar & Karayolu Aksları"
+          },
+          "en": {
+            "label": "Otoyollar & Karayolu Aksları"
+          }
+        }
+      },
+      {
+        "id": "serbest_bolge",
+        "icon": "💼",
+        "i18n": {
+          "tr": {
+            "label": "Serbest Ticaret Bölgeleri"
+          },
+          "en": {
+            "label": "Serbest Ticaret Bölgeleri"
           }
         }
       },
@@ -1843,50 +1939,14 @@ const GEO_CATALOG = {
         }
       },
       {
-        "id": "kopru_tunel",
-        "icon": "🌉",
-        "i18n": {
-          "tr": {
-            "label": "Köprüler & Tüneller"
-          },
-          "en": {
-            "label": "Köprüler & Tüneller"
-          }
-        }
-      },
-      {
         "id": "boru_hatti",
         "icon": "🛢️",
         "i18n": {
           "tr": {
-            "label": "Boru Hatları"
+            "label": "Boru Hatları & Enerji"
           },
           "en": {
-            "label": "Boru Hatları"
-          }
-        }
-      },
-      {
-        "id": "kara_demir",
-        "icon": "🛣️",
-        "i18n": {
-          "tr": {
-            "label": "Kara & Demiryolları"
-          },
-          "en": {
-            "label": "Kara & Demiryolları"
-          }
-        }
-      },
-      {
-        "id": "su_yolu",
-        "icon": "🌉",
-        "i18n": {
-          "tr": {
-            "label": "Su Yolları"
-          },
-          "en": {
-            "label": "Su Yolları"
+            "label": "Boru Hatları & Enerji"
           }
         }
       }
@@ -3017,14 +3077,14 @@ const GEO_CATALOG = {
         "turizm"
       ],
       "tiers": {
-        "1": 13,
-        "2": 20,
-        "3": 31
+        "1": 17,
+        "2": 31,
+        "3": 48
       },
       "sizeKb": {
-        "1": 5,
-        "2": 8,
-        "3": 12
+        "1": 9,
+        "2": 18,
+        "3": 25
       },
       "unlocks": [
         "quiz",
@@ -3068,14 +3128,14 @@ const GEO_CATALOG = {
         "ulasim"
       ],
       "tiers": {
-        "1": 10,
-        "2": 18,
-        "3": 26
+        "1": 22,
+        "2": 36,
+        "3": 55
       },
       "sizeKb": {
-        "1": 5,
-        "2": 7,
-        "3": 11
+        "1": 12,
+        "2": 18,
+        "3": 29
       },
       "unlocks": [
         "quiz",

@@ -106,21 +106,26 @@ const SUB_TYPES_EXT = {
     { id: "dalga_dk",    label: "Dalga & Kıyı Şekilleri", icon: "🌊", filter: (i) => ic(i, "dalga sekli") }
   ],
   turizm: [
-    { id: "all",         label: "Tüm Turizm Merkezleri",  icon: "🏛️" },
-    { id: "tarihi",      label: "Tarihî & Kültürel",      icon: "🏺", filter: (i) => ic(i, "kulturel turizm") },
-    { id: "unesco",      label: "UNESCO Dünya Mirası",    icon: "🏅", filter: (i) => ic(i, "unesco") },
-    { id: "kis_tur",     label: "Kış Turizmi",            icon: "⛷️", filter: (i) => ic(i, "kis turizmi") },
-    { id: "termal_tur",  label: "Termal Turizm",          icon: "♨️", filter: (i) => ic(i, "termal turizm") },
-    { id: "kiyi_doga",   label: "Kıyı & Doğa Turizmi",    icon: "🏖️", filter: (i) => ic(i, "doga turizmi") }
+    { id: "all",         label: "Tüm Turizm & Kültür Mirası", icon: "🏛️" },
+    { id: "unesco",      label: "UNESCO Dünya Mirası",        icon: "🏅", filter: (i) => ic(i, "unesco") },
+    { id: "milli_park",  label: "Milli Parklar",              icon: "🌲", filter: (i) => ic(i, "milli park") },
+    { id: "inanc_tur",   label: "İnanç Turizmi & Mabetler",   icon: "🕊️", filter: (i) => ic(i, "inanc") || ic(i, "cami") || ic(i, "kilise") || ic(i, "manastir") || ic(i, "turbe") },
+    { id: "cittaslow",   label: "Sakin Şehirler (Cittaslow)", icon: "🐌", filter: (i) => ic(i, "cittaslow") || ic(i, "sakin sehir") },
+    { id: "tarihi",      label: "Tarihî & Antik Kentler",     icon: "🏺", filter: (i) => ic(i, "tarih") || ic(i, "kulturel") || ic(i, "antik") || ic(i, "saray") || ic(i, "hoyuk") },
+    { id: "kis_tur",     label: "Kış Turizmi & Kayak",        icon: "⛷️", filter: (i) => ic(i, "kis turizmi") || ic(i, "kayak") },
+    { id: "termal_tur",  label: "Termal & Kaplıcalar",        icon: "♨️", filter: (i) => ic(i, "termal") || ic(i, "kaplica") },
+    { id: "kiyi_doga",   label: "Kıyı, Doğa & Kanyonlar",     icon: "🏖️", filter: (i) => ic(i, "doga") || ic(i, "kiyi") || ic(i, "lagun") || ic(i, "maar") || ic(i, "kanyon") }
   ],
   ulasim: [
-    { id: "all",         label: "Tüm Ulaşım Yapıları",    icon: "🚢" },
-    { id: "liman",       label: "Limanlar",               icon: "⚓", filter: (i) => bas(i, "liman /") },
-    { id: "havalimani",  label: "Havalimanları",          icon: "✈️", filter: (i) => ic(i, "havalimani") },
-    { id: "kopru_tunel", label: "Köprüler & Tüneller",    icon: "🌉", filter: (i) => ic(i, "kopru & tunel") },
-    { id: "boru_hatti",  label: "Boru Hatları",           icon: "🛢️", filter: (i) => bas(i, "boru hatti") },
-    { id: "kara_demir",  label: "Kara & Demiryolları",    icon: "🛣️", filter: (i) => bas(i, "demiryolu /") || bas(i, "karayolu /") },
-    { id: "su_yolu",     label: "Su Yolları",             icon: "🌉", filter: (i) => bas(i, "su yolu") }
+    { id: "all",           label: "Tüm Ulaşım & Ticaret",        icon: "🚢" },
+    { id: "liman",         label: "Deniz Limanları & Marinalar", icon: "⚓", filter: (i) => ic(i, "liman") },
+    { id: "gecit_tunel",   label: "Geçitler & Tüneller",         icon: "🌉", filter: (i) => ic(i, "gecit") || ic(i, "tunel") || ic(i, "bogaz") || ic(i, "kopru") },
+    { id: "sinir_kapisi",  label: "Sınır Kapıları & Gümrük",     icon: "🚪", filter: (i) => ic(i, "sinir kapisi") || ic(i, "istasyon") },
+    { id: "demir_yolu",    label: "Demiryolları & Tren Hatları", icon: "🚆", filter: (i) => ic(i, "demiryolu") || ic(i, "tren") || ic(i, "marmaray") },
+    { id: "otoyol",        label: "Otoyollar & Karayolu Aksları",icon: "🛣️", filter: (i) => ic(i, "otoyol") || ic(i, "karayolu") },
+    { id: "serbest_bolge", label: "Serbest Ticaret Bölgeleri",   icon: "💼", filter: (i) => ic(i, "ticaret") || ic(i, "serbest bolge") },
+    { id: "havalimani",    label: "Havalimanları",               icon: "✈️", filter: (i) => ic(i, "havalimani") },
+    { id: "boru_hatti",    label: "Boru Hatları & Enerji",       icon: "🛢️", filter: (i) => ic(i, "boru hatti") || ic(i, "terminal") }
   ],
   sehirler: [
     { id: "all",         label: "Tüm İller (81)",         icon: "🌍" },
