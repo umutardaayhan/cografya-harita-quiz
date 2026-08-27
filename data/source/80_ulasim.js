@@ -574,63 +574,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
       kpssNot: "Bandırma (bor taşınır), Derince, Haydarpaşa ve İzmir limanlarında demiryolu mevcuttur."
     },
 
-    // F. DEMİRYOLU OLMAYAN MERKEZLER & YHT OLMAYANLAR
-    {
-      id: "ula_demiryolsuz_karadeniz",
-      groupId: "grp_demiryolsuz_merkezler",
-      groupName: "Demiryolu Bağlantısı Olmayan Önemli Merkezler",
-      name: "Doğu Karadeniz ve Sinop (Demiryolsuz)",
-      shortName: "Doğu Karadeniz & Sinop",
-      category: "ulasim",
-      type: "Demiryolu / Kör Noktalar",
-      lat: 41.20, lng: 39.00,
-      region: "Karadeniz",
-      city: "Trabzon, Rize, Artvin, Giresun, Gümüşhane, Bayburt, Sinop",
-      promptTitle: "Engebeli yer şekilleri nedeniyle günümüzde DEMİRYOLU BULUNMAYAN Karadeniz illeri hangileridir?",
-      kpssNot: "Doğu Karadeniz (Trabzon, Rize, Artvin vb.) ve Sinop'ta demiryolu yoktur."
-    },
-    {
-      id: "ula_demiryolsuz_akdeniz_ege",
-      groupId: "grp_demiryolsuz_merkezler",
-      groupName: "Demiryolu Bağlantısı Olmayan Önemli Merkezler",
-      name: "Antalya, Muğla ve Çanakkale (Demiryolsuz)",
-      shortName: "Antalya, Muğla, Çanakkale",
-      category: "ulasim",
-      type: "Demiryolu / Kör Noktalar",
-      lat: 37.00, lng: 28.50,
-      region: "Akdeniz",
-      city: "Antalya, Muğla, Çanakkale, Bursa (Gemlik)",
-      promptTitle: "Turizm ve kıyı merkezleri olmalarına rağmen demiryolu ağına bağlı olmayan iller hangileridir?",
-      kpssNot: "Antalya, Muğla, Çanakkale ve Gemlik Limanı'nda demiryolu hattı bulunmaz."
-    },
-    {
-      id: "ula_demiryolsuz_dogu",
-      groupId: "grp_demiryolsuz_merkezler",
-      groupName: "Demiryolu Bağlantısı Olmayan Önemli Merkezler",
-      name: "Hakkari ve Şırnak (Demiryolsuz)",
-      shortName: "Hakkari & Şırnak",
-      category: "ulasim",
-      type: "Demiryolu / Kör Noktalar",
-      lat: 37.40, lng: 43.50,
-      region: "Güneydoğu Anadolu",
-      city: "Hakkari - Şırnak",
-      promptTitle: "Güneydoğu Toroslar'ın engebeli yapısı nedeniyle demiryolu ulaşmayan sınır illerimiz hangileridir?",
-      kpssNot: "Hakkari ve Şırnak illerinde demiryolu bağlantısı yoktur."
-    },
-    {
-      id: "ula_yht_olmayan_iller",
-      groupId: "grp_yht_olmayan_merkezler",
-      groupName: "YHT Bağlantısı Bulunmayan Büyük Şehirler",
-      name: "İzmir, Antalya, Muğla, Trabzon ve Kayseri (YHT Yok)",
-      shortName: "YHT Olmayan Büyükşehirler",
-      category: "ulasim",
-      type: "Demiryolu / YHT Olmayan Merkezler",
-      lat: 38.50, lng: 34.00,
-      region: "Türkiye Geneli",
-      city: "İzmir, Antalya, Muğla, Trabzon, Kayseri",
-      promptTitle: "Büyük nüfus ve sanayilerine rağmen günümüzde AKTİF YHT HATTI BULUNMAYAN iller hangileridir?",
-      kpssNot: "KPSS Tuzağı: İZMİR, ANTALYA, TRABZON ve KAYSERİ'de henüz aktif YHT yoktur (Ankara-Sivas YHT'si Kayseri'ye uğramaz)."
-    },
 
     // =========================================================================
     // 4. ŞEHİR ŞEHİR BAĞLI OTOYOL HATLARI (GRUP PİNLERİ)
@@ -755,35 +698,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
       kpssNot: "KPSS Tuzağı: Otoyol Hatay merkeze (Antakya) gitmez; İskenderun Limanı'nda son bulur."
     },
 
-    // E. OTOYOL BAĞLANTISI OLMAYAN MERKEZLER
-    {
-      id: "ula_otoyolsuz_merkezler_ic_bati",
-      groupId: "grp_otoyolsuz_merkezler",
-      groupName: "Otoyol Bağlantısı Bulunmayan Önemli Merkezler",
-      name: "Eskişehir, Yozgat ve Sivas (YHT Var, Otoyol Yok)",
-      shortName: "Eskişehir, Yozgat, Sivas",
-      category: "ulasim",
-      type: "Otoyol / Otoyolsuz Merkezler",
-      lat: 39.75, lng: 35.00,
-      region: "İç Anadolu",
-      city: "Eskişehir, Yozgat, Sivas",
-      promptTitle: "Hızlı tren (YHT) bağlantısı olmasına rağmen OTOYOL ŞEBEKESİ BULUNMAYAN iller hangileridir?",
-      kpssNot: "Eskişehir, Yozgat ve Sivas'a YHT ulaşır ancak otoyol bağlantıları yoktur."
-    },
-    {
-      id: "ula_otoyolsuz_merkezler_kestirme",
-      groupId: "grp_otoyolsuz_merkezler",
-      groupName: "Otoyol Bağlantısı Bulunmayan Önemli Merkezler",
-      name: "Antalya, Samsun, Erzurum ve Mardin (Otoyol Yok)",
-      shortName: "Antalya, Samsun, Erzurum, Mardin",
-      category: "ulasim",
-      type: "Otoyol / Otoyolsuz Merkezler",
-      lat: 38.50, lng: 36.50,
-      region: "Türkiye Geneli",
-      city: "Antalya, Samsun, Erzurum, Mardin",
-      promptTitle: "Büyük turizm, liman veya bölgesel merkez olmalarına rağmen otoyol ağına bağlı olmayan iller hangileridir?",
-      kpssNot: "Antalya (turizm devi), Samsun (Karadeniz'in en büyüğü), Erzurum ve Mardin'de otoyol yoktur."
-    },
 
     // =========================================================================
     // 5. BORU HATLARI & ENERJİ KORİDORLARI (ŞEHİR ŞEHİR BAĞLI PİNLER)

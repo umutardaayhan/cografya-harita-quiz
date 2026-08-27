@@ -284,16 +284,13 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
   * **Samsun:** Karadeniz'de hinterlandı en geniş demiryolu limanı.
   * **İzmir, İzmit, İstanbul:** İç kesimlerle demiryolu bağlantılı.
   * *(Demiryolsuz Limanlar: Antalya, Sinop, Trabzon, Rize, Çanakkale, Gemlik).*
-- **YHT Ağı (Ankara Merkezli):** İstanbul, Konya, Karaman, Eskişehir, Bilecik, Sakarya, İzmit, Kırıkkale, Yozgat, Sivas.
-- **YHT Bağlantısı Bulunmayan Büyük Şehirler:** İzmir, Antalya, Muğla, Trabzon, Kayseri (Ankara-Sivas YHT hattı Kayseri'den geçmez!).
+- **YHT Ağı (Ankara Merkezli):** İstanbul, Konya, Karaman, Eskişehir, Bilecik, Sakarya, İzmit, Kırıkkale, Yozgat, Sivas durak pinleri.
 - **Turistik Tren Hatları:** Doğu Ekspresi (Ankara-Kars), Mezopotamya Ekspresi (Ankara-Diyarbakır - Diyarbakır'da biter, Mardin'e gitmez).
-- **Demiryolu Bulunmayan Şehirler / Kuşaklar:** Doğu Karadeniz (Trabzon, Rize, Artvin, Gümüşhane, Bayburt), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari-Şırnak.
 - **Otoyol Aksları:**
   * **TEM Otoyolu:** İstanbul - Bolu Dağı Tüneli - Ankara ana transit omurgası.
   * **Batı Otoyol Aksı:** Edirne -> İstanbul -> Bursa -> Manisa -> İzmir -> Aydın -> Denizli'ye kadar kesintisiz.
   * **Güneydoğu Otoyol Aksı:** Ankara -> Niğde (Kırşehir/Nevşehir bağlantıları) -> Adana -> Gaziantep -> Şanlıurfa'da biter.
   * **Adana - İskenderun Otoyol Kolu:** Hatay merkeze gitmez, İskenderun'da biter.
-- **Otoyol Bağlantısı Bulunmayan Önemli Merkezler:** Eskişehir, Yozgat, Sivas (YHT var ama otoyol yok!), Antalya (Turizm merkezi ama otoyol yok!), Samsun, Erzurum, Mardin.
 
 ### 17.4 🚪 Sınır Kapıları & Demir İpek Yolu
 - **Kapıkule:** En işlek sınır kapısı (Bulgaristan / demiryolu var).
