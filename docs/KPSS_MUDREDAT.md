@@ -22,8 +22,11 @@ Her müfredat başlığı bir PAKET olarak dağıtılır; ayrıntı için
 | Dış kuvvetler & yerşekilleri | `tr.dis_kuvvetler` | ✅ |
 | Nüfus, yerleşme & göç | `tr.nufus` | ✅ |
 | Coğrafi bölgeler & bölümler | `tr.bolgeler` | ✅ |
-| Tarım, hayvancılık & sanayi | `tr.beseri` | ✅ |
+| Tarım & hayvancılık | `tr.beseri` | ✅ |
+| Sanayi & endüstri haritası | `tr.sanayi` | ✅ |
 | Madenler & enerji | `tr.madenler` | ✅ |
+| Madenler bölge haritası | `tr.maden_bolgeleri` | ✅ |
+| Enerji kaynakları bölge haritası | `tr.enerji_bolgeleri` | ✅ |
 | Turizm & kültür mirası | `tr.turizm` | ✅ |
 | Ulaşım & ticaret | `tr.ulasim` | ✅ |
 | Matematiksel konum & hesaplamalar | `tr.mutlak_konum` | ✅ |

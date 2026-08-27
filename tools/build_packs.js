@@ -129,7 +129,7 @@ const PACK_GROUPS = {
   'tr.gecitler': 'fiziki', 'tr.iklim_orman': 'fiziki', 'tr.toprak': 'fiziki',
   'tr.afet': 'fiziki', 'tr.fay': 'fiziki', 'tr.kiyilar': 'fiziki',
   'tr.dis_kuvvetler': 'fiziki',
-  'tr.beseri': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.maden_bolgeleri': 'ekonomik', 'tr.enerji_bolgeleri': 'ekonomik', 'tr.turizm': 'ekonomik',
+  'tr.beseri': 'ekonomik', 'tr.sanayi': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.maden_bolgeleri': 'ekonomik', 'tr.enerji_bolgeleri': 'ekonomik', 'tr.turizm': 'ekonomik',
   'tr.ulasim': 'ekonomik',
   'tr.sehirler': 'beseri', 'tr.nufus': 'beseri', 'tr.bolgeler': 'beseri', 'tr.iliskiler': 'beseri',
   'tr.mutlak_konum': 'modul'
@@ -183,17 +183,25 @@ const PACK_DEFS = [
     recommends: ['tr.daglar']
   },
   {
-    id: 'tr.beseri', country: 'tr', categories: ['tarim', 'hayvancilik', 'sanayi'],
+    id: 'tr.beseri', country: 'tr', categories: ['tarim', 'hayvancilik'],
     icon: '🚜', color: '#84cc16',
-    tr: { title: 'Tarım, Hayvancılık & Sanayi', desc: 'Ürün yetişme alanları, hayvancılık kuşakları ve sanayi tesisleri.' },
-    en: { title: 'Agriculture, Livestock & Industry', desc: 'Crop belts, livestock zones and industrial facilities.' },
+    tr: { title: 'Tarım & Hayvancılık', desc: 'Ürün yetişme alanları, hayvancılık kuşakları ve mera bölgeleri.' },
+    en: { title: 'Agriculture & Livestock', desc: 'Crop belts, livestock zones and pasture regions.' },
     unlocks: ['quiz', 'conqueror', 'speedrun', 'exam'],
     planRows: [
       { cat: 'tarim',       icon: '🚜', count: 33, tr: 'Tarım',  en: 'Agriculture' },
-      { cat: 'hayvancilik', icon: '🐑', count: 8,  tr: 'Hayvan', en: 'Livestock' },
-      { cat: 'sanayi',      icon: '🏭', count: 13, tr: 'Sanayi', en: 'Industry' }
+      { cat: 'hayvancilik', icon: '🐑', count: 8,  tr: 'Hayvan', en: 'Livestock' }
     ],
     recommends: []
+  },
+  {
+    id: 'tr.sanayi', country: 'tr', categories: ['sanayi'],
+    icon: '🏭', color: '#64748b',
+    tr: { title: 'Sanayi & Endüstri Haritası', desc: 'Gıda, dokuma, metalurji, otomotiv, kimya, orman ve taşa-toprağa dayalı 7 ana sanayi sektörü, 33 endüstri grubu ve fabrikalar.' },
+    en: { title: 'Industry & Manufacturing Map', desc: '7 major industrial sectors including food, textile, metallurgy, automotive, chemistry, timber, ceramics and manufacturing hubs.' },
+    unlocks: ['quiz', 'geoguessr', 'conqueror', 'speedrun', 'exam', 'boyama'],
+    planRows: [{ cat: 'sanayi', icon: '🏭', count: 33, tr: 'Sanayi Grubu', en: 'Industrial Group' }],
+    recommends: ['tr.beseri', 'tr.maden_bolgeleri', 'tr.enerji_bolgeleri']
   },
   {
     id: 'tr.iklim_orman', country: 'tr', categories: ['iklim', 'orman'],

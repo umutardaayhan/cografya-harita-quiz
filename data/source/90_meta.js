@@ -131,5 +131,15 @@ const SUB_TYPES_EXT = {
     { id: "karadeniz_bolge", label: "Karadeniz (18)",     icon: "🌲", filter: (i) => i.region === "Karadeniz" },
     { id: "doguanadolu", label: "Doğu Anadolu (14)",      icon: "🏔️", filter: (i) => i.region === "Doğu Anadolu" },
     { id: "guneydogu",   label: "Güneydoğu (9)",          icon: "🏛️", filter: (i) => i.region === "Güneydoğu Anadolu" }
+  ],
+  sanayi: [
+    { id: "all",            label: "Tüm Sanayi Kolları (7 Sektör)", icon: "🏭" },
+    { id: "gida",           label: "Besin (Gıda) Sanayisi",        icon: "🍞", filter: (i) => ic(i, "gida") || ic(i, "seker") || ic(i, "cay") || ic(i, "et") || ic(i, "sut") || ic(i, "konserve") || ic(i, "un") || ic(i, "yag") },
+    { id: "tekstil_deri",   label: "Dokuma, Deri & Giyim",         icon: "👕", filter: (i) => ic(i, "dokuma") || ic(i, "deri") || ic(i, "giyim") || ic(i, "hali") || ic(i, "ipek") || ic(i, "tekstil") },
+    { id: "metalurji",      label: "Maden Sanayisi (Metalurji)",   icon: "🔩", filter: (i) => ic(i, "metalurji") || ic(i, "demir-celik") || ic(i, "ferrokrom") || ic(i, "aluminyum") || ic(i, "bakir") || ic(i, "kursun") || ic(i, "cinko") },
+    { id: "otomotiv_ulasim", label: "Makine, Otomotiv & Araçlar",  icon: "🚗", filter: (i) => ic(i, "otomotiv") || ic(i, "traktor") || ic(i, "ulasim araclari") || ic(i, "havacilik") || ic(i, "denizcilik") || ic(i, "vagon") || ic(i, "lokomotif") || ic(i, "tersane") || ic(i, "yat") },
+    { id: "kimya",          label: "Kimya Endüstrisi & Rafineri",  icon: "🧪", filter: (i) => ic(i, "kimya") || ic(i, "petrol") || ic(i, "rafineri") || ic(i, "gubre") || ic(i, "ilac") },
+    { id: "orman",          label: "Orman Ürünleri & Mobilya",     icon: "🪵", filter: (i) => ic(i, "orman") || ic(i, "kagit") || ic(i, "mobilya") || ic(i, "agac") || ic(i, "kereste") || ic(i, "sunta") },
+    { id: "tasa_topraga",   label: "Taşa Toprağa Dayalı Sanayi",   icon: "🧱", filter: (i) => ic(i, "toprak") || ic(i, "cam") || ic(i, "tugla") || ic(i, "kiremit") || ic(i, "seramik") || ic(i, "porselen") || ic(i, "cimento") }
   ]
 };

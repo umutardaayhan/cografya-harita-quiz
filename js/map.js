@@ -53,7 +53,10 @@ const TOPIC_SUB_ICON = {
   // Toprak
   zonal: '🟫', azonal: '🟤', intrazonal: '🧂',
   // Bölgeler
-  ana_bolge: '🗺️', bolum: '📍'
+  ana_bolge: '🗺️', bolum: '📍',
+  // Sanayi & Endüstri (7 Sektör)
+  gida: '🍞', tekstil_deri: '👕', metalurji: '🔩', otomotiv_ulasim: '🚗',
+  kimya: '🧪', orman: '🪵', tasa_topraga: '🧱'
 };
 
 /**

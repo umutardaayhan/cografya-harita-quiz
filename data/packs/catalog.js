@@ -833,7 +833,7 @@ const GEO_CATALOG = {
         "icon": "🏭",
         "i18n": {
           "tr": {
-            "label": "Tüm Sanayi Tesisleri"
+            "label": "Tüm Sanayi Kolları (7 Sektör)"
           },
           "en": {
             "label": "All"
@@ -841,38 +841,86 @@ const GEO_CATALOG = {
         }
       },
       {
-        "id": "demir_celik",
-        "icon": "⚙️",
+        "id": "gida",
+        "icon": "🍞",
         "i18n": {
           "tr": {
-            "label": "Demir-Çelik"
+            "label": "Besin (Gıda) Sanayisi"
           },
           "en": {
-            "label": "Iron & Steel"
+            "label": "Besin (Gıda) Sanayisi"
           }
         }
       },
       {
-        "id": "rafineri",
-        "icon": "🛢️",
+        "id": "tekstil_deri",
+        "icon": "👕",
         "i18n": {
           "tr": {
-            "label": "Rafineri & Petrokimya"
+            "label": "Dokuma, Deri & Giyim"
           },
           "en": {
-            "label": "Refinery & Petrochemical"
+            "label": "Dokuma, Deri & Giyim"
           }
         }
       },
       {
-        "id": "imalat",
-        "icon": "🧵",
+        "id": "metalurji",
+        "icon": "🔩",
         "i18n": {
           "tr": {
-            "label": "Otomotiv & Dokuma & İmalat"
+            "label": "Maden Sanayisi (Metalurji)"
           },
           "en": {
-            "label": "Automotive, Textile & Manufacturing"
+            "label": "Maden Sanayisi (Metalurji)"
+          }
+        }
+      },
+      {
+        "id": "otomotiv_ulasim",
+        "icon": "🚗",
+        "i18n": {
+          "tr": {
+            "label": "Makine, Otomotiv & Araçlar"
+          },
+          "en": {
+            "label": "Makine, Otomotiv & Araçlar"
+          }
+        }
+      },
+      {
+        "id": "kimya",
+        "icon": "🧪",
+        "i18n": {
+          "tr": {
+            "label": "Kimya Endüstrisi & Rafineri"
+          },
+          "en": {
+            "label": "Kimya Endüstrisi & Rafineri"
+          }
+        }
+      },
+      {
+        "id": "orman",
+        "icon": "🪵",
+        "i18n": {
+          "tr": {
+            "label": "Orman Ürünleri & Mobilya"
+          },
+          "en": {
+            "label": "Orman Ürünleri & Mobilya"
+          }
+        }
+      },
+      {
+        "id": "tasa_topraga",
+        "icon": "🧱",
+        "i18n": {
+          "tr": {
+            "label": "Taşa Toprağa Dayalı Sanayi"
+          },
+          "en": {
+            "label": "Taşa Toprağa Dayalı Sanayi"
           }
         }
       }
@@ -2182,18 +2230,17 @@ const GEO_CATALOG = {
       "virtual": false,
       "categories": [
         "tarim",
-        "hayvancilik",
-        "sanayi"
+        "hayvancilik"
       ],
       "tiers": {
-        "1": 24,
-        "2": 40,
-        "3": 54
+        "1": 18,
+        "2": 30,
+        "3": 41
       },
       "sizeKb": {
-        "1": 13,
-        "2": 22,
-        "3": 29
+        "1": 9,
+        "2": 15,
+        "3": 21
       },
       "unlocks": [
         "quiz",
@@ -2216,23 +2263,71 @@ const GEO_CATALOG = {
           "count": 8,
           "tr": "Hayvan",
           "en": "Livestock"
-        },
-        {
-          "cat": "sanayi",
-          "icon": "🏭",
-          "count": 13,
-          "tr": "Sanayi",
-          "en": "Industry"
         }
       ],
       "i18n": {
         "tr": {
-          "title": "Tarım, Hayvancılık & Sanayi",
-          "desc": "Ürün yetişme alanları, hayvancılık kuşakları ve sanayi tesisleri."
+          "title": "Tarım & Hayvancılık",
+          "desc": "Ürün yetişme alanları, hayvancılık kuşakları ve mera bölgeleri."
         },
         "en": {
-          "title": "Agriculture, Livestock & Industry",
-          "desc": "Crop belts, livestock zones and industrial facilities."
+          "title": "Agriculture & Livestock",
+          "desc": "Crop belts, livestock zones and pasture regions."
+        }
+      }
+    },
+    {
+      "id": "tr.sanayi",
+      "country": "tr",
+      "group": "ekonomik",
+      "version": 1,
+      "icon": "🏭",
+      "color": "#64748b",
+      "file": "data/packs/pack.tr.sanayi.js",
+      "virtual": false,
+      "categories": [
+        "sanayi"
+      ],
+      "tiers": {
+        "1": 61,
+        "2": 113,
+        "3": 174
+      },
+      "sizeKb": {
+        "1": 36,
+        "2": 66,
+        "3": 101
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "conqueror",
+        "speedrun",
+        "exam",
+        "boyama"
+      ],
+      "recommends": [
+        "tr.beseri",
+        "tr.maden_bolgeleri",
+        "tr.enerji_bolgeleri"
+      ],
+      "planRows": [
+        {
+          "cat": "sanayi",
+          "icon": "🏭",
+          "count": 33,
+          "tr": "Sanayi Grubu",
+          "en": "Industrial Group"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Sanayi & Endüstri Haritası",
+          "desc": "Gıda, dokuma, metalurji, otomotiv, kimya, orman ve taşa-toprağa dayalı 7 ana sanayi sektörü, 33 endüstri grubu ve fabrikalar."
+        },
+        "en": {
+          "title": "Industry & Manufacturing Map",
+          "desc": "7 major industrial sectors including food, textile, metallurgy, automotive, chemistry, timber, ceramics and manufacturing hubs."
         }
       }
     },

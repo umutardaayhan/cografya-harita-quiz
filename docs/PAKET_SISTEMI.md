@@ -45,7 +45,8 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 ### 🏭 Ekonomik Coğrafya
 | Paket | id | Az / Orta / Tam |
 | :--- | :--- | :--- |
-| 🚜 Tarım, Hayvancılık & Sanayi | `tr.beseri` | 24 / 40 / 54 |
+| 🚜 Tarım & Hayvancılık | `tr.beseri` | 18 / 30 / 41 |
+| 🏭 Sanayi & Endüstri Haritası | `tr.sanayi` | 61 / 113 / 174 (33 Sanayi Grubu) |
 | ⛏️ Madenler & Enerji Kaynakları | `tr.madenler` | 23 / 43 / 65 |
 | ⛏️ Madenler Bölge Haritası | `tr.maden_bolgeleri` | 39 / 72 / 110 (23 Maden Grubu) |
 | ⚡ Enerji Kaynakları Bölge Haritası | `tr.enerji_bolgeleri` | 24 / 44 / 68 (12 Enerji Grubu) |
