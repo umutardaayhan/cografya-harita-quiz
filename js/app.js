@@ -658,6 +658,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
+      // Şık etiketleri TOPLUCA üretilir: aynı yazacak iki şık kalırsa
+      // (ör. "Linyit" / "Linyit") o şıklar ayırt edici tam adlarına döner.
+      const optionLabels = (typeof sikEtiketleri === 'function')
+        ? sikEtiketleri(qData.options)
+        : qData.options.map(o => o.shortName || o.name.replace(/\s*\([^)]*\)/g, '').trim());
+
       qData.options.forEach((opt, index) => {
         const optBtn = document.createElement('button');
         optBtn.className = 'option-btn';
@@ -672,7 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         optBtn.style.setProperty('--opt-bg', choiceColor.bg);
 
         const keyLabel = optionLetters[index] || (index + 1);
-        const displayName = opt.shortName || opt.name.replace(/\s*\([^)]*\)/g, '').trim();
+        const displayName = optionLabels[index];
 
         optBtn.innerHTML = `
           <span class="option-key" style="background: ${choiceColor.main}; color: #ffffff;">${keyLabel}</span>
@@ -901,7 +907,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderQuestion({
       question: qItem,
       options: options,
-      questionText: `📍 <span style="color: #c084fc; font-weight:800;">${qItem.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${qItem.type})</span>`,
+      // Başlık ortak üreticiden gelir: eskiden burada `qItem.name` ham hâliyle
+      // basılıyor, "📍 Demir (Divriği) (Metalik Maden)" gibi cevabın ilini ve
+      // türünü birden söyleyen bir soru çıkıyordu.
+      questionText: geoQuiz.buildQuestionText(qItem, 'find_on_map').questionText,
       questionTypeTitle: `DENEME [${examCurrentIndex + 1}/${examQuestions.length}]`,
       actualFormat: 'find_on_map',
       isProblematic: false,
@@ -3195,16 +3204,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const actualFormat = fmt === 'mixed' ? (Math.random() > 0.5 ? 'find_on_map' : 'identify') : fmt;
     geoQuiz.currentActualFormat = actualFormat;
 
-    let questionText;
-    if (actualFormat === 'find_on_map') {
-      questionText = `📍 <span style="color: #7dd3fc; font-weight:800;">${qItem.name}</span> <span style="font-size: 0.85rem; color: #94a3b8; font-weight:600;">(${qItem.type})</span>`;
-    } else if (qItem.shapeType === 'polyline') {
-      questionText = 'İşaretli Akarsu / Hat Nedir?';
-    } else if (qItem.shapeType === 'polygon') {
-      questionText = 'İşaretli Alan / Plato Nedir?';
-    } else {
-      questionText = 'İşaretli Yer Şekli Nedir?';
-    }
+    // Başlık ortak üreticiden gelir. Eskiden buradaki üç kalıp ("İşaretli Yer
+    // Şekli Nedir?" vb.) kategoriden ve bağlı gruplardan habersizdi: 12 tuz
+    // sahası birden parlarken "İşaretli Yer Şekli Nedir?" diye soruluyordu.
+    const { questionText } = geoQuiz.buildQuestionText(qItem, actualFormat);
 
     const a = geoQuiz.analytics[qItem.id] || { wrongCount: 0, correctCount: 0, streak: 0 };
     renderQuestion({

@@ -290,7 +290,7 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
   * **TEM Otoyolu:** İstanbul - Bolu Dağı Tüneli - Ankara ana transit omurgası.
   * **Batı Otoyol Aksı:** Edirne -> İstanbul -> Bursa -> Manisa -> İzmir -> Aydın -> Denizli'ye kadar kesintisiz.
   * **Güneydoğu Otoyol Aksı:** Ankara -> Niğde (Kırşehir/Nevşehir bağlantıları) -> Adana -> Gaziantep -> Şanlıurfa'da biter.
-  * **Adana - İskenderun Otoyol Kolu:** Hatay merkeze gitmez, İskenderun'da biter.
+  * **Adana - İskenderun Otoyol Kolu:** Ceyhan ve Dörtyol üzerinden İskenderun'da biter (Hatay merkeze uzanmaz).
 
 ### 17.4 🚪 Sınır Kapıları & Demir İpek Yolu
 - **Kapıkule:** En işlek sınır kapısı (Bulgaristan / demiryolu var).
@@ -299,12 +299,12 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
 - **Dilucu (Nahçıvan):** En kısa sınırımız; Zengezur Koridoru demiryolu projesi.
 - **Kapıköy (Van):** İran demiryolu sınır kapısı.
 - **Akyaka / Doğukapı (Kars):** Ermenistan demiryolu kapısı (Siyasi nedenlerle kapalı).
-- **Habur (Irak):** En işlek Orta Doğu kapısı (Demiryolu YOKTUR, dolaylı Suriye üzerinden).
+- **Habur (Irak):** En işlek Orta Doğu karayolu kapısı. _(Hap bilgi: demiryolu bağlantısı yoktur — soru kökü olarak kullanılmaz, bkz. 18.3)_
 - **Nusaybin (Mardin):** Suriye demiryolu sınır kapısı (Bağdat Demiryolu).
 
 ### 17.5 💼 Serbest Ticaret Bölgeleri
 - **İlk Serbest Bölge:** Mersin Serbest Bölgesi (1987).
-- **Ankara'da Serbest Bölge YOKTUR:** 15+ ilde serbest bölge varken başkent Ankara'da serbest bölge bulunmaz (KPSS tuzağı).
+- _(Hap bilgi: 15+ ilde serbest bölge varken başkent Ankara'da serbest bölge bulunmaz. Bu bilgi `kpssNot`ta yaşar; "hangi ilde YOKTUR?" biçiminde soru üretilmez — bkz. 18.3)_
 
 ### 17.6 🏛️ UNESCO Dünya Mirasları, Milli Parklar & İnanç
 - **UNESCO'ya En Son Eklenen Güncel Mekan:** Sardes Antik Kenti ve Bintepe Tümülüsleri (Manisa).
@@ -319,3 +319,76 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
 - **İnanç Turizmi:** St. Pierre Kilisesi (Dünyanın ilk mağara kilisesi - Hatay), Mor Gabriel Manastırı (Mardin), Meryem Ana Evi (İzmir), Akdamar Kilisesi (Van).
 
 
+
+---
+
+## 18. ❓ SORU KÖKÜ MOTORU (`promptTitle`) VE OLUMSUZ SORU YASAĞI
+
+### 18.1 İki kademeli başlık üretimi
+
+Bütün modlar (serbest test, Deneme Sınavı, Günlük Plan, Şimşek Turu, Harita
+Fatihi) soru başlığını **tek bir üreticiden** alır:
+`GeographyQuiz.buildQuestionText(item, format)`.
+
+| Kademe | Kaynak | Örnek |
+| :--- | :--- | :--- |
+| 1 | `item.questionText` (hazır tam cümle) | İlişkili eşleştirmeler |
+| 2 | `item.promptTitle` (elle yazılmış KPSS soru kökü) | "1958'de ilan edilen İLK MİLLİ PARK haritada neresidir?" |
+| 3 | Kategori + şekil kalıbı (`QUESTION_STEMS`) | "Haritada işaretli plato hangisidir?" |
+
+`QUESTION_STEMS` dört tablodan oluşur: `point`, `area`, `line`, `group`
+(+ ulaşıma özel `ulasimGroup`). Her kategori/şekil bileşiminin kendi cümlesi
+vardır; jenerik `_` kalıbına düşen kayıt kalmamıştır.
+
+### 18.2 Soru kökü güvenlik denetimi
+
+Her `promptTitle` her formatta kullanılamaz. `js/gruplama.js` içindeki
+`guvenliSoruKoku(item, format)` iki sızıntıyı eler:
+
+| Denetim | Neyi engeller | Elenen format |
+| :--- | :--- | :--- |
+| `promptAdiSizdiriyorMu` | Kök, ŞIKTA YAZAN ADI söylüyor | `identify` |
+| `promptYeriSizdiriyorMu` | Kök, CEVABIN İLİNİ söylüyor | `find_on_map` |
+
+Örnekler:
+
+```
+"...Ankara Beypazarı-Kazan trona sahası neresidir?"   → identify'da elenir (cevap "Trona")
+"...en fazla Sivas ilinde üretilen tahıl neresidir?"  → find_on_map'te elenir (Sivas'a tıkla)
+```
+
+Elenen kök sessizce 3. kademeye (kategori kalıbına) düşer; soru asla bozulmaz.
+Denetim, kaydin KENDİ adında geçen yer adlarını sızıntı saymaz — "Ankara" zaten
+"Ankara" ilinin adıdır.
+
+**Birleşik (composite) kayıtların kökü yoktur.** Bir üyenin kökü grubu
+anlatmaz; grup daima `QUESTION_STEMS.group` kalıbıyla sorulur.
+
+### 18.3 🚫 OLUMSUZ SORU YASAĞI ("olanı sor, olmayanı sorma")
+
+Bir haritada **yokluğu gösteremezsiniz.** "Demiryolu bulunmayan liman
+hangisidir?" sorusunun Gemlik, Çanakkale ve Antalya olmak üzere ÜÇ doğru
+cevabı vardır; hangisi şıkka düşerse düşsün soru bozuktur.
+
+Kural:
+
+- Soru kökünde `olmayan / bulunmayan / yer almaz / gitmeyip / yoktur`
+  kalıpları **kullanılmaz**.
+- Kayıt adı / kısa adı / türü bir yokluğu anlatamaz
+  (`"Gemlik Limanı (Demiryolsuz)"`, `"Liman / Otomotiv (Demiryolu Yok)"` ✗).
+- Yokluğu anlatan bilgi **değerlidir** ve `kpssNot`'a taşınır — cevap
+  verildikten sonra hap bilgi kartında görünür, soru kökü olarak kullanılmaz.
+- Haritada fiziki karşılığı olmayan "sanal" kayıtlar (`YHT olmayan iller`,
+  `Demiryolsuz merkezler`, `Otoyolsuz merkezler`) havuzda bulunmaz.
+
+Dönüştürme örneği:
+
+```
+✗ "Bursa sanayisinin kapısı olmasına rağmen demiryolu bağlantısı bulunmayan liman hangisidir?"
+✓ "Otomotiv ihracatı ve coğrafi işaretli zeytiniyle ünlü körfez limanı hangisidir?"
+   kpssNot: "... ⚠️ Demiryolu bağlantısı yoktur."
+```
+
+> Not: "X olmasına rağmen en fazla Y'de üretilen ürün" gibi **karşıtlık**
+> cümleleri yasak değildir; bunlar var olan bir şeyi tek bir doğru cevapla
+> sorar (ör. Mısır, Antep fıstığı).

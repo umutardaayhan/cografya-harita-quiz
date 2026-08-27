@@ -79,7 +79,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       lat: 36.36, lng: 29.32,
       region: "Akdeniz",
       city: "Muğla (Fethiye) - Antalya (Kaş Sınırı)",
-      promptTitle: "Likya Birliği'nin başkenti ve dini merkezi olan, Muğla ile Antalya il sınırında yer alan ortak UNESCO mirası haritada neresidir?",
+      promptTitle: "Likya Uygarlığı'nın idari başkenti ile kutsal din merkezini birlikte kapsayan, iki ilin sınırındaki ortak UNESCO mirası haritada neresidir?",
       kpssNot: "Likya Uygarlığı'nın idari merkezi (Xanthos) ve kutsal din merkezidir (Letoon). Muğla ile Antalya'nın idari sınırında yer alır."
     },
     {
@@ -214,7 +214,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       lat: 37.71, lng: 28.72,
       region: "Ege",
       city: "Aydın (Karacasu)",
-      promptTitle: "Antik dönemin en büyük mermer heykeltıraşlık okulu ve stadyumuna sahip olan Aydın'daki UNESCO antik kenti haritada neresidir?",
+      promptTitle: "Antik dönemin en büyük mermer heykeltıraşlık okuluna ve 30 bin kişilik stadyumuna sahip UNESCO antik kenti haritada neresidir?",
       kpssNot: "Yakınındaki beyaz/mavi mermer ocakları sayesinde Roma dünyasının 1 numaralı heykeltıraşlık okulu olmuştur. 30 bin kişilik stadyumu çok iyi korunmuştur."
     },
     {
@@ -238,7 +238,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       lat: 38.38, lng: 38.36,
       region: "Doğu Anadolu",
       city: "Malatya (Battalgazi)",
-      promptTitle: "Dünyanın en eski kerpiç saray kompleksini ve ilk madeni kılıçlarını barındıran Malatya'daki UNESCO mirası haritada neresidir?",
+      promptTitle: "Dünyanın en eski kerpiç saray kompleksini ve ilk madeni kılıçlarını barındıran, devlet sisteminin doğduğu kabul edilen höyük haritada neresidir?",
       kpssNot: "Devlet sisteminin ve bürokrasinin doğduğu yer kabul edilen M.Ö. 3300'lere ait dünyanın en eski kerpiç saray kompleksine ev sahipliği yapar."
     },
     {
@@ -254,16 +254,69 @@ Object.assign(COGRAFYA_DATA_EXT, {
       kpssNot: "Frig Krallığı'nın başkentidir; Kral Midas'ın mezar odası (tümülüs) ve Büyük İskender'in kestiği rivayet edilen Gordion Düğümü buradadır."
     },
     {
-      id: "tur_unesco_ahsap_camiler",
-      name: "Orta Çağ Ahşap Hipostil Camileri (Ortak Miras)",
-      shortName: "Ahşap Destekli Camiler",
+      id: "tur_ahsap_esrefoglu",
+      groupId: "grp_ahsap_hipostil_camiler",
+      groupName: "Orta Çağ Ahşap Hipostil Camileri (5 Camili Seri Miras)",
+      name: "Eşrefoğlu Camii (Beyşehir)",
+      shortName: "Eşrefoğlu Camii",
       category: "turizm",
-      type: "UNESCO Dünya Mirası / 5 Camili Seri Miras",
+      type: "UNESCO Dünya Mirası / Ahşap Hipostil Cami",
       lat: 37.68, lng: 31.72,
       region: "İç Anadolu",
-      city: "Konya (Eşrefoğlu), Eskişehir (Sivrihisar), Kastamonu (Mahmut Bey), Ankara (Arslanhane), Afyonkarahisar Ulu Camii",
-      promptTitle: "Eşrefoğlu, Sivrihisar, Mahmut Bey, Arslanhane ve Afyonkarahisar Ulu Camilerini kapsayan ahşap direkli seri UNESCO mirası haritada neresidir?",
-      kpssNot: "Anadolu'nun çivisiz ve ahşap direkli hipostil cami mimarisini temsil eden 5 camili ortak UNESCO mirasıdır (Eşrefoğlu, Sivrihisar, Mahmut Bey, Arslanhane, Afyon Ulu Cami)."
+      city: "Konya (Beyşehir)",
+      kpssNot: "Seri mirasın en büyük ve en ünlü üyesidir; 42 ahşap direkli orman görünümlü harimiyle bilinir."
+    },
+    {
+      id: "tur_ahsap_sivrihisar",
+      groupId: "grp_ahsap_hipostil_camiler",
+      groupName: "Orta Çağ Ahşap Hipostil Camileri (5 Camili Seri Miras)",
+      name: "Sivrihisar Ulu Camii",
+      shortName: "Sivrihisar Ulu Camii",
+      category: "turizm",
+      type: "UNESCO Dünya Mirası / Ahşap Hipostil Cami",
+      lat: 39.45, lng: 31.53,
+      region: "İç Anadolu",
+      city: "Eskişehir (Sivrihisar)",
+      kpssNot: "Anadolu Selçuklu döneminden kalan ahşap direkli (hipostil) ulu cami örneğidir."
+    },
+    {
+      id: "tur_ahsap_mahmutbey",
+      groupId: "grp_ahsap_hipostil_camiler",
+      groupName: "Orta Çağ Ahşap Hipostil Camileri (5 Camili Seri Miras)",
+      name: "Mahmut Bey Camii (Kasaba Köyü)",
+      shortName: "Mahmut Bey Camii",
+      category: "turizm",
+      type: "UNESCO Dünya Mirası / Ahşap Hipostil Cami",
+      lat: 41.47, lng: 33.66,
+      region: "Karadeniz",
+      city: "Kastamonu (Kasaba Köyü)",
+      kpssNot: "Çivi kullanılmadan inşa edilen ahşap işçiliği ve kalem işi bezemeleriyle ünlüdür."
+    },
+    {
+      id: "tur_ahsap_arslanhane",
+      groupId: "grp_ahsap_hipostil_camiler",
+      groupName: "Orta Çağ Ahşap Hipostil Camileri (5 Camili Seri Miras)",
+      name: "Arslanhane Camii (Ulus)",
+      shortName: "Arslanhane Camii",
+      category: "turizm",
+      type: "UNESCO Dünya Mirası / Ahşap Hipostil Cami",
+      lat: 39.94, lng: 32.86,
+      region: "İç Anadolu",
+      city: "Ankara (Ulus)",
+      kpssNot: "Ankara'nın en eski camilerindendir; ahşap direkli harimi ve çini mihrabıyla listeye girmiştir."
+    },
+    {
+      id: "tur_ahsap_afyon_ulu",
+      groupId: "grp_ahsap_hipostil_camiler",
+      groupName: "Orta Çağ Ahşap Hipostil Camileri (5 Camili Seri Miras)",
+      name: "Afyonkarahisar Ulu Camii",
+      shortName: "Afyon Ulu Camii",
+      category: "turizm",
+      type: "UNESCO Dünya Mirası / Ahşap Hipostil Cami",
+      lat: 38.76, lng: 30.54,
+      region: "Ege",
+      city: "Afyonkarahisar",
+      kpssNot: "Selçuklu dönemi ahşap direkli ulu camisidir; 40 ahşap sütun üzerine oturur."
     },
     {
       id: "tur_unesco_sardes",
@@ -492,14 +545,32 @@ Object.assign(COGRAFYA_DATA_EXT, {
       kpssNot: "KPSS En Güncel Bilgi: Harçsız sedir ağacı ve taşla örülen 'DÜĞMELİ EVLERİ' ve Altınbeşik Mağarası ile TÜRKİYE'NİN EN SON SAKİN ŞEHRİ (CITTASLOW) seçilmiştir."
     },
     {
-      id: "tur_citta_halfeti_arapgir",
-      name: "Halfeti & Arapgir Sakin Şehirleri",
+      id: "tur_citta_halfeti",
+      groupId: "grp_dogu_cittaslow",
+      groupName: "Doğu'nun Sakin Şehirleri (Halfeti & Arapgir)",
+      name: "Halfeti (Batık Şehir)",
+      shortName: "Halfeti",
       category: "turizm",
-      type: "Cittaslow / Sakin Şehirler",
+      type: "Cittaslow / Sakin Şehir",
       lat: 37.25, lng: 37.87,
       region: "Güneydoğu Anadolu",
-      city: "Şanlıurfa (Halfeti) - Malatya (Arapgir)",
-      kpssNot: "Birecik Barajı altında kalan 'Batık Şehir' ve siyah gülüyle Halfeti (Şanlıurfa) ile tarihi taş evleriyle Arapgir (Malatya) Doğu'nun tescilli sakin şehirleridir."
+      city: "Şanlıurfa (Halfeti)",
+      promptTitle: "Birecik Barajı suları altında kalan 'Batık Şehir' ve siyah gülüyle ünlü sakin şehir haritada neresidir?",
+      kpssNot: "Birecik Barajı suları altında kalan 'Batık Şehir' ve siyah gülüyle tescilli sakin şehirdir."
+    },
+    {
+      id: "tur_citta_arapgir",
+      groupId: "grp_dogu_cittaslow",
+      groupName: "Doğu'nun Sakin Şehirleri (Halfeti & Arapgir)",
+      name: "Arapgir (Tarihi Taş Evler)",
+      shortName: "Arapgir",
+      category: "turizm",
+      type: "Cittaslow / Sakin Şehir",
+      lat: 39.04, lng: 38.49,
+      region: "Doğu Anadolu",
+      city: "Malatya (Arapgir)",
+      promptTitle: "Tarihi taş evleri ve coğrafi işaretli köhnü üzümüyle bilinen, Doğu Anadolu'nun tescilli sakin şehri haritada neresidir?",
+      kpssNot: "Tarihi taş evleri ve coğrafi işaretli 'köhnü' üzümüyle tescillenmiş sakin şehirdir."
     },
 
     // =========================================================================
@@ -535,7 +606,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       lat: 37.05, lng: 37.86,
       region: "Güneydoğu Anadolu",
       city: "Gaziantep (Nizip)",
-      promptTitle: "Fırat Nehri kıyısında yer alan, 'Çingene Kızı' mozaiği ve Zeugma Mozaik Müzesi ile dünyaca tanınan antik kent haritada neresidir?",
+      promptTitle: "Fırat kıyısındaki Roma sınır kenti olan, 'Çingene Kızı' mozaiğiyle dünyaca tanınan antik kent haritada neresidir?",
       kpssNot: "Fırat kıyısındaki Roma sınır kentidir; kurtarılan 'Çingene Kızı' mozaiği Gaziantep Zeugma Müzesi'nde sergilenmektedir."
     },
     {

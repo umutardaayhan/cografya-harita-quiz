@@ -7,6 +7,97 @@
  * - Net, Doğrudan ve Sade Soru Metinleri
  */
 
+/**
+ * 🗣️ SORU KALIPLARI
+ *
+ * "Konumdan isim bul" sorusunun başlığı eskiden üç kalıptan ibaretti ve
+ * noktasal her kayıt — bir liman, bir sınır kapısı, bir UNESCO mirası, bir
+ * maden havzası — hepsi aynı "Haritada işaretli coğrafi konum / merkez
+ * hangisidir?" cümlesiyle soruluyordu. Turizm ve ulaşım gibi çok çeşitli
+ * kayıt barındıran haritalarda bu, soruyu anlamsızlaştırıyordu.
+ *
+ * `group` kademesi ise haritada TEK bir şeklin değil, bağlı bir grubun tüm
+ * üyelerinin birden parladığı durumu karşılar.
+ */
+const QUESTION_STEMS = {
+  group: {
+    ulasim:           { text: 'Haritada birlikte işaretli duraklar/kesimler hangi ulaşım hattını oluşturur?', title: 'ULAŞIM HATTI' },
+    maden_bolgeleri:  { text: 'Haritada birlikte işaretli çıkarım merkezleri hangi madene aittir?',           title: 'MADEN HAVZASI' },
+    madenler:         { text: 'Haritada birlikte işaretli çıkarım merkezleri hangi madene aittir?',           title: 'MADEN HAVZASI' },
+    enerji_bolgeleri: { text: 'Haritada birlikte işaretli tesisler hangi enerji kaynağına aittir?',           title: 'ENERJİ HAVZASI' },
+    sanayi:           { text: 'Haritada birlikte işaretli tesisler hangi sanayi koluna aittir?',              title: 'SANAYİ KOLU' },
+    tarim:            { text: 'Haritada işaretli üretim merkezinde öne çıkan ürünler hangileridir?',          title: 'ÜRETİM MERKEZİ' },
+    hayvancilik:      { text: 'Haritada işaretli yörede öne çıkan hayvancılık faaliyetleri hangileridir?',    title: 'HAYVANCILIK YÖRESİ' },
+    turizm:           { text: 'Haritada birlikte işaretli noktalar hangi turizm/kültür değerini oluşturur?',  title: 'TURİZM DEĞERİ' },
+    su_kaynaklari:    { text: 'Haritada birlikte işaretli su kütleleri hangileridir?',                        title: 'SU KÜTLELERİ' },
+    _:                { text: 'Haritada birlikte işaretli noktalar hangi grubu oluşturur?',                   title: 'BAĞLI GRUP' }
+  },
+  // Ulaşım grupları tek kalıba sığmaz; `grupKalibiSec` tür metnine bakar.
+  ulasimGroup: {
+    hat:     { text: 'Haritada birlikte işaretli duraklar/kesimler hangi ulaşım hattını oluşturur?', title: 'ULAŞIM HATTI' },
+    liman:   { text: 'Haritada birlikte işaretli limanlar hangi liman grubunu oluşturur?',           title: 'LİMAN GRUBU' },
+    sinir:   { text: 'Haritada birlikte işaretli kapılar hangi sınır kapısı grubunu oluşturur?',     title: 'SINIR KAPILARI' },
+    gecit:   { text: 'Haritada birlikte işaretli geçitler hangi geçit grubunu oluşturur?',           title: 'GEÇİT GRUBU' },
+    ticaret: { text: 'Haritada birlikte işaretli merkezler hangi ticaret ağını oluşturur?',          title: 'TİCARET AĞI' }
+  },
+  area: {
+    tarim:       { text: 'Haritada işaretli tarım / üretim alanı hangisidir?',        title: 'TARIM ALANI' },
+    hayvancilik: { text: 'Haritada işaretli hayvancılık yetiştirme alanı hangisidir?', title: 'HAYVANCILIK ALANI' },
+    sanayi:      { text: 'Haritada işaretli sanayi / tesis bölgesi hangisidir?',      title: 'SANAYİ BÖLGESİ' },
+    iklim:       { text: 'Haritada işaretli iklim / uç değer sahası hangisidir?',     title: 'İKLİM SAHASI' },
+    toprak:      { text: 'Haritada işaretli toprak tipi sahası hangisidir?',           title: 'TOPRAK SAHASI' },
+    nufus:       { text: 'Haritada işaretli nüfus / yerleşme sahası hangisidir?',     title: 'NÜFUS SAHASI' },
+    afet:        { text: 'Haritada işaretli afet riski sahası hangisidir?',            title: 'AFET SAHASI' },
+    fay:         { text: 'Haritada işaretli tektonik yapı / deprem bölgesi hangisidir?', title: 'TEKTONİK YAPI' },
+    madenler:    { text: 'Haritada işaretli maden / enerji sahası hangisidir?',        title: 'MADEN SAHASI' },
+    kiyilar:     { text: 'Haritada işaretli kıyı şekli / ada hangisidir?',             title: 'KIYI SORUSU' },
+    orman:       { text: 'Haritada işaretli bitki örtüsü / orman sahası hangisidir?',  title: 'BİTKİ ÖRTÜSÜ' },
+    bolgeler:    { text: 'Haritada işaretli coğrafi bölge / bölüm hangisidir?',       title: 'BÖLGE SORUSU' },
+    dis_kuvvetler: { text: 'Haritada işaretli yer şekli hangisidir?',                  title: 'YER ŞEKLİ' },
+    sehirler:    { text: 'Haritada işaretli il hangisidir?',                          title: 'İL SORUSU' },
+    _:           { text: 'Haritada işaretli alan / plato hangisidir?',                title: 'ALAN SORUSU' }
+  },
+  // ÇİZGİ (polyline) soruları. Eskiden tek bir "akarsu / hat" cümlesi vardı:
+  // Dalmaçya tipi bir KIYI ya da Kuzey Anadolu FAYI da "akarsu" diye soruluyordu.
+  line: {
+    su_kaynaklari: { text: 'Haritada işaretli akarsu hangisidir?',                     title: 'AKARSU SORUSU' },
+    daglar:        { text: 'Haritada işaretli sıradağ / dağ kuşağı hangisidir?',       title: 'SIRADAĞ SORUSU' },
+    fay:           { text: 'Haritada işaretli fay hattı / tektonik yapı hangisidir?',    title: 'FAY HATTI' },
+    gecitler:      { text: 'Haritada işaretli geçit / boğaz hangisidir?',                title: 'GEÇİT SORUSU' },
+    kiyilar:       { text: 'Haritada işaretli kıyı tipi / kıyı hattı hangisidir?',       title: 'KIYI TİPİ' },
+    afet:          { text: 'Haritada işaretli afet kuşağı / riskli hat hangisidir?',   title: 'AFET KUŞAĞI' },
+    ulasim:        { text: 'Haritada işaretli ulaşım hattı hangisidir?',                title: 'ULAŞIM HATTI' },
+    dis_kuvvetler: { text: 'Haritada işaretli yer şekli hangisidir?',                    title: 'YER ŞEKLİ' },
+    _:             { text: 'Haritada işaretli akarsu / hat hangisidir?',               title: 'HAT SORUSU' }
+  },
+  point: {
+    ulasim:           { text: 'Haritada işaretli ulaşım / ticaret merkezi hangisidir?', title: 'ULAŞIM NOKTASI' },
+    turizm:           { text: 'Haritada işaretli turizm / kültür değeri hangisidir?',   title: 'TURİZM DEĞERİ' },
+    madenler:         { text: 'Haritada işaretli maden / enerji sahası hangisidir?',    title: 'MADEN SAHASI' },
+    maden_bolgeleri:  { text: 'Haritada işaretli maden sahası hangisidir?',             title: 'MADEN SAHASI' },
+    enerji_bolgeleri: { text: 'Haritada işaretli enerji tesisi / sahası hangisidir?',   title: 'ENERJİ SAHASI' },
+    sanayi:           { text: 'Haritada işaretli sanayi tesisi hangisidir?',            title: 'SANAYİ TESİSİ' },
+    sehirler:         { text: 'Haritada işaretli il hangisidir?',                       title: 'İL SORUSU' },
+    nufus:            { text: 'Haritada işaretli nüfus / yerleşme örneği hangisidir?',  title: 'NÜFUS SORUSU' },
+    gecitler:         { text: 'Haritada işaretli geçit / boğaz hangisidir?',            title: 'GEÇİT SORUSU' },
+    tarim:            { text: 'Haritada işaretli tarım ürünü / üretim merkezi hangisidir?', title: 'TARIM SORUSU' },
+    hayvancilik:      { text: 'Haritada işaretli hayvancılık faaliyeti hangisidir?',      title: 'HAYVANCILIK SORUSU' },
+    su_kaynaklari:    { text: 'Haritada işaretli göl / su kaynağı hangisidir?',          title: 'SU KAYNAĞI' },
+    ovalar:           { text: 'Haritada işaretli ova hangisidir?',                       title: 'OVA SORUSU' },
+    platolar:         { text: 'Haritada işaretli plato hangisidir?',                     title: 'PLATO SORUSU' },
+    daglar:           { text: 'Haritada işaretli dağ / zirve hangisidir?',               title: 'DAĞ SORUSU' },
+    kiyilar:          { text: 'Haritada işaretli kıyı şekli / ada / deniz hangisidir?',   title: 'KIYI SORUSU' },
+    dis_kuvvetler:    { text: 'Haritada işaretli yer şekli hangisidir?',                 title: 'YER ŞEKLİ' },
+    bolgeler:         { text: 'Haritada işaretli coğrafi bölge / bölüm hangisidir?',      title: 'BÖLGE SORUSU' },
+    orman:            { text: 'Haritada işaretli bitki örtüsü / orman sahası hangisidir?', title: 'BİTKİ ÖRTÜSÜ' },
+    afet:             { text: 'Haritada işaretli afet riski sahası hangisidir?',         title: 'AFET SAHASI' },
+    toprak:           { text: 'Haritada işaretli toprak tipi sahası hangisidir?',        title: 'TOPRAK SAHASI' },
+    fay:              { text: 'Haritada işaretli fay / tektonik yapı hangisidir?',        title: 'TEKTONİK YAPI' },
+    iklim:            { text: 'Haritada işaretli iklim / uç değer sahası hangisidir?',    title: 'İKLİM SAHASI' },
+    _:                { text: 'Haritada işaretli coğrafi konum / merkez hangisidir?',   title: 'KONUM SORUSU' }
+  }
+};
+
 class GeographyQuiz {
   constructor(categoryKey = 'daglar', customDrawManager = null) {
     this.categoryKey = categoryKey;
@@ -551,6 +642,97 @@ class GeographyQuiz {
     return selected;
   }
 
+  /**
+   * 🗣️ SORU BAŞLIĞI ÜRETİCİSİ (tek kaynak)
+   *
+   * Deneme Sınavı ve Günlük Plan modları eskiden kendi başlıklarını kuruyordu ve
+   * buradaki iyileştirmelerin hiçbirini görmüyordu: "📍 Demir (Divriği) (Metalik
+   * Maden)" gibi hem cevabın ilini hem türünü söyleyen başlıklar, birleşik bir
+   * havza için "İşaretli Yer Şekli Nedir?" gibi kalıplar üretiyorlardı. Artık
+   * bütün modlar bu tek üreticiden geçer.
+   */
+  buildQuestionText(item, actualFormat) {
+    if (!item) return { questionText: '', questionTypeTitle: 'SORU' };
+
+    // 1) Veride hazır, tam bir soru cümlesi varsa (ilişkili eşleştirmeler)
+    if (item.questionText) {
+      return { questionText: item.questionText, questionTypeTitle: 'İLİŞKİLİ EŞLEŞTİRME' };
+    }
+
+    // 2) İSİMDEN HARİTADA BUL
+    if (actualFormat === 'find_on_map') {
+      // Önce veride elle yazılmış KPSS soru kökü denenir: "📍 Yozgat Çamlığı ?"
+      // yerine "1958'de ilan edilen İLK MİLLİ PARK haritada neresidir?" sorulur.
+      // `guvenliSoruKoku` cevabın ilini söyleyen kökleri eler.
+      const kok = (typeof guvenliSoruKoku === 'function')
+        ? guvenliSoruKoku(item, 'find_on_map') : null;
+      if (kok) {
+        return {
+          questionText: '<span style="color: #60a5fa; font-weight:700;">📍</span> ' + kok,
+          questionTypeTitle: 'HARİTADA BUL'
+        };
+      }
+      // Şehir/yöre ipucu içeren parantezleri temizle (ör. "Fındık (Giresun - Ordu)"
+      // -> "Fındık"). Temizlik `shortName` için de geçerlidir; aksi halde
+      // "Demir (Divriği)" gibi kısa adlar cevabın ilini başlıkta açık ederdi.
+      const safeName = (typeof haritadaBulEtiketi === 'function')
+        ? haritadaBulEtiketi(item)
+        : (item.shortName || item.name || '').replace(/\s*\([^)]*\)/g, '').trim();
+      return {
+        questionText: '📍 <span style="color: #60a5fa; font-weight:800; font-size: 1.15rem;">' + safeName + ' ?</span>',
+        questionTypeTitle: 'HARİTADA BUL'
+      };
+    }
+
+    // 3) KONUMDAN İSMİ BUL
+    const cat = item.category;
+    const cokluMu = !!item.isGroup || item.shapeType === 'composite';
+
+    // Bağlı grupta bir üyenin kökü grubu anlatmaz; grup kalıbı kullanılır.
+    if (cokluMu) {
+      const grupKalibi = this.grupKalibiSec(cat, item.type);
+      return { questionText: grupKalibi.text, questionTypeTitle: grupKalibi.title };
+    }
+
+    // Veride yazılı soru kökü, şıkta yazan adı ele vermiyorsa jenerik kalıbın
+    // yerine geçer. Rozet başlığı kategori kalıbından alınmaya devam eder.
+    const kok = (typeof guvenliSoruKoku === 'function')
+      ? guvenliSoruKoku(item, 'identify') : null;
+
+    let kalip;
+    if (item.shapeType === 'polyline')      kalip = QUESTION_STEMS.line[cat]  || QUESTION_STEMS.line._;
+    else if (item.shapeType === 'polygon')  kalip = QUESTION_STEMS.area[cat]  || QUESTION_STEMS.area._;
+    else                                    kalip = QUESTION_STEMS.point[cat] || QUESTION_STEMS.point._;
+
+    return { questionText: kok || kalip.text, questionTypeTitle: kalip.title };
+  }
+
+  /**
+   * Bağlı grup kalıbını seçer. Ulaşım paketi tek bir kalıba sığmıyor: aynı
+   * kategoride hem "İzmir - Aydın hattı" (bir HAT) hem "Kuşadası & Çeşme"
+   * (iki LİMAN) hem de "Gürbulak & Kapıköy" (iki SINIR KAPISI) var. Hepsini
+   * "hangi ulaşım hattını oluşturur?" diye sormak saçmalıyordu; kalıp grubun
+   * kendi tür metninden seçilir.
+   */
+  grupKalibiSec(cat, type) {
+    if (cat === 'ulasim') {
+      // DİKKAT: `type` composite'te üyelerin türlerinin birleşimidir; sıra
+      // önemlidir. Örnek: TEM'in türü "Otoyol / ... & Otoyol / Bolu Dağı
+      // TÜNELİ ..." olduğu için "tünel" araması otoyolu geçit sanıyordu.
+      // Aynı şekilde "Demiryolu / Demiryolu Bağlantılı LİMAN" bir hat değil,
+      // bir liman grubudur. En belirleyici anahtar önce sınanır.
+      const t = (type || '').toLocaleLowerCase('tr-TR');
+      const alt = QUESTION_STEMS.ulasimGroup;
+      if (t.includes('liman')) return alt.liman;
+      if (t.includes('sınır kapısı')) return alt.sinir;
+      if (t.includes('otoyol') || t.includes('demiryolu') || t.includes('boru hattı')) return alt.hat;
+      if (t.includes('geçit') || t.includes('tünel')) return alt.gecit;
+      if (t.includes('serbest bölge') || t.includes('ticaret')) return alt.ticaret;
+      return alt.hat;
+    }
+    return QUESTION_STEMS.group[cat] || QUESTION_STEMS.group._;
+  }
+
   // Yeni Soru Üret (Deste Sistemi & Geçmiş Hafıza Korumalı)
   nextQuestion() {
     if (!this.items || this.items.length === 0) {
@@ -670,45 +852,8 @@ class GeographyQuiz {
     this.currentQuestion = this.sampleGroupItems(this.currentQuestion);
     this.currentOptions = (this.currentOptions || []).map(opt => this.sampleGroupItems(opt));
 
-    // SADE, NET VE LAF KALABALIĞINDAN ARINDIRILMIŞ SORU BAŞLIKLARI (Cevap Spoil Önleme Korumalı)
-    let questionText = '';
-    let questionTypeTitle = '';
-
-    if (this.currentQuestion.questionText) {
-      questionText = this.currentQuestion.questionText;
-      questionTypeTitle = 'İLİŞKİLİ EŞLEŞTİRME';
-    } else if (this.currentActualFormat === 'find_on_map') {
-      // Şehir/yöre ipucu içeren parantezleri temizle (ör. "Fındık (Giresun - Ordu)" -> "Fındık")
-      const safeName = this.currentQuestion.shortName || this.currentQuestion.name.replace(/\s*\([^)]*\)/g, '').trim();
-      questionText = `📍 <span style="color: #60a5fa; font-weight:800; font-size: 1.15rem;">${safeName} ?</span>`;
-      questionTypeTitle = 'HARİTADA BUL';
-    } else {
-      const cat = this.currentQuestion.category;
-      if (this.currentQuestion.shapeType === 'polyline') {
-        questionText = 'Haritada işaretli akarsu / hat hangisidir?';
-        questionTypeTitle = 'HAT SORUSU';
-      } else if (this.currentQuestion.shapeType === 'polygon') {
-        if (cat === 'tarim') {
-          questionText = 'Haritada işaretli tarım / üretim alanı hangisidir?';
-          questionTypeTitle = 'TARIM ALANI';
-        } else if (cat === 'hayvancilik') {
-          questionText = 'Haritada işaretli hayvancılık yetiştirme alanı hangisidir?';
-          questionTypeTitle = 'HAYVANCILIK ALANI';
-        } else if (cat === 'sanayi') {
-          questionText = 'Haritada işaretli sanayi / tesis bölgesi hangisidir?';
-          questionTypeTitle = 'SANAYİ BÖLGESİ';
-        } else if (cat === 'iklim') {
-          questionText = 'Haritada işaretli iklim / uç değer sahası hangisidir?';
-          questionTypeTitle = 'İKLİM SAHASI';
-        } else {
-          questionText = 'Haritada işaretli alan / plato hangisidir?';
-          questionTypeTitle = 'ALAN SORUSU';
-        }
-      } else {
-        questionText = 'Haritada işaretli coğrafi konum / merkez hangisidir?';
-        questionTypeTitle = 'KONUM SORUSU';
-      }
-    }
+    const { questionText, questionTypeTitle } =
+      this.buildQuestionText(this.currentQuestion, this.currentActualFormat);
 
     return {
       question: this.currentQuestion,

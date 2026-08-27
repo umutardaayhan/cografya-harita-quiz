@@ -138,7 +138,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       lat: 41.45, lng: 32.1,
       region: "Karadeniz",
       city: "Zonguldak - Bartın - Karabük",
-      promptTitle: "Türkiye'nin TEK taşkömürü havzası olan, Karabük demir-çelik tesisinin kurulmasına gerekçe olmuş alan haritada neresidir?",
+      promptTitle: "Türkiye'nin TEK taşkömürü havzası olan ve ilk entegre demir-çelik tesisimizin kurulma gerekçesi sayılan alan haritada neresidir?",
       kpssNot: "Türkiye'nin TEK taşkömürü havzasıdır (Ereğli-Zonguldak-Amasra). Kalori değeri yüksektir; demir-çelik sanayisinin kurulma nedenidir. Kıvrımlı damarlar maliyeti yükseltir."
     },
     {

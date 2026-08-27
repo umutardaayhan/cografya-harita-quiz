@@ -601,7 +601,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       type: "Endüstriyel Hammadde / Kimya",
       region: "Akdeniz Bölgesi",
       city: "Isparta (Keçiborlu)",
-      promptTitle: "Gübre, sülfürik asit ve tarım ilacı sanayisinde kullanılan Türkiye'nin en bilinen kükürt sahası Isparta Keçiborlu haritada neresidir?",
+      promptTitle: "Gübre, sülfürik asit ve tarım ilacı sanayisinin hammaddesi olan, Göller Yöresi'ndeki tek kükürt sahası haritada neresidir?",
       kpssNot: "Kimya, gübre ve tarım ilacı sanayisinin temel girdisidir. Türkiye'nin en bilinen kükürt sahası Isparta Keçiborlu'dur."
     },
 
@@ -1572,7 +1572,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       type: "Endüstriyel Hammadde / Kimya & İhraç (Dünya 2.si)",
       region: "İç Anadolu Bölgesi",
       city: "Ankara (Beypazarı, Kazan)",
-      promptTitle: "Cam ve deterjan sanayisinin hammaddesi olan ve Türkiye'nin ABD'den sonra DÜNYANIN EN BÜYÜK 2. rezervine sahip olduğu Ankara Beypazarı-Kazan trona sahası haritada neresidir?",
+      promptTitle: "Cam ve deterjan sanayisinin hammaddesi olan, Türkiye'nin ABD'den sonra DÜNYANIN EN BÜYÜK 2. REZERVİNE sahip olduğu soda (trona) sahası haritada neresidir?",
       kpssNot: "Doğal sodyum karbonat (soda külü) mineralidir. Cam, deterjan, kâğıt ve kimya sanayisinde kullanılır. Türkiye, ABD'den sonra DÜNYANIN EN BÜYÜK 2. trona rezervine sahiptir. Ankara Beypazarı ve Kazan havzasından çıkarılır ve ihraç edilir."
     },
 

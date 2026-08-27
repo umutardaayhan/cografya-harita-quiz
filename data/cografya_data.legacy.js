@@ -3090,7 +3090,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "tarim_siirt_fistigi", name: "Siirt Fıstığı", shortName: "Siirt Fıstığı", category: "tarim",
-      promptTitle: "Antep fıstığına göre daha iri taneli ve yüksek çıtlama oranına sahip, en çok Siirt'te yetiştirilen fıstık türü haritada neresidir?",
+      promptTitle: "Antep fıstığına göre daha iri taneli ve çıtlama oranı yüksek olan, coğrafi işaretli fıstık türü haritada neresidir?",
       type: "Meyvecilik (Coğrafi İşaret)", lat: 37.93, lng: 41.94, region: "Güneydoğu Anadolu", city: "Siirt",
       shapeType: "point",
       kpssNot: "Antep fıstığına göre daha iri taneli ve yüksek çıtlama oranına sahip olan Siirt fıstığı en çok Siirt ilinde yetiştirilmektedir."
