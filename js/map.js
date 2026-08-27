@@ -166,8 +166,8 @@ class GeographyMap {
     this.drawingVertexMarkers = [];
     this.onDrawingComplete = null;
 
-    // 🔑 CARTO API Anahtarı (https://carto.com/basemaps/apikey adresinden ücretsiz alınabilir)
-    this.cartoApiKey = localStorage.getItem('kpss_carto_api_key') || '';
+    // 🔑 CARTO API Anahtarı (https://carto.com/basemaps/apikey)
+    this.cartoApiKey = localStorage.getItem('kpss_carto_api_key') || 'cb1_2dv7_1_e5256c007f5a60e7f8035343';
 
     // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri)
     this.initLayerConfigs();
