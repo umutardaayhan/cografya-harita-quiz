@@ -190,7 +190,7 @@ class GeographyMap {
   }
 
   initLayerConfigs() {
-    const keyParam = this.cartoApiKey ? `?api_key=${this.cartoApiKey}` : '';
+    const keyParam = this.cartoApiKey ? `?key=${this.cartoApiKey}` : '';
     this.layerConfigs = {
       voyager: {
         name: 'Sade / Renkli (CARTO)',
