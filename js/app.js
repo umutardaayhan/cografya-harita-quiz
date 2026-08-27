@@ -604,6 +604,13 @@ document.addEventListener('DOMContentLoaded', () => {
           optBtn.dataset.id = opt.id;
           optBtn.dataset.index = index;
 
+          const choiceColor = (typeof CHOICE_PALETTE !== 'undefined' && CHOICE_PALETTE[index % CHOICE_PALETTE.length])
+            || { main: '#3b82f6', glow: 'rgba(59,130,246,0.65)', bg: 'rgba(59,130,246,0.15)' };
+
+          optBtn.style.setProperty('--opt-color', choiceColor.main);
+          optBtn.style.setProperty('--opt-glow', choiceColor.glow);
+          optBtn.style.setProperty('--opt-bg', choiceColor.bg);
+
           const letter = optionLetters[index] || `${index + 1}`;
           const roman = romanNumerals[index] || `${index + 1}`;
 
@@ -620,9 +627,21 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           optBtn.innerHTML = `
-            <span class="option-key">${letter}</span>
+            <span class="option-key" style="background: ${choiceColor.main}; color: #ffffff;">${letter}</span>
             <span class="option-name"><strong>${labelTitle}</strong> <span style="font-size:0.74rem; color:var(--text-muted); margin-left:4px;">(${letter} Pini)</span></span>
           `;
+
+          // Hover Senkronizasyonu (Buton -> Harita Pini/Poligonu)
+          optBtn.addEventListener('mouseenter', () => {
+            if (geoQuiz.isAnswered) return;
+            const targetPins = document.querySelectorAll(`.choice-pin-container[data-id="${opt.id}"], .choice-pin-container[data-index="${index}"]`);
+            targetPins.forEach(p => p.classList.add('highlight-hover'));
+          });
+          optBtn.addEventListener('mouseleave', () => {
+            const targetPins = document.querySelectorAll(`.choice-pin-container[data-id="${opt.id}"], .choice-pin-container[data-index="${index}"]`);
+            targetPins.forEach(p => p.classList.remove('highlight-hover'));
+          });
+
           optBtn.addEventListener('click', () => handleAnswer(opt.id));
           optionsGrid.appendChild(optBtn);
         });
@@ -645,11 +664,18 @@ document.addEventListener('DOMContentLoaded', () => {
         optBtn.dataset.id = opt.id;
         optBtn.dataset.index = index;
 
+        const choiceColor = (typeof CHOICE_PALETTE !== 'undefined' && CHOICE_PALETTE[index % CHOICE_PALETTE.length])
+          || { main: '#3b82f6', glow: 'rgba(59,130,246,0.65)', bg: 'rgba(59,130,246,0.15)' };
+
+        optBtn.style.setProperty('--opt-color', choiceColor.main);
+        optBtn.style.setProperty('--opt-glow', choiceColor.glow);
+        optBtn.style.setProperty('--opt-bg', choiceColor.bg);
+
         const keyLabel = optionLetters[index] || (index + 1);
         const displayName = opt.shortName || opt.name.replace(/\s*\([^)]*\)/g, '').trim();
 
         optBtn.innerHTML = `
-          <span class="option-key">${keyLabel}</span>
+          <span class="option-key" style="background: ${choiceColor.main}; color: #ffffff;">${keyLabel}</span>
           <span class="option-name">${displayName}</span>
         `;
         optBtn.addEventListener('click', () => handleAnswer(opt.id));
@@ -1941,9 +1967,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Siralama modunda secilmis kart tekrar tiklanamasin (sessizce yok sayiliyordu)
         btn.disabled = locked || opt.state === 'picked';
 
+        const choiceColor = (typeof CHOICE_PALETTE !== 'undefined' && CHOICE_PALETTE[index % CHOICE_PALETTE.length])
+          || { main: '#3b82f6', glow: 'rgba(59,130,246,0.65)', bg: 'rgba(59,130,246,0.15)' };
+        btn.style.setProperty('--opt-color', choiceColor.main);
+        btn.style.setProperty('--opt-glow', choiceColor.glow);
+        btn.style.setProperty('--opt-bg', choiceColor.bg);
+
         const keyLabel = opt.order ? opt.order : (MK_OPTION_LETTERS[index] || (index + 1));
         btn.innerHTML = `
-          <span class="mk-option-key">${keyLabel}</span>
+          <span class="mk-option-key" style="background: ${choiceColor.main}; color: #ffffff;">${keyLabel}</span>
           <span class="mk-option-body">
             <span class="mk-option-name">${opt.label}</span>
             <span class="mk-option-sub">${opt.sub || ''}</span>

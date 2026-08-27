@@ -226,3 +226,31 @@ Kullanıcının harita üzerinde fırça ve silgiyle serbestçe coğrafi alanlar
 - **Dairesel Çizimler (Circle):** Kendi yarıçapı ve merkez koordinatları üzerinden boyama kabul alanı oluşturulur.
 - **Cevap Aydınlatması (`cevabiGoster`):** Boyama bittiğinde doğru boyanan şekiller zümrüt yeşili (`#10b981`), kaçırılan yerler mercan kırmızısı (`#ef4444`) renk tonuyla haritada netleştirilir.
 
+---
+
+## 16. 🎨 Şık Bazlı Dinamik Renk Paleti ve Harita-Küme Senkronizasyonu (Choice Colors & Group Clustering)
+
+Çok merkezli maden havzaları, enerji kuşakları, tarım-sanayi alanları ve çoklu şıklı testlerde seçeneklerin coğrafi sınırlarını ve küme noktalarını tek bakışta ayırt etmek için geliştirilen renk motoru:
+
+### 16.1 🌈 10 Benzersiz Canlı Renk Tablosu (`CHOICE_PALETTE`)
+Haritadaki açık, koyu, fiziki ve uydu altlıklarının tümünde yüksek kontrast ve göz alıcı parlaklık sağlayan renk dizilimi:
+- **A Şıkkı:** 🔵 **Canlı Mavi** (`#3b82f6`) -> Mavi Pin, Mavi Çizgi/Poligon, Mavi Buton Harfi
+- **B Şıkkı:** 🟢 **Zümrüt Yeşili** (`#10b981`) -> Yeşil Pin, Yeşil Çizgi/Poligon, Yeşil Buton Harfi
+- **C Şıkkı:** 🟠 **Kehribar Turuncu** (`#f59e0b`) -> Turuncu Pin, Turuncu Çizgi/Poligon, Turuncu Buton Harfi
+- **D Şıkkı:** 🟣 **Canlı Mor** (`#a855f7`) -> Mor Pin, Mor Çizgi/Poligon, Mor Buton Harfi
+- **E Şıkkı:** 🌸 **Mercan Pembesi** (`#ec4899`) -> Pembe Pin, Pembe Çizgi/Poligon, Pembe Buton Harfi
+- **F Şıkkı:** 🌊 **Turkuaz** (`#06b6d4`)
+- **G Şıkkı:** 🟡 **Altın Sarısı** (`#eab308`)
+- **H Şıkkı:** 🔴 **Parlak Kızıl** (`#f97316`)
+- **I Şıkkı:** 🌌 **Çivit Mavisi** (`#6366f1`)
+- **J Şıkkı:** 🌿 **Akuamarin** (`#14b8a6`)
+
+### 16.2 🌐 Harita & Küme Elemanları Entegrasyonu
+- **Grup & Havza Ayrımı:** Bir şık birden fazla noktayı kapsadığında (örneğin A Şıkkı Krom 6 nokta, B Şıkkı Bor 4 nokta), grubun tüm noktaları ve aralarındaki dinamik kesikli bağlantı hatları (`.group-choice-connector`) o şıkkın kendi renginde çizilir. Hangi noktaların hangi şıkka ait olduğu haritada anında ayrışır.
+- **Poligon ve Çizgiler:** Şehir GeoJSON sınırları, göller, delta ovaları ve nehir çizgileri ilgili şıkkın rengiyle parıldar.
+- **Göstergeler Gizliyken Bile Renk Korunur:** Rozetler gizlendiğinde dahi tam koordinat merkezindeki keşif ikonu ilgili şıkkın renginde renkli bir `drop-shadow` ile ışıltı yayar.
+
+### 16.3 ⚡ Çift Yönlü Hover Senkronizasyonu (Hover Sync)
+- Quiz panelinde bir şık butonunun üzerine gelindiğinde haritadaki ilgili şıkkın tüm pinleri ve geometrileri büyür ve parıldar (`.highlight-hover`).
+- Haritada bir pinin üzerine gelindiğinde paneldeki ilgili şık butonu belirginleşir.
+

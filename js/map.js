@@ -800,6 +800,20 @@ class GeographyMap {
     }
   }
 
+// 🎨 10 Benzersiz Canlı Şık Renk Paleti (A-J / I-X)
+const CHOICE_PALETTE = [
+  { main: '#3b82f6', glow: 'rgba(59, 130, 246, 0.65)', bg: 'rgba(59, 130, 246, 0.15)', name: 'blue' },
+  { main: '#10b981', glow: 'rgba(16, 185, 129, 0.65)', bg: 'rgba(16, 185, 129, 0.15)', name: 'emerald' },
+  { main: '#f59e0b', glow: 'rgba(245, 158, 11, 0.65)', bg: 'rgba(245, 158, 11, 0.15)', name: 'amber' },
+  { main: '#a855f7', glow: 'rgba(168, 85, 247, 0.65)', bg: 'rgba(168, 85, 247, 0.15)', name: 'purple' },
+  { main: '#ec4899', glow: 'rgba(236, 72, 153, 0.65)', bg: 'rgba(236, 72, 153, 0.15)', name: 'pink' },
+  { main: '#06b6d4', glow: 'rgba(6, 182, 212, 0.65)', bg: 'rgba(6, 182, 212, 0.15)', name: 'cyan' },
+  { main: '#eab308', glow: 'rgba(234, 179, 8, 0.65)', bg: 'rgba(234, 179, 8, 0.15)', name: 'yellow' },
+  { main: '#f97316', glow: 'rgba(249, 115, 22, 0.65)', bg: 'rgba(249, 115, 22, 0.15)', name: 'orange' },
+  { main: '#6366f1', glow: 'rgba(99, 102, 241, 0.65)', bg: 'rgba(99, 102, 241, 0.15)', name: 'indigo' },
+  { main: '#14b8a6', glow: 'rgba(20, 184, 166, 0.65)', bg: 'rgba(20, 184, 166, 0.15)', name: 'teal' }
+];
+
   // --- YENİ MOD: ÇOKLU SEÇENEK (I-V / A-E) HARİTA ROZETLERİ ---
   /**
    * @param {object} ayarlar  `rozetSabit: true` -> harf/roma rozeti "Gösterge
@@ -822,6 +836,7 @@ class GeographyMap {
     options.forEach((opt, index) => {
       const letter = letters[index] || `${index + 1}`;
       const roman = romanNumerals[index] || `${index + 1}`;
+      const choiceColor = CHOICE_PALETTE[index % CHOICE_PALETTE.length];
 
       // --- GRUP / BİRLEŞİK SEÇENEK DURUMU ---
       // İzmir ve Van gibi birbiriyle teması olmayan ayrık yerleri birleştirdiğimizde
@@ -832,6 +847,23 @@ class GeographyMap {
         const itemsToRender = (opt.displayGroupItems && opt.displayGroupItems.length > 0)
           ? opt.displayGroupItems
           : opt.groupItems;
+
+        // Çoklu üye noktaları arasında şık renginde kesikli bağlantı çizgisi
+        const validCoords = itemsToRender
+          .filter(it => Number.isFinite(it.lat) && Number.isFinite(it.lng))
+          .map(it => [it.lat, it.lng]);
+
+        if (validCoords.length >= 2) {
+          const connectorLine = L.polyline(validCoords, {
+            color: choiceColor.main,
+            weight: 2.5,
+            opacity: 0.65,
+            dashArray: '5, 5',
+            className: 'group-choice-connector'
+          }).addTo(this.multiChoiceLayerGroup);
+          connectorLine.optionId = opt.id;
+          connectorLine.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
+        }
 
         itemsToRender.forEach(subItem => {
           const subLat = subItem.lat;
@@ -844,10 +876,10 @@ class GeographyMap {
           if (subItem.shapeType === 'polygon' && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
             subGeometriVar = true;
             const poly = L.polygon(subItem.coordinates, {
-              color: '#3b82f6',
-              weight: 2,
-              fillColor: '#3b82f6',
-              fillOpacity: 0.25,
+              color: choiceColor.main,
+              weight: 2.2,
+              fillColor: choiceColor.main,
+              fillOpacity: 0.28,
               className: 'polygon-choice-shape'
             }).addTo(this.multiChoiceLayerGroup);
             poly.optionId = opt.id;
@@ -856,9 +888,9 @@ class GeographyMap {
           } else if (subItem.shapeType === 'polyline' && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
             subGeometriVar = true;
             const line = L.polyline(subItem.coordinates, {
-              color: '#3b82f6',
+              color: choiceColor.main,
               weight: 4,
-              opacity: 0.7,
+              opacity: 0.75,
               dashArray: '4, 4',
               className: 'polyline-choice-shape'
             }).addTo(this.multiChoiceLayerGroup);
@@ -907,7 +939,13 @@ class GeographyMap {
           const subCityNameClass = subUseCity ? 'choice-pin-city-name' : '';
 
           const subBadgeHtml = `
-            <div class="choice-pin-container ${subDurumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}" data-roman="${escAttr(roman)}" data-city="${escAttr(subCityName)}">
+            <div class="choice-pin-container ${subDurumSiniflari}" 
+                 data-id="${escAttr(opt.id)}" 
+                 data-index="${index}"
+                 data-letter="${escAttr(letter)}" 
+                 data-roman="${escAttr(roman)}" 
+                 data-city="${escAttr(subCityName)}"
+                 style="--choice-color: ${choiceColor.main}; --choice-glow: ${choiceColor.glow}; --choice-bg: ${choiceColor.bg};">
               <div class="choice-pin-badge ${subCityBadgeClass}">
                 <span class="choice-pin-letter">${letter}</span>
                 <span class="choice-pin-roman ${subCityNameClass}">${subLabelDisplay}</span>
@@ -966,9 +1004,9 @@ class GeographyMap {
           geometriVar = true;
           const geoLayer = L.geoJSON(feat, {
             style: {
-              color: '#38bdf8',
+              color: choiceColor.main,
               weight: 2.2,
-              fillColor: '#0284c7',
+              fillColor: choiceColor.main,
               fillOpacity: 0.28,
               className: 'city-choice-polygon'
             },
@@ -981,7 +1019,7 @@ class GeographyMap {
                 if (this._isAnsweredQuestion) return;
                 layer.setStyle({
                   weight: 3.2,
-                  color: '#60a5fa',
+                  color: choiceColor.main,
                   fillOpacity: 0.6
                 });
               });
@@ -996,9 +1034,9 @@ class GeographyMap {
       } else if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
         geometriVar = true;
         const polyline = L.polyline(opt.coordinates, {
-          color: '#3b82f6',
+          color: choiceColor.main,
           weight: 4,
-          opacity: 0.7,
+          opacity: 0.75,
           dashArray: '4, 4',
           className: 'polyline-choice-shape'
         }).addTo(this.multiChoiceLayerGroup);
@@ -1010,10 +1048,10 @@ class GeographyMap {
       } else if (shapeType === 'polygon' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
         geometriVar = true;
         const polygon = L.polygon(opt.coordinates, {
-          color: '#3b82f6',
-          weight: 2,
-          fillColor: '#3b82f6',
-          fillOpacity: 0.2,
+          color: choiceColor.main,
+          weight: 2.2,
+          fillColor: choiceColor.main,
+          fillOpacity: 0.25,
           className: 'polygon-choice-shape'
         }).addTo(this.multiChoiceLayerGroup);
         polygon.optionId = opt.id;
@@ -1065,7 +1103,13 @@ class GeographyMap {
 
       // Harfli ve Roma rakamlı veya şehir isimli şık pini
       const badgeHtml = `
-        <div class="choice-pin-container ${durumSiniflari}" data-id="${escAttr(opt.id)}" data-letter="${escAttr(letter)}" data-roman="${escAttr(roman)}" data-city="${escAttr(cityName)}">
+        <div class="choice-pin-container ${durumSiniflari}" 
+             data-id="${escAttr(opt.id)}" 
+             data-index="${index}"
+             data-letter="${escAttr(letter)}" 
+             data-roman="${escAttr(roman)}" 
+             data-city="${escAttr(cityName)}"
+             style="--choice-color: ${choiceColor.main}; --choice-glow: ${choiceColor.glow}; --choice-bg: ${choiceColor.bg};">
           <div class="choice-pin-badge ${cityBadgeClass}">
             <span class="choice-pin-letter">${letter}</span>
             <span class="choice-pin-roman ${cityNameClass}">${labelDisplay}</span>
