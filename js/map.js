@@ -17,6 +17,20 @@ const TOPIC_CATEGORY_ICON = {
   bolgeler: '🗺️', kiyilar: '🏖️', dis_kuvvetler: '🌬️', turizm: '🏛️', ulasim: '🚢'
 };
 
+// 🎨 10 Benzersiz Canlı Şık Renk Paleti (A-J / I-X)
+const CHOICE_PALETTE = [
+  { main: '#3b82f6', glow: 'rgba(59, 130, 246, 0.65)', bg: 'rgba(59, 130, 246, 0.15)', name: 'blue' },
+  { main: '#10b981', glow: 'rgba(16, 185, 129, 0.65)', bg: 'rgba(16, 185, 129, 0.15)', name: 'emerald' },
+  { main: '#f59e0b', glow: 'rgba(245, 158, 11, 0.65)', bg: 'rgba(245, 158, 11, 0.15)', name: 'amber' },
+  { main: '#a855f7', glow: 'rgba(168, 85, 247, 0.65)', bg: 'rgba(168, 85, 247, 0.15)', name: 'purple' },
+  { main: '#ec4899', glow: 'rgba(236, 72, 153, 0.65)', bg: 'rgba(236, 72, 153, 0.15)', name: 'pink' },
+  { main: '#06b6d4', glow: 'rgba(6, 182, 212, 0.65)', bg: 'rgba(6, 182, 212, 0.15)', name: 'cyan' },
+  { main: '#eab308', glow: 'rgba(234, 179, 8, 0.65)', bg: 'rgba(234, 179, 8, 0.15)', name: 'yellow' },
+  { main: '#f97316', glow: 'rgba(249, 115, 22, 0.65)', bg: 'rgba(249, 115, 22, 0.15)', name: 'orange' },
+  { main: '#6366f1', glow: 'rgba(99, 102, 241, 0.65)', bg: 'rgba(99, 102, 241, 0.15)', name: 'indigo' },
+  { main: '#14b8a6', glow: 'rgba(20, 184, 166, 0.65)', bg: 'rgba(20, 184, 166, 0.15)', name: 'teal' }
+];
+
 /** Kategori rengi: çokgen/çizgi dolgusu ve rozet arka planı bu tablodan gelir */
 const TOPIC_CATEGORY_COLOR = {
   tarim: '#84cc16', hayvancilik: '#10b981', sanayi: '#a855f7', iklim: '#06b6d4',
@@ -799,20 +813,6 @@ class GeographyMap {
       }
     }
   }
-
-// 🎨 10 Benzersiz Canlı Şık Renk Paleti (A-J / I-X)
-const CHOICE_PALETTE = [
-  { main: '#3b82f6', glow: 'rgba(59, 130, 246, 0.65)', bg: 'rgba(59, 130, 246, 0.15)', name: 'blue' },
-  { main: '#10b981', glow: 'rgba(16, 185, 129, 0.65)', bg: 'rgba(16, 185, 129, 0.15)', name: 'emerald' },
-  { main: '#f59e0b', glow: 'rgba(245, 158, 11, 0.65)', bg: 'rgba(245, 158, 11, 0.15)', name: 'amber' },
-  { main: '#a855f7', glow: 'rgba(168, 85, 247, 0.65)', bg: 'rgba(168, 85, 247, 0.15)', name: 'purple' },
-  { main: '#ec4899', glow: 'rgba(236, 72, 153, 0.65)', bg: 'rgba(236, 72, 153, 0.15)', name: 'pink' },
-  { main: '#06b6d4', glow: 'rgba(6, 182, 212, 0.65)', bg: 'rgba(6, 182, 212, 0.15)', name: 'cyan' },
-  { main: '#eab308', glow: 'rgba(234, 179, 8, 0.65)', bg: 'rgba(234, 179, 8, 0.15)', name: 'yellow' },
-  { main: '#f97316', glow: 'rgba(249, 115, 22, 0.65)', bg: 'rgba(249, 115, 22, 0.15)', name: 'orange' },
-  { main: '#6366f1', glow: 'rgba(99, 102, 241, 0.65)', bg: 'rgba(99, 102, 241, 0.15)', name: 'indigo' },
-  { main: '#14b8a6', glow: 'rgba(20, 184, 166, 0.65)', bg: 'rgba(20, 184, 166, 0.15)', name: 'teal' }
-];
 
   // --- YENİ MOD: ÇOKLU SEÇENEK (I-V / A-E) HARİTA ROZETLERİ ---
   /**
