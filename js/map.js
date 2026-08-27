@@ -166,13 +166,37 @@ class GeographyMap {
     this.drawingVertexMarkers = [];
     this.onDrawingComplete = null;
 
-    // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri - %100 Açık & API Key İstemeyen Güvenilir Sağlayıcılar)
+    // 🔑 CARTO API Anahtarı (https://carto.com/basemaps/apikey adresinden ücretsiz alınabilir)
+    this.cartoApiKey = localStorage.getItem('kpss_carto_api_key') || '';
+
+    // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri)
+    this.initLayerConfigs();
+
+    this.activeLayerKey = 'voyager';
+    this.currentTileLayer = null;
+    this.currentReferenceLayer = null;
+    this.initMap();
+  }
+
+  setCartoApiKey(key) {
+    this.cartoApiKey = (key || '').trim();
+    if (this.cartoApiKey) {
+      localStorage.setItem('kpss_carto_api_key', this.cartoApiKey);
+    } else {
+      localStorage.removeItem('kpss_carto_api_key');
+    }
+    this.initLayerConfigs();
+    this.updateTileLayer();
+  }
+
+  initLayerConfigs() {
+    const keyParam = this.cartoApiKey ? `?api_key=${this.cartoApiKey}` : '';
     this.layerConfigs = {
       voyager: {
-        name: 'Sade / Renkli',
-        withLabels: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; OpenStreetMap contributors / Esri', maxZoom: 19, minZoom: 2 }
+        name: 'Sade / Renkli (CARTO)',
+        withLabels: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${keyParam}`,
+        noLabels: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png${keyParam}`,
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
       },
       topo: {
         name: 'Fiziki / Topografik',
@@ -187,11 +211,10 @@ class GeographyMap {
         options: { attribution: '&copy; Esri, Maxar, Earthstar Geographics', maxZoom: 19, minZoom: 2 }
       },
       dark: {
-        name: 'Gece / Kontrast',
-        withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-        referenceUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
-        noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri, HERE, Garmin, OpenStreetMap contributors', maxZoom: 19, minZoom: 2 }
+        name: 'Gece / Kontrast (CARTO)',
+        withLabels: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png${keyParam}`,
+        noLabels: `https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png${keyParam}`,
+        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
       },
       terrain: {
         name: 'Kabartı / Arazi',
@@ -200,11 +223,6 @@ class GeographyMap {
         options: { attribution: '&copy; Esri &copy; USGS, NOAA', maxZoom: 19, minZoom: 2 }
       }
     };
-
-    this.activeLayerKey = 'voyager';
-    this.currentTileLayer = null;
-    this.currentReferenceLayer = null;
-    this.initMap();
   }
 
   loadAutoZoomSetting() {
