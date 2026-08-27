@@ -336,24 +336,70 @@ class MapPaintGame extends MutlakKonumGameBase {
   _getItemSamplePoints(item) {
     if (!item) return [];
     const pts = [];
+
+    const addPoint = (lat, lng) => {
+      if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) {
+        pts.push({ lat, lng });
+      }
+    };
+
     if (typeof item.lat === 'number' && typeof item.lng === 'number') {
-      pts.push({ lat: item.lat, lng: item.lng });
+      addPoint(item.lat, item.lng);
     }
+
+    // Polyline ve Polygon için hat boyunca ara örnekleme (Interpolation)
     if (item.coordinates && Array.isArray(item.coordinates)) {
-      const flattenCoords = (arr) => {
-        if (!Array.isArray(arr)) return;
-        if (arr.length >= 2 && typeof arr[0] === 'number' && typeof arr[1] === 'number') {
-          pts.push({ lat: arr[0], lng: arr[1] });
-        } else {
-          arr.forEach(flattenCoords);
+      const isPolygon = item.shapeType === 'polygon';
+
+      const sampleLine = (coords) => {
+        for (let i = 0; i < coords.length; i++) {
+          addPoint(coords[i][0], coords[i][1]);
+          if (i > 0 && Array.isArray(coords[i - 1]) && Array.isArray(coords[i])) {
+            const p1 = coords[i - 1];
+            const p2 = coords[i];
+            const distKm = this.kmMesafe(p1[0], p1[1], p2[0], p2[1]);
+            const steps = Math.max(1, Math.floor(distKm / 15)); // Her 15 km'de bir ara örnek nokta
+            for (let s = 1; s < steps; s++) {
+              const f = s / steps;
+              addPoint(p1[0] + (p2[0] - p1[0]) * f, p1[1] + (p2[1] - p1[1]) * f);
+            }
+          }
         }
       };
-      flattenCoords(item.coordinates);
+
+      const flattenAndSample = (arr) => {
+        if (!Array.isArray(arr) || !arr.length) return;
+        if (typeof arr[0] === 'number') {
+          addPoint(arr[0], arr[1]);
+        } else if (Array.isArray(arr[0]) && typeof arr[0][0] === 'number') {
+          sampleLine(arr);
+          if (isPolygon && arr.length >= 3) {
+            // Poligon kapanış çizgisi ara noktaları
+            const pFirst = arr[0];
+            const pLast = arr[arr.length - 1];
+            const distKm = this.kmMesafe(pLast[0], pLast[1], pFirst[0], pFirst[1]);
+            const steps = Math.max(1, Math.floor(distKm / 15));
+            for (let s = 1; s < steps; s++) {
+              const f = s / steps;
+              addPoint(pLast[0] + (pFirst[0] - pLast[0]) * f, pLast[1] + (pFirst[1] - pLast[1]) * f);
+            }
+            // Poligon ağırlık merkezi (Centroid)
+            let sumLat = 0, sumLng = 0;
+            arr.forEach(c => { sumLat += c[0]; sumLng += c[1]; });
+            addPoint(sumLat / arr.length, sumLng / arr.length);
+          }
+        } else {
+          arr.forEach(flattenAndSample);
+        }
+      };
+
+      flattenAndSample(item.coordinates);
     }
+
     if (item.groupItems && Array.isArray(item.groupItems)) {
       item.groupItems.forEach(sub => {
         if (typeof sub.lat === 'number' && typeof sub.lng === 'number') {
-          pts.push({ lat: sub.lat, lng: sub.lng });
+          addPoint(sub.lat, sub.lng);
         }
       });
     }
