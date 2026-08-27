@@ -444,9 +444,18 @@ Object.assign(COGRAFYA_DATA_EXT, {
     {
       id: "ula_yht_agi",
       name: "Yüksek Hızlı Tren (YHT) Ağı",
-      shortName: "YHT Ağı",
+      shortName: "YHT Ağı (Ankara Merkezli)",
       category: "ulasim",
       type: "Demiryolu / Yüksek Hızlı Tren",
+      shapeType: "polyline",
+      coordinates: [
+        // Ankara - İstanbul Kolu
+        [41.00, 28.97], [40.80, 29.43], [40.76, 29.94], [40.71, 30.36], [40.14, 29.98], [39.77, 30.52], [39.58, 32.14], [39.93, 32.86],
+        // Ankara - Sivas Kolu
+        [39.84, 33.51], [39.82, 34.81], [39.75, 37.01],
+        // Geri Dönüş ve Ankara - Konya - Karaman Kolu
+        [39.82, 34.81], [39.84, 33.51], [39.93, 32.86], [39.58, 32.14], [37.87, 32.48], [37.18, 33.22]
+      ],
       lat: 39.93, lng: 32.86,
       region: "İç Anadolu",
       city: "Ankara merkezli: İstanbul, Konya, Karaman, Eskişehir, Bilecik, Sakarya, Kocaeli, Kırıkkale, Yozgat, Sivas",
@@ -455,11 +464,23 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_tren_dogu_ekspresi",
-      name: "Turistik Doğu Ekspresi",
-      shortName: "Doğu Ekspresi",
+      name: "Turistik Doğu Ekspresi Güzergahı",
+      shortName: "Doğu Ekspresi Hattı",
       category: "ulasim",
-      type: "Demiryolu / Turistik Tren",
-      lat: 39.90, lng: 39.50,
+      type: "Demiryolu / Turistik Tren Hattı",
+      shapeType: "polyline",
+      coordinates: [
+        [39.93, 32.86], // Ankara Garı
+        [39.84, 33.51], // Kırıkkale
+        [38.73, 35.48], // Kayseri
+        [39.75, 37.01], // Sivas
+        [39.37, 38.12], // Divriği
+        [39.75, 39.49], // Erzincan
+        [39.91, 41.27], // Erzurum
+        [40.33, 42.58], // Sarıkamış
+        [40.60, 43.09]  // Kars Garı
+      ],
+      lat: 39.75, lng: 37.50,
       region: "Doğu Anadolu",
       city: "Ankara - Kırıkkale - Kayseri - Sivas - Erzincan - Erzurum - Kars",
       promptTitle: "Ankara'dan başlayıp Kayseri, Sivas, Erzincan ve Erzurum üzerinden Kars'a ulaşan ünlü kış turizm tren hattı haritada neresidir?",
@@ -467,11 +488,21 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_tren_mezopotamya",
-      name: "Mezopotamya Ekspresi",
-      shortName: "Mezopotamya Ekspresi",
+      name: "Mezopotamya Ekspresi Güzergahı",
+      shortName: "Mezopotamya Ekspresi Hattı",
       category: "ulasim",
-      type: "Demiryolu / Turistik Tren",
-      lat: 38.50, lng: 38.50,
+      type: "Demiryolu / Turistik Tren Hattı",
+      shapeType: "polyline",
+      coordinates: [
+        [39.93, 32.86], // Ankara
+        [39.84, 33.51], // Kırıkkale
+        [38.73, 35.48], // Kayseri
+        [39.75, 37.01], // Sivas (Çetinkaya)
+        [38.35, 38.31], // Malatya
+        [38.67, 39.22], // Elazığ
+        [37.91, 40.22]  // Diyarbakır (Son Durak)
+      ],
+      lat: 38.67, lng: 37.50,
       region: "Güneydoğu Anadolu",
       city: "Ankara - Kırıkkale - Kayseri - Sivas - Malatya - Elazığ - Diyarbakır",
       promptTitle: "Ankara'dan başlayıp Malatya ve Elazığ üzerinden Diyarbakır'a uzanan yeni turistik tren hattı haritada neresidir?",
@@ -479,13 +510,17 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_marmaray_tup",
-      name: "Marmaray Boğaz Tüp Geçidi",
-      shortName: "Marmaray",
+      name: "Marmaray Boğaz Tüp Geçidi & Demir İpek Yolu",
+      shortName: "Marmaray Tüp Geçit",
       category: "ulasim",
       type: "Demiryolu / Denizaltı Tüp Geçit",
-      lat: 41.00, lng: 29.00,
+      shapeType: "polyline",
+      coordinates: [
+        [41.01, 28.94], [41.015, 28.985], [41.018, 29.005], [41.02, 29.025], [41.00, 29.04]
+      ],
+      lat: 41.018, lng: 29.005,
       region: "Marmara",
-      city: "İstanbul (Asya - Avrupa)",
+      city: "İstanbul (Yenikapı - Sirkeci - Üsküdar - Ayrılık Çeşmesi)",
       kpssNot: "İstanbul Boğazı'nın altından geçen batırma tüp tüneldir. Asya ile Avrupa'yı kesintisiz bağlayarak Pekin'den Londra'ya Demir İpek Yolu'nu mümkün kılmıştır."
     },
     {
@@ -494,7 +529,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
       shortName: "Demiryolu Gitmeyen İller",
       category: "ulasim",
       type: "Demiryolu / Kör Noktalar",
-      lat: 37.00, lng: 29.00,
+      lat: 37.20, lng: 29.50,
       region: "Türkiye Geneli",
       city: "Doğu Karadeniz (Trabzon, Rize, Artvin), Sinop, Çanakkale, Bursa (Gemlik), Muğla, Antalya, Hakkari, Şırnak",
       promptTitle: "Doğu Karadeniz, Sinop, Çanakkale, Muğla, Antalya ve Hakkari gibi yer şekilleri engebeli merkezlerin ortak ulaşım özelliği nedir?",
@@ -506,11 +541,31 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // =========================================================================
     {
       id: "ula_otoyol_bati_aksi",
-      name: "Batı Otoyol Aksı (Edirne - İstanbul - İzmir - Denizli)",
-      shortName: "Batı Otoyol Aksı",
+      name: "Batı Otoyol Aksı (Edirne - İstanbul - İzmir - Aydın - Denizli)",
+      shortName: "Batı Otoyol Aksı (Denizli'ye Kadar)",
       category: "ulasim",
       type: "Otoyol / Batı Koridoru",
-      lat: 39.00, lng: 28.00,
+      shapeType: "polyline",
+      coordinates: [
+        [41.71, 26.35], // Kapıkule / Edirne
+        [41.67, 26.56], // Edirne Merkez
+        [41.42, 27.09], // Babaeski
+        [41.16, 27.80], // Çorlu / Tekirdağ
+        [41.07, 28.25], // Silivri
+        [41.00, 28.97], // İstanbul
+        [40.75, 29.83], // İzmit
+        [40.72, 29.51], // Osmangazi Köprüsü
+        [40.52, 29.35], // Orhangazi Tüneli / Yalova
+        [40.20, 29.00], // Bursa
+        [39.65, 27.88], // Balıkesir
+        [38.92, 27.83], // Akhisar
+        [38.56, 27.35], // Sabuncubeli / Manisa
+        [38.42, 27.14], // İzmir
+        [37.85, 27.84], // Aydın
+        [37.91, 28.32], // Kuyucak / Nazilli
+        [37.77, 29.08]  // Denizli (Son Nokta)
+      ],
+      lat: 39.50, lng: 28.00,
       region: "Ege",
       city: "Edirne - İstanbul - Kocaeli - Bursa - Balıkesir - Manisa - İzmir - Aydın - Denizli",
       promptTitle: "Edirne'den başlayıp İstanbul, İzmir ve Aydın üzerinden yeni açılan kesimle Denizli'ye kadar uzanan otoyol aksı haritada neresidir?",
@@ -519,14 +574,125 @@ Object.assign(COGRAFYA_DATA_EXT, {
     {
       id: "ula_otoyol_orta_dogu_aksi",
       name: "Orta ve Doğu Otoyol Aksı (Ankara - Niğde - Adana - Şanlıurfa)",
-      shortName: "Güneydoğu Otoyol Aksı",
+      shortName: "Güneydoğu Otoyol Aksı (Urfa'ya Kadar)",
       category: "ulasim",
       type: "Otoyol / Güney-Doğu Koridoru",
-      lat: 37.50, lng: 36.50,
+      shapeType: "polyline",
+      coordinates: [
+        [39.93, 32.86], // Ankara
+        [39.79, 32.80], // Gölbaşı
+        [38.94, 33.54], // Şereflikoçhisar
+        [38.37, 34.03], // Aksaray
+        [37.97, 34.68], // Niğde
+        [37.42, 34.87], // Pozantı
+        [37.21, 34.79], // Gülek Boğazı
+        [36.92, 34.90], // Tarsus
+        [37.00, 35.32], // Adana
+        [37.03, 35.81], // Ceyhan
+        [37.07, 36.25], // Osmaniye
+        [37.18, 36.74], // Nurdağı
+        [37.06, 37.38], // Gaziantep
+        [37.03, 37.98], // Birecik
+        [37.16, 38.79]  // Şanlıurfa (Son Nokta)
+      ],
+      lat: 37.80, lng: 35.80,
       region: "Güneydoğu Anadolu",
       city: "Ankara - Niğde - Adana - Mersin - İskenderun - Gaziantep - Şanlıurfa",
       promptTitle: "Ankara'dan başlayıp Niğde, Adana ve Gaziantep üzerinden Şanlıurfa'ya kadar uzanan transit otoyol hattı haritada neresidir?",
       kpssNot: "Ankara-Niğde akıllı otoyolu üzerinden Çukurova ve Güneydoğu'yu bağlar; ŞANLIURFA'DA BİTER (Urfa'dan daha doğuya otoyol gitmez)."
+    },
+
+    // =========================================================================
+    // 5. BORU HATLARI & ENERJİ KORİDORLARI
+    // =========================================================================
+    {
+      id: "ula_btc_koridoru",
+      name: "Bakü - Tiflis - Ceyhan (BTC) Ham Petrol Boru Hattı",
+      shortName: "BTC Petrol Boru Hattı",
+      category: "ulasim",
+      type: "Boru Hattı / Uluslararası Enerji Koridoru",
+      shapeType: "polyline",
+      coordinates: [
+        [41.18, 43.15], // Gürcistan Girişi (Posof/Ardahan)
+        [40.60, 43.09], // Kars
+        [39.91, 41.27], // Erzurum
+        [39.75, 39.49], // Erzincan
+        [39.37, 38.12], // Sivas
+        [38.35, 38.31], // Malatya
+        [37.57, 36.93], // Kahramanmaraş
+        [36.87, 35.93]  // Ceyhan Haydar Aliyev Deniz Terminali
+      ],
+      lat: 39.20, lng: 39.50,
+      region: "Doğu Anadolu",
+      city: "Ardahan'dan Adana Ceyhan Deniz Terminali'ne",
+      promptTitle: "Hazar petrolünü Gürcistan üzerinden Ceyhan Deniz Terminali'ne ulaştıran uluslararası petrol boru hattı haritada neresidir?",
+      kpssNot: "Hazar (Azerbaycan) petrolünü Gürcistan üzerinden Akdeniz'e (Ceyhan) taşır. Türkiye'nin küresel enerji koridoru kimliğinin temel taşıdır."
+    },
+    {
+      id: "ula_kerkuk_yumurtalik_koridoru",
+      name: "Kerkük - Yumurtalık Ham Petrol Boru Hattı",
+      shortName: "Kerkük - Yumurtalık Hattı",
+      category: "ulasim",
+      type: "Boru Hattı / Uluslararası Enerji Koridoru",
+      shapeType: "polyline",
+      coordinates: [
+        [37.15, 42.57], // Silopi / Irak Sınırı
+        [37.30, 41.50], // Midyat
+        [37.07, 41.22], // Nusaybin
+        [37.16, 38.79], // Şanlıurfa
+        [37.06, 37.38], // Gaziantep
+        [37.00, 36.25], // Osmaniye
+        [36.87, 35.93]  // Adana Yumurtalık Deniz Terminali
+      ],
+      lat: 37.10, lng: 39.20,
+      region: "Güneydoğu Anadolu",
+      city: "Şırnak Silopi'den Adana Yumurtalık Terminali'ne",
+      promptTitle: "Irak ham petrolünü Akdeniz kıyısındaki Yumurtalık deniz terminaline taşıyan tarihi boru hattı haritada neresidir?",
+      kpssNot: "Irak petrolünü Ceyhan Yumurtalık'a ulaştıran ilk büyük transit boru hattıdır; Orta Doğu petrolünün Akdeniz'e çıkış kapısıdır."
+    },
+    {
+      id: "ula_tanap_koridoru",
+      name: "TANAP (Trans Anadolu Doğal Gaz Boru Hattı)",
+      shortName: "TANAP Doğal Gaz Hattı",
+      category: "ulasim",
+      type: "Boru Hattı / Doğal Gaz Koridoru",
+      shapeType: "polyline",
+      coordinates: [
+        [41.18, 43.15], // Ardahan (Giriş)
+        [40.50, 42.00], // Erzurum
+        [39.80, 39.50], // Erzincan
+        [39.75, 37.00], // Sivas
+        [39.82, 34.81], // Yozgat
+        [39.84, 33.51], // Kırıkkale
+        [39.93, 32.86], // Ankara
+        [39.77, 30.52], // Eskişehir (Kompresör)
+        [40.20, 29.00], // Bursa
+        [40.75, 27.50], // Tekirdağ
+        [41.27, 26.68], // Edirne İpsala (Avrupa Çıkışı - TAP Bağlantısı)
+        [40.92, 26.38]
+      ],
+      lat: 39.80, lng: 34.50,
+      region: "İç Anadolu",
+      city: "Ardahan'dan Edirne İpsala Avrupa Sınırına (Türkiye'yi baştan başa geçer)",
+      promptTitle: "Azerbaycan Şah Deniz gazını Türkiye üzerinden Avrupa'ya taşıyan ve Türkiye'yi doğudan batıya kat eden en uzun doğalgaz boru hattı neresidir?",
+      kpssNot: "Azerbaycan doğal gazını 20 ilden geçerek Edirne İpsala üzerinden Avrupa'ya (TAP) bağlar. Türkiye'yi doğudan batıya kat eden EN UZUN BORU HATTIDIR."
+    },
+    {
+      id: "ula_mavi_akim_turkakim",
+      name: "Mavi Akım & TürkAkım Doğal Gaz Hatları",
+      shortName: "Mavi Akım / TürkAkım",
+      category: "ulasim",
+      type: "Boru Hattı / Doğal Gaz Koridoru",
+      shapeType: "polyline",
+      coordinates: [
+        [41.70, 35.80], [41.29, 36.33], [40.60, 35.80], [39.93, 32.86], // Mavi Akım (Samsun -> Ankara)
+        [41.29, 36.33],
+        [41.80, 28.50], [41.60, 28.00], [41.40, 27.30] // TürkAkım (Kıyıköy -> Trakya)
+      ],
+      lat: 41.40, lng: 32.00,
+      region: "Karadeniz",
+      city: "Samsun (Durusu) & Kırklareli (Kıyıköy)",
+      kpssNot: "Karadeniz'in tabanından geçen hatlardır; Mavi Akım Rus gazını Samsun'a, TürkAkım ise Trakya Kıyıköy üzerinden Türkiye ve Avrupa'ya ulaştırır."
     },
 
     // =========================================================================
