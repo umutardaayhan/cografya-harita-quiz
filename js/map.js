@@ -172,7 +172,9 @@ class GeographyMap {
     // Harita Katmanları Tanımları (Yazılı ve Dilsiz/Yazısız URL'leri)
     this.initLayerConfigs();
 
-    this.activeLayerKey = 'voyager';
+    // Seçilen taban harita (Sade / Fiziki / Uydu / Gece / Kabartı) eskiden
+    // kaydedilmiyor, her yenilemede 'voyager'a dönüyordu.
+    this.activeLayerKey = this.loadActiveLayer();
     this.currentTileLayer = null;
     this.currentReferenceLayer = null;
     this.initMap();
@@ -223,6 +225,12 @@ class GeographyMap {
         options: { attribution: '&copy; Esri &copy; USGS, NOAA', maxZoom: 19, minZoom: 2 }
       }
     };
+  }
+
+  loadActiveLayer() {
+    const saved = localStorage.getItem('kpss_cografya_map_layer');
+    // Kayıtlı anahtar artık tanımlı değilse (sürüm değişimi) tabana dön
+    return (saved && this.layerConfigs[saved]) ? saved : 'voyager';
   }
 
   loadAutoZoomSetting() {
@@ -419,6 +427,7 @@ class GeographyMap {
   setLayer(layerKey) {
     if (!this.layerConfigs[layerKey]) return;
     this.activeLayerKey = layerKey;
+    localStorage.setItem('kpss_cografya_map_layer', layerKey);
     this.updateTileLayer();
     return this.layerConfigs[layerKey].name;
   }

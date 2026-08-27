@@ -447,3 +447,74 @@ Hedefler sırasıyla şu yollardan üretilir; ilk uyan kazanır:
 > **"ERCİYES DAĞI sınıfına giren dağları boya"** gibi TEK ÖĞELİ 10 tur
 > üretiliyordu (Turizm'de 9, Su Kaynakları'nda 7). "Tek öğeli sınıf" bir
 > boyama hedefi değildir; C ve D yollarında da eşik ≥ 2'dir.
+
+---
+
+## 20. 🔒 MOD DIŞLAMASI (aynı anda tek mod)
+
+Uygulamada iki tür "mod" vardır ve **ikisi asla aynı anda çalışamaz**:
+
+| | Giriş noktası | Ne yapar |
+| :--- | :--- | :--- |
+| Oyun modları | `prepareGameMode(modeName)` | Çalışan her şeyi kapatır, oyun HUD'unu açar |
+| Standart test | `prepareStandardQuiz()` | Çalışan her şeyi kapatır, test arayüzünü geri getirir |
+
+Her ikisi de `exitAllGameModes()` üzerinden geçer: motorlar, zamanlayıcılar,
+harita tıklama dinleyicileri, özel havuz ve şeridi, plan oturumu, Şimşek/Deneme.
+
+**Kural:** standart testi başlatan HER özellik `prepareStandardQuiz()`
+çağırmak zorundadır.
+
+> ⚠️ `startSecmeceQuiz` bunu yapmıyor, yalnızca `hideAllGameHuds()` çağırıp
+> `currentMode`'u değiştiriyordu. Sonuç: **Harita Boyama açıkken Seçmece quiz
+> başlatılabiliyor**, kullanıcı hem haritayı karalıyor hem soru çözüyordu —
+> boyama tuvali, işaretçi dinleyicileri ve turu arkada çalışmaya devam
+> ediyordu. Aynı boşluk Çizim Editörü düğmesinde de vardı.
+
+Kategori ve alt tür değişimi zaten `isGameModeActive()` ile korunur.
+
+---
+
+## 21. ⚙️ KULLANICI TERCİHLERİNİN KALICILIĞI
+
+Tüm tercihler `localStorage`da yaşar ve sayfa yenilendiğinde geri gelir.
+İlerleme (istatistik) ile tercih ayrı tutulur: **"Tüm İstatistikleri Sıfırla"
+tercihlere dokunmaz.**
+
+| Tercih | Anahtar | Nerede |
+| :--- | :--- | :--- |
+| Aktif konu sekmesi | `kpss_cografya_active_category` | app.js |
+| Alt tür rozeti (**konu başına**) | `kpss_cografya_sub_types` | quiz.js |
+| Taban harita (Sade/Fiziki/Uydu/Gece/Kabartı) | `kpss_cografya_map_layer` | map.js |
+| Odak modu | `kpss_cografya_focus_mode` | app.js |
+| Soru formatı | `kpss_cografya_quiz_format` | quiz.js |
+| Zorluk seviyesi | `kpss_cografya_difficulty` | quiz.js |
+| Homojenlik | `kpss_cografya_homogeneity` | quiz.js |
+| Şık sayısı | `kpss_cografya_option_count` | quiz.js |
+| Dinamik havza örneklemesi | `kpss_dynamic_group_sampling` | quiz.js |
+| Otomatik zoom | `kpss_cografya_auto_zoom` | map.js |
+| Harita etiketleri | `kpss_cografya_labels_enabled` | map.js |
+| Rozetler | `kpss_cografya_badges_enabled` | map.js |
+| Pin şehir adları | `kpss_cografya_pin_city_enabled` | map.js |
+| Panel yerleşimi | `kpss_panel_yerlesimi_v1` | panel_manager.js |
+| Arayüz dili | `geo_lang` | i18n.js |
+
+### Geçersiz değere karşı koruma
+
+Kayıtlı tercih artık geçerli olmayabilir (paket kaldırıldı, kademe düştü,
+sürüm değişti). Her biri sessizce varsayılana düşer:
+
+- **Konu**: `ensureValidCategory()` ilk geçerli sekmeye geçer.
+- **Alt tür**: `renderSubCategories()` rozeti listede bulamazsa `all`'a döner —
+  aksi halde hiçbir rozet aktif görünmezken havuz gizlice süzgülü kalırdı.
+- **Taban harita**: `loadActiveLayer()` tanımsız anahtarda `voyager`a,
+  `refreshLayerLocks()` kilitli görünümde yine `voyager`a düşer.
+
+### Alt tür neden konu başına saklanıyor?
+
+Tek bir değer saklansaydı "Dağlar › Volkanik" seçip Sular'a geçen kullanıcı
+geri döndüğünde rozetini kaybederdi. Kayıt bir harita olarak tutulur:
+
+```json
+{ "daglar": "volkanik", "turizm": "unesco", "ulasim": "liman" }
+```

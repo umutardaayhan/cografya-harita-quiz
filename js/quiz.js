@@ -102,7 +102,9 @@ class GeographyQuiz {
   constructor(categoryKey = 'daglar', customDrawManager = null) {
     this.categoryKey = categoryKey;
     this.customDrawManager = customDrawManager;
-    this.activeSubType = 'all'; // 'all', 'volkanik', 'kirik', 'delta', vb.
+    // Alt tür rozeti KATEGORİ BAŞINA hatırlanır: "Dağlar › Volkanik" seçip
+    // Sular'a geçip geri dönen kullanıcı rozetini kaybediyordu.
+    this.activeSubType = this.loadSubType(categoryKey); // 'all', 'volkanik', 'kirik', vb.
     this.customPool = null; // Oyun modlarının (ör. Harita Fatihi) kategori dışı global havuzu
     this.items = [];
     this.remainingPool = [];
@@ -282,8 +284,28 @@ class GeographyQuiz {
     return this.optionCount;
   }
 
+  /** Kategori başına kayıtlı alt tür rozetleri */
+  loadSubTypeMap() {
+    try {
+      return JSON.parse(localStorage.getItem('kpss_cografya_sub_types') || '{}') || {};
+    } catch (e) { return {}; }
+  }
+
+  loadSubType(categoryKey) {
+    return this.loadSubTypeMap()[categoryKey] || 'all';
+  }
+
+  saveSubType(categoryKey, subTypeId) {
+    const harita = this.loadSubTypeMap();
+    if (!subTypeId || subTypeId === 'all') delete harita[categoryKey];
+    else harita[categoryKey] = subTypeId;
+    try { localStorage.setItem('kpss_cografya_sub_types', JSON.stringify(harita)); }
+    catch (e) { /* kota dolu: rozet kalıcı olmaz, oyun etkilenmez */ }
+  }
+
   setSubType(subTypeId) {
     this.activeSubType = subTypeId || 'all';
+    this.saveSubType(this.categoryKey, this.activeSubType);
     this.reloadCategoryItems();
     this.currentQuestion = null;
     this.recentQuestionIds = [];
@@ -362,7 +384,8 @@ class GeographyQuiz {
 
   setCategory(categoryKey) {
     this.categoryKey = categoryKey;
-    this.activeSubType = 'all';
+    // Kategorinin en son kullanılan alt tür rozeti geri yüklenir
+    this.activeSubType = this.loadSubType(categoryKey);
     this.reloadCategoryItems();
     this.currentQuestion = null;
     this.recentQuestionIds = [];

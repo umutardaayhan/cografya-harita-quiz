@@ -224,7 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let planSessionActive = false;   // Plan oturumu sürüyor mu?
   let mistakesLayerVisible = false;
   const mistakesLayerGroup = L.layerGroup().addTo(geoMap.map);
-  let activeCategory = 'daglar';
+  // Seçili konu sekmesi kaydedilir; yenilemede kullanıcı kaldığı yerden devam
+  // eder. Kayıtlı konunun paketi kaldırılmışsa `ensureValidCategory()` ilk
+  // geçerli sekmeye düşürür.
+  const AKTIF_KATEGORI_KEY = 'kpss_cografya_active_category';
+  let activeCategory = localStorage.getItem(AKTIF_KATEGORI_KEY) || 'daglar';
   let activeDrawShape = 'point';
   let pendingDrawingData = null;
 
@@ -334,6 +338,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     subCategoriesBar.style.display = 'flex';
+
+    // Kayıtlı rozet bu kategoride artık yoksa (paket kademesi düştü, alt tür
+    // boşaldı) sessizce "Tümü"ne dön — aksi halde hiçbir rozet aktif
+    // görünmezken havuz gizlice süzgülü kalırdı.
+    if (!subTypes.some(sub => sub.id === geoQuiz.getSubType())) {
+      geoQuiz.setSubType('all');
+    }
     const activeSubId = geoQuiz.getSubType();
 
     // Toplam elemanları saymak için kategori ham veri seti
@@ -392,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     activeCategory = categoryKey;
+    localStorage.setItem(AKTIF_KATEGORI_KEY, categoryKey);
     geoQuiz.setCategory(categoryKey);
 
     document.querySelectorAll('.category-btn').forEach(btn => {
@@ -823,16 +835,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function startExam(scope = 'all') {
     lastExamScope = scope;
     closeGamesDropdown();
-    exitAllGameModes();
-    if (currentMode === 'drawing') closeDrawingToolbar();
-    if (currentMode === 'explore') setMode('quiz');
-
-    // Oyun modundan geliniyorsa standart test arayüzünü geri getir
-    currentMode = 'quiz';
-    syncModeToggleLabel();
-    document.body.classList.remove('game-mode-active');
-    hideAllGameHuds();
-    renderSubCategories();
+    // Standart test arayüzüne dönüşün tek giriş noktası (bkz. prepareStandardQuiz)
+    prepareStandardQuiz();
 
     isExamActive = true;
     examSeconds = 0;
@@ -976,16 +980,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function startSpeedrun(scope = 'all') {
     lastSpeedrunScope = scope;
     closeGamesDropdown();
-    exitAllGameModes();
-    if (currentMode === 'drawing') closeDrawingToolbar();
-    if (currentMode === 'explore') setMode('quiz');
-
-    // Oyun modundan geliniyorsa standart test arayüzünü geri getir
-    currentMode = 'quiz';
-    syncModeToggleLabel();
-    document.body.classList.remove('game-mode-active');
-    hideAllGameHuds();
-    renderSubCategories();
+    // Standart test arayüzüne dönüşün tek giriş noktası (bkz. prepareStandardQuiz)
+    prepareStandardQuiz();
 
     isSpeedrunActive = true;
     speedrunSeconds = 60;
@@ -1450,7 +1446,12 @@ document.addEventListener('DOMContentLoaded', () => {
     matchBoardLocked = false;
     stopPlanSession();
     hideMistakesLayer();
+
+    // Özel havuz (Seçmece) temizlenirken şeridi de kaldır; eskiden havuz
+    // boşaltılıyor ama "🎯 Özel Havuz" şeridi ekranda kalıyor, kullanıcı
+    // artık geçerli olmayan bir kapsam görüyordu.
     geoQuiz.clearCustomPool();
+    if (customPoolBanner) customPoolBanner.style.display = 'none';
 
     endSpeedrun(false);
     endExam(false);
@@ -1459,14 +1460,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (labelsRestored) updateLabelsBtnUI();
   }
 
-  // Oyun modundan normal test moduna donus
-  function returnToQuizMode() {
-    exitAllGameModes();
+  /**
+   * 🚪 STANDART TESTE DÖNÜŞÜN TEK GİRİŞ NOKTASI
+   * (`prepareGameMode`'un simetriği.)
+   *
+   * Standart testi başlatan her özellik buradan geçmek zorundadır. Eskiden
+   * `startSecmeceQuiz` yalnızca `hideAllGameHuds()` çağırıp `currentMode`'u
+   * değiştiriyor, motorları hiç kapatmıyordu: Harita Boyama açıkken Seçmece
+   * quizi başlatılabiliyor, kullanıcı hem haritayı karalıyor hem soru
+   * çözüyordu (boyama tuvali, işaretçi dinleyicileri ve zamanlayıcı arkada
+   * çalışmaya devam ediyordu).
+   *
+   * Soru YÜKLEMEZ — çağıran kendi havuzunu kurup kendi sorusunu yükler.
+   */
+  function prepareStandardQuiz() {
+    exitAllGameModes();                 // motorlar, zamanlayıcılar, harita dinleyicileri
+    if (currentMode === 'drawing') closeDrawingToolbar();
     currentMode = 'quiz';
     syncModeToggleLabel();
     document.body.classList.remove('game-mode-active');
     hideAllGameHuds();
     renderSubCategories();
+  }
+
+  // Oyun modundan normal test moduna donus
+  function returnToQuizMode() {
+    prepareStandardQuiz();
     loadNextQuestion();
   }
 
@@ -2239,6 +2258,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isVisible) konumlandirMenu(layerDropdown, mapLayerBtn);
   });
 
+  /** Kayıtlı taban harita ile düğme/etiket durumunu eşitler */
+  function syncLayerButtons() {
+    const aktif = geoMap.activeLayerKey;
+    layerOptionBtns.forEach(b => b.classList.toggle('active', b.dataset.layer === aktif));
+    const cfg = geoMap.layerConfigs[aktif];
+    if (mapLayerLabel && cfg) mapLayerLabel.textContent = cfg.name;
+  }
+
   layerOptionBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -2359,6 +2386,9 @@ document.addEventListener('DOMContentLoaded', () => {
   drawModeBtn.addEventListener('click', () => {
     closeToolsDropdown();
     if (drawingToolbar.style.display === 'none') {
+      // Oyun modu açıkken çizim araç çubuğu da açılabiliyordu; boyama tuvali
+      // ile çizim motoru aynı harita üzerinde çakışıyordu. Önce oyunu kapat.
+      if (isGameModeActive()) prepareStandardQuiz();
       openDrawingToolbar();
     } else {
       closeDrawingToolbar();
@@ -2840,10 +2870,17 @@ document.addEventListener('DOMContentLoaded', () => {
         geoQuiz.currentOptions = geoQuiz.currentOptions.map(opt => geoQuiz.sampleGroupItems(opt));
       }
 
+      // ⚠️ İki çağrı da bozuktu:
+      //   • `showMultipleChoiceLocations(options, onSelect, ayarlar)` imzasına
+      //     geri çağrı yerine `currentQuestion` veriliyordu — pine tıklayınca
+      //     "currentQuestion is not a function" hatası alınıyordu.
+      //   • `highlightSingleChoiceLocation` diye bir metot hiç yok; doğrusu
+      //     `highlightQuestionShape`. Dinamik Havza düğmesine basılınca
+      //     TypeError atılıp canlı tazeleme yarıda kalıyordu.
       if (geoQuiz.currentActualFormat === 'find_on_map') {
-        geoMap.showMultipleChoiceLocations(geoQuiz.currentOptions, geoQuiz.currentQuestion, handleAnswer);
+        geoMap.showMultipleChoiceLocations(geoQuiz.currentOptions, (selectedId) => handleAnswer(selectedId));
       } else {
-        geoMap.highlightSingleChoiceLocation(geoQuiz.currentQuestion);
+        geoMap.highlightQuestionShape(geoQuiz.currentQuestion);
       }
     }
   }
@@ -2868,18 +2905,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const controlsToggleBtn = document.getElementById('controls-toggle-btn');
   const mapControlsLeft = document.getElementById('map-controls-left');
 
-  let isFocusMode = false;
+  const ODAK_MODU_KEY = 'kpss_cografya_focus_mode';
+  let isFocusMode = localStorage.getItem(ODAK_MODU_KEY) === '1';
 
   function toggleFocusMode(enable) {
     isFocusMode = typeof enable === 'boolean' ? enable : !isFocusMode;
-    if (isFocusMode) {
-      document.body.classList.add('focus-mode');
-      focusModeBtn.classList.add('active');
-    } else {
-      document.body.classList.remove('focus-mode');
-      focusModeBtn.classList.remove('active');
-    }
+    document.body.classList.toggle('focus-mode', isFocusMode);
+    if (focusModeBtn) focusModeBtn.classList.toggle('active', isFocusMode);
+    localStorage.setItem(ODAK_MODU_KEY, isFocusMode ? '1' : '0');
   }
+
+  // Kayıtlı odak modu açılışta uygulanır
+  if (isFocusMode) toggleFocusMode(true);
 
   if (focusModeBtn) focusModeBtn.addEventListener('click', () => { closeToolsDropdown(); toggleFocusMode(); });
   if (focusExitBtn) focusExitBtn.addEventListener('click', () => toggleFocusMode(false));
@@ -4248,10 +4285,15 @@ document.addEventListener('DOMContentLoaded', () => {
   /** Aktif sekme kaldırılan bir pakete aitse ilk geçerli kategoriye kay */
   function ensureValidCategory() {
     if (!CATEGORIES.length) return;                 // hiç paket yok: mağaza zaten açılacak
-    if (COGRAFYA_DATA[activeCategory]) return;      // sekme hâlâ geçerli
+    if (COGRAFYA_DATA[activeCategory]) {
+      // Kayıtlı sekme geçerli ama motor başka bir kategoriyle kurulmuş olabilir
+      if (geoQuiz.categoryKey !== activeCategory) geoQuiz.setCategory(activeCategory);
+      return;
+    }
     // Çizim sekmesinde ancak gerçekten çizim varsa kalınır
     if (activeCategory === 'ozel_cizimler' && customDrawManager.drawings.length) return;
     activeCategory = CATEGORIES[0].id;
+    localStorage.setItem(AKTIF_KATEGORI_KEY, activeCategory);
     geoQuiz.setCategory(activeCategory);
   }
 
@@ -4260,6 +4302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ensureValidCategory();
     renderCategories();
     refreshModeLocks();
+    syncLayerButtons();     // kayıtlı taban harita düğmelerde de işaretli olsun
     refreshLayerLocks();
     studyPlan.buildItemIndex();
   });
@@ -4282,6 +4325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ensureValidCategory();
     renderCategories();
     refreshModeLocks();
+    syncLayerButtons();     // kayıtlı taban harita düğmelerde de işaretli olsun
     refreshLayerLocks();
     loadNextQuestion();
     updateStatsUI();
@@ -4565,14 +4609,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedItems = allItems.filter(it => secmeceSelectedIds.has(it.id));
 
     closeSecmeceModal();
-    hideAllGameHuds();
 
-    // Normal quiz moduna geç ve havuzu kur
-    if (currentMode !== 'quiz') {
-      currentMode = 'quiz';
-      modeToggleBtn.innerHTML = '<span>🧭</span> <span>Keşif Modu</span>';
-      modeToggleBtn.classList.remove('active');
-    }
+    // Çalışan her motoru kapatıp standart teste dön. `prepareStandardQuiz`
+    // özel havuzu da temizlediği için havuz ONDAN SONRA kurulur.
+    prepareStandardQuiz();
 
     geoQuiz.setCustomPool(selectedItems, false);
 
