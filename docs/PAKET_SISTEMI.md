@@ -15,7 +15,7 @@ Harita, testler, günlük plan ve oyun modları indirilen paketlere göre şekil
 
 ---
 
-## 📚 Paket Kataloğu (22 paket · 1080 kayıt)
+## 📚 Paket Kataloğu (22 paket · 1127 kayıt)
 
 Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 (sayfa başına 9 kart). Kademe sütunu `Az / Orta / Tam` kayıt sayılarıdır.
@@ -39,7 +39,7 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 | :--- | :--- | :--- |
 | 🏛️ Şehirler & 81 İl | `tr.sehirler` | 28 / 52 / 81 |
 | 👥 Nüfus, Yerleşme & Göç | `tr.nufus` | 11 / 16 / 22 |
-| 🗺️ 7 Bölge & 21 Bölüm | `tr.bolgeler` | 10 / 18 / 28 |
+| 🗺️ Bölge Türleri & Kalkınma Projeleri | `tr.bolgeler` | 29 / 49 / 75 |
 | 🔗 İlişkili Eşleştirmeler | `tr.iliskiler` | 11 / 14 / 16 |
 
 ### 🏭 Ekonomik Coğrafya

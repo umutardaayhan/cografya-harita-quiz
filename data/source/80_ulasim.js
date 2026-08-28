@@ -34,6 +34,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_liman_trabzon",
+    groupId: 'grp_trabzon_zigana_koridoru',
       name: "Trabzon Limanı",
       shortName: "Trabzon Limanı",
       category: "ulasim",
@@ -82,6 +83,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_liman_zonguldak_eregli",
+    groupId: 'grp_bati_karadeniz_demircelik',
       name: "Zonguldak & Ereğli Limanları",
       shortName: "Zonguldak Limanı",
       category: "ulasim",
@@ -166,6 +168,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_liman_canakkale",
+    groupId: 'grp_canakkale_bogazi_koprusu',
       name: "Çanakkale Limanı",
       shortName: "Çanakkale Limanı",
       category: "ulasim",
@@ -190,6 +193,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_liman_aliaga",
+    groupId: 'grp_aliaga_petrokimya_liman',
       name: "Aliağa Limanı",
       shortName: "Aliağa Limanı",
       category: "ulasim",
@@ -282,6 +286,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     // =========================================================================
     {
       id: "ula_tunel_yeni_zigana",
+    groupId: 'grp_trabzon_zigana_koridoru',
       name: "Yeni Zigana Tüneli",
       shortName: "Yeni Zigana (En Uzun)",
       category: "ulasim",
@@ -294,6 +299,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_tunel_ovit",
+    groupId: 'grp_ovit_koridoru',
       name: "Ovit Tüneli",
       shortName: "Ovit Tüneli (14 km)",
       category: "ulasim",
@@ -318,6 +324,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_gecit_gulek",
+    groupId: 'grp_gulek_bogazi',
       name: "Gülek Boğazı",
       shortName: "Gülek Boğazı",
       category: "ulasim",
@@ -358,6 +365,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_gecit_belen",
+    groupId: 'grp_belen_gecidi',
       name: "Belen Geçidi",
       shortName: "Belen Geçidi",
       category: "ulasim",
@@ -461,7 +469,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_yht_konya_karaman",
-      groupId: "grp_yht_agi",
+      groupId: 'grp_batman_petrol_kompleksi',
       groupName: "Yüksek Hızlı Tren (YHT) Ağı",
       name: "Konya ve Karaman YHT Hattı",
       shortName: "Konya - Karaman YHT",
@@ -505,7 +513,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_dogu_sivas_divrigi_erzincan",
-      groupId: "grp_dogu_ekspresi",
+      groupId: 'grp_divrigi_sivas',
       groupName: "Turistik Doğu Ekspresi Güzergahı",
       name: "Doğu Ekspresi Orta Etabı (Sivas - Divriği - Erzincan)",
       shortName: "Doğu Ekspresi (Orta)",
@@ -519,7 +527,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_dogu_erzurum_sarikamis_kars",
-      groupId: "grp_dogu_ekspresi",
+      groupId: 'grp_erzurum_kars_plato_ekosistem',
       groupName: "Turistik Doğu Ekspresi Güzergahı",
       name: "Doğu Ekspresi Kış Turizmi Etabı (Erzurum - Kars)",
       shortName: "Doğu Ekspresi (Kars Bitişi)",
@@ -578,7 +586,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_demirliman_zonguldak",
-      groupId: "grp_demiryolu_limanlari",
+      groupId: 'grp_bati_karadeniz_demircelik',
       groupName: "Demiryolu Bağlantılı Kıyı Limanları",
       name: "Zonguldak - Ereğli Limanları (Demiryolu Bağlantılı)",
       shortName: "Zonguldak Limanı (Demiryolu)",
@@ -819,7 +827,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_btc_erzurum_erzincan",
-      groupId: "grp_boru_btc",
+      groupId: 'grp_erzurum_kars_plato_ekosistem',
       groupName: "Bakü - Tiflis - Ceyhan (BTC) Ham Petrol Hattı",
       name: "BTC Doğu Anadolu Güzergahı (Kars - Erzurum - Erzincan)",
       shortName: "BTC Doğu Güzergahı",
@@ -833,7 +841,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "ula_btc_sivas_malatya",
-      groupId: "grp_boru_btc",
+      groupId: 'grp_batman_petrol_kompleksi',
       groupName: "Bakü - Tiflis - Ceyhan (BTC) Ham Petrol Hattı",
       name: "BTC Orta Anadolu Güzergahı (Sivas - Malatya - Kahramanmaraş)",
       shortName: "BTC Orta Güzergahı",

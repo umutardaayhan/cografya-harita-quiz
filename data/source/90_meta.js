@@ -84,9 +84,12 @@ const SUB_TYPES_EXT = {
     { id: "yerlesme",    label: "Yerleşme Dokusu",        icon: "🏘️", filter: (i) => bas(i, "yerlesme /") }
   ],
   bolgeler: [
-    { id: "all",         label: "Tüm Bölge & Bölümler",   icon: "🗺️" },
-    { id: "ana_bolge",   label: "7 Coğrafi Bölge",        icon: "🌐", filter: (i) => ic(i, "cografi bolge") },
-    { id: "bolum",       label: "21 Coğrafi Bölüm",       icon: "📍", filter: (i) => ic(i, "cografi bolum") }
+    { id: "all",                label: "Tüm Bölge Konuları",         icon: "🗺️" },
+    { id: "ana_bolge",          label: "7 Bölge & 21 Bölüm",         icon: "🌐", filter: (i) => ic(i, "cografi bolge") || ic(i, "cografi bolum") },
+    { id: "dogal_sekilsel",     label: "Doğal (Fiziki) Şekilsel",    icon: "⛰️", filter: (i) => ic(i, "dogal sekilsel") || ic(i, "daglik") || ic(i, "ovalik") || ic(i, "karstik plato") || ic(i, "volkanik") || ic(i, "iklim bolgesi") || ic(i, "bitki ortusu") || ic(i, "toprak bolgesi") || ic(i, "afet bolgesi") },
+    { id: "beseri_sekilsel",    label: "Beşeri & Ekonomik Şekilsel", icon: "👥", filter: (i) => ic(i, "beseri sekilsel") || ic(i, "nufus bolgesi") || ic(i, "yerlesme bolgesi") || ic(i, "tarim bolgesi") || ic(i, "sanayi bolgesi") || ic(i, "madencilik bolgesi") },
+    { id: "islevsel_yonetim",   label: "İşlevsel Yönetim & Hizmet",  icon: "🏛️", filter: (i) => ic(i, "islevsel yonetim") || ic(i, "islevsel hizmet") || ic(i, "islevsel istatistik") },
+    { id: "kalkinma_projeleri", label: "Kalkınma Projeleri",         icon: "🏗️", filter: (i) => ic(i, "kalkinma projesi") || ic(i, "plan-proje") || ic(i, "gap") || ic(i, "dap") || ic(i, "dokap") || ic(i, "kop") || ic(i, "zbk") || ic(i, "yhgp") }
   ],
   kiyilar: [
     { id: "all",         label: "Tüm Kıyı Şekilleri",     icon: "🏖️" },

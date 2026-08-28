@@ -1,15 +1,22 @@
 /**
- * 🗺️ COĞRAFİ BÖLGELER & BÖLÜMLER — Yazım Kaynağı
+ * 🗺️ COĞRAFİ BÖLGELER, BÖLGE TÜRLERİ & KALKINMA PROJELERİ — Yazım Kaynağı
  *
- * 7 coğrafi bölge POLİGON, 21 bölüm ise merkez NOKTA olarak tanımlanmıştır.
- * Poligonlar sınav haritalarındaki genel hatları temsil eder; idari sınır
- * hassasiyetinde değildir.
+ * KPSS Müfredatına Uygun:
+ * 1. 7 Coğrafi Bölge & 21 Coğrafi Bölüm
+ * 2. Şekilsel Doğal (Fiziki) Bölgeler (Dağlık, Ovalık/Delta, Karstik & Volkanik Platolar, İklim, Bitki, Toprak, Afet)
+ * 3. Şekilsel Beşeri ve Ekonomik Bölgeler (Nüfus, Yerleşme, Tarım, Sanayi, Madencilik)
+ * 4. İşlevsel Yönetim, Hizmet ve İstatistik Bölgeleri (Mülki Yönetim, DSİ, OGM, KGM, TÜİK İBBS)
+ * 5. İşlevsel Plan-Proje Bölgeleri (Kalkınma Projeleri: GAP, DAP, DOKAP, KOP, ZBK, YHGP)
  *
  * Derleyici: node tools/build_packs.js
  */
+if (typeof COGRAFYA_DATA_EXT === 'undefined') var COGRAFYA_DATA_EXT = {};
+
 Object.assign(COGRAFYA_DATA_EXT, {
   bolgeler: [
-    // ---------------- 7 COĞRAFİ BÖLGE ----------------
+    // =========================================================================
+    // 1. 7 COĞRAFİ BÖLGE (POLİGON)
+    // =========================================================================
     {
       id: "blg_karadeniz",
       name: "Karadeniz Bölgesi",
@@ -109,7 +116,9 @@ Object.assign(COGRAFYA_DATA_EXT, {
       kpssNot: "Yüzölçümü EN KÜÇÜK bölgedir. Yaz sıcaklıkları ve buharlaşma en yüksektir. GAP ile sulanan alanlar pamuk üretimini dönüştürmüştür."
     },
 
-    // ---------------- 21 BÖLÜM ----------------
+    // =========================================================================
+    // 2. 21 COĞRAFİ BÖLÜM
+    // =========================================================================
     {
       id: "blm_dogu_karadeniz",
       name: "Doğu Karadeniz Bölümü",
@@ -142,7 +151,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_yildiz",
-    groupId: 'grp_yildiz_daglari',
+      groupId: 'grp_yildiz_daglari',
       name: "Yıldız (Istranca) Dağları Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -153,7 +162,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_ergene",
-    groupId: 'grp_ergene_havzasi',
+      groupId: 'grp_ergene_havzasi',
       name: "Ergene Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -274,7 +283,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_erzurum_kars",
-    groupId: 'grp_erzurum_kars_plato_ekosistem',
+      groupId: 'grp_erzurum_kars_plato_ekosistem',
       name: "Erzurum - Kars Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -295,7 +304,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "blm_hakkari",
-    groupId: 'grp_hakkari_daglik_bolum',
+      groupId: 'grp_hakkari_daglik_bolum',
       name: "Hakkâri Bölümü",
       category: "bolgeler",
       type: "Coğrafi Bölüm / Alt Birim",
@@ -323,6 +332,722 @@ Object.assign(COGRAFYA_DATA_EXT, {
       region: "Güneydoğu Anadolu",
       city: "Diyarbakır - Mardin - Batman - Siirt",
       kpssNot: "Karacadağ bazalt örtüsü ve Diyarbakır Havzası buradadır. Türkiye petrolünün büyük bölümü bu bölümden çıkarılır."
+    },
+
+    // =========================================================================
+    // 3. ŞEKİLSEL DOĞAL (FİZİKİ) BÖLGELER
+    // =========================================================================
+
+    // --- A) DAĞLIK BÖLGELER ---
+    {
+      id: "blg_daglik_dogu_karadeniz",
+    groupId: 'grp_kackar_masifi',
+      name: "Doğu Karadeniz Dağlık Bölgesi (Kaçkar Kuşağı)",
+      shortName: "Doğu Karadeniz Dağlık",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Dağlık Bölge",
+      shapeType: "polygon",
+      coordinates: [[41.0, 39.5], [41.4, 40.5], [41.5, 41.8], [40.6, 42.0], [40.3, 40.2], [40.7, 39.4]],
+      lat: 40.85, lng: 41.05,
+      region: "Karadeniz",
+      city: "Rize - Artvin - Trabzon - Giresun",
+      promptTitle: "Dağların kıyıya paralel uzandığı, eğim ve engebenin fazla, makineli tarımın kısıtlı ve heyelan riskinin en yüksek olduğu Doğu Karadeniz Dağlık Bölgesi haritada neresidir?",
+      kpssNot: "Kaçkar ve Doğu Karadeniz Dağları kıyıya paralel uzanır; yükselti ve eğim fazladır. Ulaşım zordur, tarım arazisi dardır; heyelan ve sel riski çok yüksektir."
+    },
+    {
+      id: "blg_daglik_mentese",
+    groupId: 'grp_mentese_ekosistemi',
+      name: "Menteşe Yöresi Dağlık Bölgesi",
+      shortName: "Menteşe Dağlık Yöresi",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Dağlık Bölge",
+      shapeType: "polygon",
+      coordinates: [[37.5, 27.5], [37.7, 28.8], [37.0, 29.2], [36.7, 28.2], [36.9, 27.4]],
+      lat: 37.15, lng: 28.35,
+      region: "Ege",
+      city: "Muğla - Aydın (güneyi)",
+      promptTitle: "Ege'de dağların kıyıya paralel uzandığı, bol yağış almasına rağmen engebe nedeniyle nüfusun seyrek olduğu Menteşe Dağlık Yöresi haritada neresidir?",
+      kpssNot: "Kıyı Ege'de dağların kıyıya paralel ve engebeli uzandığı tek alandır (Menteşe Dağları). Bol yağış alır ancak yer şekilleri nedeniyle seyrek nüfusludur. Arıcılık (çam balı) gelişmiştir."
+    },
+    {
+      id: "blg_daglik_teke_taseli",
+    groupId: 'grp_teke_taseli_karst_kusagi',
+      name: "Teke ve Taşeli Dağlık-Karstik Bölgesi",
+      shortName: "Teke & Taşeli Dağlık-Karstik",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Dağlık-Karstik Bölge",
+      shapeType: "polygon",
+      coordinates: [[36.2, 29.2], [37.2, 29.6], [37.3, 31.8], [37.0, 33.6], [36.0, 33.2], [36.1, 30.2]],
+      lat: 36.65, lng: 31.85,
+      region: "Akdeniz",
+      city: "Antalya - Mersin - Muğla (doğu) - Karaman (güney)",
+      promptTitle: "Akdeniz'de karstik kalker arazisi, engebeli yapısı ve su tutmayan kireçli toprağı nedeniyle seyrek nüfuslanan Teke ve Taşeli karstik dağlık bölgesi haritada neresidir?",
+      kpssNot: "Toroslar üzerinde yer alan kalkerli (karstik) arazidir. Yüzey suları yer altına sızdığı için kuraktır; kireçtaşı ve aşırı engebe nedeniyle seyrek nüfusludur. Kıl keçisi yetiştirilir."
+    },
+    {
+      id: "blg_daglik_hakkari",
+    groupId: 'grp_cilo_buzul',
+      name: "Hakkâri Dağlık Bölgesi (Cilo-Sat Kuşağı)",
+      shortName: "Hakkâri Dağlık",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Dağlık Bölge",
+      shapeType: "polygon",
+      coordinates: [[37.9, 43.1], [37.9, 44.5], [36.9, 44.7], [37.1, 43.0]],
+      lat: 37.55, lng: 43.85,
+      region: "Doğu Anadolu",
+      city: "Hakkâri - Şırnak (doğusu)",
+      promptTitle: "Türkiye'nin en yüksek, en engebeli ve güncel sirk/takke buzullarına sahip Hakkâri Dağlık Yöresi haritada neresidir?",
+      kpssNot: "Türkiye'nin ortalama yükseltisi en fazla ve en engebeli dağlık alanlarındandır. Cilo Dağı üzerinde güncel buzul (sirk/takke) bulunur. Ulaşım ve tarım imkanları çok kısıtlıdır."
+    },
+
+    // --- B) OVALIK BÖLGELER (DELTALAR) ---
+    {
+      id: "blg_ova_delta_bafra",
+    groupId: 'grp_bafra_deltasi',
+      name: "Bafra Delta Ovası Bölgesi (Kızılırmak Deltası)",
+      shortName: "Bafra Deltası",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Ovalık Bölge (Delta)",
+      shapeType: "polygon",
+      coordinates: [[41.5, 35.7], [41.72, 35.95], [41.6, 36.1], [41.45, 35.9]],
+      lat: 41.57, lng: 35.92,
+      region: "Karadeniz",
+      city: "Samsun (Bafra)",
+      promptTitle: "Kızılırmak'ın Karadeniz'e taşıdığı alüvyonlarla oluşturduğu verimli Bafra Delta Ovası haritada neresidir?",
+      kpssNot: "Kızılırmak'ın Karadeniz'e döküldüğü yerde taşıdığı alüvyonlarla oluşturduğu Türkiye'nin en büyük delta ovalarındandır. Tarımsal verim ve çeşitlilik çok yüksektir."
+    },
+    {
+      id: "blg_ova_delta_carsamba",
+    groupId: 'grp_carsamba_deltasi',
+      name: "Çarşamba Delta Ovası Bölgesi (Yeşilırmak Deltası)",
+      shortName: "Çarşamba Deltası",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Ovalık Bölge (Delta)",
+      shapeType: "polygon",
+      coordinates: [[41.1, 36.55], [41.38, 36.75], [41.3, 37.0], [41.12, 36.85]],
+      lat: 41.22, lng: 36.72,
+      region: "Karadeniz",
+      city: "Samsun (Çarşamba)",
+      promptTitle: "Yeşilırmak'ın taşıdığı alüvyonlarla Karadeniz kıyısında oluşturduğu Çarşamba Delta Ovası haritada neresidir?",
+      kpssNot: "Yeşilırmak'ın Karadeniz'e döküldüğü yerde oluşturduğu delta ovasıdır. Mısır, pirinç, fındık ve sebze tarımı son derece gelişmiştir."
+    },
+    {
+      id: "blg_ova_delta_cukurova",
+    groupId: 'grp_cukurova_deltasi_havza',
+      name: "Çukurova Delta Ovası Bölgesi (Seyhan & Ceyhan)",
+      shortName: "Çukurova Deltası",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Ovalık Bölge (Delta)",
+      shapeType: "polygon",
+      coordinates: [[36.5, 34.8], [37.15, 35.1], [37.1, 36.0], [36.55, 35.8], [36.6, 35.2]],
+      lat: 36.85, lng: 35.45,
+      region: "Akdeniz",
+      city: "Adana - Mersin (Tarsus)",
+      promptTitle: "Seyhan ve Ceyhan nehirlerinin oluşturduğu Türkiye'nin en büyük delta ovası olan Çukurova haritada neresidir?",
+      kpssNot: "Seyhan ve Ceyhan nehirlerinin oluşturduğu Türkiye'nin EN BÜYÜK delta ovasıdır. Yılda birden fazla ürün alınır; pamuk, mısır, narenciye ve soya üretimi yaygındır."
+    },
+    {
+      id: "blg_ova_delta_silifke",
+    groupId: 'grp_silifke_deltasi',
+      name: "Silifke Delta Ovası Bölgesi (Göksu Deltası)",
+      shortName: "Silifke Deltası",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Ovalık Bölge (Delta)",
+      shapeType: "polygon",
+      coordinates: [[36.25, 33.85], [36.45, 33.95], [36.38, 34.15], [36.2, 34.05]],
+      lat: 36.32, lng: 34.02,
+      region: "Akdeniz",
+      city: "Mersin (Silifke)",
+      promptTitle: "Göksu Nehri'nin Akdeniz'e alüvyon yığmasıyla oluşturduğu Silifke Delta Ovası haritada neresidir?",
+      kpssNot: "Göksu Nehri'nin Akdeniz'e döküldüğü yerde oluşturduğu verimli delta ovasıdır. Çeltik (pirinç), çilek ve turfanda sebzecilik gelişmiştir."
+    },
+
+    // --- C) KARSTİK PLATOLAR ---
+    {
+      id: "blg_plato_karstik_teke",
+      name: "Teke Karstik Platosu Bölgesi",
+      shortName: "Teke Karstik Platosu",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Karstik Plato Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.2, 29.1], [37.1, 29.3], [37.2, 30.5], [36.4, 30.3]],
+      lat: 36.75, lng: 29.85,
+      region: "Akdeniz",
+      city: "Antalya - Muğla",
+      promptTitle: "Akdeniz'in batısında yer alan, kalkerli karstik yapısı ve kıl keçisi yetiştiriciliğiyle bilinen Teke Platosu haritada neresidir?",
+      kpssNot: "Kalker (kireçtaşı) tabakalarının aşınmasıyla oluşan karstik platodur. Lapya, dolin, polye yaygındır. Nüfus ve tarım seyrektir."
+    },
+    {
+      id: "blg_plato_karstik_taseli",
+      name: "Taşeli Karstik Platosu Bölgesi",
+      shortName: "Taşeli Karstik Platosu",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Karstik Plato Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.2, 32.2], [37.0, 32.4], [37.1, 33.6], [36.2, 33.4]],
+      lat: 36.65, lng: 32.85,
+      region: "Akdeniz",
+      city: "Antalya - Mersin - Karaman",
+      promptTitle: "Orta Toroslar kuşağında karstik kanyon ve platolardan oluşan Taşeli Platosu haritada neresidir?",
+      kpssNot: "Orta Toroslar'da yer alan karstik aşınım platosudur. Göksu Nehri derin kanyonlarla platoyu yarmıştır; yerleşme oldukça seyrektir."
+    },
+
+    // --- D) VOLKANİK / LAV PLATOLARI ---
+    {
+      id: "blg_plato_volkanik_erzurum_kars",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
+      name: "Erzurum - Kars - Ardahan Lav Platosu Bölgesi",
+      shortName: "Erzurum-Kars Lav Platosu",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Volkanik (Lav) Platosu Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.8, 41.0], [41.3, 42.0], [41.4, 43.6], [40.0, 43.4], [39.7, 41.8]],
+      lat: 40.65, lng: 42.45,
+      region: "Doğu Anadolu",
+      city: "Erzurum - Kars - Ardahan",
+      promptTitle: "Lav örtüsünün oluşturduğu, Türkiye'nin en yüksek volkanik platosu olan Erzurum-Kars-Ardahan Bölgesi haritada neresidir?",
+      kpssNot: "Neojen volkanizması sonucu lavların geniş alanlara yayılmasıyla oluşmuş bazaltik lav platosudur. Türkiye'nin en yüksek platosudur; çernezyom toprak ve yaz yağışlarıyla beslenen Alpin çayırlar sayesinde büyükbaş mera hayvancılığı gelişmiştir."
+    },
+
+    // --- E) İKLİM BÖLGELERİ ---
+    {
+      id: "blg_iklim_karadeniz",
+      name: "Karadeniz İklim Bölgesi (Kuzey Kıyı Kuşağı)",
+      shortName: "Karadeniz İklim Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / İklim Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[41.2, 31.0], [42.1, 31.5], [42.1, 36.2], [41.6, 41.6], [40.6, 41.6], [40.6, 36.0], [40.8, 31.5]],
+      lat: 41.35, lng: 36.25,
+      region: "Karadeniz",
+      city: "Artvin'den Zonguldak'a Kıyı Şeridi",
+      promptTitle: "Her mevsim yağışlı, yıllık sıcaklık farkının en az ve kimyasal çözünmenin en fazla olduğu Karadeniz İklim Bölgesi haritada neresidir?",
+      kpssNot: "Her mevsim yağışlı, yıllık sıcaklık farkı en az, kimyasal çözünmenin en fazla olduğu iklim bölgesidir. En çok yağış Sonbahar'da düşer. Doğal bitki örtüsü geniş ve iğne yapraklı karma ormanlardır."
+    },
+    {
+      id: "blg_iklim_akdeniz",
+      name: "Akdeniz İklim Bölgesi (Akdeniz & Ege Kıyı Kuşağı)",
+      shortName: "Akdeniz İklim Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / İklim Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.0, 27.5], [39.0, 26.5], [38.5, 28.5], [37.5, 30.0], [37.8, 36.0], [36.0, 36.2], [36.0, 32.0], [36.5, 29.0]],
+      lat: 36.95, lng: 31.45,
+      region: "Akdeniz",
+      city: "Hatay'dan Çanakkale'ye Kıyı Kuşağı",
+      promptTitle: "Yazları sıcak ve kurak, kışları ılık ve yağışlı geçen, en çok yağışı kışın cephesel alan Akdeniz İklim Bölgesi haritada neresidir?",
+      kpssNot: "Yazları sıcak ve kurak, kışları ılık ve yağışlıdır. En çok yağış Kış mevsiminde (cephesel/frontal) düşer. Don olayı nadirdir; seracılık ve turunçgil tarımına uygundur."
+    },
+    {
+      id: "blg_iklim_karasal",
+      name: "Ilıman Karasal (Step) İklim Bölgesi (İç Kesimler)",
+      shortName: "Ilıman Karasal (İç Kesimler)",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / İklim Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[37.5, 31.0], [40.2, 30.5], [40.5, 36.0], [38.5, 37.5], [37.0, 37.0], [37.2, 42.0], [38.2, 41.5], [37.0, 33.0]],
+      lat: 38.95, lng: 33.75,
+      region: "İç Anadolu",
+      city: "İç Anadolu, Güneydoğu ve İç Batı Anadolu",
+      promptTitle: "Yazları sıcak ve kurak, kışları soğuk, en çok yağışı ilkbaharda konveksiyonel (Kırkikindi) alan Ilıman Karasal İklim Bölgesi haritada neresidir?",
+      kpssNot: "Yazları sıcak ve kurak, kışları soğuk ve kar yağışlıdır. Yıllık yağış miktarı düşüktür; en çok yağış İlkbahar'da (konveksiyonel/Kırkikindi) düşer. Doğal bitki örtüsü bozkırdır (step)."
+    },
+    {
+      id: "blg_iklim_sert_karasal",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
+      name: "Sert Karasal İklim Bölgesi (Erzurum - Kars Çevresi)",
+      shortName: "Sert Karasal İklim",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / İklim Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.5, 41.0], [41.3, 42.0], [41.3, 44.0], [39.5, 43.5]],
+      lat: 40.45, lng: 42.15,
+      region: "Doğu Anadolu",
+      city: "Erzurum - Kars - Ardahan - Ağrı",
+      promptTitle: "Kışları çok soğuk ve karlı, en fazla yağışını yaz aylarında alan Erzurum-Kars Sert Karasal İklim Bölgesi haritada neresidir?",
+      kpssNot: "Kışlar çok uzun, karlı ve serttir (Sibirya termik antisiklonu etkisi). En çok yağış Yaz mevsiminde (konveksiyonel) düşer; kurak mevsimi yoktur. Doğal bitki örtüsü Alpin dağ çayırlarıdır."
+    },
+
+    // --- F) BİTKİ ÖRTÜSÜ BÖLGELERİ ---
+    {
+      id: "blg_bitki_orman",
+      name: "Geniş ve İğne Yapraklı Orman Kuşağı Bölgesi (Karadeniz)",
+      shortName: "Karadeniz Orman Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Bitki Örtüsü Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[41.0, 31.0], [42.1, 31.5], [42.1, 36.0], [41.6, 41.5], [40.6, 41.5], [40.6, 35.0], [40.8, 31.5]],
+      lat: 41.20, lng: 34.80,
+      region: "Karadeniz",
+      city: "Karadeniz Kıyı Dağları",
+      promptTitle: "Geniş ve iğne yapraklı karma ormanların yer aldığı, Türkiye'nin orman varlığı en zengin olan bölgesi haritada neresidir?",
+      kpssNot: "Nemli ve ılıman iklim şartlarında gelişen geniş ve iğne yapraklı karma orman kuşağıdır. Kayın, kestane, ladin, göknar türleri yaygındır. Türkiye orman varlığının en zengin olduğu alandır."
+    },
+    {
+      id: "blg_bitki_kizilcam_maki",
+      name: "Kızılçam ve Maki Bitki Örtüsü Bölgesi (Akdeniz & Ege)",
+      shortName: "Kızılçam & Maki Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Bitki Örtüsü Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.0, 27.5], [38.8, 26.5], [38.5, 28.5], [37.2, 30.5], [37.5, 36.0], [36.0, 36.0], [36.0, 31.5]],
+      lat: 37.25, lng: 29.50,
+      region: "Akdeniz",
+      city: "Akdeniz ve Ege Kıyıları",
+      promptTitle: "Kızılçam ormanları ve bunların tahribiyle oluşan maki (zeytin, defne, mersin vb.) ve garig formasyonlarının bulunduğu bölge haritada neresidir?",
+      kpssNot: "Akdeniz ikliminin karakteristik bitki örtüsüdür. Kızılçam ormanlarının tahrip edilmesiyle maki (zeytin, defne, mersin, zakkum, keçiboynuzu, lavanta) ve garig (abdestbozan) formasyonları oluşur."
+    },
+    {
+      id: "blg_bitki_bozkir_step",
+      name: "Bozkır (Step) Bitki Örtüsü Bölgesi (İç ve Güneydoğu Anadolu)",
+      shortName: "Bozkır (Step) Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Bitki Örtüsü Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[37.5, 31.0], [40.0, 31.0], [40.2, 36.0], [38.5, 37.5], [37.0, 37.5], [37.2, 42.0], [37.0, 33.0]],
+      lat: 38.70, lng: 34.10,
+      region: "İç Anadolu",
+      city: "İç Anadolu ve Güneydoğu Anadolu",
+      promptTitle: "İlkbahar yağışlarıyla yeşeren, yaz kuraklığıyla sararan kısa boylu ot topluluklarının (geven, yavşan otu vb.) egemen olduğu bozkır kuşağı haritada neresidir?",
+      kpssNot: "İlkbahar yağışlarıyla yeşeren, yaz kuraklığıyla sararan kısa boylu ot topluluklarıdır (geven, yavşan otu, sığırkuyruğu, üzerlik). Küçükbaş hayvancılığın (koyun) temel yem kaynağıdır."
+    },
+    {
+      id: "blg_bitki_alpin_cayir",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
+      name: "Alpin Dağ Çayırları Bölgesi (Erzurum-Kars & Doğu Karadeniz)",
+      shortName: "Alpin Dağ Çayırları",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Bitki Örtüsü Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.0, 40.5], [41.2, 41.5], [41.3, 43.5], [39.8, 43.0]],
+      lat: 40.60, lng: 41.80,
+      region: "Doğu Anadolu",
+      city: "Erzurum - Kars - Ardahan - Rize Yaylaları",
+      promptTitle: "Yaz yağışlarıyla beslenen gür yeşil ot topluluklarının yer aldığı ve büyükbaş mera hayvancılığına zemin hazırlayan Alpin Çayırlar bölgesi haritada neresidir?",
+      kpssNot: "Yaz yağışlarıyla kurumadan yeşil kalan gür ot topluluklarıdır. Büyükbaş mera hayvancılığı (sığır) için ideal ortam oluşturur."
+    },
+
+    // --- G) TOPRAK BÖLGELERİ ---
+    {
+      id: "blg_toprak_terra_rossa",
+      name: "Terra-Rossa (Kırmızı Akdeniz Toprağı) Bölgesi",
+      shortName: "Terra-Rossa Sahası",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Toprak Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.0, 28.5], [37.2, 28.5], [37.5, 31.0], [37.5, 36.0], [36.0, 36.0], [36.0, 30.5]],
+      lat: 36.90, lng: 30.70,
+      region: "Akdeniz",
+      city: "Akdeniz Kireçtaşı (Kalker) Kuşağı",
+      promptTitle: "Kalker (kireçtaşı) üzerinde gelişen, demir oksit nedeniyle kırmızı renk alan ve turunçgil-zeytin tarımına uygun Terra-Rossa toprak bölgesi haritada neresidir?",
+      kpssNot: "Kalker (kireçtaşı) üzerinde gelişen, bileşimindeki demir oksit (Fe2O3) nedeniyle kırmızı renk alan zonal topraktır. Kireçli ve geçirgendir; turunçgil ve zeytine uygundur."
+    },
+    {
+      id: "blg_toprak_kahverengi_orman",
+      name: "Kahverengi Orman Toprağı Bölgesi (Karadeniz)",
+      shortName: "Kahverengi Orman Toprağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Toprak Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[41.0, 31.5], [42.0, 32.0], [42.0, 36.0], [41.5, 41.5], [40.6, 41.5], [40.6, 36.0], [40.8, 32.0]],
+      lat: 41.15, lng: 37.80,
+      region: "Karadeniz",
+      city: "Karadeniz Orman Kuşağı",
+      promptTitle: "Gür orman örtüsü altında humusça zengin, yıkanmış ve çay/fındık tarımına en uygun Kahverengi Orman Toprağı bölgesi haritada neresidir?",
+      kpssNot: "Gür orman örtüsü altında organik maddece (humus) son derece zengin, yıkanmış verimli zonal topraktır. Çay ve fındık tarımına çok uygundur."
+    },
+    {
+      id: "blg_toprak_cernezyom",
+    groupId: 'grp_erzurum_kars_plato_ekosistem',
+      name: "Çernezyom (Kara Toprak) Bölgesi (Erzurum - Kars - Ardahan)",
+      shortName: "Çernezyom Toprak Bölgesi",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Toprak Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.8, 41.2], [41.3, 42.0], [41.3, 43.5], [40.0, 43.2]],
+      lat: 40.55, lng: 42.30,
+      region: "Doğu Anadolu",
+      city: "Erzurum - Kars - Ardahan",
+      promptTitle: "Alpin çayır örtüsü altında gelişen, dünyanın organik madde ve humusça en zengin kara toprağı (Çernezyom) bölgesi haritada neresidir?",
+      kpssNot: "Alpin çayır örtüsü altında gelişen, dünyanın organik madde ve humusça EN ZENGİN zonal toprağıdır. Ancak iklimin sertliği ve don süresinin uzunluğu tarımı sınırlar, çayır-mera alanı olarak kullanılır."
+    },
+    {
+      id: "blg_toprak_step_bozkir",
+      name: "Kahverengi ve Kestane Renkli Bozkır Toprağı Bölgesi",
+      shortName: "Step / Bozkır Toprağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Toprak Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[37.5, 31.5], [39.8, 31.2], [40.0, 35.5], [38.5, 37.0], [37.0, 36.5], [37.2, 33.0]],
+      lat: 38.80, lng: 33.40,
+      region: "İç Anadolu",
+      city: "İç Anadolu ve Çevresi",
+      promptTitle: "Yetersiz yağış nedeniyle kireç birikimi fazla, humus oranı düşük ve tahıl tarımına uygun Step / Bozkır Toprağı bölgesi haritada neresidir?",
+      kpssNot: "Yetersiz yağış nedeniyle kireç ve tuz birikimi fazla, humus oranı düşük zonal topraktır. Tahıl tarımına (buğday, arpa) uygundur; nadas ihtiyacı fazladır."
+    },
+    {
+      id: "blg_toprak_rendzina",
+      name: "Kalsimorfik / Rendzina Toprak Bölgesi (Trakya / Marmara)",
+      shortName: "Rendzina Toprak Bölgesi",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Toprak Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[41.0, 26.5], [41.8, 27.0], [41.5, 28.5], [40.8, 28.0]],
+      lat: 41.40, lng: 27.50,
+      region: "Marmara",
+      city: "Tekirdağ - Kırklareli - Edirne",
+      promptTitle: "Yumuşak kireçtaşı ve killi-kireçli depolar üzerinde oluşan, ayçiçeği ve bağcılığa elverişli Rendzina kalsimorfik toprak bölgesi haritada neresidir?",
+      kpssNot: "Yumuşak kireçtaşı ve killi kireçli depolar üzerinde oluşan intrazonal kalsimorfik topraktır. Kireç oranı yüksektir; ayçiçeği ve bağcılığa elverişlidir."
+    },
+    {
+      id: "blg_toprak_vertisol",
+      name: "Vertisol (Dönen / Killi Kara Toprak / Taşdoğuran) Bölgesi",
+      shortName: "Vertisol (Taşdoğuran) Bölgesi",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Toprak Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[41.0, 26.4], [41.5, 26.8], [41.3, 27.5], [40.9, 27.0]],
+      lat: 41.25, lng: 26.90,
+      region: "Marmara",
+      city: "Ergene Havzası (Tekirdağ - Edirne)",
+      promptTitle: "Kurak dönemde çatlayıp içine dökülen taşları yağışla şişerek yukarı iten ('taşdoğuran' / 'kepir') ve ayçiçeği tarımında lider Vertisol bölgesi haritada neresidir?",
+      kpssNot: "Killi kireçli göl tortulları üzerinde oluşan intrazonal topraktır. Kurak dönemde yarılır ve içine taş dökülür; yağışla şişip taşları yukarı iter ('taşdoğuran' / 'kepir'). Ayçiçeği tarımında 1. sıradadır."
+    },
+
+    // --- H) DOĞAL AFET BÖLGELERİ ---
+    {
+      id: "blg_afet_heyelan",
+      name: "Heyelan Yüksek Risk Bölgesi (Doğu Karadeniz & Toroslar)",
+      shortName: "Heyelan Risk Bölgesi",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Doğal Afet Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.8, 39.0], [41.5, 40.5], [41.6, 41.8], [40.5, 41.8], [40.3, 39.5]],
+      lat: 40.90, lng: 40.40,
+      region: "Karadeniz",
+      city: "Trabzon - Rize - Artvin - Giresun",
+      promptTitle: "Eğim, killi toprak ve aşırı yağışlar nedeniyle heyelan olaylarının en sık görüldüğü (özellikle ilkbaharda) Doğu Karadeniz afet bölgesi haritada neresidir?",
+      kpssNot: "Eğim, killi toprak yapısı ve aşırı yağış/kar erimeleri nedeniyle heyelan riskinin en yüksek olduğu alanlardır. Heyelanlar en çok İLKBAHARDA meydana gelir."
+    },
+    {
+      id: "blg_afet_yangin",
+      name: "Orman Yangını Yüksek Risk Bölgesi (Akdeniz & Ege Kıyı Kuşağı)",
+      shortName: "Orman Yangını Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Doğal Afet Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.0, 27.5], [38.5, 26.5], [38.5, 28.5], [37.2, 30.5], [37.5, 36.0], [36.0, 36.0], [36.0, 31.0]],
+      lat: 36.85, lng: 28.60,
+      region: "Akdeniz",
+      city: "Antalya - Muğla - İzmir - Aydın - Mersin",
+      promptTitle: "Yaz kuraklığı, yüksek sıcaklık ve kızılçam-maki varlığı nedeniyle Türkiye'de orman yangını riskinin en yüksek olduğu kıyı kuşağı haritada neresidir?",
+      kpssNot: "Yaz kuraklığı, yüksek sıcaklık, düşük bağıl nem ve fön rüzgârları ile kızılçam/maki yanıcı yapısı nedeniyle Türkiye'de orman yangını riskinin en yüksek olduğu kıyı kuşağıdır."
+    },
+    {
+      id: "blg_afet_deprem_dusuk",
+      name: "Deprem Riski En Düşük Masif ve Kararlı Alanlar",
+      shortName: "Düşük Deprem Riski Alanları",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Doğal Afet Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.8, 40.0], [37.5, 40.5], [37.5, 41.8], [36.8, 41.5]],
+      lat: 37.30, lng: 40.70,
+      region: "Güneydoğu Anadolu",
+      city: "Mardin Eşiği, Alanya-Anamur, Yıldız Dağları, Doğu Karadeniz Kıyısı",
+      promptTitle: "Eski masif kütleler üzerinde yer alan ve Türkiye'de deprem tehlikesinin en düşük (4. ve 5. derece) olduğu Mardin Eşiği ve çevresi haritada neresidir?",
+      kpssNot: "Eski kütleler (masifler) ve tektonik çöküntülerden uzak alanlardır; Türkiye'de deprem riskinin en düşük olduğu 4. ve 5. derece tehlike bölgeleridir (Mardin Eşiği, Alanya-Anamur Masifi, Yıldız Dağları Masifi, Doğu Karadeniz Kıyısı, Konya-Karaman)."
+    },
+    {
+      id: "blg_afet_cig",
+    groupId: 'grp_hakkari_daglik_bolum',
+      name: "Çığ Tehlikesi Yüksek Bölge (Hakkari, Van, Bitlis, Şırnak & Doğu Karadeniz)",
+      shortName: "Çığ Tehlike Kuşağı",
+      category: "bolgeler",
+      type: "Doğal Şekilsel / Doğal Afet Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[37.2, 42.5], [38.8, 42.0], [39.0, 44.5], [37.2, 44.5]],
+      lat: 38.00, lng: 43.50,
+      region: "Doğu Anadolu",
+      city: "Hakkari - Van - Bitlis - Şırnak - Doğu Karadeniz Dağları",
+      promptTitle: "Yoğun kar yağışı ve dik eğimli yamaçlar nedeniyle çığ düşmesi tehlikesinin en yüksek olduğu Doğu Anadolu sarp dağlık bölgesi haritada neresidir?",
+      kpssNot: "Aşırı kar yağışı, dik yamaç eğimi ve bitki örtüsünden yoksun sarp dağlık alanlar nedeniyle çığ riskinin en yüksek olduğu Doğu Anadolu ve Doğu Karadeniz zirveleridir."
+    },
+
+    // =========================================================================
+    // 4. ŞEKİLSEL BEŞERİ VE EKONOMİK BÖLGELER
+    // =========================================================================
+    {
+      id: "blg_beseri_nufus_yogun",
+      name: "Yoğun Nüfus Bölgesi (İstanbul - Marmara Metropol Kuşağı)",
+      shortName: "Yoğun Nüfus Bölgesi (İstanbul)",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Nüfus Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.8, 28.5], [41.3, 28.5], [41.3, 29.5], [40.8, 29.5]],
+      lat: 41.02, lng: 28.97,
+      region: "Marmara",
+      city: "İstanbul - Kocaeli",
+      promptTitle: "Sanayi, ticaret, ulaşım ve iş olanakları nedeniyle Türkiye'de km²'ye düşen kişi sayısının (aritmetik nüfus yoğunluğunun) en yüksek olduğu bölge haritada neresidir?",
+      kpssNot: "Sanayi, ticaret, ulaşım ve eğitim olanakları nedeniyle km²'ye düşen kişi sayısı (aritmetik nüfus yoğunluğu) en yüksek olan bölgedir (Türkiye ortalamasının katbekat üstündedir)."
+    },
+    {
+      id: "blg_beseri_nufus_seyrek",
+      name: "Seyrek Nüfus Bölgesi (Tunceli - Doğu Anadolu Dağlık Alanı)",
+      shortName: "Seyrek Nüfus Bölgesi (Tunceli)",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Nüfus Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[38.8, 39.1], [39.4, 39.1], [39.5, 40.0], [38.8, 40.0]],
+      lat: 39.11, lng: 39.55,
+      region: "Doğu Anadolu",
+      city: "Tunceli - Bayburt - Hakkari",
+      promptTitle: "Engebeli yer şekilleri, sert iklimi ve sanayinin yetersizliği nedeniyle Türkiye'de aritmetik nüfus yoğunluğu en az olan ilimiz ve çevresi haritada neresidir?",
+      kpssNot: "Engebeli yer şekilleri, iklim şartları ve sanayinin yetersizliği nedeniyle km²'ye düşen kişi sayısı (aritmetik nüfus yoğunluğu) Türkiye'de EN AZ olan il Tunceli'dir."
+    },
+    {
+      id: "blg_beseri_yerlesme_kir",
+      name: "Kır Yerleşmeleri Bölgesi (Doğu Karadeniz Dağınık & İç Anadolu Toplu)",
+      shortName: "Kır Yerleşme Alanları",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Yerleşme Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.5, 38.0], [41.2, 38.5], [41.4, 41.0], [40.4, 41.0]],
+      lat: 40.75, lng: 39.80,
+      region: "Karadeniz",
+      city: "Doğu Karadeniz (Dağınık) ve İç Anadolu (Toplu)",
+      promptTitle: "Su kaynaklarının bol ve engebenin fazla olduğu yerlerde dağınık, suyun kıt ve düz olduğu yerlerde toplu kır yerleşmelerinin görüldüğü Doğu Karadeniz bölgesi haritada neresidir?",
+      kpssNot: "Su kaynaklarının bol ve arazinin engebeli olduğu Karadeniz'de DAĞINIK kır yerleşmeleri; suyun kıt ve arazinin düz olduğu İç ve GD Anadolu'da TOPLU kır yerleşmeleri yaygındır."
+    },
+    {
+      id: "blg_beseri_yerlesme_kent",
+      name: "Kent Yerleşmeleri ve Metropol Bölgesi (Marmara Sanayi & Şehir Kuşağı)",
+      shortName: "Metropol / Kent Bölgesi",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Yerleşme Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.5, 28.0], [41.2, 28.5], [41.0, 30.5], [40.2, 30.0]],
+      lat: 40.85, lng: 29.50,
+      region: "Marmara",
+      city: "İstanbul - Kocaeli - Bursa - İzmir",
+      promptTitle: "Sanayi ve hizmet sektörünün yoğunlaştığı, şehirleşme oranı en yüksek olan Marmara metropol ve kent yerleşmeleri bölgesi haritada neresidir?",
+      kpssNot: "Sanayi ve hizmet sektörünün yoğunlaştığı, nüfusunun %90'ından fazlası şehirlerde yaşayan büyükşehir aglomerasyon bölgeleridir."
+    },
+    {
+      id: "blg_beseri_tarim_bolgesi",
+    groupId: 'grp_cukurova_deltasi_havza',
+      name: "Yoğun Tarım Bölgesi (Çukurova, Ergene, Güney Marmara)",
+      shortName: "Yoğun Tarım Kuşağı",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Tarım Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[36.5, 34.8], [37.2, 35.2], [37.1, 36.0], [36.6, 35.8]],
+      lat: 36.95, lng: 35.60,
+      region: "Akdeniz",
+      city: "Çukurova, Ergene, Güney Marmara, Gediz, Büyük Menderes",
+      promptTitle: "Alüvyal verimli toprakları, sulama ve makineleşme olanaklarıyla ticari tarımın ve sanayi bitkilerinin yoğun üretildiği Çukurova tarım bölgesi haritada neresidir?",
+      kpssNot: "Geniş alüvyal düzlükler, makineleşme ve sulama olanaklarıyla ticari tarımın ve endüstriyel bitkilerin yoğun üretildiği bereketli tarım havzalarıdır."
+    },
+    {
+      id: "blg_beseri_sanayi_bolgesi",
+      name: "Ağır Sanayi Bölgesi (İstanbul, İzmit, Bursa, İzmir, Kırıkkale, İskenderun)",
+      shortName: "Ağır Sanayi Kuşağı",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Sanayi Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.5, 28.8], [41.1, 29.0], [41.0, 30.2], [40.4, 30.0]],
+      lat: 40.76, lng: 29.92,
+      region: "Marmara",
+      city: "İstanbul - Kocaeli - Bursa - İzmir - Kırıkkale - İskenderun",
+      promptTitle: "Otomotiv, demir-çelik, petrokimya ve makine üretiminin kümelendiği, Türkiye sanayi üretiminin omurgası olan Doğu Marmara Sanayi Bölgesi haritada neresidir?",
+      kpssNot: "Otomotiv, demir-çelik, petrokimya, savunma ve makine sanayisinin kümelendiği, Türkiye GSMH'sinin büyük bölümünü üreten çekirdek sanayi bölgeleridir."
+    },
+    {
+      id: "blg_beseri_madencilik_bolgesi",
+      name: "Madencilik ve Enerji Bölgesi (Zonguldak, Batman, Şırnak, Kütahya)",
+      shortName: "Madencilik & Enerji Havzası",
+      category: "bolgeler",
+      type: "Beşeri Şekilsel / Madencilik Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[41.2, 31.5], [41.6, 31.8], [41.5, 32.5], [41.1, 32.2]],
+      lat: 41.45, lng: 31.79,
+      region: "Karadeniz",
+      city: "Zonguldak (Taşkömürü), Batman (Petrol), Şırnak (Asfaltit), Kütahya (Linyit)",
+      promptTitle: "Taşkömürü, linyit, petrol ve fosfat gibi yer altı zenginliklerinin çıkarılması ve işlenmesine dayalı Zonguldak madencilik bölgesi haritada neresidir?",
+      kpssNot: "Ekonomisi yer altı zenginliklerine (taşkömürü, linyit, petrol, fosfat) dayalı maden çıkarma ve işleme merkezleridir (Zonguldak, Batman, Şırnak, Kütahya, Tokat, Mardin Mazıdağı)."
+    },
+
+    // =========================================================================
+    // 5. İŞLEVSEL YÖNETİM, HİZMET VE İSTATİSTİK BÖLGELERİ
+    // =========================================================================
+    {
+      id: "blg_islevsel_yonetim_mulki",
+      name: "İşlevsel Yönetim Bölgesi (Valilikler, Kaymakamlıklar, Belediyeler)",
+      shortName: "Mülki Yönetim Bölgeleri",
+      category: "bolgeler",
+      type: "İşlevsel Yönetim / Mülki İdare Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.5, 32.0], [40.3, 32.2], [40.2, 33.5], [39.4, 33.2]],
+      lat: 39.93, lng: 32.85,
+      region: "İç Anadolu",
+      city: "Ankara ve 81 İl Mülki Sınırları",
+      promptTitle: "Devletin kamu düzenini sağlamak için kanunla sınırlarını belirlediği il (Valilik), ilçe (Kaymakamlık) ve belediye idari yönetim bölgeleri haritada neresidir?",
+      kpssNot: "Türkiye'nin merkezi idare teşkilatına göre il (Valilik), ilçe (Kaymakamlık) ve yerel yönetimlere (Büyükşehir/İl/İlçe Belediyesi, Köy) ayrılmış idari yetki alanlarıdır. Sınırları kanunla kesin olarak çizilmiştir ve kolay kolay değişmez."
+    },
+    {
+      id: "blg_islevsel_hizmet_dsi",
+      name: "İşlevsel Hizmet Bölgesi: DSİ (Devlet Su İşleri Havza Bölge Müdürlükleri)",
+      shortName: "DSİ Hizmet Bölgeleri",
+      category: "bolgeler",
+      type: "İşlevsel Hizmet / Su Yönetim Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.2, 33.0], [40.2, 33.5], [40.0, 35.0], [39.0, 34.5]],
+      lat: 39.85, lng: 34.00,
+      region: "İç Anadolu",
+      city: "Türkiye Akarsu Havzaları DSİ Bölge Merkezleri",
+      promptTitle: "İl sınırları yerine akarsu havzalarını esas alarak baraj, sulama ve taşkın kontrolü yapan DSİ işlevsel hizmet bölgesi haritada neresidir?",
+      kpssNot: "Havza bazlı hidrolojik yönetim için kurulmuş işlevsel hizmet bölgesidir. İl sınırları yerine akarsu havzalarını esas alır; baraj, sulama ve taşkın koruma projelerini yürütür."
+    },
+    {
+      id: "blg_islevsel_hizmet_ogm",
+      name: "İşlevsel Hizmet Bölgesi: OGM (Orman Genel Müdürlüğü Bölge Müdürlükleri)",
+      shortName: "OGM Hizmet Bölgeleri",
+      category: "bolgeler",
+      type: "İşlevsel Hizmet / Orman Yönetim Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[40.0, 34.5], [41.0, 35.0], [40.8, 36.5], [39.8, 36.0]],
+      lat: 40.50, lng: 35.50,
+      region: "Karadeniz",
+      city: "Orman Bölge Müdürlükleri",
+      promptTitle: "Orman varlığının korunması, işletilmesi ve yangınla mücadele amacıyla orman yoğunluklarına göre teşkilatlanan OGM işlevsel hizmet bölgesi haritada neresidir?",
+      kpssNot: "Orman varlığının korunması, işletilmesi ve ağaçlandırma için orman yoğunluklarına göre teşkilatlanmış işlevsel hizmet bölgesidir."
+    },
+    {
+      id: "blg_islevsel_hizmet_kgm",
+      name: "İşlevsel Hizmet Bölgesi: KGM (Karayolları Genel Müdürlüğü Bölge Müdürlükleri)",
+      shortName: "KGM Hizmet Bölgeleri",
+      category: "bolgeler",
+      type: "İşlevsel Hizmet / Ulaşım Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.0, 31.5], [40.0, 31.8], [39.8, 33.2], [38.8, 33.0]],
+      lat: 39.50, lng: 32.50,
+      region: "İç Anadolu",
+      city: "Karayolları Bölge Müdürlükleri",
+      promptTitle: "Karayolu ulaşım ağının inşası, bakımı ve işletilmesi için birden fazla ili kapsayan KGM işlevsel hizmet bölgeleri haritada neresidir?",
+      kpssNot: "Ulaşım ağlarının inşası ve bakımı amacıyla belirlenen, birden fazla ili kapsayan işlevsel hizmet bölgeleridir."
+    },
+    {
+      id: "blg_islevsel_istatistik_tuik",
+      name: "İşlevsel İstatistik Bölgesi: TÜİK (İBBS Düzey 1, Düzey 2, Düzey 3)",
+      shortName: "TÜİK İstatistik Bölgeleri (İBBS)",
+      category: "bolgeler",
+      type: "İşlevsel İstatistik / İBBS Bölgesi",
+      shapeType: "polygon",
+      coordinates: [[39.5, 32.2], [40.4, 32.4], [40.3, 33.3], [39.4, 33.1]],
+      lat: 39.92, lng: 32.84,
+      region: "İç Anadolu",
+      city: "TÜİK (12 Düzey-1, 26 Düzey-2, 81 Düzey-3 Bölgesi)",
+      promptTitle: "Sosyo-ekonomik verilerin toplanması ve AB normlarına uyum amacıyla TÜİK tarafından oluşturulan İstatistiki Bölge Birimleri (İBBS) haritada neresidir?",
+      kpssNot: "AB normlarına uyum amacıyla TÜİK tarafından oluşturulan işlevsel istatistik bölgesidir. Düzey 1: 12 Bölge, Düzey 2: 26 Alt Bölge, Düzey 3: 81 İl olarak tanımlanmıştır."
+    },
+
+    // =========================================================================
+    // 6. İŞLEVSEL PLAN-PROJE BÖLGELERİ (KALKINMA PROJELERİ)
+    // =========================================================================
+    {
+      id: "blg_proje_gap",
+      groupId: 'grp_proje_gap',
+      groupName: 'GAP Kalkınma Projesi',
+      name: "GAP (Güneydoğu Anadolu Projesi - 9 İl)",
+      shortName: "GAP Projesi Sahası",
+      category: "bolgeler",
+      type: "İşlevsel Plan-Proje / Kalkınma Projesi (GAP)",
+      shapeType: "polygon",
+      coordinates: [[36.6, 37.0], [37.9, 38.0], [38.2, 41.5], [37.5, 42.8], [36.8, 42.4], [36.6, 38.5]],
+      lat: 37.45, lng: 39.85,
+      region: "Güneydoğu Anadolu",
+      city: "Şanlıurfa, Gaziantep, Adıyaman, Diyarbakır, Batman, Mardin, Siirt, Şırnak, Kilis",
+      promptTitle: "Fırat ve Dicle havzalarında 9 ili (Şanlıurfa, Gaziantep, Diyarbakır vb.) kapsayan Türkiye'nin en büyük bölgesel kalkınma projesi (GAP) sahası haritada neresidir?",
+      kpssNot: "Türkiye'nin ilk ve en kapsamlı bölgesel kalkınma projesidir. Fırat ve Dicle nehirleri üzerinde 22 baraj ve 19 HES'i kapsar; temel hedefi tarımsal sulama, hidroelektrik enerji, sanayi ve sosyo-ekonomik kalkınmadır. (9 İl: Şanlıurfa, Gaziantep, Adıyaman, Diyarbakır, Batman, Mardin, Siirt, Şırnak, Kilis)"
+    },
+    {
+      id: "blg_proje_dap",
+      groupId: 'grp_proje_dap',
+      groupName: 'DAP Kalkınma Projesi',
+      name: "DAP (Doğu Anadolu Projesi - 15 İl)",
+      shortName: "DAP Projesi Sahası",
+      category: "bolgeler",
+      type: "İşlevsel Plan-Proje / Kalkınma Projesi (DAP)",
+      shapeType: "polygon",
+      coordinates: [[38.8, 36.0], [40.2, 37.0], [41.3, 40.5], [41.3, 44.5], [38.5, 44.5], [37.3, 43.5], [37.5, 38.5]],
+      lat: 39.25, lng: 41.50,
+      region: "Doğu Anadolu",
+      city: "Ağrı, Ardahan, Bingöl, Bitlis, Elazığ, Erzincan, Erzurum, Hakkari, Iğdır, Kars, Malatya, Muş, Tunceli, Van, Sivas",
+      promptTitle: "15 ili kapsayan, büyükbaş hayvancılık, mera ıslahı ve kış turizmini geliştirmeyi hedefleyen en geniş kalkınma projesi (DAP) haritada neresidir?",
+      kpssNot: "Yüzölçümü ve il sayısı bakımından EN BÜYÜK kalkınma projesidir (15 il). Temel hedefleri: Mera ıslahı, büyükbaş hayvancılığı geliştirmek, kış turizmini canlandırmak ve göçü önlemektir. Sivas sonradan eklenmiştir (Sivas hem DAP hem KOP kapsamındadır!)."
+    },
+    {
+      id: "blg_proje_zbk",
+      groupId: 'grp_proje_zbk',
+      groupName: 'ZBK Kalkınma Projesi',
+      name: "ZBK (Zonguldak, Bartın, Karabük Projesi - 3 İl)",
+      shortName: "ZBK Projesi Sahası",
+      category: "bolgeler",
+      type: "İşlevsel Plan-Proje / Kalkınma Projesi (ZBK)",
+      shapeType: "polygon",
+      coordinates: [[41.1, 31.5], [41.7, 31.8], [41.8, 32.8], [41.1, 32.8]],
+      lat: 41.35, lng: 32.10,
+      region: "Karadeniz",
+      city: "Zonguldak, Bartın, Karabük",
+      promptTitle: "Taşkömürü işletmelerini ve demir-çelik sanayisini rehabilite etmeyi, Filyos Limanı'nı geliştirmeyi hedefleyen ZBK Projesi sahası haritada neresidir?",
+      kpssNot: "Sanayi ve madencilik odaklı tek projedir. Taşkömürü havzasını modernize etmek, demir-çelik fabrikalarını rehabilite etmek, Filyos Vadisi Liman Projesi ile yeni yatırım alanları açmak hedeflenir. (3 İl: Zonguldak, Bartın, Karabük)"
+    },
+    {
+      id: "blg_proje_dokap",
+      groupId: 'grp_proje_dokap',
+      groupName: 'DOKAP Kalkınma Projesi',
+      name: "DOKAP (Doğu Karadeniz Projesi - 11 İl)",
+      shortName: "DOKAP Projesi Sahası",
+      category: "bolgeler",
+      type: "İşlevsel Plan-Proje / Kalkınma Projesi (DOKAP)",
+      shapeType: "polygon",
+      coordinates: [[40.2, 34.5], [41.8, 35.5], [41.6, 41.8], [40.4, 41.8], [39.8, 38.5], [40.0, 35.0]],
+      lat: 40.85, lng: 38.50,
+      region: "Karadeniz",
+      city: "Artvin, Bayburt, Giresun, Gümüşhane, Ordu, Rize, Samsun, Trabzon, Amasya, Çorum, Tokat",
+      promptTitle: "Yaylaları birbirine bağlayan 'Yeşil Yol' projesi, balıkçılık ve kıyı-iç kesim ulaşımını geliştirmeyi hedefleyen Doğu Karadeniz Projesi (DOKAP) haritada neresidir?",
+      kpssNot: "Kıyı ile iç kesimler arasındaki ulaşımı geliştirmek (Yeşil Yol Projesi), yayla turizmini canlandırmak, balıkçılık ve organik tarımı desteklemek hedeflenir. (11 İl: Artvin, Bayburt, Giresun, Gümüşhane, Ordu, Rize, Samsun, Trabzon + Çorum, Amasya, Tokat. Not: Samsun, Çorum, Amasya, Tokat hem DOKAP hem YHGP üyesidir!)"
+    },
+    {
+      id: "blg_proje_yhgp",
+      groupId: 'grp_proje_yhgp',
+      groupName: 'YHGP Kalkınma Projesi',
+      name: "YHGP (Yeşilırmak Havzası Gelişim Projesi - 4 İl)",
+      shortName: "YHGP Projesi Sahası",
+      category: "bolgeler",
+      type: "İşlevsel Plan-Proje / Kalkınma Projesi (YHGP)",
+      shapeType: "polygon",
+      coordinates: [[40.0, 34.6], [41.5, 35.8], [41.4, 37.2], [39.8, 37.0], [40.0, 35.2]],
+      lat: 40.65, lng: 36.10,
+      region: "Karadeniz",
+      city: "Amasya, Çorum, Samsun, Tokat",
+      promptTitle: "Yeşilırmak havzasında taşkın, sel ve erozyonu önleyerek su kirliliğini kontrol altına almayı hedefleyen Yeşilırmak Havzası Gelişim Projesi (YHGP) haritada neresidir?",
+      kpssNot: "Yeşilırmak ve kollarındaki akış rejimini düzenlemek, erozyon ve taşkınları önlemek, nehir kirliliğini engellemek hedeflenir. (4 İl: Amasya, Çorum, Samsun, Tokat. Bu 4 ilin tamamı aynı zamanda DOKAP kapsamındadır!)"
+    },
+    {
+      id: "blg_proje_kop",
+      groupId: 'grp_proje_kop',
+      groupName: 'KOP Kalkınma Projesi',
+      name: "KOP (Konya Ovası Projesi - 8 İl)",
+      shortName: "KOP Projesi Sahası",
+      category: "bolgeler",
+      type: "İşlevsel Plan-Proje / Kalkınma Projesi (KOP)",
+      shapeType: "polygon",
+      coordinates: [[37.0, 31.8], [39.8, 32.5], [40.0, 35.5], [38.5, 35.5], [37.2, 34.0], [36.8, 32.8]],
+      lat: 38.25, lng: 33.25,
+      region: "İç Anadolu",
+      city: "Konya, Karaman, Aksaray, Niğde, Nevşehir, Kırşehir, Kırıkkale, Yozgat",
+      promptTitle: "Mavi Tünel projesiyle Göksu sularını kapalı havzaya aktararak tarımsal sulama ve obruk sorununu çözmeyi hedefleyen Konya Ovası Projesi (KOP) haritada neresidir?",
+      kpssNot: "Temel hedefi sulama sorununu çözmektir. Göksu Nehri'nin suları Mavi Tünel Projesi ile Konya Kapalı Havzası'na aktarılmıştır. Yeraltı su seviyesinin düşmesini ve obruk oluşumunu engellemek hedeflenir. (8 İl: Konya, Karaman, Aksaray, Niğde, Nevşehir, Kırşehir, Kırıkkale, Yozgat)"
     }
   ]
 });

@@ -1539,7 +1539,7 @@ const GEO_CATALOG = {
         "icon": "🗺️",
         "i18n": {
           "tr": {
-            "label": "Tüm Bölge & Bölümler"
+            "label": "Tüm Bölge Konuları"
           },
           "en": {
             "label": "All"
@@ -1551,22 +1551,58 @@ const GEO_CATALOG = {
         "icon": "🌐",
         "i18n": {
           "tr": {
-            "label": "7 Coğrafi Bölge"
+            "label": "7 Bölge & 21 Bölüm"
           },
           "en": {
-            "label": "7 Coğrafi Bölge"
+            "label": "7 Bölge & 21 Bölüm"
           }
         }
       },
       {
-        "id": "bolum",
-        "icon": "📍",
+        "id": "dogal_sekilsel",
+        "icon": "⛰️",
         "i18n": {
           "tr": {
-            "label": "21 Coğrafi Bölüm"
+            "label": "Doğal (Fiziki) Şekilsel"
           },
           "en": {
-            "label": "21 Coğrafi Bölüm"
+            "label": "Doğal (Fiziki) Şekilsel"
+          }
+        }
+      },
+      {
+        "id": "beseri_sekilsel",
+        "icon": "👥",
+        "i18n": {
+          "tr": {
+            "label": "Beşeri & Ekonomik Şekilsel"
+          },
+          "en": {
+            "label": "Beşeri & Ekonomik Şekilsel"
+          }
+        }
+      },
+      {
+        "id": "islevsel_yonetim",
+        "icon": "🏛️",
+        "i18n": {
+          "tr": {
+            "label": "İşlevsel Yönetim & Hizmet"
+          },
+          "en": {
+            "label": "İşlevsel Yönetim & Hizmet"
+          }
+        }
+      },
+      {
+        "id": "kalkinma_projeleri",
+        "icon": "🏗️",
+        "i18n": {
+          "tr": {
+            "label": "Kalkınma Projeleri"
+          },
+          "en": {
+            "label": "Kalkınma Projeleri"
           }
         }
       }
@@ -2666,7 +2702,7 @@ const GEO_CATALOG = {
       "sizeKb": {
         "1": 11,
         "2": 20,
-        "3": 28
+        "3": 29
       },
       "unlocks": [
         "quiz",
@@ -2921,14 +2957,14 @@ const GEO_CATALOG = {
         "bolgeler"
       ],
       "tiers": {
-        "1": 10,
-        "2": 18,
-        "3": 28
+        "1": 29,
+        "2": 49,
+        "3": 75
       },
       "sizeKb": {
-        "1": 5,
-        "2": 9,
-        "3": 12
+        "1": 18,
+        "2": 28,
+        "3": 48
       },
       "unlocks": [
         "quiz",

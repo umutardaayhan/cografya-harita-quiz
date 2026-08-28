@@ -158,6 +158,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_unesco_bergama",
+    groupId: 'grp_bergama_unesco',
       name: "Bergama Çok Katmanlı Kültürel Peyzajı",
       shortName: "Bergama",
       category: "turizm",
@@ -370,6 +371,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_mp_kackar",
+    groupId: 'grp_kackar_masifi',
       name: "Kaçkar Dağları Milli Parkı",
       category: "turizm",
       type: "Milli Park / Buzul & Yayla",
@@ -400,6 +402,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_mp_kuscenneti",
+    groupId: 'grp_manyas_kus_cenneti',
       name: "Manyas Kuşcenneti Milli Parkı",
       category: "turizm",
       type: "Milli Park / Ramsar & Kuş Alanı",
@@ -476,6 +479,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_inanc_haci_bektas",
+    groupId: 'grp_kapadokya_goreme',
       name: "Hacı Bektaş-ı Veli Türbesi ve Külliyesi",
       category: "turizm",
       type: "İnanç Turizmi / Tasavvuf",
@@ -611,6 +615,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "tur_meke_maari",
+    groupId: 'grp_meke_tuzlasi',
       name: "Meke Maar Gölü (Dünyanın Nazar Boncuğu)",
       shortName: "Meke Maar Gölü",
       category: "turizm",

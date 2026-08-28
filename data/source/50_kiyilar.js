@@ -100,6 +100,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "kiy_sinop_ym",
+    groupId: 'grp_sinop_inceburun',
       name: "Sinop (İnceburun) Yarımadası",
       category: "kiyilar",
       type: "Yarımada / Kıyı Şekli",

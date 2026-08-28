@@ -1638,6 +1638,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "gol_manyas",
+    groupId: 'grp_manyas_kus_cenneti',
       name: "Manyas (Kuş) Gölü",
       category: "su_kaynaklari",
       type: "Tektonik Göl (Ramsar)",
@@ -2715,6 +2716,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "match_nur_belen",
+    groupId: 'grp_belen_gecidi',
       name: "Belen Geçidi",
       matchSource: "Nur (Amanos) Dağları",
       category: "iliskili_cografya",
@@ -3054,7 +3056,8 @@ const COGRAFYA_DATA = {
 
     // --- 6. YUMRULU VE DİĞER TARIM ÜRÜNLERİ ---
     {
-      id: "tarim_sarimsak", name: "Sarımsak", shortName: "Sarımsak", category: "tarim",
+      id: "tarim_sarimsak",
+    groupId: 'grp_taskopru_sarimsak', name: "Sarımsak", shortName: "Sarımsak", category: "tarim",
       promptTitle: "Coğrafi işaretli Taşköprü üretimiyle ünlü, yüksek aromalı ve en fazla Kastamonu'da yetiştirilen yumrulu ürün haritada neresidir?",
       type: "Yumrulu Tarım Ürünü (Coğrafi İşaret)", lat: 41.38, lng: 33.78, region: "Karadeniz", city: "Kastamonu",
       shapeType: "point",
@@ -3142,7 +3145,7 @@ const COGRAFYA_DATA = {
     },
     {
       id: "hayvan_kil_kecisi_mersin",
-      groupId: 'tarim_grp_mersin',
+      groupId: 'grp_teke_taseli_karst_kusagi',
       name: "Kıl Keçisi Yetiştiriciliği",
       shortName: "Kıl Keçisi",
       category: "hayvancilik",

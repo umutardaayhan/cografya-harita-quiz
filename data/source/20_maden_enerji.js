@@ -143,6 +143,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_linyit_afsin",
+    groupId: 'grp_afsin_elbistan_enerji',
       name: "Linyit (Afşin - Elbistan)",
       shortName: "Afşin-Elbistan Linyiti",
       category: "madenler",
@@ -155,6 +156,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_linyit_soma",
+    groupId: 'grp_soma_linyit_enerji',
       name: "Linyit (Soma - Manisa)",
       category: "madenler",
       type: "Enerji Hammaddesi / Fosil",
@@ -175,6 +177,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "mad_linyit_yatagan",
+    groupId: 'grp_yatagan_linyit_enerji',
       name: "Linyit (Yatağan - Muğla)",
       category: "madenler",
       type: "Enerji Hammaddesi / Fosil",
@@ -314,6 +317,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "enerji_ataturk_baraji",
+    groupId: 'grp_ataturk_baraji_gap',
       name: "Atatürk Barajı & HES",
       shortName: "Atatürk Barajı",
       category: "madenler",
@@ -326,6 +330,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "enerji_keban_baraji",
+    groupId: 'grp_keban_baraji_havzasi',
       name: "Keban Barajı & HES",
       shortName: "Keban Barajı",
       category: "madenler",
@@ -348,6 +353,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "enerji_deriner_baraji",
+    groupId: 'grp_deriner_baraji_coruh',
       name: "Deriner Barajı & HES",
       shortName: "Deriner Barajı",
       category: "madenler",
@@ -359,6 +365,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "enerji_jes_germencik",
+    groupId: 'grp_kizildere_jeotermal',
       name: "Jeotermal Santraller (Germencik - Sarayköy)",
       shortName: "Jeotermal Santral Kuşağı",
       category: "madenler",

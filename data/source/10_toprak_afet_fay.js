@@ -371,6 +371,7 @@ Object.assign(COGRAFYA_DATA_EXT, {
     },
     {
       id: "afet_nallihan_kirgibayir",
+    groupId: 'grp_nallihan_badlands',
       name: "Nallıhan Kırgıbayır (Badlands) Sahası",
       shortName: "Kırgıbayır Sahası",
       category: "afet",
