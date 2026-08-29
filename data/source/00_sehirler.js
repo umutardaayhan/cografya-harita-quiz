@@ -19,7 +19,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 35.32,
     "region": "Akdeniz",
     "city": "Adana",
-    "promptTitle": "Çukurova deltasının kalbi; pamuk, mısır, narenciye ve soya üretiminde öncü, sanayileşmiş Akdeniz metropolü. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Adana (01) - Akdeniz Bölgesi | Rakım: ~23m\n💡 Çukurova deltasının kalbi; pamuk, mısır, narenciye ve soya üretiminde öncü, sanayileşmiş Akdeniz metropolü."
   },
   {
@@ -34,7 +33,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 38.28,
     "region": "Güneydoğu Anadolu",
     "city": "Adıyaman",
-    "promptTitle": "Nemrut Dağı Kommagene heykelleri, tütün üretimi ve Atatürk Baraj Gölü kıyısında yer alan GAP ili. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Adıyaman (02) - Güneydoğu Anadolu Bölgesi | Rakım: ~672m\n💡 Nemrut Dağı Kommagene heykelleri, tütün üretimi ve Atatürk Baraj Gölü kıyısında yer alan GAP ili."
   },
   {
@@ -49,7 +47,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 30.54,
     "region": "Ege",
     "city": "Afyonkarahisar",
-    "promptTitle": "İç Batı Anadolu kavşak noktası; mermer yatakları, termal turizm ve haşhaş tarımında Türkiye lideri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Afyonkarahisar (03) - Ege Bölgesi | Rakım: ~1021m\n💡 İç Batı Anadolu kavşak noktası; mermer yatakları, termal turizm ve haşhaş tarımında Türkiye lideri."
   },
   {
@@ -64,7 +61,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 43.05,
     "region": "Doğu Anadolu",
     "city": "Ağrı",
-    "promptTitle": "Türkiye'nin en yüksek zirvesini (5137 m) taşıyan, İshak Paşa Sarayı ve sert karasal iklim sahası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Ağrı (04) - Doğu Anadolu Bölgesi | Rakım: ~1640m\n💡 Türkiye'nin en yüksek zirvesi (Ağrı Dağı - 5137m), İshak Paşa Sarayı ve sert karasal iklim sahası."
   },
   {
@@ -79,7 +75,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 35.83,
     "region": "Karadeniz",
     "city": "Amasya",
-    "promptTitle": "Yeşilırmak vadisinde kurulu, elması ve kralkaya mezarlarıyla ünlü, şehzadeler kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Amasya (05) - Karadeniz Bölgesi | Rakım: ~411m\n💡 Yeşilırmak vadisinde kurulu, elması ve kralkaya mezarlarıyla ünlü, şehzadeler kenti."
   },
   {
@@ -94,7 +89,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 32.86,
     "region": "İç Anadolu",
     "city": "Ankara",
-    "promptTitle": "Türkiye Cumhuriyeti'nin başkenti; İç Anadolu'nun en büyük sanayi, hizmet ve idari merkezi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Ankara (06) - İç Anadolu Bölgesi | Rakım: ~890m\n💡 Türkiye Cumhuriyeti'nin başkenti; İç Anadolu'nun en büyük sanayi, hizmet ve idari merkezi."
   },
   {
@@ -109,7 +103,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 30.71,
     "region": "Akdeniz",
     "city": "Antalya",
-    "promptTitle": "Türkiye'nin turizm başkenti; karstik travertenler, seracılık, turunçgil ve kış ılıklığı cenneti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Antalya (07) - Akdeniz Bölgesi | Rakım: ~30m\n💡 Türkiye'nin turizm başkenti; karstik travertenler, seracılık, turunçgil ve kış ılıklığı cenneti."
   },
   {
@@ -124,7 +117,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 41.82,
     "region": "Karadeniz",
     "city": "Artvin",
-    "promptTitle": "Çoruh Nehri üzerindeki dev barajlar (Deriner, Yusufeli), dik dağlık yamaçlar ve Kafkasör yaylası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Artvin (08) - Karadeniz Bölgesi | Rakım: ~550m\n💡 Çoruh Nehri üzerindeki dev barajlar (Deriner, Yusufeli), dik dağlık yamaçlar ve Kafkasör yaylası."
   },
   {
@@ -139,7 +131,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 27.84,
     "region": "Ege",
     "city": "Aydın",
-    "promptTitle": "Büyük Menderes grabeninde incir, zeytin ve pamuk üretiminde Türkiye birincisi; jeotermal enerji merkezi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Aydın (09) - Ege Bölgesi | Rakım: ~60m\n💡 Büyük Menderes grabeninde incir, zeytin ve pamuk üretiminde Türkiye birincisi; jeotermal enerji merkezi."
   },
   {
@@ -154,7 +145,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 27.89,
     "region": "Marmara",
     "city": "Balıkesir",
-    "promptTitle": "Hem Ege hem Marmara'ya kıyısı olan; bor mineralleri (Susurluk/Bigadiç), hayvancılık ve zeytincilik kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Balıkesir (10) - Marmara Bölgesi | Rakım: ~100m\n💡 Hem Ege hem Marmara'ya kıyısı olan; bor mineralleri (Susurluk/Bigadiç), hayvancılık ve zeytincilik kenti."
   },
   {
@@ -169,7 +159,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.98,
     "region": "Marmara",
     "city": "Bilecik",
-    "promptTitle": "Osmanlı Devleti'nin kuruluş merkezi; seramik, mermer ve 4 farklı coğrafi bölgeye komşu geçiş ili. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bilecik (11) - Marmara Bölgesi | Rakım: ~510m\n💡 Osmanlı Devleti'nin kuruluş merkezi; seramik, mermer ve 4 farklı coğrafi bölgeye komşu geçiş ili."
   },
   {
@@ -184,7 +173,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 40.5,
     "region": "Doğu Anadolu",
     "city": "Bingöl",
-    "promptTitle": "KAF ve DAF fay hatlarının kesiştiği Karlıova kavşağı, yüzen adalar ve yaylacılık merkezi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bingöl (12) - Doğu Anadolu Bölgesi | Rakım: ~1150m\n💡 KAF ve DAF fay hatlarının kesiştiği Karlıova kavşağı, yüzen adalar ve yaylacılık merkezi."
   },
   {
@@ -199,7 +187,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 42.11,
     "region": "Doğu Anadolu",
     "city": "Bitlis",
-    "promptTitle": "Nemrut Krater Gölü, Van Gölü batı kıyısı, tütün üretimi ve zengin volkanik dağlık arazi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bitlis (13) - Doğu Anadolu Bölgesi | Rakım: ~1545m\n💡 Nemrut Krater Gölü, Van Gölü batı kıyısı, tütün üretimi ve zengin volkanik dağlık arazi."
   },
   {
@@ -214,7 +201,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 31.61,
     "region": "Karadeniz",
     "city": "Bolu",
-    "promptTitle": "Abant ve Yedigöller heyelan set gölleri, zengin orman varlığı ve Köroğlu Dağları kış turizmi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bolu (14) - Karadeniz Bölgesi | Rakım: ~725m\n💡 Abant ve Yedigöller heyelan set gölleri, zengin orman varlığı ve Köroğlu Dağları kış turizmi."
   },
   {
@@ -229,7 +215,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 30.29,
     "region": "Akdeniz",
     "city": "Burdur",
-    "promptTitle": "Göller Yöresi'nin kalbi; Salda Gölü, tektonik göl çanakları ve traverten mermerciliği. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Burdur (15) - Akdeniz Bölgesi | Rakım: ~950m\n💡 Göller Yöresi'nin kalbi; Salda Gölü, Burdur Gölü tektonik çanağı ve traverten mermerciliği."
   },
   {
@@ -244,7 +229,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.06,
     "region": "Marmara",
     "city": "Bursa",
-    "promptTitle": "Otomotiv ve tekstil sanayisinin başkenti, Uludağ kış sporları merkezi ve verimli ovası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bursa (16) - Marmara Bölgesi | Rakım: ~100m\n💡 Otomotiv ve tekstil sanayisinin başkenti, Uludağ kış sporları merkezi ve verimli Bursa Ovası."
   },
   {
@@ -259,7 +243,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 26.41,
     "region": "Marmara",
     "city": "Çanakkale",
-    "promptTitle": "Marmara'yı Ege'ye bağlayan boğazın jeopolitiği, Gelibolu Yarımadası, Kaz Dağları ve rüzgar enerjisi santralleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Çanakkale (17) - Marmara Bölgesi | Rakım: ~3m\n💡 Çanakkale Boğazı jeopolitiği, Gelibolu Yarımadası, Kaz Dağları ve rüzgar enerjisi santralleri."
   },
   {
@@ -274,7 +257,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 33.62,
     "region": "İç Anadolu",
     "city": "Çankırı",
-    "promptTitle": "Tuz Mağarası (kaya tuzu yatakları), Ilgaz Dağları kış turizmi ve buğday tarımı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Çankırı (18) - İç Anadolu Bölgesi | Rakım: ~730m\n💡 Tuz Mağarası (kaya tuzu yatakları), Ilgaz Dağları kış turizmi ve buğday tarımı."
   },
   {
@@ -289,7 +271,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.95,
     "region": "Karadeniz",
     "city": "Çorum",
-    "promptTitle": "Hitit başkenti Hattuşa, leblebi üretimi, kiremit/tuğla sanayisi ve Orta Karadeniz iç kesimi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Çorum (19) - Karadeniz Bölgesi | Rakım: ~801m\n💡 Hitit başkenti Hattuşa, leblebi üretimi, kiremit/tuğla sanayisi ve Orta Karadeniz iç kesimi."
   },
   {
@@ -304,7 +285,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.09,
     "region": "Ege",
     "city": "Denizli",
-    "promptTitle": "Pamukkale travertenleri (UNESCO), tekstil ihracatı ve Sarayköy jeotermal enerji santrali. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Denizli (20) - Ege Bölgesi | Rakım: ~420m\n💡 Pamukkale travertenleri (UNESCO), tekstil ihracatı ve Sarayköy jeotermal enerji santrali."
   },
   {
@@ -319,7 +299,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 40.24,
     "region": "Güneydoğu Anadolu",
     "city": "Diyarbakır",
-    "promptTitle": "Dicle Nehri vadisi, Hevsel Bahçeleri, bazalt volkanik plato ve GAP'ın en büyük tarım/ticaret merkezi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Diyarbakır (21) - Güneydoğu Anadolu Bölgesi | Rakım: ~660m\n💡 Dicle Nehri vadisi, Hevsel Bahçeleri, bazalt volkanik plato ve GAP'ın en büyük tarım/ticaret merkezi."
   },
   {
@@ -334,7 +313,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 26.56,
     "region": "Marmara",
     "city": "Edirne",
-    "promptTitle": "Meriç ve Ergene nehirleri, pirinç (çeltik) ve ayçiçeği üretim lideri; Selimiye Camii kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Edirne (22) - Marmara Bölgesi | Rakım: ~41m\n💡 Meriç ve Ergene nehirleri, pirinç (çeltik) ve ayçiçeği üretim lideri; Selimiye Camii kenti."
   },
   {
@@ -349,7 +327,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 39.22,
     "region": "Doğu Anadolu",
     "city": "Elazığ",
-    "promptTitle": "Keban Baraj Gölü kıyısı, Guleman krom yatakları ve Doğu Anadolu'nun sanayileşmiş kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Elazığ (23) - Doğu Anadolu Bölgesi | Rakım: ~1067m\n💡 Keban Baraj Gölü kıyısı, Guleman krom yatakları ve Doğu Anadolu'nun sanayileşmiş kenti."
   },
   {
@@ -364,7 +341,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 39.49,
     "region": "Doğu Anadolu",
     "city": "Erzincan",
-    "promptTitle": "KAF fay kuşağında tektonik ova, tulum peyniri, Tercan Ovası ve Karasu (Fırat) akarsu vadisi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Erzincan (24) - Doğu Anadolu Bölgesi | Rakım: ~1185m\n💡 KAF fay kuşağında tektonik ova, tulum peyniri, Tercan Ovası ve Karasu (Fırat) akarsu vadisi."
   },
   {
@@ -379,7 +355,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 41.28,
     "region": "Doğu Anadolu",
     "city": "Erzurum",
-    "promptTitle": "Doğu Anadolu volkanik platosunun merkezi; Palandöken kış turizmi, çernozyom topraklar ve büyükbaş mera hayvancılığı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Erzurum (25) - Doğu Anadolu Bölgesi | Rakım: ~1890m\n💡 Erzurum-Kars volkanik platosu, Palandöken kış turizmi, çernezyom topraklar ve büyükbaş mera hayvancılığı."
   },
   {
@@ -394,7 +369,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 30.52,
     "region": "İç Anadolu",
     "city": "Eskişehir",
-    "promptTitle": "Lületaşı, bor (Seyitgazi/Kırka), havacılık-demiryolu sanayisi ve Porsuk Çayı modern şehirleşmesi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Eskişehir (26) - İç Anadolu Bölgesi | Rakım: ~800m\n💡 Lületaşı, bor (Seyitgazi/Kırka), havacılık-demiryolu sanayisi ve Porsuk Çayı modern şehirleşmesi."
   },
   {
@@ -409,7 +383,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 37.38,
     "region": "Güneydoğu Anadolu",
     "city": "Gaziantep",
-    "promptTitle": "Güneydoğu'nun sanayi ve ihracat lokomotifi; Antep fıstığı ve gastronomi kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Gaziantep (27) - Güneydoğu Anadolu Bölgesi | Rakım: ~850m\n💡 Güneydoğu'nun sanayi ve ihracat lokomotifi; Antep fıstığı ve gastronomi kenti."
   },
   {
@@ -424,7 +397,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 38.39,
     "region": "Karadeniz",
     "city": "Giresun",
-    "promptTitle": "Fındık üretiminin başkenti, Doğu Karadeniz yaylaları (Kümbet) ve zengin nemli ormanlar. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Giresun (28) - Karadeniz Bölgesi | Rakım: ~10m\n💡 Fındık üretiminin başkenti, Doğu Karadeniz yaylaları (Kümbet) ve zengin nemli ormanlar."
   },
   {
@@ -439,7 +411,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 39.48,
     "region": "Karadeniz",
     "city": "Gümüşhane",
-    "promptTitle": "Gümüş ve kurşun madenleri, Karaca Mağarası karstik güzellikleri ve Zigana tünel koridoru. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Gümüşhane (29) - Karadeniz Bölgesi | Rakım: ~1150m\n💡 Gümüş ve kurşun madenleri, Karaca Mağarası karstik güzellikleri ve Zigana tünel koridoru."
   },
   {
@@ -454,7 +425,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 43.74,
     "region": "Doğu Anadolu",
     "city": "Hakkâri",
-    "promptTitle": "Cilo (Buzul) Dağları (Reşko 4135m), sirk gölleri ve Türkiye'nin en engebeli sınır ili. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Hakkâri (30) - Doğu Anadolu Bölgesi | Rakım: ~1720m\n💡 Cilo (Buzul) Dağları (Reşko 4135m), sirk gölleri ve Türkiye'nin en engebeli sınır ili."
   },
   {
@@ -469,7 +439,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 36.16,
     "region": "Akdeniz",
     "city": "Hatay",
-    "promptTitle": "Amik Ovası grabeni, Asi Nehri, İskenderun demir-çelik sanayisi ve liman kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Hatay (31) - Akdeniz Bölgesi | Rakım: ~85m\n💡 Amik Ovası grabeni, Asi Nehri, İskenderun demir-çelik sanayisi ve liman kenti."
   },
   {
@@ -484,7 +453,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 30.55,
     "region": "Akdeniz",
     "city": "Isparta",
-    "promptTitle": "Gül ve lavanta tarımı, Eğirdir ve Kovada gölleri, elma bahçeleri ve Göller Yöresi kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Isparta (32) - Akdeniz Bölgesi | Rakım: ~1035m\n💡 Gül ve lavanta tarımı, Eğirdir ve Kovada gölleri, elma bahçeleri ve Göller Yöresi kenti."
   },
   {
@@ -499,7 +467,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.63,
     "region": "Akdeniz",
     "city": "Mersin",
-    "promptTitle": "Türkiye'nin en büyük konteyner limanlarından biri, Silifke Deltası, Akkuyu NGS ve narenciye tarımı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Mersin (33) - Akdeniz Bölgesi | Rakım: ~10m\n💡 Türkiye'nin en büyük konteyner limanlarından biri, Silifke Deltası, Akkuyu NGS ve narenciye tarımı."
   },
   {
@@ -514,7 +481,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 28.98,
     "region": "Marmara",
     "city": "İstanbul",
-    "promptTitle": "İki kıtayı bağlayan dünya metropolü; sanayi, finans, ticaret, turizm ve nüfus lideri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 İstanbul (34) - Marmara Bölgesi | Rakım: ~40m\n💡 İki kıtayı bağlayan dünya metropolü; sanayi, finans, ticaret, turizm ve nüfus lideri."
   },
   {
@@ -529,7 +495,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 27.14,
     "region": "Ege",
     "city": "İzmir",
-    "promptTitle": "Ege Bölgesi'nin en büyük liman ve sanayi metropolü; Gediz Deltası, rüzgar enerjisi ve zeytin tarımı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 İzmir (35) - Ege Bölgesi | Rakım: ~25m\n💡 Ege Bölgesi'nin en büyük liman ve sanayi metropolü; Gediz Deltası, rüzgar enerjisi ve zeytin tarımı."
   },
   {
@@ -544,7 +509,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 43.1,
     "region": "Doğu Anadolu",
     "city": "Kars",
-    "promptTitle": "Ani Harabeleri (UNESCO), kaşar peyniri, Çıldır Gölü kış turizmi ve yüksek lav platosu. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kars (36) - Doğu Anadolu Bölgesi | Rakım: ~1750m\n💡 Ani Harabeleri (UNESCO), kaşar peyniri, Çıldır Gölü kış turizmi ve yüksek lav platosu."
   },
   {
@@ -559,7 +523,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 33.78,
     "region": "Karadeniz",
     "city": "Kastamonu",
-    "promptTitle": "Küre Dağları bakır yatakları, kenevir ve sarımsak (Taşköprü) tarımı, zengin ormanlar. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kastamonu (37) - Karadeniz Bölgesi | Rakım: ~775m\n💡 Küre Dağları bakır yatakları, kenevir ve sarımsak (Taşköprü) tarımı, zengin ormanlar."
   },
   {
@@ -574,7 +537,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 35.49,
     "region": "İç Anadolu",
     "city": "Kayseri",
-    "promptTitle": "Erciyes Dağı volkanı ve kış turizmi, mobilya ve gıda sanayisi, ticaret merkezi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kayseri (38) - İç Anadolu Bölgesi | Rakım: ~1050m\n💡 Erciyes Dağı volkanı ve kış turizmi, mobilya ve gıda sanayisi, ticaret merkezi."
   },
   {
@@ -589,7 +551,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 27.22,
     "region": "Marmara",
     "city": "Kırklareli",
-    "promptTitle": "Yıldız (Istranca) Dağları, İğneada Longoz Ormanları, Hamitabat doğalgaz santrali ve ayçiçeği tarımı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kırklareli (39) - Marmara Bölgesi | Rakım: ~203m\n💡 Yıldız (Istranca) Dağları, İğneada Longoz Ormanları, Hamitabat doğalgaz santrali ve ayçiçeği tarımı."
   },
   {
@@ -604,7 +565,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.16,
     "region": "İç Anadolu",
     "city": "Kırşehir",
-    "promptTitle": "Ahilik kültürü merkezi, Hirfanlı Baraj Gölü, Seyfe Gölü kuş cenneti ve jeotermal kaynaklar. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kırşehir (40) - İç Anadolu Bölgesi | Rakım: ~985m\n💡 Ahilik kültürü merkezi, Hirfanlı Baraj Gölü, Seyfe Gölü kuş cenneti ve jeotermal kaynaklar."
   },
   {
@@ -619,7 +579,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.92,
     "region": "Marmara",
     "city": "Kocaeli",
-    "promptTitle": "İzmit Körfezi petrokimya (Tüpraş), otomotiv, limanlar ve ağır sanayi başkenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kocaeli (41) - Marmara Bölgesi | Rakım: ~20m\n💡 İzmit Körfezi petrokimya (Tüpraş), otomotiv, limanlar ve ağır sanayi başkenti."
   },
   {
@@ -634,7 +593,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 32.48,
     "region": "İç Anadolu",
     "city": "Konya",
-    "promptTitle": "Türkiye'nin yüzölçümü en büyük ili; tahıl ambarı ovası, Meke Maarı ve Seydişehir alüminyum tesisleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Konya (42) - İç Anadolu Bölgesi | Rakım: ~1030m\n💡 Türkiye'nin yüzölçümü en büyük ili; tahıl ambarı Konya Ovası, Meke Maarı, Seydişehir alüminyum tesisleri."
   },
   {
@@ -649,7 +607,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.98,
     "region": "Ege",
     "city": "Kütahya",
-    "promptTitle": "Porselen ve çini sanayisi, Seyitömer ve Tunçbilek linyit yatakları ve termik santralleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kütahya (43) - Ege Bölgesi | Rakım: ~930m\n💡 Porselen ve çini sanayisi, Seyitömer ve Tunçbilek linyit yatakları ve termik santralleri."
   },
   {
@@ -664,7 +621,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 38.31,
     "region": "Doğu Anadolu",
     "city": "Malatya",
-    "promptTitle": "Dünya kuru kayısı başkenti; Hekimhan demir yatakları ve Karakaya Baraj Gölü kıyısı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Malatya (44) - Doğu Anadolu Bölgesi | Rakım: ~950m\n💡 Dünya kuru kayısı başkenti; Hekimhan demir yatakları ve Karakaya Baraj Gölü kıyısı."
   },
   {
@@ -679,7 +635,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 27.42,
     "region": "Ege",
     "city": "Manisa",
-    "promptTitle": "Gediz Ovası çekirdeksiz üzüm lideri, Soma linyit ve termik santrali, Kula volkanik sahası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Manisa (45) - Ege Bölgesi | Rakım: ~60m\n💡 Gediz Ovası çekirdeksiz üzüm lideri, Soma linyit ve termik santrali, Kula volkanik sahası."
   },
   {
@@ -694,7 +649,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 36.93,
     "region": "Akdeniz",
     "city": "Kahramanmaraş",
-    "promptTitle": "Dondurma ve tekstil sanayisi, Afşin-Elbistan linyit havzası ve termik santralleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kahramanmaraş (46) - Akdeniz Bölgesi | Rakım: ~568m\n💡 Dondurma ve tekstil sanayisi, Afşin-Elbistan linyit havzası ve termik santralleri."
   },
   {
@@ -709,7 +663,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 40.73,
     "region": "Güneydoğu Anadolu",
     "city": "Mardin",
-    "promptTitle": "Taş mimarisi, Mazıdağı fosfat yatakları, GAP sulama alanları ve tarihi İpek Yolu kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Mardin (47) - Güneydoğu Anadolu Bölgesi | Rakım: ~1085m\n💡 Taş mimarisi, Mazıdağı fosfat yatakları, GAP sulama alanları ve tarihi İpek Yolu kenti."
   },
   {
@@ -724,7 +677,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 28.36,
     "region": "Ege",
     "city": "Muğla",
-    "promptTitle": "Türkiye'nin en uzun kıyı şeridi (Bodrum, Fethiye, Marmaris), çam balı lideri, Yatağan linyiti ve Menteşe karstı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Muğla (48) - Ege Bölgesi | Rakım: ~646m\n💡 Türkiye'nin en uzun kıyı şeridi (Bodrum, Fethiye, Marmaris), çam balı lideri, Yatağan linyiti ve Menteşe karstı."
   },
   {
@@ -739,7 +691,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 41.49,
     "region": "Doğu Anadolu",
     "city": "Muş",
-    "promptTitle": "Muş tektonik ovası, Murat Nehri vadisi, lale üretimi ve mera hayvancılığı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Muş (49) - Doğu Anadolu Bölgesi | Rakım: ~1300m\n💡 Muş tektonik ovası, Murat Nehri vadisi, lale üretimi ve mera hayvancılığı."
   },
   {
@@ -754,7 +705,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.71,
     "region": "İç Anadolu",
     "city": "Nevşehir",
-    "promptTitle": "Kapadokya peri bacaları (UNESCO), tüf volkanik arazisi, patates ve bağcılık kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Nevşehir (50) - İç Anadolu Bölgesi | Rakım: ~1250m\n💡 Kapadokya peri bacaları (UNESCO), tüf volkanik arazisi, patates ve bağcılık kenti."
   },
   {
@@ -769,7 +719,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.68,
     "region": "İç Anadolu",
     "city": "Niğde",
-    "promptTitle": "Elma ve patates üretim liderlerinden, Aladağlar Milli Parkı ve kalsit madenleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Niğde (51) - İç Anadolu Bölgesi | Rakım: ~1230m\n💡 Elma ve patates üretim liderlerinden, Aladağlar Milli Parkı ve kalsit madenleri."
   },
   {
@@ -784,7 +733,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 37.88,
     "region": "Karadeniz",
     "city": "Ordu",
-    "promptTitle": "Türkiye ve dünya fındık üretim şampiyonu, arıcılık bal üretimi ve Perşembe yaylası menderesleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Ordu (52) - Karadeniz Bölgesi | Rakım: ~5m\n💡 Türkiye ve dünya fındık üretim şampiyonu, arıcılık bal üretimi ve Perşembe yaylası menderesleri."
   },
   {
@@ -799,7 +747,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 40.52,
     "region": "Karadeniz",
     "city": "Rize",
-    "promptTitle": "Türkiye çay üretiminin %100'e yakını, en fazla yağış alan ilimiz, Kaçkar Dağları ve Ayder Yaylası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Rize (53) - Karadeniz Bölgesi | Rakım: ~5m\n💡 Türkiye çay üretiminin %100'e yakını, en fazla yağış alan ilimiz, Kaçkar Dağları ve Ayder Yaylası."
   },
   {
@@ -814,7 +761,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 30.4,
     "region": "Marmara",
     "city": "Sakarya",
-    "promptTitle": "Adapazarı tektonik ovası, otomotiv ve vagon sanayisi, Sapanca Gölü ve akarsu deltası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Sakarya (54) - Marmara Bölgesi | Rakım: ~31m\n💡 Adapazarı tektonik ovası, otomotiv sanayisi, Sapanca Gölü ve Sakarya Nehri deltası."
   },
   {
@@ -829,7 +775,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 36.33,
     "region": "Karadeniz",
     "city": "Samsun",
-    "promptTitle": "Karadeniz'in en büyük sanayi/liman kenti; Bafra (Kızılırmak) ve Çarşamba (Yeşilırmak) delta ovaları. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Samsun (55) - Karadeniz Bölgesi | Rakım: ~15m\n💡 Karadeniz'in en büyük sanayi/liman kenti; Bafra (Kızılırmak) ve Çarşamba (Yeşilırmak) delta ovaları."
   },
   {
@@ -844,7 +789,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 41.94,
     "region": "Güneydoğu Anadolu",
     "city": "Siirt",
-    "promptTitle": "Fıstık ve tiftik battaniyesi üretimi, Botan Çayı Kanyonu ve petrol kuyuları. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Siirt (56) - Güneydoğu Anadolu Bölgesi | Rakım: ~895m\n💡 Fıstık ve tiftik battaniyesi üretimi, Botan Çayı Kanyonu ve petrol kuyuları."
   },
   {
@@ -859,7 +803,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 35.15,
     "region": "Karadeniz",
     "city": "Sinop",
-    "promptTitle": "Türkiye'nin en kuzey uç noktası (İnceburun), doğal limanı ve sakin şehir (Cittaslow) kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Sinop (57) - Karadeniz Bölgesi | Rakım: ~30m\n💡 Türkiye'nin en kuzey uç noktası (İnceburun), doğal limanı ve sakin şehir (Cittaslow) kenti."
   },
   {
@@ -874,7 +817,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 37.02,
     "region": "İç Anadolu",
     "city": "Sivas",
-    "promptTitle": "Divriği demir ve Kangal linyit yatakları, Kızılırmak'ın doğduğu topraklar ve jips karstı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Sivas (58) - İç Anadolu Bölgesi | Rakım: ~1285m\n💡 Divriği demir ve Kangal linyit yatakları, Kızılırmak'ın doğduğu topraklar ve jips karstı."
   },
   {
@@ -889,7 +831,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 27.51,
     "region": "Marmara",
     "city": "Tekirdağ",
-    "promptTitle": "Ergene Havzası buğday ve ayçiçeği tarımı, Asyaport limanı ve gelişmiş sanayi tesisleri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Tekirdağ (59) - Marmara Bölgesi | Rakım: ~10m\n💡 Ergene Havzası buğday ve ayçiçeği tarımı, Asyaport limanı ve gelişmiş sanayi tesisleri."
   },
   {
@@ -904,7 +845,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 36.55,
     "region": "Karadeniz",
     "city": "Tokat",
-    "promptTitle": "Kazova, Niksar ve Erbaa verimli tektonik ovaları; Ballıca Mağarası ve tütün tarımı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Tokat (60) - Karadeniz Bölgesi | Rakım: ~623m\n💡 Kazova, Niksar ve Erbaa verimli tektonik ovaları; Ballıca Mağarası ve tütün tarımı."
   },
   {
@@ -919,7 +859,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 39.72,
     "region": "Karadeniz",
     "city": "Trabzon",
-    "promptTitle": "Doğu Karadeniz'in ticaret ve liman merkezi; fındık, çay, Sümela Manastırı ve Uzungöl. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Trabzon (61) - Karadeniz Bölgesi | Rakım: ~30m\n💡 Doğu Karadeniz'in ticaret ve liman merkezi; fındık, çay, Sümela Manastırı ve Uzungöl."
   },
   {
@@ -934,7 +873,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 39.55,
     "region": "Doğu Anadolu",
     "city": "Tunceli",
-    "promptTitle": "Munzur Vadisi Milli Parkı, Munzur Gözeleri, zengin endemik bitki türleri ve kanyonlar. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Tunceli (62) - Doğu Anadolu Bölgesi | Rakım: ~940m\n💡 Munzur Vadisi Milli Parkı, Munzur Gözeleri, zengin endemik bitki türleri ve kanyonlar."
   },
   {
@@ -949,7 +887,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 38.79,
     "region": "Güneydoğu Anadolu",
     "city": "Şanlıurfa",
-    "promptTitle": "Göbeklitepe (tarihin sıfır noktası), GAP'ın suladığı Harran ve Ceylanpınar pamuk ovaları. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Şanlıurfa (63) - Güneydoğu Anadolu Bölgesi | Rakım: ~550m\n💡 Göbeklitepe (tarihin sıfır noktası), GAP'ın suladığı Harran ve Ceylanpınar pamuk ovaları."
   },
   {
@@ -964,7 +901,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.4,
     "region": "Ege",
     "city": "Uşak",
-    "promptTitle": "Dünyanın ikinci uzun kanyonu, tekstil geri dönüşüm sanayisi, halıcılık ve şeker fabrikası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Uşak (64) - Ege Bölgesi | Rakım: ~910m\n💡 Uşak Kanyonu (dünyanın 2. uzun kanyonu), tekstil geri dönüşüm sanayisi ve şeker fabrikası."
   },
   {
@@ -979,7 +915,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 43.38,
     "region": "Doğu Anadolu",
     "city": "Van",
-    "promptTitle": "Türkiye'nin en büyük gölü (Van Gölü - sodalı), Akdamar Adası, volkanik set gölleri ve inci kefali. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Van (65) - Doğu Anadolu Bölgesi | Rakım: ~1725m\n💡 Türkiye'nin en büyük gölü (Van Gölü - sodalı), Akdamar Adası, volkanik set gölleri ve inci kefali."
   },
   {
@@ -994,7 +929,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.8,
     "region": "İç Anadolu",
     "city": "Yozgat",
-    "promptTitle": "Türkiye'nin ilk milli parkını barındıran, Bozok Platosu ve mercimek/buğday tarımıyla anılan il. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Yozgat (66) - İç Anadolu Bölgesi | Rakım: ~1300m\n💡 Türkiye'nin ilk milli parkı (Yozgat Çamlığı), Bozok Platosu ve mercimek/buğday tarımı."
   },
   {
@@ -1009,7 +943,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 31.79,
     "region": "Karadeniz",
     "city": "Zonguldak",
-    "promptTitle": "Taş kömürü havzası (I. Jeolojik Zaman masifi), Çatalağzı termik santrali ve ağır demir-çelik sanayisi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Zonguldak (67) - Karadeniz Bölgesi | Rakım: ~10m\n💡 Taş kömürü havzası (I. Jeolojik Zaman masifi), Çatalağzı termik santrali ve ağır demir-çelik sanayisi."
   },
   {
@@ -1024,7 +957,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 34.03,
     "region": "İç Anadolu",
     "city": "Aksaray",
-    "promptTitle": "Ihlara Vadisi kanyonu, Hasan Dağı volkanı eteğinde yer alan tuzlu ova ve sanayi yatırımları. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Aksaray (68) - İç Anadolu Bölgesi | Rakım: ~980m\n💡 Ihlara Vadisi kanyonu, Hasan Dağı volkanı eteğinde yer alan tuzlu ova ve sanayi yatırımları."
   },
   {
@@ -1039,7 +971,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 40.22,
     "region": "Karadeniz",
     "city": "Bayburt",
-    "promptTitle": "Çoruh Nehri'nin geçtiği plato, Kop Dağı Geçidi ve Türkiye'nin nüfusu en az olan illerinden biri. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bayburt (69) - Karadeniz Bölgesi | Rakım: ~1550m\n💡 Çoruh Nehri'nin geçtiği plato, Kop Dağı Geçidi ve Türkiye'nin nüfusu en az olan illerinden biri."
   },
   {
@@ -1054,7 +985,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 33.22,
     "region": "İç Anadolu",
     "city": "Karaman",
-    "promptTitle": "Bisküvi/gıda sanayisi, elma bahçeleri ve Karadağ volkanik kütlesi eteğindeki ova kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Karaman (70) - İç Anadolu Bölgesi | Rakım: ~1040m\n💡 Bisküvi/gıda sanayisi, elma bahçeleri ve Karadağ volkanik kütlesi eteğindeki ova kenti."
   },
   {
@@ -1069,7 +999,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 33.51,
     "region": "İç Anadolu",
     "city": "Kırıkkale",
-    "promptTitle": "Tüpraş Orta Anadolu Petrol Rafinerisi ve Makine Kimya (MKE) savunma sanayisi merkezi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kırıkkale (71) - İç Anadolu Bölgesi | Rakım: ~735m\n💡 Tüpraş Orta Anadolu Petrol Rafinerisi ve Makine Kimya (MKE) savunma sanayisi merkezi."
   },
   {
@@ -1084,7 +1013,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 41.13,
     "region": "Güneydoğu Anadolu",
     "city": "Batman",
-    "promptTitle": "Türkiye'de petrolün ilk bulunduğu yer (Raman Dağı), petrol rafinerisi ve Hasankeyf tarihi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Batman (72) - Güneydoğu Anadolu Bölgesi | Rakım: ~570m\n💡 Türkiye'de petrolün ilk bulunduğu yer (Raman Dağı), petrol rafinerisi ve Hasankeyf tarihi."
   },
   {
@@ -1099,7 +1027,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 42.46,
     "region": "Güneydoğu Anadolu",
     "city": "Şırnak",
-    "promptTitle": "Cudi Dağı, Gabar petrol sahaları, asfaltit maden yatakları ve Habur Sınır Kapısı koridoru. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Şırnak (73) - Güneydoğu Anadolu Bölgesi | Rakım: ~1350m\n💡 Cudi Dağı, Gabar petrol sahaları, asfaltit maden yatakları ve Habur Sınır Kapısı koridoru."
   },
   {
@@ -1114,7 +1041,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 32.34,
     "region": "Karadeniz",
     "city": "Bartın",
-    "promptTitle": "Üzerinde taşımacılık yapılabilen tek akarsuyumuz, Amasra turizmi ve zengin ormanlar. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Bartın (74) - Karadeniz Bölgesi | Rakım: ~25m\n💡 Bartın Çayı (üzerinde taşımacılık yapılabilen tek akarsu), Amasra turizmi ve zengin ormanlar."
   },
   {
@@ -1129,7 +1055,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 42.7,
     "region": "Doğu Anadolu",
     "city": "Ardahan",
-    "promptTitle": "Kura Nehri vadisi, volkanik plato yüzeyi, Çıldır Gölü kıyısı ve sert karasal iklim. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Ardahan (75) - Doğu Anadolu Bölgesi | Rakım: ~1800m\n💡 Kura Nehri vadisi, Ardahan volkanik platosu, Çıldır Gölü kıyısı ve sert karasal iklim."
   },
   {
@@ -1144,7 +1069,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 44.04,
     "region": "Doğu Anadolu",
     "city": "Iğdır",
-    "promptTitle": "Doğu'nun Çukurovası; çukurda kaldığı için mikroklima alanı olan, pamuk ve kayısı yetişen sınır kenti. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Iğdır (76) - Doğu Anadolu Bölgesi | Rakım: ~850m\n💡 Doğu'nun Çukurovası; çukurda kaldığı için mikroklima alanı olan, pamuk ve kayısı yetişen sınır kenti."
   },
   {
@@ -1159,7 +1083,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 29.27,
     "region": "Marmara",
     "city": "Yalova",
-    "promptTitle": "Türkiye'nin yüzölçümü en küçük ili; termal turizm, süs bitkileri yetiştiriciliği ve kimya sanayisi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Yalova (77) - Marmara Bölgesi | Rakım: ~30m\n💡 Türkiye'nin yüzölçümü en küçük ili; termal turizm, süs bitkileri yetiştiriciliği ve kimya sanayisi."
   },
   {
@@ -1174,7 +1097,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 32.62,
     "region": "Karadeniz",
     "city": "Karabük",
-    "promptTitle": "Kardemir Demir-Çelik Fabrikası (Türkiye'nin ilk ağır sanayisi) ve UNESCO kenti Safranbolu. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Karabük (78) - Karadeniz Bölgesi | Rakım: ~280m\n💡 Kardemir Demir-Çelik Fabrikası (Türkiye'nin ilk ağır sanayisi) ve UNESCO kenti Safranbolu."
   },
   {
@@ -1189,7 +1111,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 37.11,
     "region": "Güneydoğu Anadolu",
     "city": "Kilis",
-    "promptTitle": "Zeytin ve bağcılık tarımı, Öncüpınar Sınır Kapısı ve Suriye sınırındaki verimli tarım ovası. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Kilis (79) - Güneydoğu Anadolu Bölgesi | Rakım: ~660m\n💡 Zeytin ve bağcılık tarımı, Öncüpınar Sınır Kapısı ve Suriye sınırındaki verimli tarım ovası."
   },
   {
@@ -1204,7 +1125,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 36.25,
     "region": "Akdeniz",
     "city": "Osmaniye",
-    "promptTitle": "Yer fıstığı üretiminin başkenti, Çukurova'nın doğu kapısı, demir-çelik sanayisi ve rüzgar enerjisi. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Osmaniye (80) - Akdeniz Bölgesi | Rakım: ~125m\n💡 Yer fıstığı üretiminin başkenti, Çukurova'nın doğu kapısı, demir-çelik sanayisi ve rüzgar enerjisi."
   },
   {
@@ -1219,7 +1139,6 @@ Object.assign(COGRAFYA_DATA_EXT, {
     "lng": 31.16,
     "region": "Karadeniz",
     "city": "Düzce",
-    "promptTitle": "Tektonik çöküntü ovası, fındık tarımı, orman ürünleri sanayisi ve Efteni Gölü sulak alanı. Bu ilimiz haritada neresidir?",
     "kpssNot": "📍 Düzce (81) - Karadeniz Bölgesi | Rakım: ~160m\n💡 Düzce tektonik çöküntü ovası, fındık tarımı, orman ürünleri sanayisi ve Efteni Gölü sulak alanı."
   }
 ]
