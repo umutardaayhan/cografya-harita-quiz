@@ -63,18 +63,37 @@ Veri katmanı **kurulabilir konu paketlerine** bölünmüştür: kullanıcı her
 - 🖌️ **Harita Boyama & 🧬 Oluşum Türü Quizi:** Karstik, tektonik ve volkanik şekilleri harita üzerinde sınıflandırın.
 - ⚡ **Şimşek Turu (60 sn)** ve 📋 **Genel Deneme (18 soru)** kronometreli sınav provaları.
 
-#### 🧭 5. Mutlak Konum & Coğrafi Hesaplama Laboratuvarı
+#### 🧠 5. Hafıza Kodu Atölyesi (Mnemonic Lab)
+Coğrafya müfredatının **hikâyeye çevrilmiş** hâli: 8 bölüm, **68 kod**, 272 metafor halkası, 190 harita durağı.
+Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her kod tek bir metin olarak yazılır ve motor altı ayrı çalışma biçimini o metinden türetir:
+
+| Biçim | Ne yapar |
+| :--- | :--- |
+| 🧩 **Kod Çözücü** | "Sakar fil" ↔ "Sakarya + Filyos" kartlarını eşleştir |
+| ✍️ **Boşluk Doldur** | Hikâyeden bir halka silinir; imgeyi ya da karşılığını tamamla |
+| 🔗 **Hikâye Zinciri** | Tekerlemeyi **gerçek coğrafi sırasına** diz |
+| 🕵️ **Kaçak Yakala** | Listeye sonradan sızan yabancıyı bul (Salda, heyelan set gölü değildir) |
+| 🔑 **Ters Kod** | Bilgiden hikâyeye geri dön |
+| 🗺️ **Harita Damgası** | Kodun uğradığı yeri harita üzerinde işaretle |
+
+- **Üç kanal aynı anda:** cevap verilir verilmez hikâye çözülmüş hâliyle yeniden yazılır, kodun bütün durakları haritaya pin olarak düşer.
+- **Haritaya harf çizme:** MASİF (M+A), volkanik **V**, vertisol **V** ve renzina **R** kodları haritanın üzerine animasyonlu olarak çizilir.
+- **📚 Kod Galerisi:** 68 kodun tamamı hikâyesi, çözüm tablosu, püf notu ve ustalık çubuğuyla; bölüm sekmeleri, arama, "Haritada göster" ve tek kod için mini oturum.
+- **Ustalık defteri:** zayıf kodlar rulet seçiminde daha ağır; tur tipi dağılımı nadir biçimleri (zincir) görünür tutacak şekilde dengelenir.
+- **Paket gerektirmez:** kodlar coğrafi kaydın kendisi değil, o kayda giden hafıza yoludur — hiçbir DLC kurulmasa da çalışır.
+
+#### 🧭 6. Mutlak Konum & Coğrafi Hesaplama Laboratuvarı
 - Türkiye'nin uç noktaları (26°-45° Doğu, 36°-42° Kuzey), yerel saat farkları, gölge boyu, gündüz süresi ve güneş açısı simülasyonları.
 
-#### 🛠️ 6. Özel Harita Çizim Editörü & NotebookLM Entegrasyonu
+#### 🛠️ 7. Özel Harita Çizim Editörü & NotebookLM Entegrasyonu
 - Harita üzerine serbest Nokta (Marker), Hat/Çizgi (Polyline) ve Geometrik Alan (Polygon) çizebilme.
 - JSON Dışa/İçe Aktarma (Export/Import) ve NotebookLM/AI çıktısını tek tıkla yapıştırma desteği.
 
-#### 🔇 7. Dilsiz Harita & Çok Katmanlı Görünüm
+#### 🔇 8. Dilsiz Harita & Çok Katmanlı Görünüm
 - Tüm şehir ve yol yazılarını tek tıkla gizleyen **Sınav Tipi Dilsiz Harita**.
 - Sade, Fiziki, Gerçek Uydu, Gece ve Kabartı katmanları — Sade dışındakiler ilgili paketle açılır.
 
-#### 🌐 8. Çift Katmanlı i18n Çekirdeği
+#### 🌐 9. Çift Katmanlı i18n Çekirdeği
 - **Arayüz dili** (`locales/*.js`) ve **coğrafi varlık dili** (paket kaydındaki `i18n` bloğu) birbirinden bağımsız yönetilir.
 - Alt tür ve oluşum sınıflandırması Türkçe metin yerine **dilden bağımsız anahtarlar** kullanır; veri çevrildiğinde motor bozulmaz.
 
@@ -101,6 +120,7 @@ Veri katmanı **kurulabilir konu paketlerine** bölünmüştür: kullanıcı her
 ├── data/
 │   ├── cografya_data.js           # Çalışma zamanı KAPLARI (boş gelir)
 │   ├── cografya_data.legacy.js    # Yazım kaynağı — fiziki & temel ekonomik
+│   ├── hafiza_kodlari.js          # 🧠 Mnemonic korpusu — [[imge|gerçek]] hikâyeleri
 │   ├── source/*.js                # Yazım kaynağı — genişletilmiş müfredat
 │   ├── packs/catalog.js           # Paket manifesti + kategori/alt tür defteri
 │   └── packs/pack.tr.*.js         # DLC paketleri (lazy yüklenir)
@@ -110,6 +130,7 @@ Veri katmanı **kurulabilir konu paketlerine** bölünmüştür: kullanıcı her
 │   ├── i18n.js                    # Çift katmanlı dil motoru
 │   ├── map.js  quiz.js  app.js    # Harita, adaptif soru motoru, akış
 │   ├── study_plan.js              # Bugünün Planı / aralıklı tekrar
+│   ├── hafiza_kodu.js             # 🧠 Hafıza Kodu Atölyesi motoru + galeri
 │   ├── panel_manager.js           # Taşınabilir & katlanabilir paneller
 │   └── geoguessr|conqueror|match|olusum_quiz|boyama_quiz|mutlak_konum.js
 ├── locales/tr.js, en.js           # Arayüz metin sözlükleri
@@ -203,6 +224,7 @@ While initially tailored for Turkish physical and human geography (KPSS / YKS na
 - 🧠 **Spaced Repetition & Adaptive Engine:** Tracks success rates and selectively decreases the frequency of mastered questions (Mastery Decay) while surfacing challenging concepts.
 - ⚡ **5-Tier Distance-Based Difficulty (Haversine):** Distractors are chosen by geographical distance, from nationwide spread down to the closest geological neighbours.
 - 🎯 **Interactive Game Modes:** GeoGuessr-style blind shot, Map Conqueror (7 regions), Match & Blast pairing, map painting, formation-type drills, 60-second speedrun and an 18-question mock exam.
+- 🧠 **Mnemonic Lab:** 68 Turkish memory codes (68 stories, 272 metaphor links, 190 map stops) drilled six ways — pair matching, cloze, chain ordering, intruder hunt, reverse decoding and map stamping. Solved stories are re-rendered and pinned on the map; four codes literally draw their letters (M+A, V, R) across Türkiye.
 - 🛠️ **Custom Vector Drawing Studio:** Draw points, polylines, and polygons on the live map with JSON Export/Import and AI/NotebookLM clipboard pasting.
 - 🔇 **Mute / Blind Map Mode:** Toggle labels off for true blind exam simulations.
 - 🧭 **Mathematical Location Lab:** Sun angle, local time differentials, shadow length, and daylight calculations.

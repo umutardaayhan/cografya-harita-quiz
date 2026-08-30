@@ -140,6 +140,12 @@ class GeographyMap {
     // Çizim yaparken seçili konunun mevcut şekilleri solgun bir referans olarak
     // haritada kalır; kendi pane'inde ve TIKLANAMAZ durur (bkz. showReferenceLayer)
     this.referenceLayerGroup = L.layerGroup();
+
+    // Dış modüllerin (ör. Hafıza Kodu Atölyesi) kendi çizim katmanları.
+    // `registerAuxLayer` ile buraya kaydedilenler `clearAll()` zincirine dahil
+    // olur; aksi halde modüller arası geçişte kendi katmanları haritada asılı
+    // kalır ve iki modun işaretleri üst üste binerdi.
+    this.auxLayerGroups = [];
     
     // Otomatik Yakınlaştırma (Auto-Zoom) Ayarı (LocalStorage destekli)
     this.autoZoomEnabled = this.loadAutoZoomSetting();
@@ -1375,6 +1381,11 @@ class GeographyMap {
     if (this.networkLayerGroup) {
       this.networkLayerGroup.clearLayers();
     }
+    // Dış modül katmanları (bkz. registerAuxLayer) da haritanın "geçici konu
+    // işareti" katmanıdır; yeni bir soru/konu çizilirken eskisiyle birlikte
+    // gitmeleri gerekir. Burada olmasalardı Keşif → Test geçişinde ya da
+    // "Sonraki Soru"da hafıza kodu pinleri quiz işaretlerinin üstünde kalırdı.
+    this.auxLayerGroups.forEach(g => { if (g && g.clearLayers) g.clearLayers(); });
   }
 
   /**
@@ -1506,14 +1517,39 @@ class GeographyMap {
    */
   isLongJump(targetCenter, targetZoom) {
     const current = this.map.getCenter();
+    // Mevcut merkez okunamıyorsa mesafe hesabı yapılamaz; animasyonu atlayıp
+    // doğrudan konumlanmak her zaman güvenli taraftır.
+    if (!current || !Number.isFinite(current.lat) || !Number.isFinite(current.lng)) return true;
     const farAway = current.distanceTo(targetCenter) > 1800000; // 1800 km
     const bigZoomJump = Math.abs(this.map.getZoom() - targetZoom) > 4;
     return farAway || bigZoomJump;
   }
 
+  /**
+   * `flyToBoundsSafely` ile AYNI korumalara sahip olmalıdır; eskiden değildi.
+   *
+   * Leaflet'in `flyTo`'su kabın ölçüsüne bölerek uçuş eğrisini kurar. Kap
+   * henüz ölçülmemişse (panel gizli, sekme arka planda, harita `display:none`
+   * bir kapsayıcının içinde) bu hesap NaN üretir ve `unproject` SENKRON olarak
+   * "Invalid LatLng object: (NaN, NaN)" fırlatır. Hata `flySafely`'yi çağıran
+   * fonksiyonun ortasında patladığı için o iş yarıda kalıyordu: Keşif Modu
+   * noktaları çizmeden, Kör Atış ilk turunu kurmadan, Hafıza Kodu Atölyesi
+   * HUD'unu doldurmadan duruyordu.
+   *
+   * Kap ölçüsüzken uçmak zaten anlamsız — gösterilecek bir görüntü yok. O
+   * durumda animasyonsuz `setView` ile hedefe oturuyoruz; kap görünür olunca
+   * `_watchContainerSize` boyutu tazeleyip haritayı doğru yerde açıyor.
+   */
   flySafely(latLng, zoom, options = {}) {
     this._ensureSize();
     const target = L.latLng(latLng);
+    if (!Number.isFinite(target.lat) || !Number.isFinite(target.lng)) return;
+
+    if (this.map.getSize().x === 0 || this.map.getSize().y === 0) {
+      this.map.setView(target, zoom, { animate: false });
+      return;
+    }
+
     if (this.isLongJump(target, zoom)) {
       this.map.setView(target, zoom, { animate: false });
       return;
@@ -1552,12 +1588,19 @@ class GeographyMap {
 
   flyToBoundsSafely(bounds, options = {}) {
     this._ensureSize();
-    if (this.map.getSize().x === 0) return;   // kap hâlâ ölçüsüz: uçma
     const target = bounds.getCenter();
-    const targetZoom = this.map.getBoundsZoom(bounds);
-    if (!Number.isFinite(target.lat) || !Number.isFinite(target.lng) || !Number.isFinite(targetZoom)) {
+    if (!Number.isFinite(target.lat) || !Number.isFinite(target.lng)) {
       return;   // bozuk sınır: sessizce vazgeç, soru render'ı bölünmesin
     }
+    // Kap ölçüsüzken uçuş/zoom hesabı NaN verir. Eskiden burada sessizce
+    // vazgeçiliyor, harita hedefe HİÇ gitmiyordu; panel açılınca kullanıcı
+    // yanlış bölgeye bakıyordu. Artık en azından merkeze animasyonsuz oturuyoruz.
+    if (this.map.getSize().x === 0 || this.map.getSize().y === 0) {
+      this.map.setView(target, this.map.getZoom(), { animate: false });
+      return;
+    }
+    const targetZoom = this.map.getBoundsZoom(bounds);
+    if (!Number.isFinite(targetZoom)) return;
     if (this.isLongJump(target, targetZoom)) {
       this.map.fitBounds(bounds, { animate: false });
       return;
@@ -2283,11 +2326,23 @@ class GeographyMap {
     this.resetView();
   }
 
+  /**
+   * Dış bir modülün katmanını ortak temizlik zincirine bağlar.
+   * Aynı grup iki kez kaydedilmez; modül katmanını kendisi oluşturur ve
+   * haritaya kendisi ekler, biz yalnızca boşaltmayı üstleniriz.
+   */
+  registerAuxLayer(group) {
+    if (!group || this.auxLayerGroups.indexOf(group) >= 0) return group;
+    this.auxLayerGroups.push(group);
+    return group;
+  }
+
   clearAll() {
     this.clearQuestionHighlight();
     this.exploreLayerGroup.clearLayers();
     this.drawingLayerGroup.clearLayers();
     this.clearReferenceLayer();
+    // auxLayerGroups temizliği clearQuestionHighlight() içinde yapılır.
   }
 
   clearAllLayers() {

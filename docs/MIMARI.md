@@ -41,5 +41,11 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
    - DLC motoru: paketlerin lazy indirilmesi, kademe (az/orta/tam) eşiği, kaldırma, oyun modu kilitleri ve `packs:changed` yayını.
    - İlk giriş rehberi ve Paket Mağazası arayüzü.
 
-9. **`js/i18n.js` + `locales/*.js` (YENİ)**:
+9. **`data/hafiza_kodlari.js` + `js/hafiza_kodu.js` (YENİ)**:
+   - Hafıza Kodu Atölyesi: müfredatın mnemonic (hikâye) katmanı. Paket sisteminden bağımsızdır.
+   - Tek kaynak ilkesi: her kod `[[imge|gerçek]]` işaretli TEK bir hikâye metnidir; eşleştirme, boşluk doldurma, sıralama, kaçak yakalama, ters kod ve harita damgası turlarının hepsi bu metinden türetilir.
+   - Ustalık defteri (`kpss_hafiza_kodu_ustalik`) zayıf kodlara ağırlık verir; tur tipi dağılımı `1/√bolluk` ile dengelenir.
+   - Galeri üreteci (`HafizaGaleri`) 68 kodu hikâyesi, çözüm tablosu, püf notu ve ustalık çubuğuyla listeler.
+
+10. **`js/i18n.js` + `locales/*.js` (YENİ)**:
    - Çift katmanlı dil motoru: arayüz metinleri (`GeoI18n.t`) ve coğrafi varlık çevirileri (`GeoI18n.pick`) birbirinden bağımsız yönetilir.

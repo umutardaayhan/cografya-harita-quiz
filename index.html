@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Uygulama Stili -->
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
   <link rel="stylesheet" href="css/packs.css?v=2">
 </head>
 <body>
@@ -108,6 +108,23 @@
               <div>
                 <strong>Seçmece Quiz</strong>
                 <small>Kategori sınırı olmadan istediğin yer şekillerini seç ve çöz</small>
+              </div>
+            </button>
+
+            <div class="games-dropdown-divider"><span>🧠 HAFIZA KODLARI (MNEMONIC)</span></div>
+
+            <button id="btn-hafiza-mode" class="game-mode-option-btn">
+              <span>🧠</span>
+              <div>
+                <strong>Hafıza Kodu Atölyesi</strong>
+                <small>Eşleştir, boşluk doldur, zinciri sırala: hikâyenin içinde çalış</small>
+              </div>
+            </button>
+            <button id="btn-hafiza-galeri" class="game-mode-option-btn">
+              <span>📚</span>
+              <div>
+                <strong>Kod Galerisi</strong>
+                <small>Tüm kodları hikâyesi, çözüm tablosu ve haritasıyla gör</small>
               </div>
             </button>
 
@@ -473,6 +490,63 @@
           <div class="mk-feedback-rows" id="mk-feedback-rows"></div>
           <div class="mk-feedback-note" id="mk-feedback-note"></div>
           <button id="mk-next-btn" class="modal-btn primary" style="width: 100%; margin-top: 8px;">Sonraki Tur → (Boşluk)</button>
+        </div>
+      </div>
+
+      <!-- 🧠 Hafıza Kodu Atölyesi HUD Bölümü -->
+      <div id="hk-hud" class="hk-hud" style="display: none;">
+        <div class="hk-header">
+          <span class="exam-stat-chip count">🧠 <span id="hk-tur-adi">Kod Çözücü</span></span>
+          <span class="exam-stat-chip count">Tur: <span id="hk-tur">1</span>/<span id="hk-maxtur">12</span></span>
+          <span class="exam-stat-chip mk-settings-chip" id="hk-ayar-chip" title="Sol alttaki Zorluk ve Şık ayarlarına göre canlı değişir">⚡ Sv.5 · 4 şık</span>
+          <span class="exam-stat-chip score">🏆 <span id="hk-skor">0</span></span>
+          <span class="speedrun-stat-chip streak" id="hk-seri-chip" style="display: none;">🔥 <span id="hk-seri">0</span></span>
+          <button id="hk-galeri-btn" class="exam-abort-chip hk-galeri-chip" title="Kod Galerisini Aç">📚 Galeri</button>
+          <button id="hk-abort-btn" class="exam-abort-chip" title="Atölyeden Çık">✕ Çık</button>
+        </div>
+
+        <div class="hk-kod-serit" id="hk-kod-serit">
+          <span class="hk-kod-ikon" id="hk-kod-ikon">🧠</span>
+          <div class="hk-kod-metin">
+            <strong id="hk-kod-baslik">Kod</strong>
+            <small id="hk-kod-konu">Konu</small>
+          </div>
+          <span class="hk-bolum-rozet" id="hk-bolum-rozet">Bölüm</span>
+        </div>
+
+        <div class="hk-yonerge" id="hk-yonerge"></div>
+
+        <div class="hk-hikaye-kutu" id="hk-hikaye-kutu">
+          <span class="hk-hikaye-baslik" id="hk-hikaye-baslik">Hikâye</span>
+          <div class="hk-hikaye" id="hk-hikaye"></div>
+        </div>
+
+        <!-- Tek seçimli turlar (boşluk / kaçak / ters kod / harita) -->
+        <div class="hk-secenekler" id="hk-secenekler"></div>
+
+        <!-- 🧩 Eşleştirme tahtası -->
+        <div class="hk-esles" id="hk-esles" style="display: none;">
+          <div class="hk-esles-bilgi">
+            <span>Kalan halka: <b id="hk-esles-kalan">0</b></span>
+            <span>Hata: <b id="hk-esles-hata">0</b></span>
+          </div>
+          <div class="hk-esles-tahta">
+            <div class="hk-esles-kol" id="hk-esles-sol"></div>
+            <div class="hk-esles-kol" id="hk-esles-sag"></div>
+          </div>
+        </div>
+
+        <!-- 🔗 Zincir (sıralama) tahtası -->
+        <div class="hk-zincir" id="hk-zincir" style="display: none;">
+          <div class="hk-zincir-yol" id="hk-zincir-yol"></div>
+          <div class="hk-zincir-havuz" id="hk-zincir-havuz"></div>
+        </div>
+
+        <div class="hk-geri" id="hk-geri" style="display: none;">
+          <div class="hk-geri-baslik" id="hk-geri-baslik"></div>
+          <div class="hk-geri-satirlar" id="hk-geri-satirlar"></div>
+          <div class="hk-geri-not" id="hk-geri-not"></div>
+          <button id="hk-next-btn" class="modal-btn primary" style="width: 100%; margin-top: 8px;">Sonraki Tur → (Boşluk)</button>
         </div>
       </div>
 
@@ -930,6 +1004,87 @@
     </div>
   </div>
 
+  <!-- 🧠 Hafıza Kodu Atölyesi — Kurulum Modalı -->
+  <div id="hk-setup-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card hk-setup-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy">🧠</div>
+        <h3>Hafıza Kodu Atölyesi</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+          Hikâyeyi okumak ezber üretmez; hikâyenin içinde çalışmak üretir.
+          Neyi, nasıl çalışacağını seç.
+        </p>
+      </div>
+
+      <div class="hk-setup-bolum">
+        <div class="hk-setup-baslik">
+          <span>📚 Hangi bölümler?</span>
+          <button class="hk-setup-mini" id="hk-setup-bolum-tumu">Tümünü seç</button>
+        </div>
+        <div class="hk-setup-grid" id="hk-setup-bolumler"></div>
+      </div>
+
+      <div class="hk-setup-bolum">
+        <div class="hk-setup-baslik">
+          <span>🎮 Hangi çalışma biçimleri?</span>
+          <button class="hk-setup-mini" id="hk-setup-tur-tumu">Tümünü seç</button>
+        </div>
+        <div class="hk-setup-grid" id="hk-setup-turler"></div>
+      </div>
+
+      <div class="hk-setup-bolum">
+        <div class="hk-setup-baslik"><span>🔢 Tur sayısı</span></div>
+        <div class="hk-setup-tursayisi" id="hk-setup-tursayisi">
+          <button data-tur="8">8</button>
+          <button data-tur="12" class="active">12</button>
+          <button data-tur="18">18</button>
+          <button data-tur="25">25</button>
+        </div>
+      </div>
+
+      <div class="hk-setup-uyari" id="hk-setup-uyari"></div>
+
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="hk-setup-iptal" class="modal-btn secondary">Vazgeç</button>
+        <button id="hk-setup-basla" class="modal-btn primary">🚀 Atölyeyi Başlat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🧠 Hafıza Kodu — Sonuç Modalı -->
+  <div id="hk-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card mk-modal-card">
+      <div class="speedrun-modal-header">
+        <div class="speedrun-trophy" id="hk-res-badge">🧠</div>
+        <h3 id="hk-res-title">Tamamlandı!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;" id="hk-res-subtitle">Atölye karnen:</p>
+      </div>
+      <div class="speedrun-stats-grid" id="hk-res-stats"></div>
+      <div id="hk-res-rounds" class="geoguessr-round-list"></div>
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button id="hk-res-close" class="modal-btn secondary">Kapat</button>
+        <button id="hk-res-galeri" class="modal-btn secondary">📚 Galeri</button>
+        <button id="hk-res-restart" class="modal-btn primary">🔁 Yeniden</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📚 Kod Galerisi -->
+  <div id="hk-galeri-modal" class="modal-overlay hk-galeri-overlay" style="display: none;">
+    <div class="modal-card hk-galeri-card">
+      <div class="hk-galeri-ust">
+        <div class="hk-galeri-basmetin">
+          <h3>📚 Hafıza Kodu Galerisi</h3>
+          <p id="hk-galeri-ozet">Tüm coğrafi kodlar, hikâyesi ve çözüm tablosuyla</p>
+        </div>
+        <input type="text" id="hk-galeri-arama" class="hk-galeri-arama" placeholder="🔍 Kod, hikâye ya da yer ara…">
+        <button id="hk-galeri-kapat" class="exam-abort-chip">✕ Kapat</button>
+      </div>
+      <div class="hk-gal-tablar" id="hk-galeri-tablar"></div>
+      <div class="hk-gal-liste" id="hk-galeri-liste"></div>
+    </div>
+  </div>
+
   <!-- ⚡ Şimşek Turu Sonuç Modalı -->
   <div id="speedrun-modal" class="modal-overlay" style="display: none;">
     <div class="modal-card speedrun-modal-card">
@@ -1101,6 +1256,7 @@
   <script src="data/cografya_data.js?v=2"></script>
   <script src="data/tr_cities_geojson.js?v=2"></script>
   <script src="data/mutlak_konum_data.js?v=2"></script>
+  <script src="data/hafiza_kodlari.js?v=1"></script>
 
   <!-- 2) Paket kataloğu + i18n çekirdeği + dil sözlükleri -->
   <script src="data/packs/catalog.js?v=2"></script>
@@ -1120,10 +1276,11 @@
   <script src="js/mutlak_konum.js?v=3"></script>
   <script src="js/olusum_quiz.js?v=4"></script>
   <script src="js/boyama_quiz.js?v=4"></script>
+  <script src="js/hafiza_kodu.js?v=5"></script>
   <script src="js/panel_manager.js?v=2"></script>
   <script src="js/study_plan.js?v=2"></script>
-  <script src="js/map.js?v=6"></script>
+  <script src="js/map.js?v=9"></script>
   <script src="js/quiz.js?v=5"></script>
-  <script src="js/app.js?v=16"></script>
+  <script src="js/app.js?v=18"></script>
 </body>
 </html>

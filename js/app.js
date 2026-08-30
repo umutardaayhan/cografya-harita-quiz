@@ -1104,6 +1104,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Mutlak konum modlari zorlugu siklarin cografi yakinligi olarak kullanir
       if (mkRefreshRound()) return;
+      // Hafiza kodu atolyesinde zorluk, celdiricilerin AYNI bolumden gelme
+      // olasiligini belirler (Sv.5 = kodlar birbirine en cok karisan halleriyle)
+      if (hkRefreshRound()) return;
 
       if (currentMode === 'quiz') {
         loadNextQuestion();
@@ -1171,6 +1174,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (matchHud) matchHud.style.display = 'none';
     const mkHudEl = document.getElementById('mk-hud');
     if (mkHudEl) mkHudEl.style.display = 'none';
+    const hkHudEl = document.getElementById('hk-hud');
+    if (hkHudEl) hkHudEl.style.display = 'none';
     const paintTools = document.getElementById('mk-paint-tools');
     if (paintTools) paintTools.style.display = 'none';
     const mapEl2 = document.getElementById('map');
@@ -1277,12 +1282,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function isGameModeActive() {
+    // 'hafiza' burada YOKTU: Hafıza Kodu Atölyesi açıkken "Keşif Modu"
+    // düğmesine basılınca toggleMode else dalına düşüyor, currentMode'u
+    // sessizce 'quiz' yapıp arkada bir soru yüklüyordu. Sonuç: atölye HUD'u
+    // ekranda dururken haritada standart testin şık pinleri beliriyor,
+    // kullanıcı iki modu aynı anda görüyordu.
     return currentMode === 'geoguessr' || currentMode === 'conqueror' ||
-           currentMode === 'match' || currentMode.indexOf('mk_') === 0;
+           currentMode === 'match' || currentMode === 'hafiza' ||
+           currentMode.indexOf('mk_') === 0;
   }
 
   function hideGameModals() {
-    [geoguessrModal, conquerorModal, matchModal, document.getElementById('mk-modal'), gameScopeModal].forEach(m => {
+    [geoguessrModal, conquerorModal, matchModal, document.getElementById('mk-modal'),
+     document.getElementById('hk-modal'), document.getElementById('hk-setup-modal'),
+     document.getElementById('hk-galeri-modal'), gameScopeModal].forEach(m => {
       if (m) m.style.display = 'none';
     });
   }
@@ -1443,6 +1456,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     activeMkKey = null;
 
+    // 🧠 Hafıza Kodu Atölyesi de bir motordur: harita katmanını ve HUD'u
+    // burada bırakmazsak kod pinleri bir sonraki modun üstünde asılı kalır.
+    hafizaGame.exit();
+    hkKapat();
+
     matchBoardLocked = false;
     stopPlanSession();
     hideMistakesLayer();
@@ -1495,6 +1513,9 @@ document.addEventListener('DOMContentLoaded', () => {
     exitAllGameModes();
     if (currentMode === 'drawing') closeDrawingToolbar();
     currentMode = modeName;
+    // Keşif Modu'ndan bir oyun moduna geçildiğinde düğme "Test Moduna Geç"
+    // yazılı kalıyor, kullanıcıya keşif hâlâ açıkmış gibi görünüyordu.
+    syncModeToggleLabel();
     document.body.classList.add('game-mode-active');
     hideAllGameHuds();
   }
@@ -2174,6 +2195,588 @@ document.addEventListener('DOMContentLoaded', () => {
       openGameScopeModal('Harita Boyama', '🖌️', (scope) => startMutlakKonumMode('boyama', scope));
     });
   }
+
+  // ============================================================
+  // 🧠 HAFIZA KODU ATÖLYESİ
+  //
+  // Diğer oyun modlarından farkı: veri kaynağı paketler değil, kendi hikâye
+  // korpusudur (data/hafiza_kodlari.js). Bu yüzden kapsam modalı da alt tür
+  // rozeti de anlamsızdır; kapsamı kendi kurulum modalı belirler.
+  // ============================================================
+  const hafizaGame = new HafizaKoduGame(geoMap);
+
+  const hkHud = document.getElementById('hk-hud');
+  const hkTurAdiEl = document.getElementById('hk-tur-adi');
+  const hkTurEl = document.getElementById('hk-tur');
+  const hkMaxTurEl = document.getElementById('hk-maxtur');
+  const hkAyarChip = document.getElementById('hk-ayar-chip');
+  const hkSkorEl = document.getElementById('hk-skor');
+  const hkSeriChip = document.getElementById('hk-seri-chip');
+  const hkSeriEl = document.getElementById('hk-seri');
+  const hkKodIkon = document.getElementById('hk-kod-ikon');
+  const hkKodBaslik = document.getElementById('hk-kod-baslik');
+  const hkKodKonu = document.getElementById('hk-kod-konu');
+  const hkBolumRozet = document.getElementById('hk-bolum-rozet');
+  const hkYonergeEl = document.getElementById('hk-yonerge');
+  const hkHikayeKutu = document.getElementById('hk-hikaye-kutu');
+  const hkHikayeBaslik = document.getElementById('hk-hikaye-baslik');
+  const hkHikayeEl = document.getElementById('hk-hikaye');
+  const hkSeceneklerEl = document.getElementById('hk-secenekler');
+  const hkEslesEl = document.getElementById('hk-esles');
+  const hkEslesSol = document.getElementById('hk-esles-sol');
+  const hkEslesSag = document.getElementById('hk-esles-sag');
+  const hkEslesKalan = document.getElementById('hk-esles-kalan');
+  const hkEslesHata = document.getElementById('hk-esles-hata');
+  const hkZincirEl = document.getElementById('hk-zincir');
+  const hkZincirYol = document.getElementById('hk-zincir-yol');
+  const hkZincirHavuz = document.getElementById('hk-zincir-havuz');
+  const hkGeriEl = document.getElementById('hk-geri');
+  const hkGeriBaslik = document.getElementById('hk-geri-baslik');
+  const hkGeriSatirlar = document.getElementById('hk-geri-satirlar');
+  const hkGeriNot = document.getElementById('hk-geri-not');
+  const hkNextBtn = document.getElementById('hk-next-btn');
+  const hkAbortBtn = document.getElementById('hk-abort-btn');
+
+  const hkSetupModal = document.getElementById('hk-setup-modal');
+  const hkModal = document.getElementById('hk-modal');
+  const hkGaleriModal = document.getElementById('hk-galeri-modal');
+
+  const HK_HARF = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+  /** Kurulum modalında en son seçilen kapsam (yeniden oynama bunu kullanır) */
+  let hkSonAyar = { bolumler: null, turler: null, turSayisi: 12, kodlar: null };
+  let hkAktif = false;
+
+  function hkAyarlariBagla() {
+    hafizaGame.getSettings = () => ({
+      optionCount: geoQuiz.getOptionCount(),
+      difficulty: geoQuiz.getDifficultyLevel()
+    });
+    hafizaGame.onPinSelect = (pinId) => hkSec(pinId);
+  }
+
+  function startHafizaMode(ayar) {
+    hkSonAyar = Object.assign({ bolumler: null, turler: null, turSayisi: 12, kodlar: null }, ayar || {});
+    prepareGameMode('hafiza');
+    hkAktif = true;
+
+    if (quizDefaultStatsBar) quizDefaultStatsBar.style.display = 'none';
+    if (standardQuizBody) standardQuizBody.style.display = 'none';
+    if (subCategoriesBar) subCategoriesBar.style.display = 'none';
+    if (hkHud) hkHud.style.display = 'flex';
+
+    hkAyarlariBagla();
+    hkRender(hafizaGame.start(hkSonAyar));
+  }
+
+  function hkKapat() {
+    hkAktif = false;
+    if (hkHud) hkHud.style.display = 'none';
+  }
+
+  // ---------- Görünüm ----------
+  function hkRender(view) {
+    if (!view) return;
+
+    if (view.finished) {
+      hkKarneGoster(view.summary);
+      return;
+    }
+
+    if (hkTurAdiEl) hkTurAdiEl.textContent = `${view.turIkon || ''} ${view.turAdi || ''}`.trim();
+    if (hkTurEl) hkTurEl.textContent = view.tur;
+    if (hkMaxTurEl) hkMaxTurEl.textContent = view.maxTur;
+    if (hkSkorEl) hkSkorEl.textContent = view.skor;
+    if (hkAyarChip) hkAyarChip.textContent = view.ayar || '';
+    if (hkSeriChip) {
+      hkSeriChip.style.display = view.seri > 1 ? 'inline-flex' : 'none';
+      if (hkSeriEl) hkSeriEl.textContent = view.seri;
+    }
+
+    if (view.kod) {
+      if (hkKodIkon) hkKodIkon.textContent = view.kod.ikon || '🧠';
+      if (hkKodBaslik) hkKodBaslik.textContent = view.kod.baslik || '';
+      if (hkKodKonu) hkKodKonu.textContent = view.kod.konu || '';
+    }
+    if (hkBolumRozet && view.bolum) {
+      hkBolumRozet.textContent = `${view.bolum.ikon} ${view.bolum.kisa}`;
+      hkBolumRozet.style.setProperty('--hk-renk', view.bolum.renk);
+      if (hkHud) hkHud.style.setProperty('--hk-renk', view.bolum.renk);
+    }
+
+    if (hkYonergeEl) {
+      hkYonergeEl.innerHTML = view.yonerge || '';
+      hkYonergeEl.style.display = view.yonerge ? 'block' : 'none';
+    }
+    if (hkHikayeBaslik) hkHikayeBaslik.textContent = view.hikayeBaslik || '';
+    if (hkHikayeEl) hkHikayeEl.innerHTML = view.hikayeHtml || '';
+    if (hkHikayeKutu) hkHikayeKutu.classList.toggle('cozuldu', !!view.geri);
+
+    hkRenderSecenekler(view);
+    hkRenderEsles(view);
+    hkRenderZincir(view);
+    hkRenderGeri(view);
+  }
+
+  function hkRenderSecenekler(view) {
+    if (!hkSeceneklerEl) return;
+    const goster = view.tip === 'secim' && view.secenekler && view.secenekler.length;
+    hkSeceneklerEl.style.display = goster ? 'grid' : 'none';
+    hkSeceneklerEl.innerHTML = '';
+    if (!goster) return;
+
+    const kilitli = !!view.geri;
+    view.secenekler.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'hk-secenek' + (opt.state ? ' ' + opt.state : '');
+      btn.disabled = kilitli;
+      const renk = (typeof CHOICE_PALETTE !== 'undefined' && CHOICE_PALETTE[i % CHOICE_PALETTE.length])
+        || { main: '#8b5cf6' };
+      btn.innerHTML = `<span class="hk-secenek-harf" style="background:${renk.main}">${HK_HARF[i] || i + 1}</span>` +
+                      `<span class="hk-secenek-metin"></span>`;
+      btn.querySelector('.hk-secenek-metin').textContent = opt.label;
+      btn.addEventListener('click', () => hkSec(opt.id));
+      hkSeceneklerEl.appendChild(btn);
+    });
+  }
+
+  function hkRenderEsles(view) {
+    if (!hkEslesEl) return;
+    const goster = view.tip === 'esles' && view.esles;
+    hkEslesEl.style.display = goster ? 'block' : 'none';
+    if (!goster) return;
+
+    if (hkEslesKalan) hkEslesKalan.textContent = view.esles.kalan;
+    if (hkEslesHata) hkEslesHata.textContent = view.esles.hata;
+
+    const kur = (kap, kartlar, taraf) => {
+      if (!kap) return;
+      kap.innerHTML = '';
+      kartlar.forEach(k => {
+        const btn = document.createElement('button');
+        btn.className = 'hk-esles-kart ' + taraf + (k.state ? ' ' + k.state : '');
+        btn.dataset.id = k.id;
+        btn.dataset.taraf = taraf;
+        btn.textContent = k.label;
+        btn.addEventListener('click', () => hkEslesTikla(btn, k.id, taraf));
+        kap.appendChild(btn);
+      });
+    };
+    kur(hkEslesSol, view.esles.sol, 'sol');
+    kur(hkEslesSag, view.esles.sag, 'sag');
+  }
+
+  function hkEslesTikla(btn, kartId, taraf) {
+    if (btn.classList.contains('matched')) return;
+
+    const sonuc = hafizaGame.eslesSec(kartId, taraf);
+    if (!sonuc) return;
+
+    // Aynı taraftaki önceki seçimi bırak
+    const kap = taraf === 'sol' ? hkEslesSol : hkEslesSag;
+    if (kap) kap.querySelectorAll('.hk-esles-kart.secili').forEach(b => b.classList.remove('secili'));
+    btn.classList.add('secili');
+
+    if (sonuc.sonuc === 'secildi') return;
+
+    if (sonuc.sonuc === 'hata') {
+      const yanlislar = hkEslesEl.querySelectorAll('.hk-esles-kart.secili');
+      yanlislar.forEach(b => {
+        b.classList.remove('secili');
+        b.classList.add('sarsil');
+        setTimeout(() => b.classList.remove('sarsil'), 450);
+      });
+      if (hkEslesHata) hkEslesHata.textContent = sonuc.hata;
+      return;
+    }
+
+    // Eşleşti — iki kartı da kilitle
+    hkEslesEl.querySelectorAll(`.hk-esles-kart[data-id="${sonuc.eslesenId}"]`).forEach(b => {
+      b.classList.remove('secili');
+      b.classList.add('matched');
+      b.disabled = true;
+    });
+    if (typeof sonuc.kalan === 'number' && hkEslesKalan) hkEslesKalan.textContent = sonuc.kalan;
+
+    if (sonuc.sonuc === 'tamam') hkRender(sonuc.gorunum);
+  }
+
+  /** Zincir turunun ekrandaki durumu (yerleşim + kilit) */
+  let hkZincirDurum = null;
+
+  function hkRenderZincir(view) {
+    if (!hkZincirEl) return;
+    const goster = view.tip === 'zincir' && view.zincir;
+    hkZincirEl.style.display = goster ? 'block' : 'none';
+    if (!goster) return;
+
+    hkZincirDurum = {
+      etiketler: view.zincir.havuz.map(h => h.label),
+      hedefSayi: view.zincir.hedefSayi,
+      yon: view.zincir.yon,
+      yerlesim: [],
+      kilitli: !!view.geri
+    };
+    hkZincirCiz();
+  }
+
+  function hkZincirCiz() {
+    if (!hkZincirDurum || !hkZincirYol || !hkZincirHavuz) return;
+    const d = hkZincirDurum;
+
+    hkZincirYol.innerHTML = '';
+    for (let i = 0; i < d.hedefSayi; i++) {
+      const yuva = document.createElement('div');
+      yuva.className = 'hk-zincir-yuva' + (d.yerlesim[i] ? ' dolu' : '');
+      const etiket = d.yerlesim[i];
+      yuva.innerHTML = `<span class="hk-zincir-no">${i + 1}</span>` +
+                       `<span class="hk-zincir-ad"></span>`;
+      yuva.querySelector('.hk-zincir-ad').textContent = etiket || '—';
+      if (etiket && !d.kilitli) {
+        yuva.classList.add('tiklanir');
+        yuva.title = 'Buradan itibaren geri al';
+        yuva.addEventListener('click', () => hkZincirTikla(etiket));
+      }
+      hkZincirYol.appendChild(yuva);
+    }
+
+    hkZincirHavuz.innerHTML = '';
+    d.etiketler.forEach(et => {
+      const kart = document.createElement('button');
+      const yerlesti = d.yerlesim.includes(et);
+      kart.className = 'hk-zincir-kart' + (yerlesti ? ' yerlesti' : '');
+      kart.textContent = et;
+      kart.disabled = yerlesti || d.kilitli;
+      kart.addEventListener('click', () => hkZincirTikla(et));
+      hkZincirHavuz.appendChild(kart);
+    });
+  }
+
+  function hkZincirTikla(etiket) {
+    const sonuc = hafizaGame.zincirSec(etiket);
+    if (!sonuc) return;
+    hkZincirDurum.yerlesim = sonuc.yerlesim;
+    if (sonuc.sonuc === 'tamam') {
+      hkZincirDurum.kilitli = true;
+      hkZincirCiz();
+      hkRender(sonuc.gorunum);
+      return;
+    }
+    hkZincirCiz();
+  }
+
+  function hkRenderGeri(view) {
+    if (!hkGeriEl) return;
+    if (!view.geri) {
+      hkGeriEl.style.display = 'none';
+      return;
+    }
+    hkGeriEl.style.display = 'block';
+    hkGeriEl.className = 'hk-geri ' + (view.geri.ok ? 'dogru' : 'yanlis');
+    if (hkGeriBaslik) {
+      hkGeriBaslik.textContent = view.geri.baslik +
+        (view.geri.puan ? `  ·  +${view.geri.puan} puan` : '');
+    }
+    if (hkGeriSatirlar) {
+      hkGeriSatirlar.innerHTML = '';
+      (view.geri.satirlar || []).forEach(r => {
+        const sat = document.createElement('div');
+        sat.className = 'hk-geri-satir' + (r.vurgu ? ' vurgu' : '');
+        const l = document.createElement('span'); l.className = 'hk-geri-l'; l.textContent = r.label;
+        const v = document.createElement('span'); v.className = 'hk-geri-v'; v.textContent = r.value;
+        sat.appendChild(l); sat.appendChild(v);
+        hkGeriSatirlar.appendChild(sat);
+      });
+    }
+    if (hkGeriNot) {
+      hkGeriNot.textContent = view.geri.not || '';
+      hkGeriNot.style.display = view.geri.not ? 'block' : 'none';
+    }
+    if (hkNextBtn) {
+      hkNextBtn.textContent = hafizaGame.tur >= hafizaGame.maxTur
+        ? 'Karneyi Gör → (Boşluk)' : 'Sonraki Tur → (Boşluk)';
+      hkNextBtn.focus();
+    }
+  }
+
+  function hkSec(secenekId) {
+    const view = hafizaGame.select(secenekId);
+    if (view) hkRender(view);
+  }
+
+  function hkSonraki() {
+    hkRender(hafizaGame.next());
+  }
+
+  /** Zorluk / şık sayısı oyun ortasında değişirse turu yeniden kurar */
+  function hkRefreshRound() {
+    if (!hkAktif || !hafizaGame.isActive) return false;
+    hkRender(hafizaGame.refreshRound());
+    return true;
+  }
+
+  function hkKarneGoster(summary) {
+    if (!summary || !hkModal) return;
+    const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setEl('hk-res-badge', summary.badge || '🧠');
+    setEl('hk-res-title', summary.title || 'Tamamlandı!');
+    setEl('hk-res-subtitle', summary.subtitle || 'Atölye karnen:');
+
+    const stats = document.getElementById('hk-res-stats');
+    if (stats) {
+      stats.innerHTML = (summary.stats || []).map(s => `
+        <div class="speedrun-stat-box ${s.cls || ''}">
+          <span class="speedrun-stat-val ${s.cls || ''}">${s.val}</span>
+          <span class="speedrun-stat-lbl">${s.label}</span>
+        </div>`).join('');
+    }
+    const rounds = document.getElementById('hk-res-rounds');
+    if (rounds) {
+      rounds.innerHTML = '';
+      (summary.rows || []).forEach(r => {
+        const sat = document.createElement('div');
+        sat.className = 'geoguessr-round-row';
+        const l = document.createElement('span'); l.textContent = r.left;
+        const v = document.createElement('span');
+        v.style.color = r.ok ? '#4ade80' : '#f87171';
+        v.style.fontWeight = '800';
+        v.textContent = r.right;
+        sat.appendChild(l); sat.appendChild(v);
+        rounds.appendChild(sat);
+      });
+    }
+    hkModal.style.display = 'flex';
+  }
+
+  // ---------- Kurulum modalı ----------
+  let hkSetupSecim = { bolumler: new Set(), turler: new Set(), turSayisi: 12 };
+
+  function hkSetupAc() {
+    if (!hkSetupModal) { startHafizaMode({}); return; }
+    closeGamesDropdown();
+
+    const bolumKap = document.getElementById('hk-setup-bolumler');
+    const turKap = document.getElementById('hk-setup-turler');
+
+    if (bolumKap) {
+      bolumKap.innerHTML = '';
+      HAFIZA_BOLUMLERI.forEach(b => {
+        const adet = HAFIZA_KODLARI.filter(k => k.bolum === b.key).length;
+        if (!adet) return;
+        const btn = document.createElement('button');
+        btn.className = 'hk-setup-secim' + (hkSetupSecim.bolumler.has(b.key) ? ' active' : '');
+        btn.style.setProperty('--hk-renk', b.renk);
+        btn.innerHTML = `<span class="hk-setup-ikon">${b.ikon}</span>
+          <span class="hk-setup-metin"><strong></strong><small>${adet} kod</small></span>`;
+        btn.querySelector('strong').textContent = b.kisa;
+        btn.addEventListener('click', () => {
+          if (hkSetupSecim.bolumler.has(b.key)) hkSetupSecim.bolumler.delete(b.key);
+          else hkSetupSecim.bolumler.add(b.key);
+          btn.classList.toggle('active');
+          hkSetupUyariTazele();
+        });
+        bolumKap.appendChild(btn);
+      });
+    }
+
+    if (turKap) {
+      turKap.innerHTML = '';
+      HK_TUR_TANIMLARI.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = 'hk-setup-secim' + (hkSetupSecim.turler.has(t.key) ? ' active' : '');
+        btn.innerHTML = `<span class="hk-setup-ikon">${t.ikon}</span>
+          <span class="hk-setup-metin"><strong></strong><small></small></span>`;
+        btn.querySelector('strong').textContent = t.ad;
+        btn.querySelector('small').textContent = t.aciklama;
+        btn.addEventListener('click', () => {
+          if (hkSetupSecim.turler.has(t.key)) hkSetupSecim.turler.delete(t.key);
+          else hkSetupSecim.turler.add(t.key);
+          btn.classList.toggle('active');
+          hkSetupUyariTazele();
+        });
+        turKap.appendChild(btn);
+      });
+    }
+
+    hkSetupUyariTazele();
+    hkSetupModal.style.display = 'flex';
+  }
+
+  /**
+   * Seçilen kapsamın kaç soru üretebildiğini önceden söyler.
+   * Kullanıcı "sadece Jeoloji + sadece Zincir" gibi boş bir kesişim seçtiğinde
+   * oyunu başlatıp anında karneyle karşılaşmasın diye.
+   */
+  function hkSetupUyariTazele() {
+    const uyari = document.getElementById('hk-setup-uyari');
+    if (!uyari) return;
+
+    const bolumler = hkSetupSecim.bolumler.size ? Array.from(hkSetupSecim.bolumler) : null;
+    const turler = hkSetupSecim.turler.size ? Array.from(hkSetupSecim.turler) : null;
+
+    let gorevSayisi = 0;
+    HAFIZA_KODLARI.forEach(k => {
+      if (bolumler && !bolumler.includes(k.bolum)) return;
+      let u = HafizaKoduGame.uygunTurler(k);
+      if (turler) u = u.filter(t => turler.includes(t));
+      gorevSayisi += u.length;
+    });
+
+    const basla = document.getElementById('hk-setup-basla');
+    if (gorevSayisi === 0) {
+      uyari.className = 'hk-setup-uyari hata';
+      uyari.textContent = '⚠️ Bu seçimle tek bir soru bile üretilemiyor. Daha fazla bölüm ya da çalışma biçimi seç.';
+      if (basla) basla.disabled = true;
+    } else {
+      uyari.className = 'hk-setup-uyari';
+      uyari.textContent = `✅ Bu kapsamda ${gorevSayisi} farklı soru üretilebiliyor` +
+        (bolumler ? '' : ' (tüm bölümler)') + '.';
+      if (basla) basla.disabled = false;
+    }
+  }
+
+  // ---------- Galeri ----------
+  let hkGaleriBolum = '';
+  let hkGaleriArama = '';
+
+  function hkGaleriAc(bolumKey) {
+    if (!hkGaleriModal) return;
+    closeGamesDropdown();
+    if (typeof bolumKey === 'string') hkGaleriBolum = bolumKey;
+    hkGaleriCiz();
+    hkGaleriModal.style.display = 'flex';
+  }
+
+  function hkGaleriCiz() {
+    const tablar = document.getElementById('hk-galeri-tablar');
+    const liste = document.getElementById('hk-galeri-liste');
+    const ozet = document.getElementById('hk-galeri-ozet');
+    if (!tablar || !liste) return;
+
+    tablar.innerHTML = HafizaGaleri.bolumSeridi(hkGaleriBolum);
+    tablar.querySelectorAll('.hk-gal-tab').forEach(t => {
+      t.addEventListener('click', () => {
+        hkGaleriBolum = t.dataset.bolum || '';
+        hkGaleriCiz();
+      });
+    });
+
+    liste.innerHTML = HafizaGaleri.kartlar(hkGaleriBolum, hkGaleriArama);
+    liste.scrollTop = 0;
+
+    liste.querySelectorAll('[data-calis]').forEach(b => {
+      b.addEventListener('click', () => {
+        const kodId = b.dataset.calis;
+        hkGaleriModal.style.display = 'none';
+        startHafizaMode({ kodlar: [kodId], turSayisi: 6 });
+      });
+    });
+    liste.querySelectorAll('[data-harita]').forEach(b => {
+      b.addEventListener('click', () => {
+        const kod = HAFIZA_KODLARI.find(k => k.id === b.dataset.harita);
+        if (!kod) return;
+        hkGaleriModal.style.display = 'none';
+        // Haritayı göstermek için atölyeyi açmaya gerek yok; sadece odaklan.
+        hafizaGame.kodaOdaklan(kod);
+      });
+    });
+
+    if (ozet) {
+      const adet = liste.querySelectorAll('.hk-gal-kart').length;
+      const toplamUst = HAFIZA_KODLARI.reduce((a, k) => a + HafizaUstalik.yuzde(k.id), 0);
+      const ortalama = HAFIZA_KODLARI.length ? Math.round(toplamUst / HAFIZA_KODLARI.length) : 0;
+      ozet.textContent = `${adet} kod gösteriliyor · Toplam ${HAFIZA_KODLARI.length} kod · Ortalama ustalık %${ortalama}`;
+    }
+  }
+
+  // ---------- Bağlantılar ----------
+  const btnHafizaMode = document.getElementById('btn-hafiza-mode');
+  if (btnHafizaMode) btnHafizaMode.addEventListener('click', hkSetupAc);
+
+  const btnHafizaGaleri = document.getElementById('btn-hafiza-galeri');
+  if (btnHafizaGaleri) btnHafizaGaleri.addEventListener('click', () => hkGaleriAc(''));
+
+  const hkGaleriBtn = document.getElementById('hk-galeri-btn');
+  if (hkGaleriBtn) hkGaleriBtn.addEventListener('click', () => hkGaleriAc());
+
+  if (hkNextBtn) hkNextBtn.addEventListener('click', hkSonraki);
+  if (hkAbortBtn) hkAbortBtn.addEventListener('click', returnToQuizMode);
+
+  const hkSetupIptal = document.getElementById('hk-setup-iptal');
+  if (hkSetupIptal) hkSetupIptal.addEventListener('click', () => { hkSetupModal.style.display = 'none'; });
+
+  const hkSetupBasla = document.getElementById('hk-setup-basla');
+  if (hkSetupBasla) {
+    hkSetupBasla.addEventListener('click', () => {
+      hkSetupModal.style.display = 'none';
+      startHafizaMode({
+        bolumler: hkSetupSecim.bolumler.size ? Array.from(hkSetupSecim.bolumler) : null,
+        turler: hkSetupSecim.turler.size ? Array.from(hkSetupSecim.turler) : null,
+        turSayisi: hkSetupSecim.turSayisi
+      });
+    });
+  }
+
+  const hkSetupBolumTumu = document.getElementById('hk-setup-bolum-tumu');
+  if (hkSetupBolumTumu) {
+    hkSetupBolumTumu.addEventListener('click', () => {
+      const hepsiSecili = hkSetupSecim.bolumler.size === HAFIZA_BOLUMLERI.length;
+      hkSetupSecim.bolumler = hepsiSecili ? new Set() : new Set(HAFIZA_BOLUMLERI.map(b => b.key));
+      hkSetupAc();
+    });
+  }
+
+  const hkSetupTurTumu = document.getElementById('hk-setup-tur-tumu');
+  if (hkSetupTurTumu) {
+    hkSetupTurTumu.addEventListener('click', () => {
+      const hepsiSecili = hkSetupSecim.turler.size === HK_TUR_TANIMLARI.length;
+      hkSetupSecim.turler = hepsiSecili ? new Set() : new Set(HK_TUR_TANIMLARI.map(t => t.key));
+      hkSetupAc();
+    });
+  }
+
+  const hkSetupTurSayisi = document.getElementById('hk-setup-tursayisi');
+  if (hkSetupTurSayisi) {
+    hkSetupTurSayisi.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        hkSetupTurSayisi.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        hkSetupSecim.turSayisi = parseInt(b.dataset.tur, 10) || 12;
+      });
+    });
+  }
+
+  const hkResClose = document.getElementById('hk-res-close');
+  if (hkResClose) hkResClose.addEventListener('click', () => {
+    if (hkModal) hkModal.style.display = 'none';
+    returnToQuizMode();
+  });
+
+  const hkResGaleri = document.getElementById('hk-res-galeri');
+  if (hkResGaleri) hkResGaleri.addEventListener('click', () => {
+    if (hkModal) hkModal.style.display = 'none';
+    hkGaleriAc();
+  });
+
+  const hkResRestart = document.getElementById('hk-res-restart');
+  if (hkResRestart) hkResRestart.addEventListener('click', () => {
+    if (hkModal) hkModal.style.display = 'none';
+    startHafizaMode(hkSonAyar);
+  });
+
+  const hkGaleriKapat = document.getElementById('hk-galeri-kapat');
+  if (hkGaleriKapat) hkGaleriKapat.addEventListener('click', () => {
+    if (hkGaleriModal) hkGaleriModal.style.display = 'none';
+  });
+
+  const hkGaleriAramaEl = document.getElementById('hk-galeri-arama');
+  if (hkGaleriAramaEl) {
+    hkGaleriAramaEl.addEventListener('input', () => {
+      hkGaleriArama = hkGaleriAramaEl.value;
+      hkGaleriCiz();
+    });
+  }
+
   // Soru formatı artık Araçlar menüsünün içinde; ayrı bir açılır düğmesi yok.
   // Eski elemanlara yapılan atıflar null olabilir, bu yüzden hepsi korumalı.
   if (formatToggleBtn && formatDropdown) {
@@ -2232,6 +2835,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Mutlak konum modlarinda sik sayisi secenek/kart adedini belirler
       if (mkRefreshRound()) return;
+      if (hkRefreshRound()) return;
 
       if (isExamActive) {
         loadExamQuestion();
@@ -2982,6 +3586,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- KLAVYE KISAYOLLARI (1-5 VE A-E SEÇİMİ, ENTER/SPACE İLE GEÇİŞ, ESC İLE ODAKTAN ÇIKIŞ) ---
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      const hkGal = document.getElementById('hk-galeri-modal');
+      if (hkGal && hkGal.style.display === 'flex') {
+        hkGal.style.display = 'none';
+        return;
+      }
       if (gameScopeModal && gameScopeModal.style.display === 'flex') {
         closeGameScopeModal();
         return;
@@ -3002,6 +3611,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if ((e.key === ' ' || e.key === 'Enter') && geoGuessrGame.isActive && geoGuessrGame.hasGuessedThisRound) {
       e.preventDefault();
       if (geoguessrNextBtn) geoguessrNextBtn.click();
+      return;
+    }
+
+    // 🧠 Hafıza Kodu Atölyesi: Boşluk/Enter ile ilerle, A-H veya 1-8 ile şık seç
+    if (hkAktif) {
+      const geriAcik = hkGeriEl && hkGeriEl.style.display === 'block';
+      if (e.key === ' ' || e.key === 'Enter') {
+        if (geriAcik) {
+          e.preventDefault();
+          hkSonraki();
+        }
+        return;
+      }
+      if (!geriAcik && hkSeceneklerEl && hkSeceneklerEl.style.display === 'grid') {
+        const pressed = e.key.toUpperCase();
+        let idx = -1;
+        if (/^[1-8]$/.test(pressed)) idx = parseInt(pressed, 10) - 1;
+        else if (HK_HARF.indexOf(pressed) >= 0) idx = HK_HARF.indexOf(pressed);
+        const buttons = hkSeceneklerEl.querySelectorAll('.hk-secenek');
+        if (idx >= 0 && idx < buttons.length) {
+          e.preventDefault();
+          buttons[idx].click();
+        }
+      }
       return;
     }
 
