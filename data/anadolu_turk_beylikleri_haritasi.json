@@ -1,0 +1,790 @@
+{
+  "mapName": "Anadolu Türk Beylikleri (1. ve 2. Dönem)",
+  "createdAt": "2026-09-07T21:15:00.000Z",
+  "drawings": [
+    {
+      "name": "Saltuklular (Saltukoğulları)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          40.35,
+          40.3
+        ],
+        [
+          40.55,
+          41.45
+        ],
+        [
+          40.4,
+          42.45
+        ],
+        [
+          39.85,
+          42.4
+        ],
+        [
+          39.6,
+          41.35
+        ],
+        [
+          39.75,
+          40.3
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Doğu Anadolu / Erzurum, Kars, Bayburt",
+      "color": "#dc2626",
+      "promptTitle": "Malazgirt Savaşı'ndan sonra Erzurum merkezli kurulan, Üç Kümbetler ve Mama Hatun Türbesi gibi eserler bırakan İLK Anadolu Türk beyliği haritada neresidir?",
+      "kpssNot": "Anadolu'da kurulan İLK Türk beyliğidir (1072 - Ebulkasım Saltuk Bey). Erzurum merkezlidir. Önemli Eserleri: Erzurum Ulu Camii, Tepsi Minare (Saat Kulesi), Üç Kümbetler ve Tercan Mama Hatun Külliyesi/Kervansarayı. Anadolu Selçuklu hükümdarı Rükneddin Süleyman Şah tarafından yıkılmıştır."
+    },
+    {
+      "name": "Mengücekliler (Mengücekoğulları)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          39.6,
+          37.75
+        ],
+        [
+          39.95,
+          38.45
+        ],
+        [
+          40.05,
+          39.55
+        ],
+        [
+          39.55,
+          39.65
+        ],
+        [
+          39.25,
+          38.25
+        ],
+        [
+          39.3,
+          37.8
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Doğu Anadolu / Erzincan, Kemah, Divriği",
+      "color": "#ea580c",
+      "promptTitle": "Erzincan, Kemah ve Divriği çevresinde kurulan; UNESCO Dünya Mirası Divriği Ulu Camii ve Darüşşifası'nı inşa eden 1. Dönem Türk beyliği haritada neresidir?",
+      "kpssNot": "Mengücek Gazi tarafından Erzincan, Kemah ve Divriği yöresinde kurulmuştur. En önemli eseri Ahmet Şah ve Turan Melek tarafından yaptırılan, taş işçiliği ve gölge oyunlarıyla ünlü, UNESCO Dünya Miras Listesi'ndeki ilk Türk yapısı olan Divriği Ulu Camii ve Darüşşifası'dır. I. Alaeddin Keykubad tarafından Anadolu Selçuklu Devleti'ne katılmıştır."
+    },
+    {
+      "name": "Danişmentliler (Danişmendoğulları)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          40.65,
+          35.6
+        ],
+        [
+          40.85,
+          36.75
+        ],
+        [
+          40.2,
+          37.45
+        ],
+        [
+          39.55,
+          37.2
+        ],
+        [
+          39.5,
+          36.15
+        ],
+        [
+          40.1,
+          35.5
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Orta & Karadeniz / Sivas, Tokat, Niksar, Amasya",
+      "color": "#2563eb",
+      "promptTitle": "Sivas, Tokat ve Amasya çevresinde kurulan; Anadolu'daki ilk medrese sayılan Niksar Yağıbasan Medresesi'ni inşa eden en güçlü 1. Dönem beyliği haritada neresidir?",
+      "kpssNot": "Danişment Ahmet Gazi tarafından kurulmuştur. 1. Dönem beyliklerinin en güçlüsüdür. Anadolu'daki İLK medrese olan Tokat/Niksar Yağıbasan Medresesi bu beyliğe aittir. Kendi adına madeni para (sikke) bastıran ilk beyliktir. Haçlı Seferleri'ne karşı Anadolu Selçukluları ile birlikte destansı mücadeleler vermişlerdir (Danişmendname destanına konu olmuştur)."
+    },
+    {
+      "name": "Artuklular (Artukoğulları)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          37.85,
+          39.85
+        ],
+        [
+          38.15,
+          40.65
+        ],
+        [
+          37.85,
+          41.75
+        ],
+        [
+          37.2,
+          41.65
+        ],
+        [
+          37.1,
+          40.4
+        ],
+        [
+          37.4,
+          39.85
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Güneydoğu Anadolu / Mardin, Hasankeyf, Harput",
+      "color": "#059669",
+      "promptTitle": "Mardin, Hasankeyf ve Harput kollarında hüküm süren; Malabadi Köprüsü'nü inşa eden ve sibernetiğin kurucusu El-Cezeri'nin hizmet ettiği beylik haritada neresidir?",
+      "kpssNot": "Artuk Bey'in oğulları tarafından Hasankeyf, Mardin ve Harput olmak üzere 3 kol halinde kurulmuştur. Önemli Eserleri: Dünyanın en geniş taş kemerli köprüsü olan Diyarbakır/Batman arasındaki Malabadi Köprüsü, Mardin Ulu Camii, Hatuniye ve Zinciriye Medreseleri. Robotik ve sibernetik biliminin kurucusu El-Cezeri (Otomatlar Kitabı) Artuklu sarayında başmühendis olarak çalışmıştır."
+    },
+    {
+      "name": "Çaka Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          38.75,
+          26.7
+        ],
+        [
+          38.65,
+          27.2
+        ],
+        [
+          38.3,
+          27.2
+        ],
+        [
+          38.15,
+          26.85
+        ],
+        [
+          38.25,
+          26.3
+        ],
+        [
+          38.55,
+          26.35
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Ege / İzmir, Çeşme, Urla, Foça",
+      "color": "#0284c7",
+      "promptTitle": "İzmir ve civarında kurulan; 1081 yılındaki donanmasıyla Türk Deniz Kuvvetleri'nin temeli kabul edilen İLK Türk denizci beyliği haritada neresidir?",
+      "kpssNot": "İlk Türk denizcisi ve amirali kabul edilen Çaka Bey tarafından İzmir merkezli kurulmuştur. Ege adaları (Midilli, Sakız, Sisam, Rodos) ve Bizans donanmasına karşı zaferler kazanmıştır. Çaka Bey'in 40 parçalık ilk Türk donanmasını denize indirdiği 1081 yılı, Türk Deniz Kuvvetleri'nin resmi kuruluş yıldönümü olarak kabul edilir."
+    },
+    {
+      "name": "Ahlatşahlar (Sökmenliler)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          39.05,
+          42.2
+        ],
+        [
+          39.15,
+          43.3
+        ],
+        [
+          38.7,
+          43.35
+        ],
+        [
+          38.4,
+          42.8
+        ],
+        [
+          38.4,
+          42.15
+        ],
+        [
+          38.75,
+          42.1
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Doğu Anadolu / Van Gölü Havzası, Bitlis, Ahlat",
+      "color": "#9333ea",
+      "promptTitle": "Van Gölü havzası ve Bitlis çevresinde kurulan; abidevi mezar taşlarıyla ünlü UNESCO adayı Selçuklu Meydan Mezarlığı'nı inşa eden 1. Dönem beyliği haritada neresidir?",
+      "kpssNot": "Sökmen el-Kutbî tarafından Ahlat merkezli kurulmuştur. Kubbet-ül İslam unvanına sahip üç şehirden biri olan Ahlat'ı imar etmişlerdir. Orhun Abideleri'nden sonra Türk dünyasının en büyük anıtsal mezar taşlarının bulunduğu 'Ahlat Selçuklu Meydan Mezarlığı' ve anıt kümbetleri bu dönemin şaheserleridir."
+    },
+    {
+      "name": "İnaloğulları (Yınaloğulları)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          38.15,
+          40.15
+        ],
+        [
+          38.1,
+          40.55
+        ],
+        [
+          37.75,
+          40.5
+        ],
+        [
+          37.7,
+          40.1
+        ],
+        [
+          37.95,
+          40.0
+        ]
+      ],
+      "type": "1. Dönem Anadolu Türk Beyliği",
+      "region": "Güneydoğu Anadolu / Diyarbakır (Amid)",
+      "color": "#854d0e",
+      "promptTitle": "Malazgirt sonrasında Diyarbakır (Amid) merkezli kurulan ve tarihi surların onarılmasında görev alan 1. Dönem Türk beyliği haritada neresidir?",
+      "kpssNot": "Sadr Bey tarafından Diyarbakır merkezli kurulmuştur. Tarihi Diyarbakır surlarının ve burçlarının onarılmasında büyük katkıları olmuş, üzerlerine kitabeler kazımışlardır. Daha sonra Eyyubiler ve Artukluların hakimiyetine girmiştir."
+    },
+    {
+      "name": "Karamanoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          37.75,
+          32.4
+        ],
+        [
+          37.8,
+          33.65
+        ],
+        [
+          37.4,
+          34.15
+        ],
+        [
+          36.75,
+          33.65
+        ],
+        [
+          36.65,
+          32.7
+        ],
+        [
+          37.15,
+          32.3
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "İç Anadolu & Akdeniz / Karaman, Konya, Ermenek",
+      "color": "#b91c1c",
+      "promptTitle": "Kendisini Anadolu Selçuklu'nun doğrudan mirasçısı sayan, 1277'de Türkçeyi resmi dil ilan eden ve Osmanlı'yı en çok uğraştıran 2. Dönem beyliği haritada neresidir?",
+      "kpssNot": "Kerimüddin Karaman Bey tarafından kurulmuştur. Kendilerini Anadolu Selçuklu Devleti'nin meşru mirasçısı olarak gördüklerinden Osmanlı'yı en çok uğraştıran beylik olmuşlardır. 13 Mayıs 1277'de Karamanoğlu Mehmet Bey 'Bugünden sonra divanda, dergâhta, bargâhta, mecliste ve meydanda Türkçeden başka dil kullanılmaya' fermanıyla Türkçeyi resmi devlet dili ilan etmiştir. II. Bayezid döneminde tamamen yıkılmıştır."
+    },
+    {
+      "name": "Karesioğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          40.3,
+          26.9
+        ],
+        [
+          40.25,
+          28.15
+        ],
+        [
+          39.6,
+          28.2
+        ],
+        [
+          39.3,
+          27.2
+        ],
+        [
+          39.45,
+          26.6
+        ],
+        [
+          39.95,
+          26.55
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Marmara & Ege / Balıkesir, Çanakkale",
+      "color": "#1d4ed8",
+      "promptTitle": "Balıkesir ve Çanakkale çevresinde kurulan; Orhan Bey döneminde barışçıl yolla Osmanlı'ya katılan İLK Türk beyliği haritada neresidir?",
+      "kpssNot": "Karesi Bey tarafından Balıkesir ve Çanakkale yöresinde kurulmuştur. Orhan Bey döneminde (1345) Osmanlı Devleti'ne katılan İLK Türk beyliğidir. Donanması ve Evrenos Bey, Hacı İlbey, Ece Halil gibi değerli komutanları Osmanlı hizmetine girmiş; böylece Osmanlı'nın Rumeli'ye geçişi kolaylaşmış ve Osmanlı denizciliğinin temeli atılmıştır."
+    },
+    {
+      "name": "Germiyanoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          39.5,
+          29.5
+        ],
+        [
+          39.4,
+          30.25
+        ],
+        [
+          38.8,
+          30.15
+        ],
+        [
+          38.55,
+          29.3
+        ],
+        [
+          38.75,
+          28.85
+        ],
+        [
+          39.25,
+          29.0
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Ege & İç Batı Anadolu / Kütahya, Uşak, Simav",
+      "color": "#7c3aed",
+      "promptTitle": "Kütahya merkezli kurulan; toprakları I. Murat devrinde çeyiz, II. Murat devrinde ise vasiyet yoluyla Osmanlı'ya geçen beylik haritada neresidir?",
+      "kpssNot": "I. Yakup Bey tarafından Kütahya merkezli kurulmuştur. I. Murat döneminde Şehzade Bayezid'in Devlet Hatun ile evlenmesiyle Simav, Emet, Tavşanlı ve Gediz çeyiz olarak Osmanlı'ya verilmiştir. Beyliğin son hükümdarı II. Yakup Bey'in vasiyeti üzerine 1429 yılında (II. Murat devri) savaşsız olarak Osmanlı topraklarına katılmıştır."
+    },
+    {
+      "name": "Hamitoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          38.3,
+          30.5
+        ],
+        [
+          38.35,
+          31.45
+        ],
+        [
+          37.8,
+          31.55
+        ],
+        [
+          37.4,
+          30.85
+        ],
+        [
+          37.4,
+          30.0
+        ],
+        [
+          37.85,
+          29.95
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Akdeniz / Göller Yöresi, Isparta, Eğirdir, Burdur",
+      "color": "#0d9488",
+      "promptTitle": "Göller Yöresi'nde kurulan ve Eğirdir, Yalvaç, Beyşehir gibi toprakları 80 bin altın karşılığında Osmanlı'ya satılan beylik haritada neresidir?",
+      "kpssNot": "Dündar Bey tarafından Eğirdir (Felekabad) merkezli kurulmuştur. Göller Yöresi'ne (Isparta, Burdur, Eğirdir) hakim olmuştur. Karamanoğulları baskısına karşı I. Murat döneminde Eğirdir, Yalvaç, Şarkikaraağaç, Akşehir ve Beyşehir 80.000 altın karşılığında parayla Osmanlı'ya satılmıştır. Kalan topraklar Yıldırım Bayezid tarafından alınmıştır."
+    },
+    {
+      "name": "Aydınoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          38.3,
+          27.8
+        ],
+        [
+          38.25,
+          28.55
+        ],
+        [
+          37.8,
+          28.5
+        ],
+        [
+          37.65,
+          27.5
+        ],
+        [
+          37.85,
+          27.25
+        ],
+        [
+          38.15,
+          27.35
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Ege / Aydın, Birgi, Tire, Selçuk (Ayasuluk)",
+      "color": "#06b6d4",
+      "promptTitle": "Aydın ve Birgi merkezli kurulan; Gazi Umur Bey komutasında Ege ve Akdeniz'de güçlü bir donanmayla Haçlılara kök söktüren denizci beylik haritada neresidir?",
+      "kpssNot": "Mehmet Bey tarafından Birgi merkezli kurulmuştur. En parlak dönemini Gazi Umur Bey zamanında yaşamışlardır. Umur Bey, Ege ve Balkan sahillerine düzenlediği başarılı deniz akınlarıyla bilinir. Selçuk İsa Bey Camii ve Birgi Ulu Camii önemli mimari şaheserleridir. II. Murat döneminde kesin olarak Osmanlı'ya bağlanmıştır."
+    },
+    {
+      "name": "Saruhanoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          39.0,
+          27.6
+        ],
+        [
+          38.9,
+          28.3
+        ],
+        [
+          38.45,
+          28.25
+        ],
+        [
+          38.35,
+          27.4
+        ],
+        [
+          38.6,
+          27.15
+        ],
+        [
+          38.9,
+          27.25
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Ege / Manisa, Gediz Havzası, Turgutlu, Akhisar",
+      "color": "#84cc16",
+      "promptTitle": "Gediz Havzası ve Manisa merkezli kurulan, Ege Denizi'nde korsanlık ve deniz akınları yapan, Manisa Ulu Camii'ni inşa eden beylik haritada neresidir?",
+      "kpssNot": "Saruhan Bey tarafından Manisa merkezli kurulmuştur. Gediz Ovası'na hakim olmuş ve denizcilikle uğraşarak Cenevizlilerle mücadele etmişlerdir. İshak Bey tarafından yaptırılan Manisa Ulu Camii ve Medresesi dönemin en önemli eseridir. I. Bayezid tarafından Osmanlı topraklarına katılmış, Çelebi Mehmet döneminde kesin hakimiyet sağlanmıştır."
+    },
+    {
+      "name": "Menteşeoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          37.45,
+          27.4
+        ],
+        [
+          37.5,
+          28.6
+        ],
+        [
+          37.1,
+          29.3
+        ],
+        [
+          36.65,
+          29.1
+        ],
+        [
+          36.7,
+          27.75
+        ],
+        [
+          37.05,
+          27.3
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Ege & Akdeniz / Muğla, Milas, Bodrum, Fethiye",
+      "color": "#6366f1",
+      "promptTitle": "Muğla, Milas ve Bodrum çevresinde kurulan; Rodos Şövalyeleri ve Venediklilere karşı deniz savaşları veren denizci beylik haritada neresidir?",
+      "kpssNot": "Menteşe Bey tarafından Muğla ve Milas merkezli kurulmuştur. 200 parçaya yakın donanmalarıyla Ege Denizi ve Doğu Akdeniz'de Rodos Şövalyeleri ve Venedik ile mücadele etmişlerdir. Milas Firuz Bey Camii ve Balat İlyas Bey Külliyesi önemli mimari miraslarıdır. II. Murat döneminde tamamen Osmanlı topraklarına katılmıştır."
+    },
+    {
+      "name": "Candaroğulları (İsfendiyaroğulları)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          42.05,
+          35.15
+        ],
+        [
+          41.7,
+          35.2
+        ],
+        [
+          41.2,
+          34.2
+        ],
+        [
+          41.2,
+          33.25
+        ],
+        [
+          41.8,
+          33.2
+        ],
+        [
+          41.95,
+          34.2
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Karadeniz / Kastamonu, Sinop, Küre, Çankırı",
+      "color": "#0891b2",
+      "promptTitle": "Kastamonu ve Sinop merkezli kurulan; Karadeniz'in en güçlü Türk tersanesine sahip olup 1461'de Fatih tarafından Osmanlı'ya katılan beylik haritada neresidir?",
+      "kpssNot": "Şemseddin Yaman Candar tarafından Kastamonu'da kurulmuş, daha sonra Sinop'u alarak denizcilikte büyük aşama kaydetmişlerdir. Sinop tersanesi ve Küre bakır madenleri beyliğe büyük ekonomik güç kazandırmıştır. 1461'de Fatih Sultan Mehmet, Trabzon seferi sırasında Sinop ve Kastamonu'yu alarak beyliğe son vermiştir."
+    },
+    {
+      "name": "Dulkadiroğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          38.4,
+          37.15
+        ],
+        [
+          38.25,
+          37.8
+        ],
+        [
+          37.55,
+          37.65
+        ],
+        [
+          37.3,
+          36.85
+        ],
+        [
+          37.6,
+          36.4
+        ],
+        [
+          38.2,
+          36.45
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Akdeniz & Doğu Anadolu / Kahramanmaraş, Elbistan, Malatya",
+      "color": "#f59e0b",
+      "promptTitle": "Maraş ve Elbistan merkezli kurulan; 1515 Turnadağ Savaşı ile Osmanlı'ya katılarak Anadolu Türk siyasi birliğini kesin olarak sağlayan SON beylik haritada neresidir?",
+      "kpssNot": "Zeyneddin Karaca Bey tarafından Elbistan merkezli kurulmuş, sonradan Maraş merkez olmuştur. Memlükler ile Osmanlı arasında tampon bir devlet olmuştur. 1515 yılında Yavuz Sultan Selim komutasındaki Osmanlı ordusu ile yapılan Turnadağ Savaşı'nda son hükümdarı Alaüddevle Bozkurt Bey yenilmiş; bu katılım ile Anadolu Türk siyasi birliği KESİN OLARAK tamamlanmıştır."
+    },
+    {
+      "name": "Ramazanoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          37.3,
+          35.1
+        ],
+        [
+          37.35,
+          36.05
+        ],
+        [
+          36.85,
+          36.1
+        ],
+        [
+          36.65,
+          35.5
+        ],
+        [
+          36.75,
+          34.8
+        ],
+        [
+          37.05,
+          34.8
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Akdeniz / Çukurova, Adana, Tarsus, Misis",
+      "color": "#b45309",
+      "promptTitle": "Çukurova (Adana ve Tarsus) yöresinde kurulan; Yavuz Sultan Selim'in Mısır Seferi ile Osmanlı'ya bağlanan ve en son vilayete dönüştürülen beylik haritada neresidir?",
+      "kpssNot": "Ramazan Bey tarafından Çukurova'da kurulmuştur. Oğuzların Üçok koluna mensup Yüreğir boyundandırlar. Yavuz Sultan Selim'in Memlük seferi sırasında Osmanlı hakimiyetini kabul etmişlerdir. 1608 yılında son bey Pir Mansur'un kendi isteğiyle çekilmesi üzerine doğrudan Osmanlı vilayeti haline gelmiştir. Adana Ulu Camii önemli eseridir."
+    },
+    {
+      "name": "Osmanoğulları (Osmanlı Beyliği)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          40.5,
+          29.7
+        ],
+        [
+          40.45,
+          30.4
+        ],
+        [
+          39.9,
+          30.45
+        ],
+        [
+          39.85,
+          29.8
+        ],
+        [
+          40.1,
+          29.45
+        ],
+        [
+          40.35,
+          29.5
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Marmara & Batı Karadeniz / Söğüt, Domaniç, Bilecik, Bursa",
+      "color": "#15803d",
+      "promptTitle": "Kayı boyu tarafından Söğüt ve Domaniç merkezli Bizans sınırında bir uç beyliği olarak kurulup zamanla 3 kıtaya hükmeden imparatorluğa dönüşen beylik haritada neresidir?",
+      "kpssNot": "Oğuzların Bozok kolunun Kayı boyuna mensupturlar. Ertuğrul Gazi önderliğinde Söğüt (kışlak) ve Domaniç (yayla) yöresine yerleştirilmişlerdir. 1299'da Osman Gazi önderliğinde bağımsızlığını ilan eden beylik; adaletli yönetimi, Gaza ve Cihat anlayışı, Ahilerin desteği (Şeyh Edebali) ve jeopolitik konumu sayesinde 600 yılı aşkın sürecek bir cihan imparatorluğuna dönüşmüştür."
+    },
+    {
+      "name": "Teke Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          37.1,
+          30.0
+        ],
+        [
+          37.15,
+          30.8
+        ],
+        [
+          36.8,
+          30.85
+        ],
+        [
+          36.3,
+          30.45
+        ],
+        [
+          36.3,
+          29.55
+        ],
+        [
+          36.85,
+          29.6
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Akdeniz / Antalya, Teke Yarımadası, Korkuteli, Elmalı",
+      "color": "#3b82f6",
+      "promptTitle": "Antalya ve Teke Yarımadası çevresinde kurulan; Yivli Minare Külliyesi ile şehri imar eden denizci Türk beyliği haritada neresidir?",
+      "kpssNot": "Hamitoğulları'nın Antalya şubesinden Yunus Bey tarafından bağımsızlaştırılmıştır. Teke Türkmenlerine dayanır. Antalya limanı sayesinde deniz ticareti ve korsanlıkla ilgilenmiş, Kıbrıs Krallığı ile savaşmışlardır. Yıldırım Bayezid devrinde Osmanlı'ya katılmış, II. Murat döneminde kesin olarak Osmanlı sancağı olmuştur."
+    },
+    {
+      "name": "Sahipataoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          39.05,
+          30.3
+        ],
+        [
+          39.0,
+          31.2
+        ],
+        [
+          38.55,
+          31.2
+        ],
+        [
+          38.45,
+          30.5
+        ],
+        [
+          38.65,
+          30.15
+        ],
+        [
+          38.9,
+          30.15
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Ege & İç Anadolu / Afyonkarahisar, Sandıklı, Bolvadin",
+      "color": "#be185d",
+      "promptTitle": "Selçuklu veziri Sahip Ata Fahreddin Ali'nin oğulları tarafından Afyonkarahisar merkezli kurulan 2. Dönem beyliği haritada neresidir?",
+      "kpssNot": "Anadolu Selçuklu veziriazamı Sahip Ata Fahreddin Ali'nin oğulları tarafından Afyonkarahisar (Karahisar-ı Sahip) merkezli kurulmuştur. UNESCO ahşap tavanlı ve direkli camiler miras serisinde yer alan Afyon Ulu Camii bu dönemin en seçkin mimari örneğidir. Germiyanoğulları tarafından yıkılmıştır."
+    },
+    {
+      "name": "Eretna Devleti (Kadı Burhaneddin)",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          39.7,
+          36.3
+        ],
+        [
+          39.6,
+          36.8
+        ],
+        [
+          38.8,
+          36.7
+        ],
+        [
+          38.6,
+          35.6
+        ],
+        [
+          38.8,
+          35.2
+        ],
+        [
+          39.4,
+          35.5
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "İç Anadolu / Sivas, Kayseri, Develi",
+      "color": "#64748b",
+      "promptTitle": "İlhanlı valisi Alaeddin Eretna ve ardından veziri Kadı Burhaneddin tarafından Sivas-Kayseri merkezli yönetilen devlet haritada neresidir?",
+      "kpssNot": "İlhanlıların Anadolu genel valisi olan Uygur kökenli Alaeddin Eretna tarafından kurulmuştur. Başkentleri Sivas ve Kayseri olmuştur. Eretna'nın ölümünden sonra veziri Kadı Burhaneddin Ahmet yönetimi ele geçirerek kendi adına devlet kurmuştur. Kadı Burhaneddin aynı zamanda divan edebiyatının önemli şairlerindendir. Akkoyunlular ile savaşırken hayatını kaybetmiştir."
+    },
+    {
+      "name": "Taceddinoğulları Beyliği",
+      "category": "ozel_cizimler",
+      "shapeType": "polygon",
+      "coordinates": [
+        [
+          41.3,
+          36.7
+        ],
+        [
+          41.25,
+          37.55
+        ],
+        [
+          40.75,
+          37.5
+        ],
+        [
+          40.65,
+          36.8
+        ],
+        [
+          40.9,
+          36.55
+        ]
+      ],
+      "type": "2. Dönem Anadolu Türk Beyliği",
+      "region": "Karadeniz / Canik Yöresi, Niksar, Çarşamba, Ordu",
+      "color": "#155e75",
+      "promptTitle": "Orta Karadeniz'de Canik beyliklerinden biri olan, Niksar ve Çarşamba havzasında hüküm süren Türk beyliği haritada neresidir?",
+      "kpssNot": "Taceddin Bey tarafından Niksar merkezli kurulmuş, Çarşamba ve Terme sahillerine kadar hakimiyetini genişletmiştir. Orta Karadeniz sahilindeki Canik beyliklerinin en önemlilerindendir. Kadı Burhaneddin ile mücadele etmişler, daha sonra I. Mehmet (Çelebi) döneminde Osmanlı hakimiyetine girmişlerdir."
+    }
+  ]
+}
