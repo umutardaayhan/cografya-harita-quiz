@@ -116,7 +116,8 @@ değil). Rastgele kategori seçen oyun modları (ör. Kör Atış) böylece boş
 | `data/cografya_data.js` | Boş çalışma zamanı kapları + Türkçe-güvenli `trLower`/`trUpper`. |
 | `js/pack_manager.js` | DLC motoru: kurulum, kademe, kaldırma, projeksiyon, mod kilitleri + `GeoScope` kapsam çözücü. |
 | `js/pack_edits.js` | Düzenleme katmanı: kullanıcının sildiği/değiştirdiği/eklediği kayıtlar. Kaynak paket dosyası değişmez. |
-| `js/globe_view.js` | 🌍 Küre görünümü: MapLibre GL v5 globe projeksiyonu (ikinci render motoru). |
+| `js/globe_view.js` | 🌍 Küre görünümü: MapLibre GL v5 globe projeksiyonu (ikinci render motoru) + Ultra Gerçekçi Mod. |
+| `js/solar.js` | ☀️ Güneş konumu ve gece-gündüz sınırı (terminatör) matematiği. Node'dan da çalışır; birim testi var. |
 | `js/pack_store_ui.js` | Rehber ekranı + mağaza arayüzü. |
 | `js/i18n.js` | Çift katmanlı dil motoru. |
 | `locales/tr.js`, `locales/en.js` | Arayüz metin sözlükleri. |
@@ -539,6 +540,57 @@ bir seçenek** olarak girer — `js/globe_view.js`.
 | Pin ve markup TEK kaynak | Pinler `GeographyMap.getCustomCategoryIcon()` ve `GeographyMap.buildChoicePin()` çıktısını aynen kullanır. Cevap renklendirmesi (`highlightMultiChoiceAnswer`) ve rozet durumları (`applyChoicePinStates`) katman nesnesi değil **DOM sorgusu** kullandığı için küre pinlerinde de ek kod olmadan çalışır. |
 | Tıklama köprüsü | Küre tıklaması Leaflet haritasında sentetik `click` tetikler; Kör Atış ve Koordinat Avcısı dinleyicileri app.js'te tek yerde durduğu için oyun motorlarına dokunulmadı. |
 | Desteklenmeyeni reddetme | Bağlı grup şekilleri (`isGroup`) küre tarafında yok: `false` döner ve `GeographyMap` o an düz haritaya iner. Sessizce eksik çizmekten iyidir. |
+
+### ☀️ Ultra Gerçekçi Mod
+
+Küre açıkken devreye giren üç katmanlı bir gerçeklik paketi
+(`js/solar.js` + `js/globe_view.js`):
+
+1. **Gece-gündüz sınırı (terminatör).** Güneşin O ANDA dik vurduğu nokta
+   hesaplanır; gece yarımküresi ile üç alacakaranlık kuşağı (sivil −6°, deniz
+   −12°, astronomik −18°) ayrı dolgular olarak üst üste binerek yumuşak bir
+   geçiş üretir. Sınıra sıcak renkli, bulanık bir çizgi eklenir: şafak/akşam.
+   Dakikada bir tazelenir (terminatör 0,25°/dk kayar).
+2. **Yıldız alanı.** Kabın arkasına tuvalle çizilir. Tohumlu rastgele üretici
+   kullanılır: pencere boyutu değişince yıldızlar YER DEĞİŞTİRMEZ.
+3. **Güneş.** Dik nokta görünen yüzdeyse güneş kameranın ARKASINDADIR — disk
+   çizmek yanlış olur, o noktaya yumuşak bir parlama konur. Arka yüzdeyse küre
+   güneşi gizler; disk, dik noktanın kerterizi yönünde silüetin hemen dışında
+   doğar.
+
+**Güneş matematiği neden ayrı dosyada?** `js/mutlak_konum.js` içindeki güneş
+yardımcıları müfredat için bilinçli olarak sadeleştirilmiştir (21 Haziran →
+sabit 23,45°, yalnızca öğle açısı). Gerçek zamanlı terminatör için tarihe bağlı
+deklinasyon, merkez denklemi düzeltmesi ve Greenwich saat açısı gerekiyor;
+karıştırmak yerine `js/solar.js` ayrıldı, oradaki öğretici basitlik bozulmadı.
+
+`js/solar.js` node'dan da çalışır ve birim testi vardır. Ölçülen değerler:
+deklinasyon gündönümlerinde 0,005° sapma, saatlik dönüş 14,998°/saat, dik
+noktada güneş yüksekliği 90,0000° ve **terminatör sınırındaki her noktada
+hedef yükseklikten sapma 0,0000°** (0°, −6°, −12°, −18° için ayrı ayrı).
+
+Modun görsel etkisi de ölçüldü (kürenin diskinde ortalama parlaklık, 0-255):
+
+| Kamera | Merkez | Sol çeyrek | Sağ çeyrek |
+| :--- | :--- | :--- | :--- |
+| Dik noktada (tam gündüz) | 44,9 | 44,5 | 44,4 |
+| 90° doğuda (sınır diskten geçiyor) | 42,1 | 44,9 | **12,4** |
+| Antipodda (tam gece) | 11,5 | 11,7 | 11,7 |
+
+**Yol boyunca düzeltilen üç hata:**
+
+1. `map.isStyleLoaded()` katman eklemek için YANLIŞ ölçüt: o bayrak tüm
+   kaynakların döşemelerinin yüklenmesini de bekliyor, küre ölçeğinde uzun süre
+   `false` kalıyor ve mod kurulumunu sonsuza erteliyordu → `style.load`
+   olayıyla tutulan kendi hazırlık bayrağı.
+2. Küre PERSPEKTİF kamerayla çiziliyor: silüet yarıçapı `512·2^z/(2π)`
+   formülünden %10,8 sapıyor (163 px yerine 145 px) ve `map.project()` arka
+   yüzdeki noktayı antipodda tam MERKEZE düşürüyor. "Merkeze uzaklık" testi bu
+   yüzden güneşi yanlış tarafa koyuyordu → gizlilik `isLocationOccluded()` ile,
+   yarıçap gizlilik sınırında ikili aramayla ÖLÇÜLÜYOR (dört yönde fark 0 px).
+3. Güneşin gradyanı kutu kenarında %7 saydamlıkta kesilip çevresinde KARE bir
+   kenar bırakıyordu → `radial-gradient(circle closest-side, …)` ile gradyan
+   kutunun iç teğet dairesinde sıfıra iniyor.
 
 **Küre ile uyumlu modlar:** Keşif Modu, standart test, Şimşek Turu, Genel
 Deneme, Kör Atış. Diğer modlara girerken `requireFlatView()` devreye girer ve

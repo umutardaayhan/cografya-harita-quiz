@@ -604,6 +604,63 @@ body {
    #map'in ustu kapali olsa da ekran okuyucu/odak sirasina girmemeleri icin. */
 body.globe-active #map .leaflet-control-container { display: none; }
 
+/* =========================================================================
+   ULTRA GERCEKCI MOD: yildiz alani + gunes
+   Gokyuzu MapLibre tuvalinin ARKASINDA durur (kap icinde ilk cocuk):
+   gezegenin arkasindaki uzay, onundeki degil.
+   ========================================================================= */
+.globe-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+#globe .maplibregl-canvas-container,
+#globe .maplibregl-control-container { position: relative; z-index: 1; }
+
+.globe-stars { position: absolute; inset: 0; display: block; }
+
+/* Gunes: kurenin kenarinda disk + korona. `on-globe` durumunda (dik nokta
+   goruen yuzde, yani gunes kameranin arkasinda) disk yerine yumusak parlama. */
+/* `closest-side`: gradyan kutunun IC TEYET DAIRESINDE sifira iner.
+   Varsayilan `farthest-corner` ile son gorunur durak kutu kenarinda ~%7
+   saydamlikta kesiliyordu ve gunesin cevresinde KARE bir kenar olusuyordu
+   (ekran goruntusunde olculdu). */
+.globe-sun {
+  position: absolute;
+  display: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle closest-side,
+      rgba(255, 253, 245, 1) 0%,
+      rgba(255, 249, 224, 0.98) 7%,
+      rgba(255, 232, 165, 0.80) 14%,
+      rgba(255, 200, 105, 0.42) 26%,
+      rgba(255, 170, 70, 0.18) 42%,
+      rgba(255, 150, 60, 0.06) 62%,
+      rgba(255, 140, 50, 0) 100%);
+  animation: globe-sun-nabiz 7s ease-in-out infinite;
+}
+.globe-sun.on-globe {
+  /* Dik nokta bize bakiyor: gunes diski cizilmez, yuzeyde parlama olur */
+  background:
+    radial-gradient(circle closest-side,
+      rgba(255, 255, 245, 0.26) 0%,
+      rgba(255, 240, 200, 0.14) 32%,
+      rgba(255, 220, 160, 0.04) 62%,
+      rgba(255, 210, 150, 0) 100%);
+  mix-blend-mode: screen;
+  animation: none;
+}
+@keyframes globe-sun-nabiz {
+  0%, 100% { opacity: 0.92; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.035); }
+}
+
+/* Ultra mod acikken atif ve kontroller gokyuzunun ustunde kalsin */
+body.globe-ultra #globe .maplibregl-ctrl-group { box-shadow: 0 0 0 1px rgba(120,150,200,.25); }
+
 /* Kure atif kutusu koyu zeminde okunabilir olsun */
 #globe .maplibregl-ctrl-attrib {
   background: rgba(5, 9, 20, 0.7);
