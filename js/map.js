@@ -222,36 +222,53 @@ class GeographyMap {
 
   initLayerConfigs() {
     const keyParam = this.cartoApiKey ? `?key=${this.cartoApiKey}` : '';
+
+    /**
+     * TEK DÜNYA KURALI (`noWrap`).
+     *
+     * Varsayılan Leaflet davranışı, Dünya ekrandan daha darken (geniş ekranda
+     * zoom 2'de dünya 1024 px, ekran 1600 px) sağa-sola KOPYA döşer. Kopyalarda
+     * işaretçiler çizilmediği için kullanıcı "boş ikinci Dünya"ya sürüklüyordu.
+     * `noWrap` ile tek bir Dünya kalır; çevresi uzay boşluğudur (arka plan
+     * `#map` üzerinde CSS ile verildi). `bounds` da aralık dışı boş döşeme
+     * isteklerini kesip ağ gürültüsünü azaltır.
+     */
+    const tekDunya = {
+      noWrap: true,
+      bounds: [[-85.06, -180], [85.06, 180]]
+    };
+    const ortak = (ekstra) => Object.assign({ maxZoom: 19, minZoom: 0 }, tekDunya, ekstra);
+
     this.layerConfigs = {
       voyager: {
         name: 'Sade / Renkli (CARTO)',
         withLabels: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${keyParam}`,
         noLabels: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png${keyParam}`,
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
+        options: ortak({ attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd' })
       },
       topo: {
         name: 'Fiziki / Topografik',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri, CGIAR, USGS, NPS', maxZoom: 19, minZoom: 2 }
+        options: ortak({ attribution: '&copy; Esri, CGIAR, USGS, NPS' })
       },
       satellite: {
         name: 'Gerçek Uydu',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri, Maxar, Earthstar Geographics', maxZoom: 19, minZoom: 2 }
+        options: ortak({ attribution: '&copy; Esri, Maxar, Earthstar Geographics' })
       },
       dark: {
         name: 'Gece / Kontrast (CARTO)',
         withLabels: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png${keyParam}`,
         noLabels: `https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png${keyParam}`,
-        options: { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19, minZoom: 2 }
+        options: ortak({ attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd' })
       },
       terrain: {
         name: 'Kabartı / Arazi',
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
-        options: { attribution: '&copy; Esri &copy; USGS, NOAA', maxZoom: 19, minZoom: 2 }
+        options: ortak({ attribution: '&copy; Esri &copy; USGS, NOAA' })
       }
     };
   }
@@ -369,19 +386,37 @@ class GeographyMap {
   }
 
   initMap() {
-    // Türkiye merkezli harita başlatma
-    // Harita Turkiye'ye kilitli degildir: tum dunya gezilebilir.
-    // maxBounds yalnizca kutuplarin otesine surukleyip haritayi kaybetmeyi
-    // engelleyen yumusak bir siniridir (viscosity 0 = surukleme sirasinda direnc yok).
+    /**
+     * KAYDIRMA & ZOOM SINIRLARI
+     *
+     * Eski ayar (`maxBounds ±240`, `minZoom 2`, `zoomSnap 1`) dünya ölçeğinde
+     * üç ayrı UX sorunu üretiyordu — ölçüldü:
+     *
+     *  1. 3000 px doğuya sürükleme merkezi yalnızca +26,8° oynatıp GERİ SEKİYORDU.
+     *     Sebep: ±240° hayalet bir kaydırma alanı tanımlıyordu; Dünya ekrandan
+     *     darken Leaflet merkezi yine de sınıra çakıyor, sürükleme "ölüyordu".
+     *  2. Geniş ekranda Dünya'nın yanında KOPYALARI görünüyordu (işaretçisiz,
+     *     boş). Artık döşemeler `noWrap` (bkz. initLayerConfigs) ve çevresi uzay.
+     *  3. `zoomSnap: 1` kesirli zoom'u yasaklıyordu: 2 → 3 sıçraması, ayrıca
+     *     kapsam ev görünümlerinin ara zoom'ları (6.4) tekerlekte bozuluyordu.
+     *
+     * Yeni kural: sınır TAM OLARAK Dünya'nın kendisidir (±180 / ±85). Merkez
+     * Dünya'nın dışına çıkamaz, yani gezegen ekrandan kaçmaz; içeride kaydırma
+     * hiçbir yerde direnç göstermez. Zoom tabanı 1'e indi (tüm Dünya küçük
+     * ekranlarda da tek karede), kesirli zoom açık.
+     */
     this.map = L.map(this.containerId, {
       // Açılış görünümü de kapsamdan gelir: uygulama dünya paketleriyle
       // açıldığında ilk kare Türkiye'ye çakılı kalmasın.
       center: this.homeView.center,
       zoom: this.homeView.zoom,
-      minZoom: 2,
+      minZoom: 1,
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 90,
       maxBounds: [
-        [-85.0, -240.0],
-        [85.0, 240.0]
+        [-85.06, -180.0],
+        [85.06, 180.0]
       ],
       maxBoundsViscosity: 0.0,
       zoomControl: false

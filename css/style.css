@@ -529,12 +529,33 @@ body {
 }
 
 /* --- HARİTA ALANI --- */
+/* Doseme katmani artik `noWrap` (bkz. js/map.js → initLayerConfigs): dunyanin
+   yaninda kopyasi degil UZAY BOSLUGU durur. Duz gri bir zemin bunu "eksik
+   harita" gibi gosteriyordu; derin uzay gradyani ise tek gezegeni kasitli bir
+   tasarim olarak okutur. Dunya olceginde disari kaydirildiginda goruntu
+   bozulmaz, gezegen kenarda yuzer. */
 #map {
   flex: 1;
   width: 100vw;
   height: 100vh;
   z-index: 1;
-  background-color: #1e293b;
+  background-color: #050914;
+  background-image:
+    radial-gradient(1px 1px at 18% 28%, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 73% 16%, rgba(255, 255, 255, 0.40) 50%, transparent 51%),
+    radial-gradient(1px 1px at 41% 72%, rgba(255, 255, 255, 0.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 61%, rgba(255, 255, 255, 0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 9% 84%, rgba(255, 255, 255, 0.30) 50%, transparent 51%),
+    radial-gradient(1px 1px at 57% 43%, rgba(255, 255, 255, 0.28) 50%, transparent 51%),
+    radial-gradient(120% 120% at 50% 50%, #0b1224 0%, #050914 55%, #01030a 100%);
+  background-size: 320px 320px, 420px 420px, 260px 260px, 500px 500px, 380px 380px, 340px 340px, 100% 100%;
+}
+
+/* Leaflet kendi kabina opak bir zemin basar; uzay arka plani gorunsun diye
+   seffaflastirilir (doseme goruntuleri bundan etkilenmez). */
+#map.leaflet-container,
+#map .leaflet-pane {
+  background: transparent;
 }
 
 /* --- SOL ALT HARİTA & QUIZ ARAÇLARI (KOMPAKT KART & SCROLL DÜZENİ) --- */
