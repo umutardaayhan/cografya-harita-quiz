@@ -554,6 +554,25 @@ class GeographyMap {
     return !!(this.globe && this.globe.active);
   }
 
+  /** ☀️ Ultra Gerçekçi Mod açık mı? (küre kapalıyken de tercih hatırlanır) */
+  get ultraRealistic() {
+    return !!(this.globe && this.globe.ultra);
+  }
+
+  /**
+   * Ultra Gerçekçi Mod'u açar/kapatır. Mod KÜRE gerektirir: açılırken küre
+   * görünümü kapalıysa onu da açar, böylece kullanıcı tek düğmeyle
+   * "gezegeni gerçek ışığıyla gör" diyebilir.
+   *
+   * @returns {boolean} modun yeni durumu
+   */
+  setUltraRealistic(acik) {
+    if (!this.globe) return false;
+    this.globe.setUltraRealistic(acik);
+    if (acik && !this.globeActive) this.setLayer('globe');
+    return this.globe.ultra;
+  }
+
   /**
    * Küre ile UYUMSUZ modlar (çizim editörü, harita boyama, oluşum alıştırması,
    * matematiksel konum ızgaraları, hafıza kodu damgaları) doğrudan Leaflet

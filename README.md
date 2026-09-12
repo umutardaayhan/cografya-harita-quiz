@@ -65,6 +65,10 @@ Paketler ülke ülke değil **konu konu** bölünmüştür — 8 paket / 207 kay
   halkası ve yıldızlı uzay zemini ile. Mercator şişmesi yoktur; yaklaştıkça otomatik
   olarak düz haritaya geçer. Pinler, hatlar, şık işaretçileri, bilgi balonları ve
   Kör Atış tıklaması küre üzerinde de çalışır.
+- **☀️ Ultra Gerçekçi Mod:** Gezegeni o anki gerçek ışığıyla gösterir — güneşin
+  dik vurduğu yüz aydınlık, geri kalanı karanlık. Gece-gündüz sınırı (terminatör)
+  gerçek zamanlı hesaplanır, üç alacakaranlık kuşağıyla yumuşatılır; şafak çizgisi,
+  yıldız alanı ve kürenin kenarından doğan güneş eklenir. Dakikada bir tazelenir.
 - **Sınırsız gezinme:** Kaydırma duvarı kaldırıldı (eskiden 3000 px sürükleme 26°
   sonra geri sekiyordu), kesirli zoom açıldı ve dünyanın yanındaki boş kopyalar
   yerine uzay boşluğu geldi.
@@ -158,7 +162,8 @@ Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her
 │   └── packs/pack.world.*.js      # 🌍 Dünya DLC paketleri (lazy yüklenir)
 ├── js/
 │   ├── pack_manager.js            # DLC motoru + GeoScope (kapsam: ev görünümü & ölçek)
-│   ├── globe_view.js              # 🌍 Küre görünümü (MapLibre GL v5 globe projeksiyonu)
+│   ├── globe_view.js              # 🌍 Küre görünümü + ☀️ Ultra Gerçekçi Mod
+│   ├── solar.js                   # ☀️ Güneş konumu & gece-gündüz sınırı (birim testli)
 │   ├── pack_store_ui.js           # Rehber ekranı + paket mağazası
 │   ├── i18n.js                    # Çift katmanlı dil motoru
 │   ├── map.js  quiz.js  app.js    # Harita, adaptif soru motoru, akış
@@ -262,6 +267,7 @@ While initially tailored for Turkish physical and human geography (KPSS / YKS na
 - 🧠 **Mnemonic Lab:** 68 Turkish memory codes (68 stories, 272 metaphor links, 190 map stops) drilled six ways — pair matching, cloze, chain ordering, intruder hunt, reverse decoding and map stamping. Solved stories are re-rendered and pinned on the map; four codes literally draw their letters (M+A, V, R) across Türkiye.
 - 🛠️ **Custom Vector Drawing Studio:** Draw points, polylines, and polygons on the live map with JSON Export/Import and AI/NotebookLM clipboard pasting.
 - 🌍 **Globe View:** A sixth base-map option renders the Earth as an actual sphere (MapLibre GL v5 globe projection) with satellite imagery, an atmosphere ring and a starfield backdrop — no Mercator distortion, and it eases back into a flat map as you zoom in. Pins, lines, answer markers, popups and blind-shot clicks all work on the globe; the library is lazy-loaded only when you open the view.
+- ☀️ **Ultra Realistic Mode:** Lights the planet with the real, current sun — the sub-solar hemisphere bright, the rest in darkness. The day/night terminator is computed live (verified to 0.0000° against an independent solar-elevation check), softened by three twilight bands, and completed with a dawn line, a star field and the sun rising over the limb.
 - 🔇 **Mute / Blind Map Mode:** Toggle labels off for true blind exam simulations.
 - 🧭 **Mathematical Location Lab:** Sun angle, local time differentials, shadow length, and daylight calculations.
 - 📱 **Modern Glassmorphic UI:** Fast, zero-dependency, dark-mode design with draggable panels, responsive layout and keyboard accessibility.

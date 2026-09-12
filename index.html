@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Uygulama Stili -->
-  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/style.css?v=10">
   <link rel="stylesheet" href="css/packs.css?v=2">
 </head>
 <body>
@@ -321,6 +321,11 @@
         <!-- Otomatik Yakınlaştırma (Auto-Zoom) Aç/Kapa Butonu -->
         <button id="auto-zoom-btn" class="tool-btn active" title="Sorularda Haritanın Otomatik Yakınlaşmasını Açar/Kapatır">
           <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak</span>
+        </button>
+
+        <!-- ☀️ Ultra Gerçekçi Mod: küre + gece/gündüz sınırı + yıldızlar & güneş -->
+        <button id="ultra-real-btn" class="tool-btn" title="Ultra Gerçekçi Mod: gerçek zamanlı gece-gündüz sınırı, yıldız alanı ve güneş (küre görünümünü açar)">
+          <span>🌞</span> <span id="ultra-real-label">Ultra Gerçekçi</span>
         </button>
 
         <!-- Dilsiz Harita (Yazısız / İsimsiz Mod) Butonu -->
@@ -1285,9 +1290,10 @@
   <script src="js/hafiza_kodu.js?v=5"></script>
   <script src="js/panel_manager.js?v=2"></script>
   <script src="js/study_plan.js?v=2"></script>
-  <script src="js/globe_view.js?v=1"></script>
-  <script src="js/map.js?v=12"></script>
+  <script src="js/solar.js?v=1"></script>
+  <script src="js/globe_view.js?v=2"></script>
+  <script src="js/map.js?v=13"></script>
   <script src="js/quiz.js?v=6"></script>
-  <script src="js/app.js?v=20"></script>
+  <script src="js/app.js?v=21"></script>
 </body>
 </html>
