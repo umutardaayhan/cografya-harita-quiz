@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Uygulama Stili -->
-  <link rel="stylesheet" href="css/style.css?v=7">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <link rel="stylesheet" href="css/packs.css?v=2">
 </head>
 <body>
@@ -293,6 +293,11 @@
   <!-- Harita Alanı -->
   <div id="map"></div>
 
+  <!-- 🌍 Küre Görünümü (ikinci render motoru — bkz. js/globe_view.js).
+       Leaflet SÖKÜLMEZ, bu kap onun üstünü kaplar: küreden çıkınca uygulama
+       hiçbir durumu kaybetmeden düz haritaya döner. -->
+  <div id="globe" style="display:none"></div>
+
   <!-- Sol Alt Harita & Quiz Araçları (Kompakt 2 Satırlı Blok) -->
   <div id="map-controls-left" class="map-controls-left">
     <button id="controls-toggle-btn" class="panel-minimize-btn left-controls-min-btn" title="Kontrolleri Küçült / Aç"><span>◀</span></button>
@@ -309,6 +314,7 @@
             <button class="layer-option-btn" data-layer="satellite">🛰️ Gerçek Uydu</button>
             <button class="layer-option-btn" data-layer="dark">🌙 Gece / Karanlık</button>
             <button class="layer-option-btn" data-layer="terrain">🏔️ Kabartı / Arazi</button>
+            <button class="layer-option-btn" data-layer="globe">🌍 Küre / Gezegen</button>
           </div>
         </div>
 
@@ -1259,7 +1265,7 @@
   <script src="data/hafiza_kodlari.js?v=1"></script>
 
   <!-- 2) Paket kataloğu + i18n çekirdeği + dil sözlükleri -->
-  <script src="data/packs/catalog.js?v=3"></script>
+  <script src="data/packs/catalog.js?v=4"></script>
   <script src="js/i18n.js?v=2"></script>
   <script src="locales/tr.js?v=3"></script>
   <script src="locales/en.js?v=3"></script>
@@ -1279,8 +1285,9 @@
   <script src="js/hafiza_kodu.js?v=5"></script>
   <script src="js/panel_manager.js?v=2"></script>
   <script src="js/study_plan.js?v=2"></script>
-  <script src="js/map.js?v=10"></script>
+  <script src="js/globe_view.js?v=1"></script>
+  <script src="js/map.js?v=12"></script>
   <script src="js/quiz.js?v=6"></script>
-  <script src="js/app.js?v=19"></script>
+  <script src="js/app.js?v=20"></script>
 </body>
 </html>
