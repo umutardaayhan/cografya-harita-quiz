@@ -56,6 +56,7 @@ GeoI18n.register('en', {
   'group.fiziki': 'Physical',
   'group.beseri': 'Human',
   'group.ekonomik': 'Economic',
+  'group.dunya': 'World',
   'group.modul': 'Modules',
 
   // --- Tiers ---

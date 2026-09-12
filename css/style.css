@@ -1976,6 +1976,16 @@ body.focus-mode .pm-bar { display: none; }
 .topic-badge.topic-turizm        { background: #ca8a04; }
 .topic-badge.topic-ulasim        { background: #2563eb; }
 
+/* 🌐 Dunya modulu kategorileri */
+.topic-badge.topic-dunya_daglari     { background: #b45309; }
+.topic-badge.topic-dunya_sulari      { background: #1d4ed8; }
+.topic-badge.topic-dunya_okyanuslari { background: #0e7490; }
+.topic-badge.topic-dunya_denizleri   { background: #0891b2; }
+.topic-badge.topic-dunya_bogazlari   { background: #7c3aed; }
+.topic-badge.topic-dunya_ulkeleri    { background: #db2777; }
+.topic-badge.topic-dunya_harikalari  { background: #d97706; }
+.topic-badge.topic-dunya_yapilari    { background: #475569; }
+
 /* 🌊 Gol daireleri: buyuklukle orantili, mavi.
    Soru vurgusundaki daire nabiz gibi atarak dikkat ceker. */
 .lake-circle {

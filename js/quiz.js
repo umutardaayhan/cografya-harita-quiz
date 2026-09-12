@@ -55,6 +55,15 @@ const QUESTION_STEMS = {
     bolgeler:    { text: 'Haritada işaretli coğrafi bölge / bölüm hangisidir?',       title: 'BÖLGE SORUSU' },
     dis_kuvvetler: { text: 'Haritada işaretli yer şekli hangisidir?',                  title: 'YER ŞEKLİ' },
     sehirler:    { text: 'Haritada işaretli il hangisidir?',                          title: 'İL SORUSU' },
+    // 🌐 Dünya modülü
+    dunya_daglari:     { text: 'Haritada işaretli dağ kuşağı hangisidir?',            title: 'DÜNYA DAĞI' },
+    dunya_sulari:      { text: 'Haritada işaretli su kütlesi hangisidir?',            title: 'DÜNYA SUYU' },
+    dunya_okyanuslari: { text: 'Haritada işaretli okyanus / deniz tabanı yapısı hangisidir?', title: 'OKYANUS SORUSU' },
+    dunya_denizleri:   { text: 'Haritada işaretli deniz / körfez hangisidir?',        title: 'DENİZ SORUSU' },
+    dunya_bogazlari:   { text: 'Haritada işaretli boğaz / kanal hangisidir?',         title: 'BOĞAZ SORUSU' },
+    dunya_ulkeleri:    { text: 'Haritada işaretli ülke / kıta hangisidir?',           title: 'ÜLKE SORUSU' },
+    dunya_harikalari:  { text: 'Haritada işaretli harika hangisidir?',                title: 'DÜNYA HARİKASI' },
+    dunya_yapilari:    { text: 'Haritada işaretli yapı hangisidir?',                  title: 'YAPI SORUSU' },
     _:           { text: 'Haritada işaretli alan / plato hangisidir?',                title: 'ALAN SORUSU' }
   },
   // ÇİZGİ (polyline) soruları. Eskiden tek bir "akarsu / hat" cümlesi vardı:
@@ -68,6 +77,13 @@ const QUESTION_STEMS = {
     afet:          { text: 'Haritada işaretli afet kuşağı / riskli hat hangisidir?',   title: 'AFET KUŞAĞI' },
     ulasim:        { text: 'Haritada işaretli ulaşım hattı hangisidir?',                title: 'ULAŞIM HATTI' },
     dis_kuvvetler: { text: 'Haritada işaretli yer şekli hangisidir?',                    title: 'YER ŞEKLİ' },
+    // 🌐 Dünya modülü
+    dunya_daglari:     { text: 'Haritada işaretli sıradağ sistemi hangisidir?',          title: 'SIRADAĞ SORUSU' },
+    dunya_sulari:      { text: 'Haritada işaretli nehir hangisidir?',                    title: 'DÜNYA NEHRİ' },
+    dunya_okyanuslari: { text: 'Haritada işaretli okyanus akıntısı / sırt hangisidir?',  title: 'AKINTI & SIRT' },
+    dunya_bogazlari:   { text: 'Haritada işaretli boğaz / kanal hangisidir?',            title: 'BOĞAZ SORUSU' },
+    dunya_harikalari:  { text: 'Haritada işaretli harika hangisidir?',                   title: 'DÜNYA HARİKASI' },
+    dunya_yapilari:    { text: 'Haritada işaretli yapı / hat hangisidir?',               title: 'YAPI SORUSU' },
     _:             { text: 'Haritada işaretli akarsu / hat hangisidir?',               title: 'HAT SORUSU' }
   },
   point: {
@@ -94,6 +110,15 @@ const QUESTION_STEMS = {
     toprak:           { text: 'Haritada işaretli toprak tipi sahası hangisidir?',        title: 'TOPRAK SAHASI' },
     fay:              { text: 'Haritada işaretli fay / tektonik yapı hangisidir?',        title: 'TEKTONİK YAPI' },
     iklim:            { text: 'Haritada işaretli iklim / uç değer sahası hangisidir?',    title: 'İKLİM SAHASI' },
+    // 🌐 Dünya modülü
+    dunya_daglari:     { text: 'Haritada işaretli dağ / volkan hangisidir?',              title: 'DÜNYA DAĞI' },
+    dunya_sulari:      { text: 'Haritada işaretli göl / şelale hangisidir?',              title: 'DÜNYA SUYU' },
+    dunya_okyanuslari: { text: 'Haritada işaretli okyanus / deniz çukuru hangisidir?',    title: 'OKYANUS SORUSU' },
+    dunya_denizleri:   { text: 'Haritada işaretli deniz / körfez hangisidir?',            title: 'DENİZ SORUSU' },
+    dunya_bogazlari:   { text: 'Haritada işaretli boğaz / kanal hangisidir?',             title: 'BOĞAZ SORUSU' },
+    dunya_ulkeleri:    { text: 'Haritada işaretli başkent / ülke hangisidir?',            title: 'ÜLKE SORUSU' },
+    dunya_harikalari:  { text: 'Haritada işaretli dünya harikası hangisidir?',            title: 'DÜNYA HARİKASI' },
+    dunya_yapilari:    { text: 'Haritada işaretli yapı / anıt hangisidir?',               title: 'YAPI SORUSU' },
     _:                { text: 'Haritada işaretli coğrafi konum / merkez hangisidir?',   title: 'KONUM SORUSU' }
   }
 };

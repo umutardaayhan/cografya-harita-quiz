@@ -405,6 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
     activeCategory = categoryKey;
     localStorage.setItem(AKTIF_KATEGORI_KEY, categoryKey);
     geoQuiz.setCategory(categoryKey);
+    // Konu değişimi kapsam değişimi de olabilir (Dağlar → Okyanuslar): ev
+    // görünümü yeni konunun ölçeğine çekilir.
+    applyScopeView();
 
     document.querySelectorAll('.category-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.category === categoryKey);
@@ -865,6 +868,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Karıştır ve en fazla 18 soru seç
     examQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 18);
 
+    // Deneme kapsamı dünya kayıtları içeriyorsa ev görünümü de dünyaya açılır
+    if (typeof GeoScope !== 'undefined' && geoMap.setHomeView) {
+      geoMap.setHomeView(GeoScope.viewForItems(examQuestions));
+    }
+
     if (examInterval) clearInterval(examInterval);
     examInterval = setInterval(() => {
       examSeconds++;
@@ -1010,6 +1018,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       geoQuiz.setCustomPool(buildGlobalQuizPool());
     }
+    applyScopeView();
 
     if (speedrunInterval) clearInterval(speedrunInterval);
     speedrunInterval = setInterval(() => {
@@ -1640,6 +1649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     geoQuiz.setCustomPool(pool);
+    applyScopeView();       // `conquerorGame.start` resetView çağırıyor: kapsam önce yazılmalı
 
     const status = conquerorGame.start(pool);
     updateConquerorUI(status);
@@ -3499,6 +3509,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   resetViewBtn.addEventListener('click', () => {
+    applyScopeView();       // kapsam değişmiş olabilir (dünya ↔ Türkiye)
     geoMap.resetView();
   });
 
@@ -4915,6 +4926,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }, true);   // YAKALAMA fazı: mod başlatıcılarından önce çalışır
   }
 
+  /**
+   * 🌐 Haritanın EV GÖRÜNÜMÜNÜ (kapsam) o an çalışılan havuza göre ayarlar.
+   *
+   * Ev görünümü eskiden Türkiye'ye sabitlenmişti; dünya paketleri eklendikten
+   * sonra "Görünümü Sıfırla", Keşif Modu ve oyun turları dünya kayıtlarında
+   * kamerayı Türkiye'de bırakıyordu. Kapsam kararı tek kaynaktan gelir:
+   * kurulu paketin ülkesi (`GeoScope`). Bir oyun kapsamı (custom pool) aktifse
+   * o havuz, değilse seçili konu sekmesi belirleyicidir.
+   */
+  function applyScopeView() {
+    if (typeof GeoScope === 'undefined' || !geoMap || !geoMap.setHomeView) return false;
+    const havuz = (geoQuiz && Array.isArray(geoQuiz.customPool) && geoQuiz.customPool.length)
+      ? geoQuiz.customPool
+      : null;
+    const view = havuz
+      ? GeoScope.viewForItems(havuz)
+      : GeoScope.viewForCategory(activeCategory);
+    return geoMap.setHomeView(view);
+  }
+
   /** Aktif sekme kaldırılan bir pakete aitse ilk geçerli kategoriye kay */
   function ensureValidCategory() {
     if (!CATEGORIES.length) return;                 // hiç paket yok: mağaza zaten açılacak
@@ -4933,6 +4964,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Paket kurulunca/kaldırılınca tüm türetilmiş arayüz tazelenir
   document.addEventListener('packs:changed', () => {
     ensureValidCategory();
+    applyScopeView();       // yeni kurulan/kaldırılan paket kapsamı değiştirebilir
     renderCategories();
     refreshModeLocks();
     syncLayerButtons();     // kayıtlı taban harita düğmelerde de işaretli olsun
@@ -4956,6 +4988,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Kullanıcı tüm paketlerini kaldırdıysa boş bir haritaya değil, mağazaya döner
     if (packManager.isEmpty()) { packStore.openStore(afterPacksReady); return; }
     ensureValidCategory();
+    applyScopeView();
     renderCategories();
     refreshModeLocks();
     syncLayerButtons();     // kayıtlı taban harita düğmelerde de işaretli olsun
@@ -5248,6 +5281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     prepareStandardQuiz();
 
     geoQuiz.setCustomPool(selectedItems, false);
+    applyScopeView();
 
     if (customPoolBanner) {
       customPoolBanner.style.display = 'flex';
@@ -5261,6 +5295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     geoQuiz.clearCustomPool();
     if (customPoolBanner) customPoolBanner.style.display = 'none';
     geoQuiz.reloadCategoryItems();
+    applyScopeView();
     loadNextQuestion();
   }
 

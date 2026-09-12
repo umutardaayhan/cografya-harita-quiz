@@ -31,6 +31,105 @@ const GeoPacks = {
   has(id) { return !!this._payloads[id]; }
 };
 
+/**
+ * 🌐 KAPSAM (SCOPE) ÇÖZÜCÜ
+ *
+ * Paket kimlikleri `{kapsam}.{konu}` biçimindedir (`tr.daglar`, `world.bogazlar`).
+ * Dünya paketleri eklendiğinde ortaya çıkan sorun şudur: harita, uçuşlar ve
+ * Kör Atış puanlaması TÜRKİYE ölçeğine göre ayarlanmıştı — ev görünümü
+ * [39, 35.3] / z6.4, 1000 puan için 20 km sapma. Everest sorusunda kamera
+ * Türkiye'de kalıyor, dünya ölçeğinde 20 km'lik isabet ise imkânsız oluyordu.
+ *
+ * Bu nesne "elimdeki kayıtların kapsamı ne?" sorusunu tek yerden yanıtlar:
+ * katalogdaki `countries` kaydından ev görünümünü (center/zoom) ve mesafe
+ * ölçek katsayısını (`scale`) döndürür. Kapsam eklemek = kataloğa ülke
+ * yazmak; harita ve oyun motorlarında değişiklik gerekmez.
+ */
+const GeoScope = {
+  catalog: null,
+  pm: null,
+  /** Katalog okunamazsa (bozuk/eksik) düşülecek güvenli varsayılan */
+  DEFAULT: { id: 'tr', center: [39.0, 35.3], zoom: 6.4, scale: 1 },
+
+  attach(catalog, pm) {
+    this.catalog = catalog;
+    this.pm = pm;
+  },
+
+  /** Kapsam kaydı → { id, center, zoom, scale } */
+  view(countryId) {
+    const c = (this.catalog && this.catalog.countries) ? this.catalog.countries[countryId] : null;
+    if (!c || !Array.isArray(c.center)) return Object.assign({}, this.DEFAULT);
+    return {
+      id: countryId,
+      center: c.center,
+      zoom: (typeof c.zoom === 'number') ? c.zoom : 6,
+      scale: (typeof c.scale === 'number' && c.scale > 0) ? c.scale : 1
+    };
+  },
+
+  /** `world.bogazlar` → `world` (manifest varsa oradan, yoksa kimlikten) */
+  countryOfPack(packId) {
+    if (!packId) return this.DEFAULT.id;
+    const def = this.pm ? this.pm.packDef(packId) : null;
+    if (def && def.country) return def.country;
+    const nokta = String(packId).indexOf('.');
+    return nokta > 0 ? String(packId).slice(0, nokta) : this.DEFAULT.id;
+  },
+
+  /** Koordinat hangi kapsama düşüyor? (pakete bağlı OLMAYAN kullanıcı çizimleri için) */
+  countryOfCoord(lat, lng) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return this.DEFAULT.id;
+    const bbox = ((this.catalog && this.catalog.countries && this.catalog.countries[this.DEFAULT.id]) || {}).bbox;
+    if (!Array.isArray(bbox)) return this.DEFAULT.id;
+    const icinde = lat >= bbox[0][0] && lat <= bbox[1][0] && lng >= bbox[0][1] && lng <= bbox[1][1];
+    return icinde ? this.DEFAULT.id : 'world';
+  },
+
+  countryOfItem(item) {
+    if (!item) return this.DEFAULT.id;
+    if (item.packId) return this.countryOfPack(item.packId);
+    // Kullanıcının kendi çizimi: paketi yoktur, konumundan karar verilir.
+    return this.countryOfCoord(item.lat, item.lng);
+  },
+
+  /**
+   * Bir kayıt listesinin ev görünümü. Liste birden çok kapsam karıştırıyorsa
+   * EN GENİŞ kapsam (en büyük `scale`) kazanır: aksi halde karma bir havuzda
+   * Türkiye görünümünde kalan kamera dünya hedeflerini ekran dışında bırakırdı.
+   */
+  viewForItems(items) {
+    let best = null;
+    (items || []).forEach(it => {
+      const v = this.view(this.countryOfItem(it));
+      if (!best || v.scale > best.scale) best = v;
+    });
+    return best || this.view(this.DEFAULT.id);
+  },
+
+  /** Seçili konu sekmesinin kapsamı */
+  viewForCategory(catId) {
+    const items = (typeof COGRAFYA_DATA !== 'undefined') ? COGRAFYA_DATA[catId] : null;
+    return this.viewForItems(items || []);
+  },
+
+  /** Kurulu tüm paketlerin birleşik kapsamı (oyun modlarının "tümü" kapsamı) */
+  viewForInstalled() {
+    if (!this.pm) return this.view(this.DEFAULT.id);
+    let best = null;
+    this.pm.installedIds().forEach(packId => {
+      const v = this.view(this.countryOfPack(packId));
+      if (!best || v.scale > best.scale) best = v;
+    });
+    return best || this.view(this.DEFAULT.id);
+  },
+
+  /** Mesafe tabanlı puanlamanın (Kör Atış) bölüneceği ölçek katsayısı */
+  scaleForItem(item) {
+    return this.view(this.countryOfItem(item)).scale;
+  }
+};
+
 /** Kurulum durumunun saklandığı anahtar */
 const PACKS_STORAGE_KEY = 'geo_packs_v1';
 
@@ -60,6 +159,9 @@ class PackManager {
     this.state = this._load();
     this._loading = {};        // url -> Promise (aynı dosya iki kez indirilmesin)
     this.unlockedModes = new Set();
+    // Kapsam çözücü katalog + manifest erişimine ihtiyaç duyar (Türkiye / Dünya
+    // ev görünümü ve mesafe ölçeği); tek örnek üzerinden bağlanır.
+    GeoScope.attach(catalog, this);
   }
 
   // =========================================================================
@@ -197,7 +299,9 @@ class PackManager {
     const t = Math.max(1, Math.min(3, parseInt(tier, 10) || 2));
     const hedefler = forceAll
       ? this.catalog.packs
-      : this.catalog.packs.filter(p => !this.isInstalled(p.id) || this.installedTier(p.id) !== t);
+      // `installedTier` diye bir metot yok; kademe okuması `tierOf` ile yapılır.
+      // Eski çağrı `forceAll=false` yolunda TypeError fırlatıyordu.
+      : this.catalog.packs.filter(p => !this.isInstalled(p.id) || this.tierOf(p.id) !== t);
 
     for (let i = 0; i < hedefler.length; i++) {
       await this.install(hedefler[i].id, t);
