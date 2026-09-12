@@ -397,7 +397,7 @@ const PACK_DEFS = [
     icon: '🗿', color: '#f59e0b',
     tr: { title: 'Dünyanın Harikaları', desc: 'Antik dünyanın 7 harikası, yeni 7 harika ve öne çıkan doğal harikalar.' },
     en: { title: 'Wonders of the World', desc: 'The seven ancient wonders, the new seven wonders and major natural wonders.' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_satellite'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe', 'layer_satellite'],
     planRows: [{ cat: 'dunya_harikalari', icon: '🗿', count: 10, tr: 'Harika', en: 'Wonder' }],
     recommends: ['world.yapilar']
   },
@@ -406,7 +406,7 @@ const PACK_DEFS = [
     icon: '⛴️', color: '#7c3aed',
     tr: { title: 'Boğazlar & Kanallar', desc: 'Süveyş, Panama, Malakka, Hürmüz, Cebelitarık gibi stratejik su geçitleri.' },
     en: { title: 'Straits & Canals', desc: 'Strategic water passages: Suez, Panama, Malacca, Hormuz, Gibraltar and more.' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe'],
     planRows: [{ cat: 'dunya_bogazlari', icon: '⛴️', count: 8, tr: 'Boğaz', en: 'Strait' }],
     recommends: ['world.denizler']
   },
@@ -415,7 +415,7 @@ const PACK_DEFS = [
     icon: '🌊', color: '#0891b2',
     tr: { title: 'Denizler & Körfezler', desc: 'İç denizler, kenar denizler, körfezler ve kapalı havzalar (Hazar, Ölü Deniz).' },
     en: { title: 'Seas & Gulfs', desc: 'Inland and marginal seas, gulfs and closed basins (Caspian, Dead Sea).' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe'],
     planRows: [{ cat: 'dunya_denizleri', icon: '🌊', count: 10, tr: 'Deniz', en: 'Sea' }],
     recommends: ['world.okyanuslar']
   },
@@ -424,7 +424,7 @@ const PACK_DEFS = [
     icon: '🌐', color: '#0e7490',
     tr: { title: 'Okyanuslar & Akıntılar', desc: 'Beş okyanus, derin deniz çukurları, okyanus sırtları ve sıcak/soğuk su akıntıları.' },
     en: { title: 'Oceans & Currents', desc: 'The five oceans, deep-sea trenches, mid-ocean ridges and warm/cold currents.' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_dark'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe', 'layer_dark'],
     planRows: [{ cat: 'dunya_okyanuslari', icon: '🌐', count: 8, tr: 'Okyanus', en: 'Ocean' }],
     recommends: ['world.denizler']
   },
@@ -433,7 +433,7 @@ const PACK_DEFS = [
     icon: '🏳️', color: '#db2777',
     tr: { title: 'Ülkeler & Başkentler', desc: 'Kıtalar, başkentler ve ülke rekorları (en büyük, en küçük, en kalabalık).' },
     en: { title: 'Countries & Capitals', desc: 'Continents, capital cities and country records (largest, smallest, most populous).' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe'],
     planRows: [{ cat: 'dunya_ulkeleri', icon: '🏳️', count: 12, tr: 'Ülke', en: 'Country' }],
     recommends: ['world.yapilar']
   },
@@ -442,7 +442,7 @@ const PACK_DEFS = [
     icon: '🏗️', color: '#475569',
     tr: { title: 'Önemli Yapılar & Mühendislik', desc: 'Gökdelenler, köprü ve tüneller, barajlar ve simge anıtlar.' },
     en: { title: 'Landmark Structures', desc: 'Skyscrapers, bridges and tunnels, dams and iconic monuments.' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_satellite'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe', 'layer_satellite'],
     planRows: [{ cat: 'dunya_yapilari', icon: '🏗️', count: 10, tr: 'Yapı', en: 'Structure' }],
     recommends: ['world.harikalar']
   },
@@ -451,7 +451,7 @@ const PACK_DEFS = [
     icon: '🗻', color: '#b45309',
     tr: { title: 'Dünya Dağları & Volkanları', desc: 'Himalayalar, Andlar, Alpler gibi sıradağ sistemleri; zirve rekorları ve ünlü volkanlar.' },
     en: { title: 'World Mountains & Volcanoes', desc: 'Ranges such as the Himalayas, Andes and Alps; summit records and famous volcanoes.' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_topo', 'layer_terrain'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe', 'layer_topo', 'layer_terrain'],
     planRows: [{ cat: 'dunya_daglari', icon: '🗻', count: 10, tr: 'Dünya Dağı', en: 'World Mountain' }],
     recommends: ['world.sular']
   },
@@ -460,7 +460,7 @@ const PACK_DEFS = [
     icon: '🏞️', color: '#1d4ed8',
     tr: { title: 'Dünya Nehirleri & Gölleri', desc: 'Nil, Amazon, Tuna gibi nehir hatları; Baykal, Victoria gibi göller ve büyük şelaleler.' },
     en: { title: 'World Rivers & Lakes', desc: 'River courses such as the Nile, Amazon and Danube; lakes and major waterfalls.' },
-    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_topo'],
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_globe', 'layer_topo'],
     planRows: [{ cat: 'dunya_sulari', icon: '🏞️', count: 10, tr: 'Dünya Suyu', en: 'World Water' }],
     recommends: ['world.daglar']
   },

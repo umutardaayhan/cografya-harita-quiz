@@ -31,15 +31,25 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
    - Çoklu geometri vurgulama motoru (Nokta nabzı, animasyonlu kesikli çizgi, taranmış parıltılı çokgen).
    - İnteraktif serbest çizim motoru (Vertex markers, kılavuz çizgiler, geri alma).
 
-6. **`js/quiz.js`**:
+6. **`js/globe_view.js` (YENİ)**:
+   - 🌍 Küre görünümü: MapLibre GL v5 `globe` projeksiyonu ile gerçek bir gezegen.
+     Leaflet'in yerine geçmez, harita görünüm listesine altıncı seçenek olarak girer
+     ve kabı Leaflet'in üstünü kaplar; kapanınca uygulama düz haritaya döner.
+   - Kütüphane TEMBEL yüklenir (1 MB); pin ve şık markup'ı `GeographyMap` ile
+     ortaktır, bu yüzden cevap renklendirmesi küre üzerinde de çalışır.
+   - Küre tıklaması Leaflet'te sentetik `click` tetikler: Kör Atış ve Koordinat
+     Avcısı hiç değişmeden küre üzerinde çalışır.
+   - Ayrıntı: [PAKET_SISTEMI.md](PAKET_SISTEMI.md) § Küre görünümü.
+
+7. **`js/quiz.js`**:
    - **Adaptif Soru Motoru (Spaced Repetition)**: Kullanıcının her soru için hata ve başarı geçmişini izleyerek en çok yanlış yapılan soruları ağırlıklı rastgele (Roulette Wheel) seçimiyle daha sık karşısına çıkarma.
    - **Dinamik Şık Motoru**: 2, 3, 4 veya 5 (A-B-C-D-E ÖSYM formatı) şık üretimi ve çeldirici yönetimi.
    - **Soru Kökü Motoru**: veride elle yazılmış KPSS soru kökleri (`promptTitle`) cevabın adını/ilini ele vermiyorsa jenerik kalıbın yerine geçer; kategori ve şekil (nokta/alan/çizgi/bağlı grup) başına ayrı soru kalıpları. Ayrıntı: [OZEL_HARITA_VE_ADAPTIF_MOTOR.md](OZEL_HARITA_VE_ADAPTIF_MOTOR.md) §18.
 
-7. **`js/app.js`**:
+8. **`js/app.js`**:
    - Çizim editörü akışı, mod yönetimi (Quiz, Keşif, Çizim), klavye kısayolları (1-5 ve A-E tuşları, Space/Enter ile geçiş).
 
-8. **`js/pack_manager.js` + `js/pack_store_ui.js` (YENİ)**:
+9. **`js/pack_manager.js` + `js/pack_store_ui.js` (YENİ)**:
    - DLC motoru: paketlerin lazy indirilmesi, kademe (az/orta/tam) eşiği, kaldırma, oyun modu kilitleri ve `packs:changed` yayını.
    - İlk giriş rehberi ve Paket Mağazası arayüzü.
    - **`GeoScope` (kapsam çözücü)**: paket kimliğinin ülke kısmından (`tr.*` / `world.*`)
@@ -47,11 +57,11 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
      katsayısını çözer. Böylece Türkiye ve Dünya kapsamları aynı motorlarla,
      kendi ölçeklerinde çalışır. Ayrıntı: [PAKET_SISTEMI.md](PAKET_SISTEMI.md) § Dünya Modülü.
 
-9. **`data/hafiza_kodlari.js` + `js/hafiza_kodu.js` (YENİ)**:
+10. **`data/hafiza_kodlari.js` + `js/hafiza_kodu.js` (YENİ)**:
    - Hafıza Kodu Atölyesi: müfredatın mnemonic (hikâye) katmanı. Paket sisteminden bağımsızdır.
    - Tek kaynak ilkesi: her kod `[[imge|gerçek]]` işaretli TEK bir hikâye metnidir; eşleştirme, boşluk doldurma, sıralama, kaçak yakalama, ters kod ve harita damgası turlarının hepsi bu metinden türetilir.
    - Ustalık defteri (`kpss_hafiza_kodu_ustalik`) zayıf kodlara ağırlık verir; tur tipi dağılımı `1/√bolluk` ile dengelenir.
    - Galeri üreteci (`HafizaGaleri`) 68 kodu hikâyesi, çözüm tablosu, püf notu ve ustalık çubuğuyla listeler.
 
-10. **`js/i18n.js` + `locales/*.js` (YENİ)**:
+11. **`js/i18n.js` + `locales/*.js` (YENİ)**:
    - Çift katmanlı dil motoru: arayüz metinleri (`GeoI18n.t`) ve coğrafi varlık çevirileri (`GeoI18n.pick`) birbirinden bağımsız yönetilir.

@@ -60,6 +60,14 @@ Paketler ülke ülke değil **konu konu** bölünmüştür — 8 paket / 207 kay
 | 🗻 **Dünya Dağları & Volkanları** | Himalayalar, Andlar, Alpler, Kayalıklar; Everest, K2, Kilimanjaro; Fuji, Etna, Vezüv, Krakatoa |
 | 🏞️ **Dünya Nehirleri & Gölleri** | Nil, Amazon, Yangtze, Tuna, Volga, Kongo; Baykal, Victoria, Titicaca; Niagara, Victoria, Angel şelaleleri |
 
+- **🌍 Küre görünümü:** Harita görünüm listesine eklenen **Küre / Gezegen** seçeneği,
+  dünyayı dikdörtgen değil gerçek bir küre olarak gösterir — uydu görüntüsü, atmosfer
+  halkası ve yıldızlı uzay zemini ile. Mercator şişmesi yoktur; yaklaştıkça otomatik
+  olarak düz haritaya geçer. Pinler, hatlar, şık işaretçileri, bilgi balonları ve
+  Kör Atış tıklaması küre üzerinde de çalışır.
+- **Sınırsız gezinme:** Kaydırma duvarı kaldırıldı (eskiden 3000 px sürükleme 26°
+  sonra geri sekiyordu), kesirli zoom açıldı ve dünyanın yanındaki boş kopyalar
+  yerine uzay boşluğu geldi.
 - **Kapsam duyarlı harita:** Ev görünümü (merkez/zoom) ve "Görünümü Sıfırla" artık
   çalıştığın kapsama göre davranır; dünya sorusunda kamera Türkiye'de kalmaz.
 - **Kapsam duyarlı puanlama:** Kör Atış'ın km tabanlı puan eğrisi dünya ölçeğine
@@ -150,6 +158,7 @@ Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her
 │   └── packs/pack.world.*.js      # 🌍 Dünya DLC paketleri (lazy yüklenir)
 ├── js/
 │   ├── pack_manager.js            # DLC motoru + GeoScope (kapsam: ev görünümü & ölçek)
+│   ├── globe_view.js              # 🌍 Küre görünümü (MapLibre GL v5 globe projeksiyonu)
 │   ├── pack_store_ui.js           # Rehber ekranı + paket mağazası
 │   ├── i18n.js                    # Çift katmanlı dil motoru
 │   ├── map.js  quiz.js  app.js    # Harita, adaptif soru motoru, akış
@@ -170,6 +179,7 @@ Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her
 | :--- | :--- | :--- |
 | **Frontend** | Vanilla JavaScript (ES6+), HTML5 | Sıfır çalışma zamanı bağımlılığı, ultra hafif çekirdek |
 | **Harita Motoru** | Leaflet.js v1.9.4 | Özel SVG filtreleri, dinamik katmanlar ve işaretçiler |
+| **Küre Motoru** | MapLibre GL JS v5 (tembel yüklenir) | `globe` projeksiyonu; yalnızca Küre görünümü açılınca indirilir |
 | **Stil & Arayüz** | Modern CSS3 (Glassmorphism) | Sivri köşeli koyu tema, responsive mobil uyum |
 | **Veri & Dağıtım** | Paket (DLC) mimarisi | Lazy yüklenen konu paketleri, 3 detay kademesi, çok dilli kayıt şeması |
 | **Derleme** | Node.js (yalnızca geliştirme) | `tools/build_packs.js` kaynakları paketlere derler |
@@ -251,6 +261,7 @@ While initially tailored for Turkish physical and human geography (KPSS / YKS na
 - 🎯 **Interactive Game Modes:** GeoGuessr-style blind shot, Map Conqueror (7 regions), Match & Blast pairing, map painting, formation-type drills, 60-second speedrun and an 18-question mock exam.
 - 🧠 **Mnemonic Lab:** 68 Turkish memory codes (68 stories, 272 metaphor links, 190 map stops) drilled six ways — pair matching, cloze, chain ordering, intruder hunt, reverse decoding and map stamping. Solved stories are re-rendered and pinned on the map; four codes literally draw their letters (M+A, V, R) across Türkiye.
 - 🛠️ **Custom Vector Drawing Studio:** Draw points, polylines, and polygons on the live map with JSON Export/Import and AI/NotebookLM clipboard pasting.
+- 🌍 **Globe View:** A sixth base-map option renders the Earth as an actual sphere (MapLibre GL v5 globe projection) with satellite imagery, an atmosphere ring and a starfield backdrop — no Mercator distortion, and it eases back into a flat map as you zoom in. Pins, lines, answer markers, popups and blind-shot clicks all work on the globe; the library is lazy-loaded only when you open the view.
 - 🔇 **Mute / Blind Map Mode:** Toggle labels off for true blind exam simulations.
 - 🧭 **Mathematical Location Lab:** Sun angle, local time differentials, shadow length, and daylight calculations.
 - 📱 **Modern Glassmorphic UI:** Fast, zero-dependency, dark-mode design with draggable panels, responsive layout and keyboard accessibility.
