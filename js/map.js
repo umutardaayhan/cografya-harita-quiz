@@ -14,7 +14,11 @@
 const TOPIC_CATEGORY_ICON = {
   tarim: '🚜', hayvancilik: '🐑', sanayi: '🏭', iklim: '🌡️', orman: '🌲',
   toprak: '🟫', afet: '⚠️', fay: '💥', madenler: '⛏️', nufus: '👥',
-  bolgeler: '🗺️', kiyilar: '🏖️', dis_kuvvetler: '🌬️', turizm: '🏛️', ulasim: '🚢'
+  bolgeler: '🗺️', kiyilar: '🏖️', dis_kuvvetler: '🌬️', turizm: '🏛️', ulasim: '🚢',
+  // 🌐 Dünya modülü
+  dunya_daglari: '🗻', dunya_sulari: '🏞️', dunya_okyanuslari: '🌐',
+  dunya_denizleri: '🌊', dunya_bogazlari: '⛴️', dunya_ulkeleri: '🏳️',
+  dunya_harikalari: '🗿', dunya_yapilari: '🏗️'
 };
 
 // 🎨 10 Benzersiz Canlı Şık Renk Paleti (A-J / I-X)
@@ -37,7 +41,11 @@ const TOPIC_CATEGORY_COLOR = {
   orman: '#16a34a', toprak: '#a16207', afet: '#dc2626', fay: '#f97316',
   madenler: '#78716c', nufus: '#0ea5e9', bolgeler: '#7c3aed', kiyilar: '#06b6d4',
   dis_kuvvetler: '#14b8a6', turizm: '#eab308', ulasim: '#3b82f6',
-  platolar: '#f59e0b', ovalar: '#22c55e', daglar: '#d97706', su_kaynaklari: '#2563eb'
+  platolar: '#f59e0b', ovalar: '#22c55e', daglar: '#d97706', su_kaynaklari: '#2563eb',
+  // 🌐 Dünya modülü
+  dunya_daglari: '#b45309', dunya_sulari: '#1d4ed8', dunya_okyanuslari: '#0e7490',
+  dunya_denizleri: '#0891b2', dunya_bogazlari: '#7c3aed', dunya_ulkeleri: '#db2777',
+  dunya_harikalari: '#f59e0b', dunya_yapilari: '#475569'
 };
 
 /**
@@ -70,7 +78,16 @@ const TOPIC_SUB_ICON = {
   ana_bolge: '🗺️', bolum: '📍',
   // Sanayi & Endüstri (7 Sektör)
   gida: '🍞', tekstil_deri: '👕', metalurji: '🔩', otomotiv_ulasim: '🚗',
-  kimya: '🧪', orman: '🪵', tasa_topraga: '🧱'
+  kimya: '🧪', orman: '🪵', tasa_topraga: '🧱',
+  // 🌐 Dünya modülü (anahtarlar `d_` ön ekiyle Türkiye alt türlerinden ayrılır)
+  d_sirada: '⛰️', d_zirve: '🏔️', d_volkan: '🌋',
+  d_nehir: '🌊', d_gol: '💧', d_selale: '⛲',
+  d_okyanus: '🌐', d_cukur: '🕳️', d_akinti: '🌀', d_sirt: '🌍',
+  d_deniz: '🌊', d_korfez: '🏖️', d_kapali: '🧂',
+  d_bogaz: '〰️', d_kanal: '🚧',
+  d_baskent: '🏛️', d_ulke_rekor: '🥇', d_kita: '🗺️',
+  d_antik: '🏺', d_yeni7: '🏅', d_dogal: '🏞️',
+  d_gokdelen: '🏙️', d_kopru: '🌉', d_baraj: '⚡', d_anit: '🗽'
 };
 
 /**
@@ -147,6 +164,12 @@ class GeographyMap {
     // kalır ve iki modun işaretleri üst üste binerdi.
     this.auxLayerGroups = [];
     
+    // EV GÖRÜNÜMÜ (kapsam). Eskiden Türkiye merkezi `resetView()` içinde
+    // sabitti; dünya paketleri eklendiğinde Everest sorusunda kamera Türkiye'de
+    // kalıyordu. Artık kapsam dışarıdan yazılır (`setHomeView`), kaynağı
+    // katalogdaki ülke kaydıdır (bkz. GeoScope, js/pack_manager.js).
+    this.homeView = { center: [39.0, 35.3], zoom: 6.4 };
+
     // Otomatik Yakınlaştırma (Auto-Zoom) Ayarı (LocalStorage destekli)
     this.autoZoomEnabled = this.loadAutoZoomSetting();
 
@@ -351,8 +374,10 @@ class GeographyMap {
     // maxBounds yalnizca kutuplarin otesine surukleyip haritayi kaybetmeyi
     // engelleyen yumusak bir siniridir (viscosity 0 = surukleme sirasinda direnc yok).
     this.map = L.map(this.containerId, {
-      center: [39.0, 35.3],
-      zoom: 6.4,
+      // Açılış görünümü de kapsamdan gelir: uygulama dünya paketleriyle
+      // açıldığında ilk kare Türkiye'ye çakılı kalmasın.
+      center: this.homeView.center,
+      zoom: this.homeView.zoom,
       minZoom: 2,
       maxBounds: [
         [-85.0, -240.0],
@@ -1608,8 +1633,32 @@ class GeographyMap {
     this.map.flyToBounds(bounds, Object.assign({ duration: 0.8 }, options));
   }
 
+  /**
+   * Ev görünümünü (kapsam) değiştirir. `GeoScope.view()` çıktısı ya da
+   * `{center, zoom}` biçiminde bir nesne bekler; bozuk değerler yok sayılır
+   * çünkü NaN bir merkez `flyTo` içinde istisna fırlatıp soru render'ını
+   * komple bölerdi.
+   *
+   * @returns {boolean} görünüm gerçekten değiştiyse true
+   */
+  setHomeView(view) {
+    if (!view || !Array.isArray(view.center)) return false;
+    const [lat, lng] = view.center;
+    const zoom = Number(view.zoom);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(zoom)) return false;
+
+    const ayni = this.homeView
+      && this.homeView.center[0] === lat
+      && this.homeView.center[1] === lng
+      && this.homeView.zoom === zoom;
+    if (ayni) return false;
+
+    this.homeView = { center: [lat, lng], zoom: zoom };
+    return true;
+  }
+
   resetView() {
-    this.flySafely([39.0, 35.3], 6.4);
+    this.flySafely(this.homeView.center, this.homeView.zoom);
   }
 
   // =========================================================================

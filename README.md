@@ -4,7 +4,7 @@
 [![Leaflet](https://img.shields.io/badge/Leaflet.js-1.9.4-199900?style=flat&logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-Modern_Glassmorphism-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![Packs](https://img.shields.io/badge/Paketler-18_paket_·_472_kayıt-8b5cf6?style=flat)](docs/PAKET_SISTEMI.md)
+[![Packs](https://img.shields.io/badge/Paketler-30_paket_·_1334_kayıt-8b5cf6?style=flat)](docs/PAKET_SISTEMI.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat&logo=vercel&logoColor=white)](https://vercel.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -36,34 +36,56 @@ Veri katmanı **kurulabilir konu paketlerine** bölünmüştür: kullanıcı her
 ### ✨ Öne Çıkan Özellikler
 
 #### 📦 1. Paket (DLC) Sistemi & Kişisel Müfredat
-- **18 Konu Paketi / 472 Kayıt:** Dağlar, akarsu & göller, ovalar & platolar, geçitler, iklim & bitki örtüsü, toprak tipleri, doğal afetler, fay hatları, kıyılar & adalar, dış kuvvetler, nüfus & göç, 7 bölge & 21 bölüm, tarım-hayvancılık-sanayi, madenler & enerji, turizm, ulaşım ve matematiksel konum.
+- **30 Konu Paketi / 1.334 Kayıt:** Dağlar, akarsu & göller, ovalar & platolar, geçitler, iklim & bitki örtüsü, toprak tipleri, doğal afetler, fay hatları, kıyılar & adalar, dış kuvvetler, nüfus & göç, 7 bölge & 21 bölüm, tarım-hayvancılık-sanayi, madenler & enerji, turizm, ulaşım, matematiksel konum ve **8 Dünya paketi**.
 - **3 Detay Kademesi:** Her paket `Az` (sınav rekorları), `Orta` (sık sorulanlar) veya `Tam` (her kayıt) olarak kurulur. Kademe sonradan yükseltilebilir; ilerleme korunur.
 - **Mod & Katman Kilitleri:** Şekil Yapbozu ilişki paketiyle, Matematiksel Konum modülleri kendi paketiyle açılır. Harita görünümleri de pakete bağlıdır (Uydu → Turizm/Kıyılar, Kabartı → Dağlar/Fay, Gece → Matematiksel Konum).
 - **Toplu İşlemler:** Mağazadan tek tıkla tüm paketleri kur ya da tümünü kaldır; soru geçmişin her koşulda korunur.
 - **İlk Giriş Rehberi:** Siteye ilk gelen kullanıcı haritayla değil, 3 adımlık rehber ve Paket Mağazası ile karşılaşır.
-- **Ölçeklenebilir Mağaza:** Grup sekmeleri (Fiziki / Beşeri / Ekonomik / Modüller), Türkçe-güvenli arama ve sayfalama ile yüzlerce pakete kadar açılır.
+- **Ölçeklenebilir Mağaza:** Grup sekmeleri (Fiziki / Beşeri / Ekonomik / **Dünya** / Modüller), Türkçe-güvenli arama ve sayfalama ile yüzlerce pakete kadar açılır.
 
 > 📖 Mimari ve yazım kılavuzu: **[docs/PAKET_SISTEMI.md](docs/PAKET_SISTEMI.md)**
 
-#### 🧠 2. Adaptif Soru & Ustalık Motoru (Spaced Repetition)
+#### 🌍 2. Dünya Haritası & Dünya Paketleri (`world.*`)
+Harita artık yalnızca Türkiye'yi değil, **dünyanın önemli konumlarını** da çalıştırır.
+Paketler ülke ülke değil **konu konu** bölünmüştür — 8 paket / 207 kayıt:
+
+| Paket | İçerik |
+| :--- | :--- |
+| 🗿 **Dünyanın Harikaları** | Antik dünyanın 7 harikası, Yeni 7 Harika, doğal harikalar (Büyük Kanyon, Büyük Set Resifi, Ha Long, Kapadokya…) |
+| ⛴️ **Boğazlar & Kanallar** | Süveyş, Panama, Malakka, Hürmüz, Cebelitarık, Bering, Babülmendeb, Magellan, Kiel, Korint… |
+| 🌊 **Denizler & Körfezler** | Akdeniz, Kızıldeniz, Baltık, Karayip, Güney Çin Denizi; Bengal/Basra/Meksika körfezleri; Hazar & Ölü Deniz |
+| 🌐 **Okyanuslar & Akıntılar** | 5 okyanus, Mariana gibi derin çukurlar, Orta Atlantik Sırtı, Ateş Çemberi, Golf & Humboldt akıntıları |
+| 🏳️ **Ülkeler & Başkentler** | 7 kıta, 24 başkent ve ülke rekorları (en büyük, en küçük, en kalabalık, en kuzeydeki başkent…) |
+| 🏗️ **Önemli Yapılar** | Burç Halife, Eyfel, Golden Gate, 1915 Çanakkale, Manş Tüneli, Üç Boğaz & Atatürk barajları, Ayasofya… |
+| 🗻 **Dünya Dağları & Volkanları** | Himalayalar, Andlar, Alpler, Kayalıklar; Everest, K2, Kilimanjaro; Fuji, Etna, Vezüv, Krakatoa |
+| 🏞️ **Dünya Nehirleri & Gölleri** | Nil, Amazon, Yangtze, Tuna, Volga, Kongo; Baykal, Victoria, Titicaca; Niagara, Victoria, Angel şelaleleri |
+
+- **Kapsam duyarlı harita:** Ev görünümü (merkez/zoom) ve "Görünümü Sıfırla" artık
+  çalıştığın kapsama göre davranır; dünya sorusunda kamera Türkiye'de kalmaz.
+- **Kapsam duyarlı puanlama:** Kör Atış'ın km tabanlı puan eğrisi dünya ölçeğine
+  göre esnetilir (Türkiye'de 20 km = 1000 puan, dünyada ~180 km).
+- **Ayrı çeldirici havuzu:** Dünya kayıtları kendi kategorilerinde durur; Türkiye
+  sorularının şıkları bozulmaz, dünya sorularının çeldiricileri de tutarlı kalır.
+
+#### 🧠 3. Adaptif Soru & Ustalık Motoru (Spaced Repetition)
 - **Rulet Tekerleği Algoritması:** Öğrencinin geçmiş başarı/hata verilerini takip eder.
 - **Ustalık Seyreltme (Mastery Decay):** Art arda doğru bilinen soruların ağırlığı %90-95 oranında azaltılarak havuzdan seyreltilir.
 - **Odak Rozetleri:** Sık hata yapılan sorular `⚠️ Sık Yanıldığın Soru`, pekişenler `🎓 Ustalaşılan Soru` rozetiyle işaretlenir.
 - **Bugünün Planı:** Yeni / Tekrar / Yanlışlar fazlarından oluşan günlük paket, kurulu paketlerden türetilir ve günlük bütçeyle sınırlanır.
 
-#### ⚡ 3. Mesafe Tabanlı 5 Kademeli Akıllı Zorluk
+#### ⚡ 4. Mesafe Tabanlı 5 Kademeli Akıllı Zorluk
 - **Seviye 1 (Kolay):** Çeldiriciler Türkiye geneline yayılır (> 500 km).
 - **Seviye 3 (Orta / Bölgesel):** Çeldiriciler aynı veya komşu bölgelerden seçilir (~150-350 km).
 - **Seviye 5 (Uzman / ÖSYM Eleme Modu):** Çeldiriciler aynı fay hattı veya sıradağdaki **en yakın komşulardan** seçilir.
 
-#### 🎮 4. İnteraktif Oyun Modları
+#### 🎮 5. İnteraktif Oyun Modları
 - 🎯 **Kör Atış (GeoGuessr):** Dilsiz haritada serbest tıklama, km sapma ölçümü ve radar halkaları.
 - ⚔️ **Harita Fatihi:** 7 coğrafi bölgeyi soru çözerek fethedin ve haritayı renginize boyayın.
 - 🧩 **Şekil Yapbozu (Match & Blast):** Akarsu-Delta, Dağ-Geçit ve Hayvancılık-Bölge kartlarını kombo çarpanlarıyla eşleştirin.
 - 🖌️ **Harita Boyama & 🧬 Oluşum Türü Quizi:** Karstik, tektonik ve volkanik şekilleri harita üzerinde sınıflandırın.
 - ⚡ **Şimşek Turu (60 sn)** ve 📋 **Genel Deneme (18 soru)** kronometreli sınav provaları.
 
-#### 🧠 5. Hafıza Kodu Atölyesi (Mnemonic Lab)
+#### 🧠 6. Hafıza Kodu Atölyesi (Mnemonic Lab)
 Coğrafya müfredatının **hikâyeye çevrilmiş** hâli: 8 bölüm, **68 kod**, 272 metafor halkası, 190 harita durağı.
 Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her kod tek bir metin olarak yazılır ve motor altı ayrı çalışma biçimini o metinden türetir:
 
@@ -82,18 +104,18 @@ Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her
 - **Ustalık defteri:** zayıf kodlar rulet seçiminde daha ağır; tur tipi dağılımı nadir biçimleri (zincir) görünür tutacak şekilde dengelenir.
 - **Paket gerektirmez:** kodlar coğrafi kaydın kendisi değil, o kayda giden hafıza yoludur — hiçbir DLC kurulmasa da çalışır.
 
-#### 🧭 6. Mutlak Konum & Coğrafi Hesaplama Laboratuvarı
+#### 🧭 7. Mutlak Konum & Coğrafi Hesaplama Laboratuvarı
 - Türkiye'nin uç noktaları (26°-45° Doğu, 36°-42° Kuzey), yerel saat farkları, gölge boyu, gündüz süresi ve güneş açısı simülasyonları.
 
-#### 🛠️ 7. Özel Harita Çizim Editörü & NotebookLM Entegrasyonu
+#### 🛠️ 8. Özel Harita Çizim Editörü & NotebookLM Entegrasyonu
 - Harita üzerine serbest Nokta (Marker), Hat/Çizgi (Polyline) ve Geometrik Alan (Polygon) çizebilme.
 - JSON Dışa/İçe Aktarma (Export/Import) ve NotebookLM/AI çıktısını tek tıkla yapıştırma desteği.
 
-#### 🔇 8. Dilsiz Harita & Çok Katmanlı Görünüm
+#### 🔇 9. Dilsiz Harita & Çok Katmanlı Görünüm
 - Tüm şehir ve yol yazılarını tek tıkla gizleyen **Sınav Tipi Dilsiz Harita**.
 - Sade, Fiziki, Gerçek Uydu, Gece ve Kabartı katmanları — Sade dışındakiler ilgili paketle açılır.
 
-#### 🌐 9. Çift Katmanlı i18n Çekirdeği
+#### 🌐 10. Çift Katmanlı i18n Çekirdeği
 - **Arayüz dili** (`locales/*.js`) ve **coğrafi varlık dili** (paket kaydındaki `i18n` bloğu) birbirinden bağımsız yönetilir.
 - Alt tür ve oluşum sınıflandırması Türkçe metin yerine **dilden bağımsız anahtarlar** kullanır; veri çevrildiğinde motor bozulmaz.
 
@@ -122,10 +144,12 @@ Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her
 │   ├── cografya_data.legacy.js    # Yazım kaynağı — fiziki & temel ekonomik
 │   ├── hafiza_kodlari.js          # 🧠 Mnemonic korpusu — [[imge|gerçek]] hikâyeleri
 │   ├── source/*.js                # Yazım kaynağı — genişletilmiş müfredat
-│   ├── packs/catalog.js           # Paket manifesti + kategori/alt tür defteri
-│   └── packs/pack.tr.*.js         # DLC paketleri (lazy yüklenir)
+│   ├── source/9*_dunya_*.js       # 🌍 Dünya kapsamı yazım kaynağı
+│   ├── packs/catalog.js           # Paket manifesti + kapsam/kategori/alt tür defteri
+│   ├── packs/pack.tr.*.js         # Türkiye DLC paketleri (lazy yüklenir)
+│   └── packs/pack.world.*.js      # 🌍 Dünya DLC paketleri (lazy yüklenir)
 ├── js/
-│   ├── pack_manager.js            # DLC motoru: kurulum, kademe, kilitler
+│   ├── pack_manager.js            # DLC motoru + GeoScope (kapsam: ev görünümü & ölçek)
 │   ├── pack_store_ui.js           # Rehber ekranı + paket mağazası
 │   ├── i18n.js                    # Çift katmanlı dil motoru
 │   ├── map.js  quiz.js  app.js    # Harita, adaptif soru motoru, akış
@@ -219,7 +243,8 @@ While initially tailored for Turkish physical and human geography (KPSS / YKS na
 
 ### 🌟 Key Features
 
-- 📦 **Pack (DLC) System — 18 packs, 472 entries:** Topics ship as installable packs with three detail levels (Light / Medium / Full). You download only what you want to study, and the map, quizzes, daily plan, game modes **and even the available map layers** are shaped by your installed packs. One-click *Install All* / *Remove All* is available in the store, and your question history always survives uninstalling. See [docs/PAKET_SISTEMI.md](docs/PAKET_SISTEMI.md).
+- 📦 **Pack (DLC) System — 30 packs, 1,334 entries:** Topics ship as installable packs with three detail levels (Light / Medium / Full). You download only what you want to study, and the map, quizzes, daily plan, game modes **and even the available map layers** are shaped by your installed packs. One-click *Install All* / *Remove All* is available in the store, and your question history always survives uninstalling. See [docs/PAKET_SISTEMI.md](docs/PAKET_SISTEMI.md).
+- 🌍 **World Map & World Packs (`world.*`) — 8 packs, 207 entries:** Wonders of the World (ancient & new seven, natural wonders), Straits & Canals (Suez, Panama, Malacca, Hormuz, Gibraltar…), Seas & Gulfs, Oceans, Trenches & Currents, Countries & Capitals, Landmark Structures, World Mountains & Volcanoes, World Rivers & Lakes. The map's home view and the blind-shot scoring curve adapt to the active scope, so world questions are neither framed on Türkiye nor scored on a Türkiye-sized distance curve.
 - 🌐 **Dual-Layer i18n Core:** Interface strings and geographic entity names are translated independently; sub-type filters and landform classification use language-neutral keys, so the engine survives translation.
 - 🧠 **Spaced Repetition & Adaptive Engine:** Tracks success rates and selectively decreases the frequency of mastered questions (Mastery Decay) while surfacing challenging concepts.
 - ⚡ **5-Tier Distance-Based Difficulty (Haversine):** Distractors are chosen by geographical distance, from nationwide spread down to the closest geological neighbours.

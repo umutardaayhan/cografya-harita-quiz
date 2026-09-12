@@ -117,7 +117,43 @@ const CATEGORY_META = {
   dis_kuvvetler: { canonical: 'exogenic',     en: { title: 'Exogenic Landforms',      short: 'Exogenic' } },
   turizm:        { canonical: 'tourism',      en: { title: 'Tourism & Heritage',      short: 'Tourism' } },
   ulasim:        { canonical: 'transport',    en: { title: 'Transport & Trade',       short: 'Transport' } },
-  sehirler:      { canonical: 'provinces',    en: { title: 'Provinces & 81 Cities',   short: 'Cities' } }
+  sehirler:      { canonical: 'provinces',    en: { title: 'Provinces & 81 Cities',   short: 'Cities' } },
+
+  // --- 🌐 DÜNYA MODÜLÜ KATEGORİLERİ ---
+  // Türkiye kategorilerinden bilinçli olarak AYRI tutulur: çeldiriciler aynı
+  // kategori havuzundan seçildiği için Türkiye geçitleriyle dünya boğazlarını
+  // tek kovaya koymak soruları anlamsızlaştırırdı (bkz. 91_dunya_meta.js).
+  dunya_daglari:     { canonical: 'world_mountains', en: { title: 'World Mountains & Volcanoes', short: 'W. Mtn' } },
+  dunya_sulari:      { canonical: 'world_waters',    en: { title: 'World Rivers & Lakes',        short: 'W. Water' } },
+  dunya_okyanuslari: { canonical: 'oceans',          en: { title: 'Oceans & Currents',           short: 'Ocean' } },
+  dunya_denizleri:   { canonical: 'seas',            en: { title: 'Seas & Gulfs',                short: 'Sea' } },
+  dunya_bogazlari:   { canonical: 'straits',         en: { title: 'Straits & Canals',            short: 'Strait' } },
+  dunya_ulkeleri:    { canonical: 'countries',       en: { title: 'Countries & Capitals',        short: 'Country' } },
+  dunya_harikalari:  { canonical: 'wonders',         en: { title: 'Wonders of the World',        short: 'Wonder' } },
+  dunya_yapilari:    { canonical: 'structures',      en: { title: 'Landmark Structures',         short: 'Structure' } }
+};
+
+/**
+ * Ülke (kapsam) kayıt defteri → `catalog.countries`.
+ *
+ * `center/zoom` haritanın o kapsamdaki EV GÖRÜNÜMÜdür; `resetView()` ve oyun
+ * modları bunu kullanır (bkz. js/pack_manager.js → GeoScope).
+ *
+ * `scale` ölçek katsayısıdır: Kör Atış puanlaması km tabanlıdır ve Türkiye'ye
+ * göre ayarlanmıştır (20 km = 1000 puan). Dünya ölçeğinde bu eşik ulaşılamaz
+ * olurdu; sapma bu katsayıya bölünerek değerlendirilir.
+ */
+const COUNTRY_META = {
+  tr: {
+    code: 'TUR', center: [39.0, 35.3], zoom: 6.4, scale: 1,
+    bbox: [[35.8, 25.6], [42.3, 45.0]],
+    i18n: { tr: { name: 'Türkiye' }, en: { name: 'Türkiye (Turkey)' } }
+  },
+  world: {
+    code: 'WLD', center: [22.0, 12.0], zoom: 2, scale: 9,
+    bbox: [[-58.0, -170.0], [78.0, 180.0]],
+    i18n: { tr: { name: 'Dünya' }, en: { name: 'World' } }
+  }
 };
 
 /**
@@ -132,7 +168,12 @@ const PACK_GROUPS = {
   'tr.beseri': 'ekonomik', 'tr.sanayi': 'ekonomik', 'tr.madenler': 'ekonomik', 'tr.maden_bolgeleri': 'ekonomik', 'tr.enerji_bolgeleri': 'ekonomik', 'tr.turizm': 'ekonomik',
   'tr.ulasim': 'ekonomik',
   'tr.sehirler': 'beseri', 'tr.nufus': 'beseri', 'tr.bolgeler': 'beseri', 'tr.iliskiler': 'beseri',
-  'tr.mutlak_konum': 'modul'
+  'tr.mutlak_konum': 'modul',
+  // 🌐 Dünya paketleri kendi sekmesinde toplanır: Türkiye sekmelerini
+  // kalabalıklaştırmadan yeni kapsam eklenebilsin.
+  'world.daglar': 'dunya', 'world.sular': 'dunya', 'world.okyanuslar': 'dunya',
+  'world.denizler': 'dunya', 'world.bogazlar': 'dunya', 'world.ulkeler': 'dunya',
+  'world.harikalar': 'dunya', 'world.yapilar': 'dunya'
 };
 
 /**
@@ -341,6 +382,89 @@ const PACK_DEFS = [
     planRows: [{ cat: 'ulasim', icon: '🚢', count: 12, tr: 'Ulaşım', en: 'Transport' }],
     recommends: ['tr.gecitler']
   },
+
+  // =========================================================================
+  // 🌐 DÜNYA PAKETLERİ (country: 'world')
+  //
+  // Ülke bazlı değil KAPSAM bazlıdır: "dünyanın önemli konumları" tek tek
+  // ülkelere bölünmez, konuya göre paketlenir. Açtıkları modlar bilinçli
+  // olarak sınırlıdır: Harita Fatihi 7 Türkiye bölgesine, Oluşum/Boyama
+  // Türkiye oluşum taksonomisine, Şekil Yapbozu `matchType` çiftlerine
+  // bağlıdır; dünya kayıtları bunları beslemez.
+  // =========================================================================
+  {
+    id: 'world.harikalar', country: 'world', categories: ['dunya_harikalari'],
+    icon: '🗿', color: '#f59e0b',
+    tr: { title: 'Dünyanın Harikaları', desc: 'Antik dünyanın 7 harikası, yeni 7 harika ve öne çıkan doğal harikalar.' },
+    en: { title: 'Wonders of the World', desc: 'The seven ancient wonders, the new seven wonders and major natural wonders.' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_satellite'],
+    planRows: [{ cat: 'dunya_harikalari', icon: '🗿', count: 10, tr: 'Harika', en: 'Wonder' }],
+    recommends: ['world.yapilar']
+  },
+  {
+    id: 'world.bogazlar', country: 'world', categories: ['dunya_bogazlari'],
+    icon: '⛴️', color: '#7c3aed',
+    tr: { title: 'Boğazlar & Kanallar', desc: 'Süveyş, Panama, Malakka, Hürmüz, Cebelitarık gibi stratejik su geçitleri.' },
+    en: { title: 'Straits & Canals', desc: 'Strategic water passages: Suez, Panama, Malacca, Hormuz, Gibraltar and more.' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam'],
+    planRows: [{ cat: 'dunya_bogazlari', icon: '⛴️', count: 8, tr: 'Boğaz', en: 'Strait' }],
+    recommends: ['world.denizler']
+  },
+  {
+    id: 'world.denizler', country: 'world', categories: ['dunya_denizleri'],
+    icon: '🌊', color: '#0891b2',
+    tr: { title: 'Denizler & Körfezler', desc: 'İç denizler, kenar denizler, körfezler ve kapalı havzalar (Hazar, Ölü Deniz).' },
+    en: { title: 'Seas & Gulfs', desc: 'Inland and marginal seas, gulfs and closed basins (Caspian, Dead Sea).' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam'],
+    planRows: [{ cat: 'dunya_denizleri', icon: '🌊', count: 10, tr: 'Deniz', en: 'Sea' }],
+    recommends: ['world.okyanuslar']
+  },
+  {
+    id: 'world.okyanuslar', country: 'world', categories: ['dunya_okyanuslari'],
+    icon: '🌐', color: '#0e7490',
+    tr: { title: 'Okyanuslar & Akıntılar', desc: 'Beş okyanus, derin deniz çukurları, okyanus sırtları ve sıcak/soğuk su akıntıları.' },
+    en: { title: 'Oceans & Currents', desc: 'The five oceans, deep-sea trenches, mid-ocean ridges and warm/cold currents.' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_dark'],
+    planRows: [{ cat: 'dunya_okyanuslari', icon: '🌐', count: 8, tr: 'Okyanus', en: 'Ocean' }],
+    recommends: ['world.denizler']
+  },
+  {
+    id: 'world.ulkeler', country: 'world', categories: ['dunya_ulkeleri'],
+    icon: '🏳️', color: '#db2777',
+    tr: { title: 'Ülkeler & Başkentler', desc: 'Kıtalar, başkentler ve ülke rekorları (en büyük, en küçük, en kalabalık).' },
+    en: { title: 'Countries & Capitals', desc: 'Continents, capital cities and country records (largest, smallest, most populous).' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam'],
+    planRows: [{ cat: 'dunya_ulkeleri', icon: '🏳️', count: 12, tr: 'Ülke', en: 'Country' }],
+    recommends: ['world.yapilar']
+  },
+  {
+    id: 'world.yapilar', country: 'world', categories: ['dunya_yapilari'],
+    icon: '🏗️', color: '#475569',
+    tr: { title: 'Önemli Yapılar & Mühendislik', desc: 'Gökdelenler, köprü ve tüneller, barajlar ve simge anıtlar.' },
+    en: { title: 'Landmark Structures', desc: 'Skyscrapers, bridges and tunnels, dams and iconic monuments.' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_satellite'],
+    planRows: [{ cat: 'dunya_yapilari', icon: '🏗️', count: 10, tr: 'Yapı', en: 'Structure' }],
+    recommends: ['world.harikalar']
+  },
+  {
+    id: 'world.daglar', country: 'world', categories: ['dunya_daglari'],
+    icon: '🗻', color: '#b45309',
+    tr: { title: 'Dünya Dağları & Volkanları', desc: 'Himalayalar, Andlar, Alpler gibi sıradağ sistemleri; zirve rekorları ve ünlü volkanlar.' },
+    en: { title: 'World Mountains & Volcanoes', desc: 'Ranges such as the Himalayas, Andes and Alps; summit records and famous volcanoes.' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_topo', 'layer_terrain'],
+    planRows: [{ cat: 'dunya_daglari', icon: '🗻', count: 10, tr: 'Dünya Dağı', en: 'World Mountain' }],
+    recommends: ['world.sular']
+  },
+  {
+    id: 'world.sular', country: 'world', categories: ['dunya_sulari'],
+    icon: '🏞️', color: '#1d4ed8',
+    tr: { title: 'Dünya Nehirleri & Gölleri', desc: 'Nil, Amazon, Tuna gibi nehir hatları; Baykal, Victoria gibi göller ve büyük şelaleler.' },
+    en: { title: 'World Rivers & Lakes', desc: 'River courses such as the Nile, Amazon and Danube; lakes and major waterfalls.' },
+    unlocks: ['quiz', 'geoguessr', 'speedrun', 'exam', 'layer_topo'],
+    planRows: [{ cat: 'dunya_sulari', icon: '🏞️', count: 10, tr: 'Dünya Suyu', en: 'World Water' }],
+    recommends: ['world.daglar']
+  },
+
   {
     id: 'tr.mutlak_konum', country: 'tr', categories: [], virtual: true,
     icon: '📐', color: '#38bdf8',
@@ -369,7 +493,19 @@ const SUBTYPE_EN = {
   kusaklar: 'Climate Belts', uc_degerler: 'Extremes & Records', mikroklima: 'Microclimates',
   nemli: 'Humid Forests', igne: 'Coniferous Forests', cali: 'Shrubland (Maquis)', ot: 'Grassland (Steppe / Alpine)',
   milli_park: 'National Parks', akarsu_delta: 'River to Delta', dag_gecit: 'Mountain to Pass',
-  hayvan_bolge: 'Livestock to Region', point: 'Points', polyline: 'Lines', polygon: 'Areas'
+  hayvan_bolge: 'Livestock to Region', point: 'Points', polyline: 'Lines', polygon: 'Areas',
+
+  // --- 🌐 Dünya modülü alt türleri ---
+  d_sirada: 'Mountain Ranges', d_zirve: 'Summits & Records', d_volkan: 'Volcanoes',
+  d_nehir: 'Rivers', d_gol: 'Lakes', d_selale: 'Waterfalls',
+  d_okyanus: 'Oceans', d_cukur: 'Deep-Sea Trenches', d_akinti: 'Ocean Currents',
+  d_sirt: 'Ridges & Plate Boundaries',
+  d_deniz: 'Seas', d_korfez: 'Gulfs', d_kapali: 'Closed Basins',
+  d_bogaz: 'Natural Straits', d_kanal: 'Artificial Canals',
+  d_baskent: 'Capital Cities', d_ulke_rekor: 'Country Records', d_kita: 'Continents',
+  d_antik: 'Seven Wonders of the Ancient World', d_yeni7: 'New Seven Wonders', d_dogal: 'Natural Wonders',
+  d_gokdelen: 'Skyscrapers', d_kopru: 'Bridges & Tunnels', d_baraj: 'Dams & Energy Structures',
+  d_anit: 'Monuments & Landmarks'
 };
 
 // ---------------------------------------------------------------------------
@@ -638,12 +774,7 @@ const catalogLines = [
   '  schemaVersion: 1,',
   '  defaultLang: "tr",',
   '  langs: ["tr", "en"],',
-  '  countries: {',
-  '    tr: {',
-  '      code: "TUR", center: [39.0, 35.0], zoom: 6, bbox: [[35.8, 25.6], [42.3, 45.0]],',
-  '      i18n: { tr: { name: "Türkiye" }, en: { name: "Türkiye (Turkey)" } }',
-  '    }',
-  '  },',
+  '  countries: ' + indent(COUNTRY_META) + ',',
   '  categories: ' + indent(catalogCategories) + ',',
   '  subTypes: ' + indent(catalogSubTypes) + ',',
   '  packs: ' + indent(catalogPacks),

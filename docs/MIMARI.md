@@ -25,7 +25,9 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
 
 5. **`js/map.js`**:
    - Leaflet.js entegrasyonu.
-   - Türkiye sınırları odaklı harita yönetimi (Sade ve Fiziki/Kabartı katmanları).
+   - Kapsam odaklı harita yönetimi (Sade ve Fiziki/Kabartı katmanları). Harita tüm
+     dünyada gezilebilir; **ev görünümü** (`setHomeView`) Türkiye ya da Dünya
+     kapsamına göre `GeoScope` tarafından yazılır.
    - Çoklu geometri vurgulama motoru (Nokta nabzı, animasyonlu kesikli çizgi, taranmış parıltılı çokgen).
    - İnteraktif serbest çizim motoru (Vertex markers, kılavuz çizgiler, geri alma).
 
@@ -40,6 +42,10 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
 8. **`js/pack_manager.js` + `js/pack_store_ui.js` (YENİ)**:
    - DLC motoru: paketlerin lazy indirilmesi, kademe (az/orta/tam) eşiği, kaldırma, oyun modu kilitleri ve `packs:changed` yayını.
    - İlk giriş rehberi ve Paket Mağazası arayüzü.
+   - **`GeoScope` (kapsam çözücü)**: paket kimliğinin ülke kısmından (`tr.*` / `world.*`)
+     haritanın ev görünümünü (merkez/zoom) ve mesafe tabanlı puanlamanın ölçek
+     katsayısını çözer. Böylece Türkiye ve Dünya kapsamları aynı motorlarla,
+     kendi ölçeklerinde çalışır. Ayrıntı: [PAKET_SISTEMI.md](PAKET_SISTEMI.md) § Dünya Modülü.
 
 9. **`data/hafiza_kodlari.js` + `js/hafiza_kodu.js` (YENİ)**:
    - Hafıza Kodu Atölyesi: müfredatın mnemonic (hikâye) katmanı. Paket sisteminden bağımsızdır.

@@ -44,6 +44,8 @@ const PACK_GROUP_TABS = [
   { id: 'fiziki',   icon: '⛰️' },
   { id: 'beseri',   icon: '👥' },
   { id: 'ekonomik', icon: '🏭' },
+  // 🌐 Dünya kapsamı kendi sekmesinde: Türkiye sekmeleri kalabalıklaşmasın
+  { id: 'dunya',    icon: '🌍' },
   { id: 'modul',    icon: '📐' }
 ];
 

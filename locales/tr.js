@@ -56,6 +56,7 @@ GeoI18n.register('tr', {
   'group.fiziki': 'Fiziki',
   'group.beseri': 'Beşeri',
   'group.ekonomik': 'Ekonomik',
+  'group.dunya': 'Dünya',
   'group.modul': 'Modüller',
 
   // --- Kademeler ---

@@ -15,9 +15,9 @@ Harita, testler, günlük plan ve oyun modları indirilen paketlere göre şekil
 
 ---
 
-## 📚 Paket Kataloğu (22 paket · 1127 kayıt)
+## 📚 Paket Kataloğu (30 paket · 1334 kayıt)
 
-Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
+Mağaza beş GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 (sayfa başına 9 kart). Kademe sütunu `Az / Orta / Tam` kayıt sayılarıdır.
 
 ### ⛰️ Fiziki Coğrafya
@@ -52,6 +52,21 @@ Mağaza dört GRUP sekmesi, bir arama kutusu ve sayfalama ile gezilir
 | ⚡ Enerji Kaynakları Bölge Haritası | `tr.enerji_bolgeleri` | 24 / 44 / 68 (12 Enerji Grubu) |
 | 🏛️ Turizm & Kültür Mirası | `tr.turizm` | 19 / 35 / 53 |
 | 🚢 Ulaşım & Ticaret Koridorları | `tr.ulasim` | 34 / 63 / 96 |
+
+### 🌍 Dünya (kapsam: `world`)
+Ülke ülke değil **konu konu** paketlenmiş dünya kapsamı: "dünyanın önemli
+konumları". Ayrıntı: [§ Dünya Modülü](#-dünya-modülü-kapsam-world).
+
+| Paket | id | Az / Orta / Tam |
+| :--- | :--- | :--- |
+| 🗿 Dünyanın Harikaları | `world.harikalar` | 8 / 15 / 24 |
+| ⛴️ Boğazlar & Kanallar | `world.bogazlar` | 8 / 15 / 23 |
+| 🌊 Denizler & Körfezler | `world.denizler` | 8 / 15 / 24 |
+| 🌐 Okyanuslar & Akıntılar | `world.okyanuslar` | 8 / 11 / 15 |
+| 🏳️ Ülkeler & Başkentler | `world.ulkeler` | 13 / 24 / 37 |
+| 🏗️ Önemli Yapılar & Mühendislik | `world.yapilar` | 12 / 19 / 29 |
+| 🗻 Dünya Dağları & Volkanları | `world.daglar` | 10 / 18 / 28 |
+| 🏞️ Dünya Nehirleri & Gölleri | `world.sular` | 10 / 17 / 27 |
 
 ### 📐 Modüller
 | Paket | id | Not |
@@ -96,9 +111,10 @@ değil). Rastgele kategori seçen oyun modları (ör. Kör Atış) böylece boş
 | `data/source/*.js` | Ek yazım kaynakları. Numaralı dosyalar sırayla okunup birleştirilir; yeni konu = yeni dosya. |
 | `tools/build_packs.js` | Derleyici. Kaynağı paketlere böler, kademe/alt tür/oluşum alanlarını hesaplar. |
 | `data/packs/catalog.js` | Paylaşılan kayıt defteri: ülkeler, kategoriler, alt türler, paket manifestleri. |
-| `data/packs/pack.tr.*.js` | Paket içerikleri. Kendilerini `GeoPacks.register()` ile kaydeder. |
+| `data/packs/pack.tr.*.js` | Türkiye paket içerikleri. Kendilerini `GeoPacks.register()` ile kaydeder. |
+| `data/packs/pack.world.*.js` | Dünya kapsamı paketleri (bkz. [§ Dünya Modülü](#-dünya-modülü-kapsam-world)). |
 | `data/cografya_data.js` | Boş çalışma zamanı kapları + Türkçe-güvenli `trLower`/`trUpper`. |
-| `js/pack_manager.js` | DLC motoru: kurulum, kademe, kaldırma, projeksiyon, mod kilitleri. |
+| `js/pack_manager.js` | DLC motoru: kurulum, kademe, kaldırma, projeksiyon, mod kilitleri + `GeoScope` kapsam çözücü. |
 | `js/pack_edits.js` | Düzenleme katmanı: kullanıcının sildiği/değiştirdiği/eklediği kayıtlar. Kaynak paket dosyası değişmez. |
 | `js/pack_store_ui.js` | Rehber ekranı + mağaza arayüzü. |
 | `js/i18n.js` | Çift katmanlı dil motoru. |
@@ -356,7 +372,7 @@ Oyun modları (Kör Atış/GeoGuessr, Harita Fatihi, Şimşek Turu, Genel Deneme
 Katalog büyüdükçe kartları tek listede basmak sürdürülemez. Gezinme üç katmanlıdır:
 
 1. **Grup sekmeleri** — `catalog.packs[].group` alanına göre Fiziki / Beşeri /
-   Ekonomik / Modüller. Sekmelerde canlı paket sayacı bulunur.
+   Ekonomik / Dünya / Modüller. Sekmelerde canlı paket sayacı bulunur.
 2. **Arama** — paket adı, açıklaması ve kimliği üzerinde Türkçe-güvenli arama
    (`trLower`, böylece "iklim" araması "İklim"i de bulur).
 3. **Sayfalama** — sayfa başına `STORE_PAGE_SIZE` (9) kart. Grup ya da arama
@@ -410,10 +426,10 @@ diğerleri konusuyla tematik olarak eşleşen paketle gelir:
 
 | Görünüm | Kilit anahtarı | Açan paket |
 | :--- | :--- | :--- |
-| ⛰️ Fiziki / Topografik | `layer_topo` | Dağlar, Ovalar & Platolar |
-| 🏔️ Kabartı / Arazi | `layer_terrain` | Dağlar, Fay Hatları |
-| 🛰️ Gerçek Uydu | `layer_satellite` | Turizm, Kıyılar |
-| 🌙 Gece / Karanlık | `layer_dark` | Matematiksel Konum |
+| ⛰️ Fiziki / Topografik | `layer_topo` | Dağlar, Ovalar & Platolar, Dünya Dağları, Dünya Suları |
+| 🏔️ Kabartı / Arazi | `layer_terrain` | Dağlar, Fay Hatları, Dünya Dağları |
+| 🛰️ Gerçek Uydu | `layer_satellite` | Turizm, Kıyılar, Dünyanın Harikaları, Önemli Yapılar |
+| 🌙 Gece / Karanlık | `layer_dark` | Matematiksel Konum, Okyanuslar |
 
 Kilitli görünüme tıklamak katmanı değiştirmez, mağazayı açar. Kullanılan
 görünümün paketi kaldırılırsa harita otomatik olarak Sade'ye döner
@@ -445,6 +461,80 @@ Böylece bir liman ⚓, havalimanı ✈️, deprem bölgesi 🏚️, buzul şekl
 ayrışır. Yeni bir kategori eklendiğinde bu üç tabloya birer satır ve
 `css/style.css` içindeki `.topic-badge.topic-<kategori>` kuralına bir renk yazmak
 yeterlidir.
+
+---
+
+## 🌍 Dünya Modülü (kapsam: `world`)
+
+Dünya haritası ayrı bir sayfa ya da ayrı bir motor DEĞİLDİR: mevcut paket
+sisteminin ikinci bir **kapsamı**dır. Harita zaten tüm dünyada gezilebiliyordu
+(`minZoom: 2`, yumuşak `maxBounds`); eksik olan şey veri ve ölçekti.
+
+Paketler ülke ülke değil **konu konu** bölünmüştür — istek de buydu: "ülkelerin
+değil dünyanın önemli konumları". Bir ülkenin tamamını modellemek yerine
+boğazlar, denizler, okyanuslar, harikalar, yapılar, ülkeler/başkentler, dağlar
+ve sular kapsam düzeyinde paketlenir.
+
+### Neden ayrı kategoriler (`dunya_*`)?
+
+Test motoru çeldiricileri **aynı kategori havuzundan** seçer. Dünya boğazlarını
+Türkiye'nin `gecitler` kovasına doldurmak, "Zigana Geçidi" sorusuna Panama
+Kanalı'nı çeldirici yapardı; mesafe tabanlı zorluk da (Haversine yüzdelikleri)
+iki ölçeği karıştırırdı. Bu yüzden dünya kayıtları `dunya_daglari`,
+`dunya_sulari`, `dunya_okyanuslari`, `dunya_denizleri`, `dunya_bogazlari`,
+`dunya_ulkeleri`, `dunya_harikalari`, `dunya_yapilari` kategorilerinde durur.
+Kategori kayıt defteri hâlâ paylaşımlıdır; ileride eklenecek bir Almanya paketi
+dağlarını istediği kovaya doldurabilir.
+
+Kayıtlarda `region` alanı **kıta**, `city` alanı **ülke** taşır: Türkiye
+verisinde bölge/il ne işe yarıyorsa dünya verisinde kıta/ülke aynı işi görür
+(rozet metni, balon başlığı, çeldirici bağlamı).
+
+### Kapsam çözücü: `GeoScope` (js/pack_manager.js)
+
+Türkiye'ye göre ayarlanmış iki şey dünya ölçeğinde bozuluyordu:
+
+| Sorun | Eski davranış | Çözüm |
+| :--- | :--- | :--- |
+| Ev görünümü | `resetView()` içinde `[39.0, 35.3] / z6.4` sabitti; Everest sorusundan sonra "Görünümü Sıfırla" kamerayı Türkiye'ye çekiyordu | `GeographyMap.setHomeView()` + katalogdaki `countries[].center/zoom` |
+| Kör Atış puanı | 1000 puan için 20 km sapma gerekiyordu; dünya turunda ulaşılamazdı | Sapma `countries[].scale` katsayısına bölünür (Türkiye 1, Dünya 9); eğri aynı kalır |
+
+`GeoScope` "elimdeki kayıtların kapsamı ne?" sorusunu tek yerden yanıtlar:
+`viewForCategory()`, `viewForItems()`, `viewForInstalled()` ve
+`scaleForItem()`. Kapsam, kaydın paket kimliğinden (`world.bogazlar → world`)
+okunur; pakete bağlı olmayan kullanıcı çizimlerinde ise koordinat Türkiye
+bbox'ının dışındaysa dünya kabul edilir. Karışık havuzlarda **en geniş kapsam
+kazanır** — aksi halde karma bir denemede kamera Türkiye'de kalıp dünya
+hedeflerini ekran dışında bırakırdı.
+
+`js/app.js` içindeki `applyScopeView()` bu kararı konu değişiminde,
+`packs:changed` yayınında, "Görünümü Sıfırla" düğmesinde ve oyun kapsamı
+kurulduğunda uygular. Kör Atış her turda havuzun kapsamına göre kamerayı
+sıfırlar (hedefin konumuna göre değil — yoksa cevabı ele verirdi).
+
+### Açılan modlar
+
+Dünya paketleri `quiz`, `geoguessr`, `speedrun` ve `exam` açar. Açmadıkları
+bilinçlidir: **Harita Fatihi** 7 Türkiye bölgesine, **Oluşum & Boyama** Türkiye
+oluşum taksonomisine, **Şekil Yapbozu** `matchType` çiftlerine bağlıdır.
+Harita görünümleri de tematik olarak eşleşir: `world.daglar` → Fiziki/Kabartı,
+`world.harikalar` ve `world.yapilar` → Uydu, `world.okyanuslar` → Gece.
+
+### Yeni kapsam eklemek
+
+1. `tools/build_packs.js` içindeki `COUNTRY_META`'ya kapsamı yaz
+   (`code`, `center`, `zoom`, `scale`, `bbox`, `i18n`).
+2. Kayıtları `data/source/9*_*.js` biçiminde yeni bir kaynak dosyaya ekle;
+   yeni kategori açıyorsan `data/source/91_dunya_meta.js` örneğindeki gibi
+   `CATEGORIES_EXT.push(...)` ve `SUB_TYPES_EXT` satırlarını yaz.
+3. `CATEGORY_META`'ya `canonical` + İngilizce başlık, `PACK_GROUPS`'a grup,
+   `PACK_DEFS`'e paket tanımı ekle.
+4. Grup yeni ise `js/pack_store_ui.js` → `PACK_GROUP_TABS` ve
+   `locales/*.js` → `group.<id>` satırı.
+5. `node tools/build_packs.js`.
+
+Harita ve oyun motorlarında değişiklik gerekmez: ev görünümü ve ölçek
+katalogdan okunur.
 
 ---
 

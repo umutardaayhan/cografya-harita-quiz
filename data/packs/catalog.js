@@ -13,9 +13,59 @@ const GEO_CATALOG = {
   defaultLang: "tr",
   langs: ["tr", "en"],
   countries: {
-    tr: {
-      code: "TUR", center: [39.0, 35.0], zoom: 6, bbox: [[35.8, 25.6], [42.3, 45.0]],
-      i18n: { tr: { name: "Türkiye" }, en: { name: "Türkiye (Turkey)" } }
+    "tr": {
+      "code": "TUR",
+      "center": [
+        39,
+        35.3
+      ],
+      "zoom": 6.4,
+      "scale": 1,
+      "bbox": [
+        [
+          35.8,
+          25.6
+        ],
+        [
+          42.3,
+          45
+        ]
+      ],
+      "i18n": {
+        "tr": {
+          "name": "Türkiye"
+        },
+        "en": {
+          "name": "Türkiye (Turkey)"
+        }
+      }
+    },
+    "world": {
+      "code": "WLD",
+      "center": [
+        22,
+        12
+      ],
+      "zoom": 2,
+      "scale": 9,
+      "bbox": [
+        [
+          -58,
+          -170
+        ],
+        [
+          78,
+          180
+        ]
+      ],
+      "i18n": {
+        "tr": {
+          "name": "Dünya"
+        },
+        "en": {
+          "name": "World"
+        }
+      }
     }
   },
   categories: {
@@ -376,6 +426,126 @@ const GEO_CATALOG = {
         "en": {
           "title": "Provinces & 81 Cities",
           "short": "Cities"
+        }
+      }
+    },
+    "dunya_daglari": {
+      "canonical": "world_mountains",
+      "icon": "🗻",
+      "color": "#b45309",
+      "i18n": {
+        "tr": {
+          "title": "Dünya Dağları & Volkanları",
+          "short": "D. Dağ"
+        },
+        "en": {
+          "title": "World Mountains & Volcanoes",
+          "short": "W. Mtn"
+        }
+      }
+    },
+    "dunya_sulari": {
+      "canonical": "world_waters",
+      "icon": "🏞️",
+      "color": "#1d4ed8",
+      "i18n": {
+        "tr": {
+          "title": "Dünya Nehirleri & Gölleri",
+          "short": "D. Su"
+        },
+        "en": {
+          "title": "World Rivers & Lakes",
+          "short": "W. Water"
+        }
+      }
+    },
+    "dunya_okyanuslari": {
+      "canonical": "oceans",
+      "icon": "🌐",
+      "color": "#0e7490",
+      "i18n": {
+        "tr": {
+          "title": "Okyanuslar & Akıntılar",
+          "short": "Okyanus"
+        },
+        "en": {
+          "title": "Oceans & Currents",
+          "short": "Ocean"
+        }
+      }
+    },
+    "dunya_denizleri": {
+      "canonical": "seas",
+      "icon": "🌊",
+      "color": "#0891b2",
+      "i18n": {
+        "tr": {
+          "title": "Denizler & Körfezler",
+          "short": "Deniz"
+        },
+        "en": {
+          "title": "Seas & Gulfs",
+          "short": "Sea"
+        }
+      }
+    },
+    "dunya_bogazlari": {
+      "canonical": "straits",
+      "icon": "⛴️",
+      "color": "#7c3aed",
+      "i18n": {
+        "tr": {
+          "title": "Boğazlar & Kanallar",
+          "short": "Boğaz"
+        },
+        "en": {
+          "title": "Straits & Canals",
+          "short": "Strait"
+        }
+      }
+    },
+    "dunya_ulkeleri": {
+      "canonical": "countries",
+      "icon": "🏳️",
+      "color": "#db2777",
+      "i18n": {
+        "tr": {
+          "title": "Ülkeler & Başkentler",
+          "short": "Ülke"
+        },
+        "en": {
+          "title": "Countries & Capitals",
+          "short": "Country"
+        }
+      }
+    },
+    "dunya_harikalari": {
+      "canonical": "wonders",
+      "icon": "🗿",
+      "color": "#f59e0b",
+      "i18n": {
+        "tr": {
+          "title": "Dünyanın Harikaları",
+          "short": "Harika"
+        },
+        "en": {
+          "title": "Wonders of the World",
+          "short": "Wonder"
+        }
+      }
+    },
+    "dunya_yapilari": {
+      "canonical": "structures",
+      "icon": "🏗️",
+      "color": "#475569",
+      "i18n": {
+        "tr": {
+          "title": "Önemli Yapılar & Mühendislik",
+          "short": "Yapı"
+        },
+        "en": {
+          "title": "Landmark Structures",
+          "short": "Structure"
         }
       }
     }
@@ -2084,6 +2254,418 @@ const GEO_CATALOG = {
           }
         }
       }
+    ],
+    "dunya_daglari": [
+      {
+        "id": "all",
+        "icon": "🗻",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Dağ & Volkanlar"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_sirada",
+        "icon": "⛰️",
+        "i18n": {
+          "tr": {
+            "label": "Sıradağ Sistemleri"
+          },
+          "en": {
+            "label": "Mountain Ranges"
+          }
+        }
+      },
+      {
+        "id": "d_zirve",
+        "icon": "🏔️",
+        "i18n": {
+          "tr": {
+            "label": "Zirveler & Rekorlar"
+          },
+          "en": {
+            "label": "Summits & Records"
+          }
+        }
+      },
+      {
+        "id": "d_volkan",
+        "icon": "🌋",
+        "i18n": {
+          "tr": {
+            "label": "Volkanlar"
+          },
+          "en": {
+            "label": "Volcanoes"
+          }
+        }
+      }
+    ],
+    "dunya_sulari": [
+      {
+        "id": "all",
+        "icon": "🏞️",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Nehir & Göller"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_nehir",
+        "icon": "🌊",
+        "i18n": {
+          "tr": {
+            "label": "Nehirler"
+          },
+          "en": {
+            "label": "Rivers"
+          }
+        }
+      },
+      {
+        "id": "d_gol",
+        "icon": "💧",
+        "i18n": {
+          "tr": {
+            "label": "Göller"
+          },
+          "en": {
+            "label": "Lakes"
+          }
+        }
+      },
+      {
+        "id": "d_selale",
+        "icon": "⛲",
+        "i18n": {
+          "tr": {
+            "label": "Şelaleler"
+          },
+          "en": {
+            "label": "Waterfalls"
+          }
+        }
+      }
+    ],
+    "dunya_okyanuslari": [
+      {
+        "id": "all",
+        "icon": "🌐",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Okyanus Konuları"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_okyanus",
+        "icon": "🌊",
+        "i18n": {
+          "tr": {
+            "label": "Okyanuslar"
+          },
+          "en": {
+            "label": "Oceans"
+          }
+        }
+      },
+      {
+        "id": "d_cukur",
+        "icon": "🕳️",
+        "i18n": {
+          "tr": {
+            "label": "Derin Deniz Çukurları"
+          },
+          "en": {
+            "label": "Deep-Sea Trenches"
+          }
+        }
+      },
+      {
+        "id": "d_akinti",
+        "icon": "🌀",
+        "i18n": {
+          "tr": {
+            "label": "Okyanus Akıntıları"
+          },
+          "en": {
+            "label": "Ocean Currents"
+          }
+        }
+      },
+      {
+        "id": "d_sirt",
+        "icon": "🌍",
+        "i18n": {
+          "tr": {
+            "label": "Sırtlar & Levha Sınırları"
+          },
+          "en": {
+            "label": "Ridges & Plate Boundaries"
+          }
+        }
+      }
+    ],
+    "dunya_denizleri": [
+      {
+        "id": "all",
+        "icon": "🌊",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Deniz & Körfezler"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_deniz",
+        "icon": "🌐",
+        "i18n": {
+          "tr": {
+            "label": "Denizler"
+          },
+          "en": {
+            "label": "Seas"
+          }
+        }
+      },
+      {
+        "id": "d_korfez",
+        "icon": "🏖️",
+        "i18n": {
+          "tr": {
+            "label": "Körfezler"
+          },
+          "en": {
+            "label": "Gulfs"
+          }
+        }
+      },
+      {
+        "id": "d_kapali",
+        "icon": "🧂",
+        "i18n": {
+          "tr": {
+            "label": "Kapalı Havzalar"
+          },
+          "en": {
+            "label": "Closed Basins"
+          }
+        }
+      }
+    ],
+    "dunya_bogazlari": [
+      {
+        "id": "all",
+        "icon": "⛴️",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Boğaz & Kanallar"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_bogaz",
+        "icon": "〰️",
+        "i18n": {
+          "tr": {
+            "label": "Doğal Boğazlar"
+          },
+          "en": {
+            "label": "Natural Straits"
+          }
+        }
+      },
+      {
+        "id": "d_kanal",
+        "icon": "🚧",
+        "i18n": {
+          "tr": {
+            "label": "Yapay Kanallar"
+          },
+          "en": {
+            "label": "Artificial Canals"
+          }
+        }
+      }
+    ],
+    "dunya_ulkeleri": [
+      {
+        "id": "all",
+        "icon": "🏳️",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Ülke Konuları"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_baskent",
+        "icon": "🏛️",
+        "i18n": {
+          "tr": {
+            "label": "Başkentler"
+          },
+          "en": {
+            "label": "Capital Cities"
+          }
+        }
+      },
+      {
+        "id": "d_ulke_rekor",
+        "icon": "🥇",
+        "i18n": {
+          "tr": {
+            "label": "Ülke Rekorları"
+          },
+          "en": {
+            "label": "Country Records"
+          }
+        }
+      },
+      {
+        "id": "d_kita",
+        "icon": "🗺️",
+        "i18n": {
+          "tr": {
+            "label": "Kıtalar"
+          },
+          "en": {
+            "label": "Continents"
+          }
+        }
+      }
+    ],
+    "dunya_harikalari": [
+      {
+        "id": "all",
+        "icon": "🗿",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Harikalar"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_antik",
+        "icon": "🏺",
+        "i18n": {
+          "tr": {
+            "label": "Antik Dünyanın 7 Harikası"
+          },
+          "en": {
+            "label": "Seven Wonders of the Ancient World"
+          }
+        }
+      },
+      {
+        "id": "d_yeni7",
+        "icon": "🏅",
+        "i18n": {
+          "tr": {
+            "label": "Yeni Dünyanın 7 Harikası"
+          },
+          "en": {
+            "label": "New Seven Wonders"
+          }
+        }
+      },
+      {
+        "id": "d_dogal",
+        "icon": "🏞️",
+        "i18n": {
+          "tr": {
+            "label": "Doğal Harikalar"
+          },
+          "en": {
+            "label": "Natural Wonders"
+          }
+        }
+      }
+    ],
+    "dunya_yapilari": [
+      {
+        "id": "all",
+        "icon": "🏗️",
+        "i18n": {
+          "tr": {
+            "label": "Tüm Yapılar"
+          },
+          "en": {
+            "label": "All"
+          }
+        }
+      },
+      {
+        "id": "d_gokdelen",
+        "icon": "🏙️",
+        "i18n": {
+          "tr": {
+            "label": "Gökdelenler"
+          },
+          "en": {
+            "label": "Skyscrapers"
+          }
+        }
+      },
+      {
+        "id": "d_kopru",
+        "icon": "🌉",
+        "i18n": {
+          "tr": {
+            "label": "Köprüler & Tüneller"
+          },
+          "en": {
+            "label": "Bridges & Tunnels"
+          }
+        }
+      },
+      {
+        "id": "d_baraj",
+        "icon": "⚡",
+        "i18n": {
+          "tr": {
+            "label": "Barajlar & Enerji Yapıları"
+          },
+          "en": {
+            "label": "Dams & Energy Structures"
+          }
+        }
+      },
+      {
+        "id": "d_anit",
+        "icon": "🗽",
+        "i18n": {
+          "tr": {
+            "label": "Anıtlar & Simge Yapılar"
+          },
+          "en": {
+            "label": "Monuments & Landmarks"
+          }
+        }
+      }
     ]
   },
   packs: [
@@ -3200,6 +3782,420 @@ const GEO_CATALOG = {
         "en": {
           "title": "Transport & Trade Corridors",
           "desc": "Ports, airports, bridges, tunnels, pipelines and the Turkish Straits."
+        }
+      }
+    },
+    {
+      "id": "world.harikalar",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🗿",
+      "color": "#f59e0b",
+      "file": "data/packs/pack.world.harikalar.js",
+      "virtual": false,
+      "categories": [
+        "dunya_harikalari"
+      ],
+      "tiers": {
+        "1": 8,
+        "2": 15,
+        "3": 24
+      },
+      "sizeKb": {
+        "1": 3,
+        "2": 6,
+        "3": 9
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam",
+        "layer_satellite"
+      ],
+      "recommends": [
+        "world.yapilar"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_harikalari",
+          "icon": "🗿",
+          "count": 10,
+          "tr": "Harika",
+          "en": "Wonder"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Dünyanın Harikaları",
+          "desc": "Antik dünyanın 7 harikası, yeni 7 harika ve öne çıkan doğal harikalar."
+        },
+        "en": {
+          "title": "Wonders of the World",
+          "desc": "The seven ancient wonders, the new seven wonders and major natural wonders."
+        }
+      }
+    },
+    {
+      "id": "world.bogazlar",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "⛴️",
+      "color": "#7c3aed",
+      "file": "data/packs/pack.world.bogazlar.js",
+      "virtual": false,
+      "categories": [
+        "dunya_bogazlari"
+      ],
+      "tiers": {
+        "1": 8,
+        "2": 15,
+        "3": 23
+      },
+      "sizeKb": {
+        "1": 3,
+        "2": 7,
+        "3": 10
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam"
+      ],
+      "recommends": [
+        "world.denizler"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_bogazlari",
+          "icon": "⛴️",
+          "count": 8,
+          "tr": "Boğaz",
+          "en": "Strait"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Boğazlar & Kanallar",
+          "desc": "Süveyş, Panama, Malakka, Hürmüz, Cebelitarık gibi stratejik su geçitleri."
+        },
+        "en": {
+          "title": "Straits & Canals",
+          "desc": "Strategic water passages: Suez, Panama, Malacca, Hormuz, Gibraltar and more."
+        }
+      }
+    },
+    {
+      "id": "world.denizler",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🌊",
+      "color": "#0891b2",
+      "file": "data/packs/pack.world.denizler.js",
+      "virtual": false,
+      "categories": [
+        "dunya_denizleri"
+      ],
+      "tiers": {
+        "1": 8,
+        "2": 15,
+        "3": 24
+      },
+      "sizeKb": {
+        "1": 3,
+        "2": 6,
+        "3": 9
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam"
+      ],
+      "recommends": [
+        "world.okyanuslar"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_denizleri",
+          "icon": "🌊",
+          "count": 10,
+          "tr": "Deniz",
+          "en": "Sea"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Denizler & Körfezler",
+          "desc": "İç denizler, kenar denizler, körfezler ve kapalı havzalar (Hazar, Ölü Deniz)."
+        },
+        "en": {
+          "title": "Seas & Gulfs",
+          "desc": "Inland and marginal seas, gulfs and closed basins (Caspian, Dead Sea)."
+        }
+      }
+    },
+    {
+      "id": "world.okyanuslar",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🌐",
+      "color": "#0e7490",
+      "file": "data/packs/pack.world.okyanuslar.js",
+      "virtual": false,
+      "categories": [
+        "dunya_okyanuslari"
+      ],
+      "tiers": {
+        "1": 8,
+        "2": 11,
+        "3": 15
+      },
+      "sizeKb": {
+        "1": 3,
+        "2": 4,
+        "3": 6
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam",
+        "layer_dark"
+      ],
+      "recommends": [
+        "world.denizler"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_okyanuslari",
+          "icon": "🌐",
+          "count": 8,
+          "tr": "Okyanus",
+          "en": "Ocean"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Okyanuslar & Akıntılar",
+          "desc": "Beş okyanus, derin deniz çukurları, okyanus sırtları ve sıcak/soğuk su akıntıları."
+        },
+        "en": {
+          "title": "Oceans & Currents",
+          "desc": "The five oceans, deep-sea trenches, mid-ocean ridges and warm/cold currents."
+        }
+      }
+    },
+    {
+      "id": "world.ulkeler",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🏳️",
+      "color": "#db2777",
+      "file": "data/packs/pack.world.ulkeler.js",
+      "virtual": false,
+      "categories": [
+        "dunya_ulkeleri"
+      ],
+      "tiers": {
+        "1": 13,
+        "2": 24,
+        "3": 37
+      },
+      "sizeKb": {
+        "1": 5,
+        "2": 9,
+        "3": 14
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam"
+      ],
+      "recommends": [
+        "world.yapilar"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_ulkeleri",
+          "icon": "🏳️",
+          "count": 12,
+          "tr": "Ülke",
+          "en": "Country"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Ülkeler & Başkentler",
+          "desc": "Kıtalar, başkentler ve ülke rekorları (en büyük, en küçük, en kalabalık)."
+        },
+        "en": {
+          "title": "Countries & Capitals",
+          "desc": "Continents, capital cities and country records (largest, smallest, most populous)."
+        }
+      }
+    },
+    {
+      "id": "world.yapilar",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🏗️",
+      "color": "#475569",
+      "file": "data/packs/pack.world.yapilar.js",
+      "virtual": false,
+      "categories": [
+        "dunya_yapilari"
+      ],
+      "tiers": {
+        "1": 12,
+        "2": 19,
+        "3": 29
+      },
+      "sizeKb": {
+        "1": 5,
+        "2": 7,
+        "3": 10
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam",
+        "layer_satellite"
+      ],
+      "recommends": [
+        "world.harikalar"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_yapilari",
+          "icon": "🏗️",
+          "count": 10,
+          "tr": "Yapı",
+          "en": "Structure"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Önemli Yapılar & Mühendislik",
+          "desc": "Gökdelenler, köprü ve tüneller, barajlar ve simge anıtlar."
+        },
+        "en": {
+          "title": "Landmark Structures",
+          "desc": "Skyscrapers, bridges and tunnels, dams and iconic monuments."
+        }
+      }
+    },
+    {
+      "id": "world.daglar",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🗻",
+      "color": "#b45309",
+      "file": "data/packs/pack.world.daglar.js",
+      "virtual": false,
+      "categories": [
+        "dunya_daglari"
+      ],
+      "tiers": {
+        "1": 10,
+        "2": 18,
+        "3": 28
+      },
+      "sizeKb": {
+        "1": 4,
+        "2": 7,
+        "3": 11
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam",
+        "layer_topo",
+        "layer_terrain"
+      ],
+      "recommends": [
+        "world.sular"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_daglari",
+          "icon": "🗻",
+          "count": 10,
+          "tr": "Dünya Dağı",
+          "en": "World Mountain"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Dünya Dağları & Volkanları",
+          "desc": "Himalayalar, Andlar, Alpler gibi sıradağ sistemleri; zirve rekorları ve ünlü volkanlar."
+        },
+        "en": {
+          "title": "World Mountains & Volcanoes",
+          "desc": "Ranges such as the Himalayas, Andes and Alps; summit records and famous volcanoes."
+        }
+      }
+    },
+    {
+      "id": "world.sular",
+      "country": "world",
+      "group": "dunya",
+      "version": 1,
+      "icon": "🏞️",
+      "color": "#1d4ed8",
+      "file": "data/packs/pack.world.sular.js",
+      "virtual": false,
+      "categories": [
+        "dunya_sulari"
+      ],
+      "tiers": {
+        "1": 10,
+        "2": 17,
+        "3": 27
+      },
+      "sizeKb": {
+        "1": 4,
+        "2": 7,
+        "3": 11
+      },
+      "unlocks": [
+        "quiz",
+        "geoguessr",
+        "speedrun",
+        "exam",
+        "layer_topo"
+      ],
+      "recommends": [
+        "world.daglar"
+      ],
+      "planRows": [
+        {
+          "cat": "dunya_sulari",
+          "icon": "🏞️",
+          "count": 10,
+          "tr": "Dünya Suyu",
+          "en": "World Water"
+        }
+      ],
+      "i18n": {
+        "tr": {
+          "title": "Dünya Nehirleri & Gölleri",
+          "desc": "Nil, Amazon, Tuna gibi nehir hatları; Baykal, Victoria gibi göller ve büyük şelaleler."
+        },
+        "en": {
+          "title": "World Rivers & Lakes",
+          "desc": "River courses such as the Nile, Amazon and Danube; lakes and major waterfalls."
         }
       }
     },
