@@ -170,6 +170,9 @@ class GeographyMap {
     // katalogdaki ülke kaydıdır (bkz. GeoScope, js/pack_manager.js).
     this.homeView = { center: [39.0, 35.3], zoom: 6.4 };
 
+    // 🌍 İkinci render motoru (küre) — app.js `attachGlobe()` ile bağlar.
+    this.globe = null;
+
     // Otomatik Yakınlaştırma (Auto-Zoom) Ayarı (LocalStorage destekli)
     this.autoZoomEnabled = this.loadAutoZoomSetting();
 
@@ -204,6 +207,9 @@ class GeographyMap {
     // Seçilen taban harita (Sade / Fiziki / Uydu / Gece / Kabartı) eskiden
     // kaydedilmiyor, her yenilemede 'voyager'a dönüyordu.
     this.activeLayerKey = this.loadActiveLayer();
+    // Küreden çıkıldığında dönülecek DÜZ görünüm: küre bir döşeme seti değil,
+    // motor seçimidir — "geri dön" hedefi olarak kullanılamaz.
+    this.flatLayerKey = (this.activeLayerKey !== 'globe') ? this.activeLayerKey : 'voyager';
     this.currentTileLayer = null;
     this.currentReferenceLayer = null;
     this.initMap();
@@ -269,6 +275,20 @@ class GeographyMap {
         withLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         noLabels: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
         options: ortak({ attribution: '&copy; Esri &copy; USGS, NOAA' })
+      },
+      /**
+       * 🌍 KÜRE — diğerleri gibi bir döşeme seti DEĞİL, ikinci bir render
+       * motorudur (bkz. js/globe_view.js). Görünüm listesinde durması bilinçli:
+       * kullanıcı için "harita nasıl görünsün?" sorusunun bir cevabı, kod
+       * tarafında ise mevcut kilit/etiket/senkron mekanizmalarını bedelsiz
+       * devralmasını sağlıyor.
+       */
+      globe: {
+        name: 'Küre / Gezegen',
+        globe: true,
+        withLabels: null,
+        noLabels: null,
+        options: {}
       }
     };
   }
@@ -313,6 +333,8 @@ class GeographyMap {
         document.body.classList.remove('map-no-labels');
       }
       this.updateTileLayer();
+      // Küre etiketleri ayrı bir raster referans katmanıdır; stil yeniden kurulur.
+      if (this.globeActive) this.globe.refreshStyle();
     }
   }
 
@@ -464,6 +486,9 @@ class GeographyMap {
 
   updateTileLayer() {
     const config = this.layerConfigs[this.activeLayerKey] || this.layerConfigs.voyager;
+    // Küre görünümünün döşemesi MapLibre stilinden gelir; burada yapacak iş yok.
+    // (Korumasız kalırsa `L.tileLayer(null)` ile render zinciri kırılırdı.)
+    if (config.globe) return;
     const url = this.labelsEnabled ? config.withLabels : config.noLabels;
 
     if (this.currentTileLayer) {
@@ -494,8 +519,72 @@ class GeographyMap {
     if (!this.layerConfigs[layerKey]) return;
     this.activeLayerKey = layerKey;
     localStorage.setItem('kpss_cografya_map_layer', layerKey);
-    this.updateTileLayer();
+
+    // 🌍 KÜRE: taban döşemesi değişmez, RENDER MOTORU değişir. Küre kabı
+    // Leaflet'in üstünü kaplar; Leaflet sökülmez, arkada canlı kalır (durumu,
+    // dinleyicileri ve çizim motoru olduğu gibi durur).
+    if (this.layerConfigs[layerKey].globe) {
+      if (this.globe) {
+        this.globe.enable()
+          .then(() => this._globeYenidenCiz())
+          .catch(err => {
+            console.warn('Küre açılamadı, düz haritaya dönülüyor:', err);
+            this.setLayer(this.flatLayerKey || 'voyager');
+            document.dispatchEvent(new CustomEvent('globe:failed', { detail: { message: err.message } }));
+          });
+      }
+    } else {
+      this.flatLayerKey = layerKey;      // küreden çıkışta dönülecek görünüm
+      if (this.globe && this.globe.active) {
+        this.globe.disable();
+        this._globeYenidenCiz();
+      }
+      this.updateTileLayer();
+    }
     return this.layerConfigs[layerKey].name;
+  }
+
+  /** Küre bağlanır (uygulama açılışında bir kez) */
+  attachGlobe(globeView) {
+    this.globe = globeView;
+    return globeView;
+  }
+
+  get globeActive() {
+    return !!(this.globe && this.globe.active);
+  }
+
+  /**
+   * Küre ile UYUMSUZ modlar (çizim editörü, harita boyama, oluşum alıştırması,
+   * matematiksel konum ızgaraları, hafıza kodu damgaları) doğrudan Leaflet
+   * katmanlarına — kendi pane'lerine, canvas'ına, SVG filtrelerine — yazar.
+   * Bu modlara girerken düz haritaya dönmek, yarım çizilmiş bir küre
+   * göstermekten iyidir.
+   *
+   * @returns {boolean} görünüm gerçekten düze çevrildiyse true
+   */
+  requireFlatView() {
+    if (!this.globeActive) return false;
+    this.setLayer(this.flatLayerKey || 'voyager');
+    document.dispatchEvent(new CustomEvent('globe:forced-flat'));
+    return true;
+  }
+
+  /**
+   * Görünüm motoru değiştiğinde ekrandaki soru/keşif içeriği yeniden basılır;
+   * aksi halde küreye geçen kullanıcı boş bir gezegen görürdü.
+   */
+  _globeYenidenCiz() {
+    // ASENKRON yayınlanır. `highlightQuestionShape` küre çizemediğinde
+    // `requireFlatView()` çağırıyor; olay senkron yayınlansa dinleyici aynı
+    // soruyu yığının ortasında yeniden basar, dış çağrı da devam edip AYNI
+    // şekli ikinci kez çizerdi. Bir sonraki makro göreve bırakınca dış çağrı
+    // önce tamamlanır, tazeleme de üzerine temiz basar.
+    setTimeout(() => {
+      document.dispatchEvent(new CustomEvent('map:view-changed', {
+        detail: { globe: this.globeActive }
+      }));
+    }, 0);
   }
 
   // 3D Üçgen Prizma Dağ Kabartma İkonu Üretici
@@ -796,6 +885,13 @@ class GeographyMap {
     this.clearQuestionHighlight();
     if (!questionItem) return;
 
+    // 🌍 Küre: çizemediği soru tipinde (bağlı grup) `false` döner ve
+    // görünüm o an düz haritaya iner — yarım çizim göstermeyiz.
+    if (this.globeActive) {
+      if (this.globe.highlightShape(questionItem)) return;
+      this.requireFlatView();
+    }
+
     // Şehirler kategorisinde gerçek GeoJSON sınırlarını parıldat
     if (questionItem.category === 'sehirler') {
       const feat = this.getCityFeature(questionItem);
@@ -929,9 +1025,101 @@ class GeographyMap {
    *   kartını eşleştiren TEK ipucu harftir; gizlenince oyun oynanamaz hale
    *   geliyordu (tüm pinler aynı anonim daireye dönüşüyordu).
    */
+  /**
+   * 🔤 ŞIK PİNİ BİÇİMLENDİRİCİSİ (iki render motorunun ORTAK kaynağı)
+   *
+   * Harfli/roma rakamlı şık pini hem Leaflet `divIcon`'unda hem de KÜRE
+   * görünümünün HTML işaretçisinde kullanılır. Markup tek yerde durmak
+   * ZORUNDA: cevap renklendirmesi (`highlightMultiChoiceAnswer`) ve rozet
+   * durumları (`applyChoicePinStates`) katman nesnelerine değil doğrudan
+   * `document.querySelectorAll('.choice-pin-container')` sonucuna yazar.
+   * Yani iki motor aynı sınıf ve veri özniteliklerini üretirse, cevap
+   * vurgusu KÜRE üzerinde de hiçbir ek kod olmadan çalışır.
+   *
+   * @returns {{html:string, className:string, iconSize:number[], iconAnchor:number[], durumSiniflari:string}}
+   */
+  buildChoicePin(opt, { index, letter, roman, choiceColor, geometriVar, rozetSabit, shapeType }) {
+    const isLinear = shapeType === 'polyline';
+    const isArea = shapeType === 'polygon' || opt.category === 'sehirler' || opt.category === 'bolgeler';
+    const isPoint = !isLinear && !isArea;
+    const shapeClass = isLinear ? 'shape-linear' : (isArea ? 'shape-area' : 'shape-point');
+
+    // Noktasal şekiller için keşif modundaki zengin özel ikonun HTML'i
+    let exploreIconHtml = '';
+    if (isPoint && !rozetSabit) {
+      // `isimsiz` + `notr`: ikon ne adı ne de oluşum türünü ele vermeli.
+      const customIcon = this.getCustomCategoryIcon(opt, { isimsiz: true, notr: true });
+      const ikonAyar = (customIcon && customIcon.options) || {};
+      const iconHtml = ikonAyar.html || '<div class="pulse-circle"></div>';
+
+      // Kaynak ikon normalde kendi `iconAnchor`'ıyla hizalanır (dağ prizmasının
+      // tabanı 32 px'lik kutunun 26. pikselindedir). Yalnızca HTML'ini kopyalayıp
+      // ortalarsak ikon kendi yarıçapı kadar kayar; farkı burada telafi ediyoruz.
+      const [ikonG, ikonY] = ikonAyar.iconSize || [0, 0];
+      const [ankraX, ankraY] = ikonAyar.iconAnchor || [ikonG / 2, ikonY / 2];
+      const dx = (ikonG / 2) - ankraX;
+      const dy = (ikonY / 2) - ankraY;
+
+      exploreIconHtml =
+        `<div class="choice-pin-explore-icon" style="--pin-dx:${dx}px; --pin-dy:${dy}px;">${iconHtml}</div>`;
+    }
+
+    const durumSiniflari = [
+      shapeClass,
+      geometriVar ? 'geometri-var' : 'geometri-yok',
+      rozetSabit ? 'rozet-sabit' : ''
+    ].filter(Boolean).join(' ');
+
+    let cityName = '';
+    if (isPoint) {
+      cityName = this.findCityName(opt);
+    }
+    const useCity = this.pinCityEnabled && isPoint && !!cityName;
+    const labelDisplay = useCity ? cityName : roman;
+    const cityBadgeClass = useCity ? 'choice-pin-city-badge' : '';
+    const cityNameClass = useCity ? 'choice-pin-city-name' : '';
+
+    // Harfli ve Roma rakamlı veya şehir isimli şık pini
+    const badgeHtml = `
+        <div class="choice-pin-container ${durumSiniflari}"
+             data-id="${escAttr(opt.id)}"
+             data-index="${index}"
+             data-letter="${escAttr(letter)}"
+             data-roman="${escAttr(roman)}"
+             data-city="${escAttr(cityName)}"
+             style="--choice-color: ${choiceColor.main}; --choice-glow: ${choiceColor.glow}; --choice-bg: ${choiceColor.bg};">
+          <div class="choice-pin-badge ${cityBadgeClass}">
+            <span class="choice-pin-letter">${letter}</span>
+            <span class="choice-pin-roman ${cityNameClass}">${labelDisplay}</span>
+          </div>
+          <div class="choice-pin-point"></div>
+          ${exploreIconHtml}
+        </div>
+      `;
+
+    return {
+      html: badgeHtml,
+      // Şekil/geometri sınıfları KÖK öğeye de yazılır. Rozet gizlendiğinde
+      // işaretçinin 36x44'lük şeffaf kutusu DOM'da kalıyor ve boş görünen
+      // haritaya tıklayan öğrenci farkında olmadan o şıkkı işaretliyordu;
+      // CSS bu kutuyu ancak kökten kapatabiliyor.
+      className: `choice-map-icon ${durumSiniflari}`,
+      iconSize: [36, 44],
+      iconAnchor: [18, 44],
+      durumSiniflari
+    };
+  }
+
   showMultipleChoiceLocations(options, onSelectOption, ayarlar = {}) {
     this.clearQuestionHighlight();
     if (!options || options.length === 0) return;
+
+    // 🌍 Küre: şık pinleri ORTAK üreticiden geldiği için cevap renklendirmesi
+    // ve rozet durumları ek kod olmadan çalışır (bkz. buildChoicePin).
+    if (this.globeActive) {
+      if (this.globe.showChoices(options, onSelectOption, ayarlar)) return;
+      this.requireFlatView();
+    }
 
     const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
     const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -1169,73 +1357,17 @@ class GeographyMap {
         });
       }
 
-      const isLinear = shapeType === 'polyline';
-      const isArea = shapeType === 'polygon' || opt.category === 'sehirler' || opt.category === 'bolgeler';
-      const isPoint = !isLinear && !isArea;
-      const shapeClass = isLinear ? 'shape-linear' : (isArea ? 'shape-area' : 'shape-point');
-
-      // Noktasal şekiller için keşif modundaki zengin özel ikonun HTML'i
-      let exploreIconHtml = '';
-      if (isPoint && !rozetSabit) {
-        // `isimsiz` + `notr`: ikon ne adı ne de oluşum türünü ele vermeli.
-        const customIcon = this.getCustomCategoryIcon(opt, { isimsiz: true, notr: true });
-        const ikonAyar = (customIcon && customIcon.options) || {};
-        const iconHtml = ikonAyar.html || '<div class="pulse-circle"></div>';
-
-        // Kaynak ikon normalde kendi `iconAnchor`'ıyla hizalanır (dağ prizmasının
-        // tabanı 32 px'lik kutunun 26. pikselindedir). Yalnızca HTML'ini kopyalayıp
-        // ortalarsak ikon kendi yarıçapı kadar kayar; farkı burada telafi ediyoruz.
-        const [ikonG, ikonY] = ikonAyar.iconSize || [0, 0];
-        const [ankraX, ankraY] = ikonAyar.iconAnchor || [ikonG / 2, ikonY / 2];
-        const dx = (ikonG / 2) - ankraX;
-        const dy = (ikonY / 2) - ankraY;
-
-        exploreIconHtml =
-          `<div class="choice-pin-explore-icon" style="--pin-dx:${dx}px; --pin-dy:${dy}px;">${iconHtml}</div>`;
-      }
-
-      const durumSiniflari = [
-        shapeClass,
-        geometriVar ? 'geometri-var' : 'geometri-yok',
-        rozetSabit ? 'rozet-sabit' : ''
-      ].filter(Boolean).join(' ');
-
-      let cityName = '';
-      if (isPoint) {
-        cityName = this.findCityName(opt);
-      }
-      const useCity = this.pinCityEnabled && isPoint && !!cityName;
-      const labelDisplay = useCity ? cityName : roman;
-      const cityBadgeClass = useCity ? 'choice-pin-city-badge' : '';
-      const cityNameClass = useCity ? 'choice-pin-city-name' : '';
-
-      // Harfli ve Roma rakamlı veya şehir isimli şık pini
-      const badgeHtml = `
-        <div class="choice-pin-container ${durumSiniflari}" 
-             data-id="${escAttr(opt.id)}" 
-             data-index="${index}"
-             data-letter="${escAttr(letter)}" 
-             data-roman="${escAttr(roman)}" 
-             data-city="${escAttr(cityName)}"
-             style="--choice-color: ${choiceColor.main}; --choice-glow: ${choiceColor.glow}; --choice-bg: ${choiceColor.bg};">
-          <div class="choice-pin-badge ${cityBadgeClass}">
-            <span class="choice-pin-letter">${letter}</span>
-            <span class="choice-pin-roman ${cityNameClass}">${labelDisplay}</span>
-          </div>
-          <div class="choice-pin-point"></div>
-          ${exploreIconHtml}
-        </div>
-      `;
+      // Pin biçimlendirmesi KÜRE görünümüyle paylaşılır (bkz. buildChoicePin).
+      const pin = this.buildChoicePin(opt, {
+        index, letter, roman, choiceColor, geometriVar, rozetSabit, shapeType
+      });
+      const durumSiniflari = pin.durumSiniflari;
 
       const choiceIcon = L.divIcon({
-        // Şekil/geometri sınıfları KÖK öğeye de yazılır. Rozet gizlendiğinde
-        // Leaflet işaretçisinin 36x44'lük şeffaf kutusu DOM'da kalıyor ve boş
-        // görünen haritaya tıklayan öğrenci farkında olmadan o şıkkı
-        // işaretliyordu; CSS bu kutuyu ancak kökten kapatabiliyor.
-        className: `choice-map-icon ${durumSiniflari}`,
-        html: badgeHtml,
-        iconSize: [36, 44],
-        iconAnchor: [18, 44]
+        className: pin.className,
+        html: pin.html,
+        iconSize: pin.iconSize,
+        iconAnchor: pin.iconAnchor
       });
 
       const marker = L.marker([lat, lng], { icon: choiceIcon }).addTo(this.multiChoiceLayerGroup);
@@ -1605,6 +1737,10 @@ class GeographyMap {
     const target = L.latLng(latLng);
     if (!Number.isFinite(target.lat) || !Number.isFinite(target.lng)) return;
 
+    // Küre etkinse kamerayı O sürer; Leaflet yine de aynı yere alınır, böylece
+    // görünümler arası geçişte kadraj korunur.
+    if (this.globeActive) this.globe.flyTo([target.lat, target.lng], zoom);
+
     if (this.map.getSize().x === 0 || this.map.getSize().y === 0) {
       this.map.setView(target, zoom, { animate: false });
       return;
@@ -1648,6 +1784,7 @@ class GeographyMap {
 
   flyToBoundsSafely(bounds, options = {}) {
     this._ensureSize();
+    if (this.globeActive) this.globe.fitBounds(bounds);
     const target = bounds.getCenter();
     if (!Number.isFinite(target.lat) || !Number.isFinite(target.lng)) {
       return;   // bozuk sınır: sessizce vazgeç, soru render'ı bölünmesin
@@ -1694,6 +1831,7 @@ class GeographyMap {
 
   resetView() {
     this.flySafely(this.homeView.center, this.homeView.zoom);
+    if (this.globeActive) this.globe.flyTo(this.homeView.center, this.homeView.zoom);
   }
 
   // =========================================================================
@@ -2185,6 +2323,13 @@ class GeographyMap {
   // --- KEŞİF MODU VE TÜM ÇİZİMLERİ GÖSTERME ---
   showAllPoints(items, defaultColor = '#3b82f6') {
     this.clearAll();
+
+    // 🌍 Küre etkinse keşif pinleri orada basılır (Leaflet kabı arkada boş kalır)
+    if (this.globeActive && this.globe.showExplore(items)) {
+      this.resetView();
+      return;
+    }
+
     this._bindPopupActions();
 
     // 0. Kompozit veya birleşik grup nesnelerini tekil alt çizimlere aç (flatten)
@@ -2423,6 +2568,7 @@ class GeographyMap {
 
   clearAll() {
     this.clearQuestionHighlight();
+    if (this.globe) this.globe.clear();
     this.exploreLayerGroup.clearLayers();
     this.drawingLayerGroup.clearLayers();
     this.clearReferenceLayer();

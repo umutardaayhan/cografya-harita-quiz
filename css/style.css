@@ -558,6 +558,59 @@ body {
   background: transparent;
 }
 
+/* =========================================================================
+   🌍 KURE GORUNUMU (ikinci render motoru — bkz. js/globe_view.js)
+   Leaflet sokulmez; bu kap onun USTUNU kaplar. Boylece kureden cikinca
+   uygulama hicbir durumu kaybetmeden duz haritaya doner.
+   ========================================================================= */
+#globe {
+  position: absolute;
+  inset: 0;
+  z-index: 2;                 /* #map: 1 — ustunu kaplar, panel/menuler (1000+) ustte kalir */
+  background-color: #050914;
+  background-image: inherit;  /* #map ile ayni uzay zemini */
+}
+#globe canvas { outline: none; }
+
+/* MapLibre isaretciyi `transform: translate(-50%,-50%) translate(Xpx,Ypx)` ile
+   konumlandirir ve bunu ogenin kap koseginde (0,0) MUTLAK durdugunu varsayarak
+   yapar. `position: relative` verildiginde ogeler akista kalip birbirini asagi
+   itiyordu: olcumde her pin oncekinden ~28 px daha kayiyor, Cebelitarik
+   116 px, Malakka 172 px asagida (kurenin disinda, bosluga) cikiyordu. */
+#globe .globe-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  cursor: pointer;
+}
+#globe .globe-pin > * { position: absolute; inset: 0; }
+#globe .globe-pin.globe-target { pointer-events: none; }
+
+/* Balonu koyu temaya uydur (varsayilan MapLibre balonu beyazdir) */
+#globe .globe-popup .maplibregl-popup-content {
+  background: rgba(12, 18, 32, 0.95);
+  color: #e2e8f5;
+  border: 1px solid rgba(120, 150, 200, 0.32);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+  padding: 12px 14px;
+  font-size: 0.86rem;
+}
+#globe .globe-popup .maplibregl-popup-tip { border-top-color: rgba(12, 18, 32, 0.95); }
+#globe .globe-popup .maplibregl-popup-close-button { color: #94a3b8; font-size: 1.1rem; }
+
+/* Kure acikken Leaflet'in kendi kontrolleri (zoom, atif) gorunmesin:
+   #map'in ustu kapali olsa da ekran okuyucu/odak sirasina girmemeleri icin. */
+body.globe-active #map .leaflet-control-container { display: none; }
+
+/* Kure atif kutusu koyu zeminde okunabilir olsun */
+#globe .maplibregl-ctrl-attrib {
+  background: rgba(5, 9, 20, 0.7);
+  color: #94a3b8;
+}
+#globe .maplibregl-ctrl-attrib a { color: #7dd3fc; }
+
 /* --- SOL ALT HARİTA & QUIZ ARAÇLARI (KOMPAKT KART & SCROLL DÜZENİ) --- */
 .map-controls-left {
   position: absolute;

@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // silme/düzenleme/ekleme işlemleri burada tutulur (bkz. js/pack_edits.js).
   const packEdits = new PackEditStore();
   const geoMap = new GeographyMap('map');
+  // 🌍 İkinci render motoru. Kütüphanesi (MapLibre) TEMBEL yüklenir: küreye
+  // hiç girmeyen kullanıcı 1 MB'lık bedeli ödemez.
+  const globeView = new GlobeView('globe', geoMap);
+  geoMap.attachGlobe(globeView);
   const geoQuiz = new GeographyQuiz('daglar', customDrawManager);
 
   // DOM Elemanları - Navigasyon & Genel
@@ -1517,9 +1521,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Bir oyun modu baslatilmadan onceki ortak hazirlik
+  /**
+   * 🌍 Küre üzerinde çalışabilen oyun modları. Dışındakiler doğrudan Leaflet
+   * katmanlarına yazar (boyama canvas'ı, oluşum SVG filtreleri, matematiksel
+   * konum ızgaraları, hafıza kodu damgaları, bölge boyama) — bu modlara
+   * girerken küre kapanıp düz haritaya dönülür.
+   */
+  const KURE_UYUMLU_MODLAR = ['geoguessr'];
+
   function prepareGameMode(modeName) {
     closeGamesDropdown();
     exitAllGameModes();
+    if (!KURE_UYUMLU_MODLAR.includes(modeName)) geoMap.requireFlatView();
     if (currentMode === 'drawing') closeDrawingToolbar();
     currentMode = modeName;
     // Keşif Modu'ndan bir oyun moduna geçildiğinde düğme "Test Moduna Geç"
@@ -2926,6 +2939,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- ÇİZİM EDİTÖRÜ MODU VE ARAÇ ÇUBUĞU ---
   function openDrawingToolbar() {
+    // Çizim motoru Leaflet vertex işaretçileri ve kılavuz çizgileriyle çalışır
+    geoMap.requireFlatView();
     currentMode = 'drawing';
     drawingToolbar.style.display = 'flex';
     // Menü yüksekliği gizliyken değişmiş olabilir; araç çubuğu altına otursun
@@ -3503,6 +3518,48 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDynamicGroupBtnUI();
     toggleDynamicGroupBtn.addEventListener('click', handleDynamicGroupToggle);
   }
+
+  // =========================================================================
+  // 🌍 GÖRÜNÜM MOTORU DEĞİŞİMİ (düz harita ↔ küre)
+  // =========================================================================
+  /**
+   * Motor değişince ekrandaki içerik yeniden basılır; aksi halde küreye geçen
+   * kullanıcı boş bir gezegen, düze dönen kullanıcı boş bir harita görürdü.
+   * Oyun modları kendi çizimlerini kendileri kurduğu için dokunulmaz.
+   */
+  let _yenidenCizimSuruyor = false;
+  function redrawCurrentView() {
+    if (_yenidenCizimSuruyor) return;
+    _yenidenCizimSuruyor = true;
+    try {
+      if (currentMode === 'explore') { loadExploreMode(); return; }
+      if (currentMode !== 'quiz') return;              // çizim ve oyun modları hariç
+      if (!geoQuiz || !geoQuiz.currentQuestion) return;
+
+      if (geoQuiz.currentActualFormat === 'find_on_map') {
+        geoMap.showMultipleChoiceLocations(geoQuiz.currentOptions, (selectedId) => handleAnswer(selectedId));
+      } else {
+        geoMap.highlightQuestionShape(geoQuiz.currentQuestion);
+      }
+    } finally {
+      _yenidenCizimSuruyor = false;
+    }
+  }
+
+  document.addEventListener('map:view-changed', redrawCurrentView);
+
+  // Küre kütüphanesi indirilemedi (çevrimdışı / CDN kapalı): sessizce düşmek
+  // yerine kullanıcıya söyle, düğme durumu da düz görünüme dönsün.
+  document.addEventListener('globe:failed', (e) => {
+    syncLayerButtons();
+    showEditToast('🌍 Küre görünümü yüklenemedi: ' + ((e.detail && e.detail.message) || 'bağlantı yok'));
+  });
+
+  // Küre ile uyumsuz bir moda girildi (çizim, boyama, oluşum, hafıza kodu…)
+  document.addEventListener('globe:forced-flat', () => {
+    syncLayerButtons();
+    showEditToast('🗺️ Bu mod düz harita gerektiriyor; küre görünümü kapatıldı.');
+  });
 
   if (btnDynamicGroupTools) {
     btnDynamicGroupTools.addEventListener('click', handleDynamicGroupToggle);
@@ -4885,7 +4942,8 @@ document.addEventListener('DOMContentLoaded', () => {
     topo: 'layer_topo',
     terrain: 'layer_terrain',
     satellite: 'layer_satellite',
-    dark: 'layer_dark'
+    dark: 'layer_dark',
+    globe: 'layer_globe'         // 🌍 Küre: dünya paketlerinden biri gerekir
   };
 
   function refreshLayerLocks() {
@@ -4983,6 +5041,23 @@ document.addEventListener('DOMContentLoaded', () => {
     packsBtn.addEventListener('click', () => packStore.openStore(afterPacksReady));
   }
 
+  /**
+   * Kayıtlı görünüm KÜRE ise motoru gerçekten ayağa kaldırır.
+   * `GeographyMap` yapıcısı yalnızca anahtarı okur; küreyi açmak paketlerin
+   * yüklenmesini (kilit kontrolü) beklemek zorundadır.
+   */
+  let _kureAcilistaKuruldu = false;
+  function bootGlobeIfSaved() {
+    if (_kureAcilistaKuruldu || geoMap.activeLayerKey !== 'globe') return;
+    if (!packManager.isModeAvailable('layer_globe')) {
+      geoMap.setLayer('voyager');       // paket kaldırılmış: taban haritaya dön
+      syncLayerButtons();
+      return;
+    }
+    _kureAcilistaKuruldu = true;
+    geoMap.setLayer('globe');
+  }
+
   /** Mağaza/rehber kapandıktan sonraki normal açılış akışı */
   function afterPacksReady() {
     // Kullanıcı tüm paketlerini kaldırdıysa boş bir haritaya değil, mağazaya döner
@@ -4993,6 +5068,7 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshModeLocks();
     syncLayerButtons();     // kayıtlı taban harita düğmelerde de işaretli olsun
     refreshLayerLocks();
+    bootGlobeIfSaved();
     loadNextQuestion();
     updateStatsUI();
     openPlanScreen();

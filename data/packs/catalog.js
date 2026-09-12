@@ -3812,6 +3812,7 @@ const GEO_CATALOG = {
         "geoguessr",
         "speedrun",
         "exam",
+        "layer_globe",
         "layer_satellite"
       ],
       "recommends": [
@@ -3863,7 +3864,8 @@ const GEO_CATALOG = {
         "quiz",
         "geoguessr",
         "speedrun",
-        "exam"
+        "exam",
+        "layer_globe"
       ],
       "recommends": [
         "world.denizler"
@@ -3914,7 +3916,8 @@ const GEO_CATALOG = {
         "quiz",
         "geoguessr",
         "speedrun",
-        "exam"
+        "exam",
+        "layer_globe"
       ],
       "recommends": [
         "world.okyanuslar"
@@ -3966,6 +3969,7 @@ const GEO_CATALOG = {
         "geoguessr",
         "speedrun",
         "exam",
+        "layer_globe",
         "layer_dark"
       ],
       "recommends": [
@@ -4017,7 +4021,8 @@ const GEO_CATALOG = {
         "quiz",
         "geoguessr",
         "speedrun",
-        "exam"
+        "exam",
+        "layer_globe"
       ],
       "recommends": [
         "world.yapilar"
@@ -4069,6 +4074,7 @@ const GEO_CATALOG = {
         "geoguessr",
         "speedrun",
         "exam",
+        "layer_globe",
         "layer_satellite"
       ],
       "recommends": [
@@ -4121,6 +4127,7 @@ const GEO_CATALOG = {
         "geoguessr",
         "speedrun",
         "exam",
+        "layer_globe",
         "layer_topo",
         "layer_terrain"
       ],
@@ -4174,6 +4181,7 @@ const GEO_CATALOG = {
         "geoguessr",
         "speedrun",
         "exam",
+        "layer_globe",
         "layer_topo"
       ],
       "recommends": [

@@ -116,6 +116,7 @@ değil). Rastgele kategori seçen oyun modları (ör. Kör Atış) böylece boş
 | `data/cografya_data.js` | Boş çalışma zamanı kapları + Türkçe-güvenli `trLower`/`trUpper`. |
 | `js/pack_manager.js` | DLC motoru: kurulum, kademe, kaldırma, projeksiyon, mod kilitleri + `GeoScope` kapsam çözücü. |
 | `js/pack_edits.js` | Düzenleme katmanı: kullanıcının sildiği/değiştirdiği/eklediği kayıtlar. Kaynak paket dosyası değişmez. |
+| `js/globe_view.js` | 🌍 Küre görünümü: MapLibre GL v5 globe projeksiyonu (ikinci render motoru). |
 | `js/pack_store_ui.js` | Rehber ekranı + mağaza arayüzü. |
 | `js/i18n.js` | Çift katmanlı dil motoru. |
 | `locales/tr.js`, `locales/en.js` | Arayüz metin sözlükleri. |
@@ -430,6 +431,7 @@ diğerleri konusuyla tematik olarak eşleşen paketle gelir:
 | 🏔️ Kabartı / Arazi | `layer_terrain` | Dağlar, Fay Hatları, Dünya Dağları |
 | 🛰️ Gerçek Uydu | `layer_satellite` | Turizm, Kıyılar, Dünyanın Harikaları, Önemli Yapılar |
 | 🌙 Gece / Karanlık | `layer_dark` | Matematiksel Konum, Okyanuslar |
+| 🌍 Küre / Gezegen | `layer_globe` | Sekiz dünya paketinden herhangi biri |
 
 Kilitli görünüme tıklamak katmanı değiştirmez, mağazayı açar. Kullanılan
 görünümün paketi kaldırılırsa harita otomatik olarak Sade'ye döner
@@ -519,6 +521,48 @@ bilinçlidir: **Harita Fatihi** 7 Türkiye bölgesine, **Oluşum & Boyama** Tür
 oluşum taksonomisine, **Şekil Yapbozu** `matchType` çiftlerine bağlıdır.
 Harita görünümleri de tematik olarak eşleşir: `world.daglar` → Fiziki/Kabartı,
 `world.harikalar` ve `world.yapilar` → Uydu, `world.okyanuslar` → Gece.
+
+### 🌍 Küre görünümü (ikinci render motoru)
+
+Leaflet 2B Web Mercator ile sınırlıdır: küre projeksiyonu yoktur ve dünya
+ölçeğinde kutuplara doğru şişme (Grönland ≈ Afrika) kaçınılmazdır. Küre
+görünümü bu yüzden **MapLibre GL v5**'in `globe` projeksiyonuyla çizilir ve
+harita görünüm listesine (`Sade / Fiziki / Uydu / Gece / Kabartı`) **altıncı
+bir seçenek** olarak girer — `js/globe_view.js`.
+
+| Karar | Gerekçe |
+| :--- | :--- |
+| Leaflet SÖKÜLMEDİ | Çizim editörü, harita boyama, oluşum alıştırması, matematiksel konum ızgaraları ve hafıza kodu damgaları doğrudan Leaflet pane/canvas/SVG filtrelerine yazıyor. Küre bu motorun yerine geçmez, **üstünü kaplar**; kapanınca uygulama hiçbir durumu kaybetmeden düz haritaya döner. |
+| MapLibre **v5** sabitlendi | v6 yalnızca ESM dağıtılıyor; uygulama `file://` üzerinden de açılabildiği için modül script'leri CORS'a takılırdı. v5 UMD yayınlar ve `file://` altında test edildi. |
+| TEMBEL yükleme | MapLibre 1 MB, Leaflet 145 KB. Kütüphane ilk etkinleştirmede `<script>` ile indirilir; küreye hiç girmeyen (ya da dünya paketi kurmayan) kullanıcı bu bedeli ödemez — ölçümle doğrulandı. |
+| Döşeme: Esri World Imagery | "Uzayda süzülen gezegen" görüntüsünü veren katman odur; etiket içermediği için dilsiz harita mantığına da uyar. Etiketler `World_Boundaries_and_Places` referans katmanıyla, kullanıcının tercihine göre açılır. Yeni anahtar/hesap gerekmez. |
+| Pin ve markup TEK kaynak | Pinler `GeographyMap.getCustomCategoryIcon()` ve `GeographyMap.buildChoicePin()` çıktısını aynen kullanır. Cevap renklendirmesi (`highlightMultiChoiceAnswer`) ve rozet durumları (`applyChoicePinStates`) katman nesnesi değil **DOM sorgusu** kullandığı için küre pinlerinde de ek kod olmadan çalışır. |
+| Tıklama köprüsü | Küre tıklaması Leaflet haritasında sentetik `click` tetikler; Kör Atış ve Koordinat Avcısı dinleyicileri app.js'te tek yerde durduğu için oyun motorlarına dokunulmadı. |
+| Desteklenmeyeni reddetme | Bağlı grup şekilleri (`isGroup`) küre tarafında yok: `false` döner ve `GeographyMap` o an düz haritaya iner. Sessizce eksik çizmekten iyidir. |
+
+**Küre ile uyumlu modlar:** Keşif Modu, standart test, Şimşek Turu, Genel
+Deneme, Kör Atış. Diğer modlara girerken `requireFlatView()` devreye girer ve
+kullanıcıya "bu mod düz harita gerektiriyor" bildirimi gösterilir
+(`js/app.js` → `KURE_UYUMLU_MODLAR`).
+
+**Yol boyunca çıkan üç somut hata** (hepsi ölçülüp düzeltildi):
+
+1. `L.latLngBounds(...).pad()` kutup ötesine taşabiliyor; MapLibre geçersiz
+   koordinatta **istisna fırlatıp** soru render'ını yarıda bırakıyordu →
+   küreye giren her koordinat `_kirp()` ile ±85/±180'e kırpılır.
+2. Projeksiyon `style.load` sonrası değiştirilince o ana kadar eklenmiş
+   işaretçiler Mercator konumlarında donuyordu → projeksiyon artık **stilin
+   içinde** tanımlı, ayrıca stil yüklenince işaretçiler tazeleniyor.
+3. İşaretçi kökü `position: relative` bırakılınca MapLibre'nin
+   `translate(-50%,-50%)` konumlandırması akışla çakışıyor, her pin
+   öncekinden ~28 px daha aşağı kayıyordu (Malakka 172 px, kürenin dışında) →
+   `position: absolute`. Arka yüzdeki pinler de `opacityWhenCovered: 0` ile
+   tamamen gizleniyor.
+
+Küre kapatılırken MapLibre örneği **sökülür** (`map.remove()`): gizli bir WebGL
+bağlamı tutmak hem tarayıcı bağlam sınırını yer hem de 0x0 tuvalde iptal edilen
+döşeme istekleri işlenmeyen promise reddi üretiyordu (tek kapatmada 16 konsol
+hatası ölçüldü).
 
 ### Yeni kapsam eklemek
 
