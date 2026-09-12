@@ -39,17 +39,44 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
      ortaktır, bu yüzden cevap renklendirmesi küre üzerinde de çalışır.
    - Küre tıklaması Leaflet'te sentetik `click` tetikler: Kör Atış ve Koordinat
      Avcısı hiç değişmeden küre üzerinde çalışır.
+   - Gök mekaniği `js/globe_sky.js`'e devredilir (aşağıya bakın); bu dosya yalnızca
+     ışık/gökyüzü rengini yazar, zaman durumunu tutar ve katmanları sıraya dizer.
    - Ayrıntı: [PAKET_SISTEMI.md](PAKET_SISTEMI.md) § Küre görünümü.
 
-7. **`js/quiz.js`**:
+7. **`js/globe_sky.js` (YENİ)**:
+   - 🌌 Kürenin gerçekçilik çekirdeği. Üç parça:
+     - **`GokMekanigi`** — saf matematik, WebGL'e dokunmaz: alt-güneş noktası
+       (Astronomical Almanac güneş formülü), GMST, küre birim vektörleri ve
+       MapLibre `light.position` çevirimi. Dünya-sabit → view dönüşümü
+       MapLibre'nin kendi `light` zincirinin birebir kopyasıdır; aksi hâlde bizim
+       terminatörümüz ile MapLibre'nin atmosfer parlaması birbirinden kayar.
+     - **`YildizKatmani`** — `data/yildiz_katalogu.js`'teki 5070 gerçek yıldızı
+       (HYG v3.8, kadir ≤ 6.0) gök küresine çizer + prosedürel Samanyolu.
+       ra/dec göksel çerçevede saklanır, GMST döndürmesi vertex shader'da tek
+       uniform ile yapılır: zaman değişince tampon yeniden yüklenmez.
+     - **`GeceKatmani`** — her piksel için ışın-küre kesişimi ile güneş
+       yükseltisini bulur: gerçek terminatör, gün batımı halkası ve NASA GIBS
+       Black Marble şehir ışıkları (shader'da terminatörle maskelenir).
+   - **Neden bu dosya var**: küre önce MapLibre'nin hazır çıktısıyla yetiniyordu ve
+     "güneş" diye bir şey yoktu (parlama `light.anchor: viewport` ile EKRANA
+     çiviliydi), yıldızlar CSS `radial-gradient` noktalarıydı (WebGL tuvalinin
+     arkasındaki DOM katmanında) ve gündüz/gece sınırı hiç yoktu. Kusur kameranın
+     hareketi değil, güneş ile yıldızların REFERANS ÇERÇEVESİYDİ — ikisi de dünya
+     uzayında değildi. Ayrıntılı gerekçe dosyanın kendi başlığındadır.
+   - Katman sırası bağlayıcıdır: `gok-yildiz → taban → etiket → gok-gece → sekil-*`.
+     Gece örtüsü bilinçli olarak şekillerin ALTINDADIR; üstte olsa sınav
+     şekillerini ve pinlerini de karartırdı.
+   - `tools/build_star_catalog.js` kataloğu HYG'den yeniden üretir.
+
+8. **`js/quiz.js`**:
    - **Adaptif Soru Motoru (Spaced Repetition)**: Kullanıcının her soru için hata ve başarı geçmişini izleyerek en çok yanlış yapılan soruları ağırlıklı rastgele (Roulette Wheel) seçimiyle daha sık karşısına çıkarma.
    - **Dinamik Şık Motoru**: 2, 3, 4 veya 5 (A-B-C-D-E ÖSYM formatı) şık üretimi ve çeldirici yönetimi.
    - **Soru Kökü Motoru**: veride elle yazılmış KPSS soru kökleri (`promptTitle`) cevabın adını/ilini ele vermiyorsa jenerik kalıbın yerine geçer; kategori ve şekil (nokta/alan/çizgi/bağlı grup) başına ayrı soru kalıpları. Ayrıntı: [OZEL_HARITA_VE_ADAPTIF_MOTOR.md](OZEL_HARITA_VE_ADAPTIF_MOTOR.md) §18.
 
-8. **`js/app.js`**:
+9. **`js/app.js`**:
    - Çizim editörü akışı, mod yönetimi (Quiz, Keşif, Çizim), klavye kısayolları (1-5 ve A-E tuşları, Space/Enter ile geçiş).
 
-9. **`js/pack_manager.js` + `js/pack_store_ui.js` (YENİ)**:
+10. **`js/pack_manager.js` + `js/pack_store_ui.js` (YENİ)**:
    - DLC motoru: paketlerin lazy indirilmesi, kademe (az/orta/tam) eşiği, kaldırma, oyun modu kilitleri ve `packs:changed` yayını.
    - İlk giriş rehberi ve Paket Mağazası arayüzü.
    - **`GeoScope` (kapsam çözücü)**: paket kimliğinin ülke kısmından (`tr.*` / `world.*`)
@@ -57,11 +84,11 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
      katsayısını çözer. Böylece Türkiye ve Dünya kapsamları aynı motorlarla,
      kendi ölçeklerinde çalışır. Ayrıntı: [PAKET_SISTEMI.md](PAKET_SISTEMI.md) § Dünya Modülü.
 
-10. **`data/hafiza_kodlari.js` + `js/hafiza_kodu.js` (YENİ)**:
+11. **`data/hafiza_kodlari.js` + `js/hafiza_kodu.js` (YENİ)**:
    - Hafıza Kodu Atölyesi: müfredatın mnemonic (hikâye) katmanı. Paket sisteminden bağımsızdır.
    - Tek kaynak ilkesi: her kod `[[imge|gerçek]]` işaretli TEK bir hikâye metnidir; eşleştirme, boşluk doldurma, sıralama, kaçak yakalama, ters kod ve harita damgası turlarının hepsi bu metinden türetilir.
    - Ustalık defteri (`kpss_hafiza_kodu_ustalik`) zayıf kodlara ağırlık verir; tur tipi dağılımı `1/√bolluk` ile dengelenir.
    - Galeri üreteci (`HafizaGaleri`) 68 kodu hikâyesi, çözüm tablosu, püf notu ve ustalık çubuğuyla listeler.
 
-11. **`js/i18n.js` + `locales/*.js` (YENİ)**:
+12. **`js/i18n.js` + `locales/*.js` (YENİ)**:
    - Çift katmanlı dil motoru: arayüz metinleri (`GeoI18n.t`) ve coğrafi varlık çevirileri (`GeoI18n.pick`) birbirinden bağımsız yönetilir.

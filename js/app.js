@@ -3366,6 +3366,188 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // =========================================================================
+  // 🌌 GÖK KONTROLLERİ (Küre / Gezegen görünümü)
+  // =========================================================================
+  /**
+   * Zaman sürgüsü, tarih seçici ve gök anahtarları. Hepsi `globeView` üzerindeki
+   * TEK doğruluk kaynağına yazar; terminatör, yıldızlar ve atmosfer parlaması
+   * oradan okuduğu için "ayarı değiştirdim ama katman eski değeri kullanıyor"
+   * diye bir durum oluşamaz (bkz. js/globe_sky.js başlığı).
+   *
+   * Zaman sürgüsü neden pedagojik: gün içinde sürüklendiğinde terminatörün
+   * Dünya'yı süpürüşü görünür; tarih 21 Haziran / 21 Aralık'a çekildiğinde
+   * eksen eğikliğinin (23,5°) terminatörü eğdiği ve kutup gündüzü/gecesinin
+   * doğduğu doğrudan izlenir. Mutlak Konum modülünün sayısal olarak öğrettiği
+   * şeyin (güneş açısı, gündüz süresi) görsel yarısı budur.
+   */
+  const skyRow = document.getElementById('sky-controls-row');
+  const skyDate = document.getElementById('sky-date');
+  const skySlider = document.getElementById('sky-time-slider');
+  const skyClock = document.getElementById('sky-clock');
+  const skyReadout = document.getElementById('sky-sun-readout');
+  const skyNowBtn = document.getElementById('sky-now-btn');
+  const skyPlayBtn = document.getElementById('sky-play-btn');
+  const skyPlayIcon = document.getElementById('sky-play-icon');
+  const skyPlayLabel = document.getElementById('sky-play-label');
+  const skyDayLockBtn = document.getElementById('sky-daylock-btn');
+  const skyDayLockLabel = document.getElementById('sky-daylock-label');
+  const skyStarsBtn = document.getElementById('sky-stars-btn');
+  const skyLightsBtn = document.getElementById('sky-lights-btn');
+  const skyTiltBtn = document.getElementById('sky-tilt-btn');
+  const skyTiltLabel = document.getElementById('sky-tilt-label');
+
+  /** Sürgü/tarih alanları kullanıcı sürüklerken geri yazılmasın diye bayrak */
+  let _skyKullaniciYaziyor = false;
+
+  function skyGostergeYaz(durum) {
+    if (!skyReadout) return;
+    const yon = (v, p, n) => (v >= 0 ? p : n);
+    const lat = Math.abs(durum.lat).toFixed(1) + '°' + yon(durum.lat, 'K', 'G');
+    const lng = Math.abs(durum.lng).toFixed(1) + '°' + yon(durum.lng, 'D', 'B');
+    skyReadout.textContent = `☀️ ${lat} ${lng}`;
+    // Mevsim ipucu: |deklinasyon| ≈ 23,4 → gündönümü, ≈ 0 → ekinoks
+    const d = Math.abs(durum.decl);
+    const mevsim = d > 23 ? ' · gündönümü' : (d < 1 ? ' · ekinoks' : '');
+    skyReadout.title = `Alt-güneş noktası (Güneşin tam tepede olduğu yer): ${lat} ${lng}`
+      + `\nDeklinasyon: ${durum.decl.toFixed(2)}°${mevsim}`
+      + `\nGök saati (UTC): ${durum.tarih.toISOString().slice(0, 16).replace('T', ' ')}`
+      + (durum.canli ? '\nCanlı gerçek zaman' : '\nDondurulmuş zaman — "Şimdi" ile canlıya dönün');
+  }
+
+  function skyAlanlariYaz(durum) {
+    if (_skyKullaniciYaziyor) return;
+    const t = durum.tarih;
+    if (skyDate) skyDate.value = t.toISOString().slice(0, 10);
+    const dk = t.getUTCHours() * 60 + t.getUTCMinutes();
+    if (skySlider) skySlider.value = String(dk);
+    if (skyClock) {
+      skyClock.textContent = String(t.getUTCHours()).padStart(2, '0') + ':'
+        + String(t.getUTCMinutes()).padStart(2, '0');
+    }
+  }
+
+  function skyArayuzuTazele() {
+    if (!globeView) return;
+    const durum = globeView.gunesDurumu;
+    skyGostergeYaz(durum);
+    skyAlanlariYaz(durum);
+
+    if (skyPlayIcon) skyPlayIcon.textContent = durum.oynuyor ? '⏸' : '▶';
+    if (skyPlayLabel) skyPlayLabel.textContent = durum.oynuyor ? 'Durdur' : 'Oynat';
+    if (skyPlayBtn) skyPlayBtn.classList.toggle('active', durum.oynuyor);
+    if (skyNowBtn) skyNowBtn.classList.toggle('active', durum.canli);
+
+    if (skyDayLockBtn) skyDayLockBtn.classList.toggle('active', globeView.gunduzKilidi);
+    if (skyDayLockLabel) skyDayLockLabel.textContent = globeView.gunduzKilidi ? 'Gündüz Kilidi (Açık)' : 'Gündüz Kilidi';
+    if (skyStarsBtn) skyStarsBtn.classList.toggle('active', globeView.yildizlarAcik);
+    if (skyLightsBtn) skyLightsBtn.classList.toggle('active', globeView.sehirIsiklariAcik);
+    if (skyTiltBtn) skyTiltBtn.classList.toggle('active', globeView.egimKilidi);
+    if (skyTiltLabel) skyTiltLabel.textContent = globeView.egimKilidi ? 'Eğim Kilidi (Açık)' : 'Eğim Kilidi';
+  }
+
+  /** Tarih + sürgü değerlerinden UTC bir an kurar ve küreye yazar */
+  function skyZamaniUygula() {
+    if (!globeView || !skySlider) return;
+    const dk = parseInt(skySlider.value, 10) || 0;
+    const gun = (skyDate && skyDate.value) || globeView.gokZamani.toISOString().slice(0, 10);
+    const [y, m, d] = gun.split('-').map(Number);
+    if (!y || !m || !d) return;
+    const t = new Date(Date.UTC(y, m - 1, d, Math.floor(dk / 60), dk % 60, 0));
+    globeView.zamaniAyarla(t);
+    skyGostergeYaz(globeView.gunesDurumu);
+    if (skyClock) {
+      skyClock.textContent = String(Math.floor(dk / 60)).padStart(2, '0') + ':'
+        + String(dk % 60).padStart(2, '0');
+    }
+  }
+
+  if (skyRow && globeView) {
+    ['input', 'change'].forEach(ev => {
+      if (skySlider) {
+        skySlider.addEventListener(ev, () => {
+          _skyKullaniciYaziyor = true;
+          globeView.oynatmayiDurdur();
+          skyZamaniUygula();
+          skyArayuzuTazele();
+        });
+      }
+      if (skyDate) {
+        skyDate.addEventListener(ev, () => {
+          _skyKullaniciYaziyor = true;
+          globeView.oynatmayiDurdur();
+          skyZamaniUygula();
+          skyArayuzuTazele();
+        });
+      }
+    });
+    // Sürükleme bittiğinde geri yazma kilidi kalkar (oynatma alanları tazeleyebilsin)
+    [skySlider, skyDate].forEach(el => {
+      if (el) ['pointerup', 'blur'].forEach(ev => el.addEventListener(ev, () => { _skyKullaniciYaziyor = false; }));
+    });
+
+    if (skyNowBtn) {
+      skyNowBtn.addEventListener('click', () => {
+        _skyKullaniciYaziyor = false;
+        globeView.simdiyeDon();
+        skyArayuzuTazele();
+        showEditToast('🕐 Gökyüzü canlı gerçek zamana döndü.');
+      });
+    }
+
+    if (skyPlayBtn) {
+      skyPlayBtn.addEventListener('click', () => {
+        _skyKullaniciYaziyor = false;
+        if (globeView.gunesDurumu.oynuyor) globeView.oynatmayiDurdur();
+        else globeView.oynat(1);          // 1 gerçek saniye = 1 saat → gün 24 sn
+        skyArayuzuTazele();
+      });
+    }
+
+    if (skyDayLockBtn) {
+      skyDayLockBtn.addEventListener('click', () => {
+        globeView.setGunduzKilidi(!globeView.gunduzKilidi);
+        skyArayuzuTazele();
+      });
+    }
+    if (skyStarsBtn) {
+      skyStarsBtn.addEventListener('click', () => {
+        globeView.setYildizlar(!globeView.yildizlarAcik);
+        skyArayuzuTazele();
+      });
+    }
+    if (skyLightsBtn) {
+      skyLightsBtn.addEventListener('click', () => {
+        globeView.setSehirIsiklari(!globeView.sehirIsiklariAcik);
+        skyArayuzuTazele();
+      });
+    }
+    if (skyTiltBtn) {
+      skyTiltBtn.addEventListener('click', () => {
+        globeView.setEgimKilidi(!globeView.egimKilidi);
+        skyArayuzuTazele();
+      });
+    }
+
+    // Zaman oynatılırken gösterge canlı kalsın (katman zaten her karede çiziliyor)
+    document.addEventListener('globe:sky-tick', (e) => {
+      skyGostergeYaz(e.detail);
+      skyAlanlariYaz(e.detail);
+    });
+
+    // Küre açılıp kapandığında satır görünürlüğü CSS ile değişir; değerler de
+    // tazelenmeli, yoksa satır eski bir "an" göstererek açılır.
+    document.addEventListener('map:view-changed', () => skyArayuzuTazele());
+    skyArayuzuTazele();
+
+    // Canlı moddayken saat ilerliyor: dakikada bir gösterge tazelenir.
+    // (Terminatörün kendisi zaten her çizimde gerçek zamanı okuyor; bu yalnızca
+    // rakamların ekranda eskimemesi için.)
+    setInterval(() => {
+      if (globeView.active && globeView.gunesDurumu.canli) skyArayuzuTazele();
+    }, 60000);
+  }
+
   // --- SORU GÖSTERGELERİ (PİNLER) GİZLE/KÜÇÜLT BUTONU ---
   const toggleBadgesBtn = document.getElementById('toggle-badges-btn');
   const badgesBtnLabel = document.getElementById('badges-btn-label');

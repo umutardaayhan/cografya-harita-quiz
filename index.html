@@ -348,6 +348,40 @@
         </button>
       </div>
 
+      <!-- 🌌 GÖK KONTROLLERİ — yalnızca Küre / Gezegen görünümünde görünür
+           (CSS: body:not(.globe-active) .sky-controls-row { display: none }).
+           Buradaki her ayar GlobeView'daki tek doğruluk kaynağına yazar; gece
+           örtüsü, yıldızlar ve atmosfer parlaması aynı ANA bakar. -->
+      <div class="map-controls-row sky-controls-row" id="sky-controls-row">
+        <div class="sky-time-block">
+          <span class="selector-label sky-sun-readout" id="sky-sun-readout"
+                title="Alt-güneş noktası: Güneşin o anda tam tepede olduğu coğrafi konum. Terminatör, alacakaranlık ve atmosfer parlaması bu tek noktadan türer.">☀️ —</span>
+          <input type="date" id="sky-date" class="sky-date-input"
+                 title="Tarih: eksen eğikliği (23,5°) nedeniyle terminatörün eğimi mevsimle değişir. 21 Haziran ve 21 Aralık'ta kutup gündüzü/gecesi görünür hâle gelir.">
+          <input type="range" id="sky-time-slider" class="sky-time-slider" min="0" max="1439" step="5"
+                 title="Günün saati (UTC): terminatörü Dünya üzerinde süpürür">
+          <span class="sky-clock" id="sky-clock">--:--</span>
+        </div>
+        <button id="sky-now-btn" class="tool-btn" title="Gerçek zamana dön (canlı gökyüzü)">
+          <span>🕐</span> <span>Şimdi</span>
+        </button>
+        <button id="sky-play-btn" class="tool-btn" title="Zamanı oynat: 1 gerçek saniyede 1 saat geçer, bir tam gün 24 saniyede döner">
+          <span id="sky-play-icon">▶</span> <span id="sky-play-label">Oynat</span>
+        </button>
+        <button id="sky-daylock-btn" class="tool-btn" title="Gece örtüsünü tamamen kapatır. Gerçekçilik yerine okunaklılık: gece tarafına düşen bir bölgeyi çalışırken işe yarar.">
+          <span>☀️</span> <span id="sky-daylock-label">Gündüz Kilidi</span>
+        </button>
+        <button id="sky-stars-btn" class="tool-btn" title="Gerçek yıldız kataloğu (5070 yıldız, kadir ≤ 6.0) ve Samanyolu">
+          <span>✨</span> <span>Yıldızlar</span>
+        </button>
+        <button id="sky-lights-btn" class="tool-btn" title="Gece tarafında NASA Black Marble şehir ışıkları">
+          <span>🌃</span> <span>Şehir Işıkları</span>
+        </button>
+        <button id="sky-tilt-btn" class="tool-btn" title="Kamera eğimini kilitler. Eğik kamerada pin ↔ konum eşleşmesini gözle takip etmek zorlaşır; sınav pratiğinde düz kamera daha okunaklı.">
+          <span>🎥</span> <span id="sky-tilt-label">Eğim Kilidi</span>
+        </button>
+      </div>
+
       <div class="map-controls-row">
         <!-- Coğrafi Mesafe Zorluk Seçici (1-5 Kademe) -->
         <div class="difficulty-selector" title="Zorluk Seviyesi (Şıklar Arası Coğrafi Yakınlık Mesafesi)">
@@ -1285,9 +1319,14 @@
   <script src="js/hafiza_kodu.js?v=5"></script>
   <script src="js/panel_manager.js?v=2"></script>
   <script src="js/study_plan.js?v=2"></script>
-  <script src="js/globe_view.js?v=1"></script>
+  <!-- 🌌 Küre görünümünün gök mekaniği: yıldız kataloğu → uzay katmanları →
+       küre motoru. Sıra bağlayıcıdır: globe_sky.js kataloğu okur, globe_view.js
+       de katman sınıflarını kurar. -->
+  <script src="data/yildiz_katalogu.js?v=1"></script>
+  <script src="js/globe_sky.js?v=4"></script>
+  <script src="js/globe_view.js?v=3"></script>
   <script src="js/map.js?v=12"></script>
   <script src="js/quiz.js?v=6"></script>
-  <script src="js/app.js?v=20"></script>
+  <script src="js/app.js?v=21"></script>
 </body>
 </html>

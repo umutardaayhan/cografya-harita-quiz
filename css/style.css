@@ -563,12 +563,19 @@ body {
    Leaflet sokulmez; bu kap onun USTUNU kaplar. Boylece kureden cikinca
    uygulama hicbir durumu kaybetmeden duz haritaya doner.
    ========================================================================= */
+/* YILDIZLAR BURADA DEGIL: #map'in CSS yildizlari (radial-gradient noktalari)
+   bilincli olarak MIRAS ALINMIYOR. O noktalar WebGL tuvalinin ARKASINDAKI DOM
+   katmaninda, sayfa koordinatlarinda duruyor; kamera dondugunde kipirdamalari
+   fizikî olarak imkânsizdi ve `background-size` ile dosendikleri icin ayni alti
+   nokta gozle gorulur bir izgarada tekrarliyordu. Kure gorunumunun yildizlari
+   artik gercek bir katalogdan, gok kuresi uzerinde ciziliyor
+   (bkz. js/globe_sky.js · YildizKatmani). Buradaki duz koyu zemin yalnizca
+   WebGL tuvali boyanana kadar gorunen taban. */
 #globe {
   position: absolute;
   inset: 0;
   z-index: 2;                 /* #map: 1 — ustunu kaplar, panel/menuler (1000+) ustte kalir */
-  background-color: #050914;
-  background-image: inherit;  /* #map ile ayni uzay zemini */
+  background-color: #03060f;
 }
 #globe canvas { outline: none; }
 
@@ -665,6 +672,88 @@ body.globe-active #map .leaflet-control-container { display: none; }
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+}
+
+/* =========================================================================
+   🌌 GOK KONTROLLERI (yalnizca Kure / Gezegen gorunumunde)
+   Zaman surgusu terminatoru Dunya uzerinde supurur; tarih secici mevsimi
+   (eksen egikligi) degistirir. Satir yalnizca kure aktifken gorunur — duz
+   haritada gunes/gece diye bir sey yok, dugmeler orada anlamsiz olurdu.
+   ========================================================================= */
+body:not(.globe-active) .sky-controls-row { display: none; }
+
+.sky-controls-row {
+  padding-top: 6px;
+  border-top: 1px dashed rgba(120, 150, 200, 0.22);
+}
+
+.sky-time-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.sky-sun-readout {
+  font-variant-numeric: tabular-nums;   /* rakam genisligi sabit: deger degisince satir ziplamasin */
+  white-space: nowrap;
+}
+
+.sky-date-input,
+.sky-clock {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  color: var(--text-main);
+  border-radius: var(--radius-md);
+  padding: 4px 6px;
+  font-size: 0.78rem;
+  font-family: inherit;
+}
+
+.sky-clock {
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  text-align: center;
+}
+
+.sky-date-input { color-scheme: dark; }   /* tarih secicinin kendi paleti koyu temaya uysun */
+
+.sky-time-slider {
+  flex: 1 1 90px;
+  min-width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, #0b1224 0%, #1d4f7c 25%, #f0a93c 50%, #1d4f7c 75%, #0b1224 100%);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Surgu basligi: gunun saatini tasiyan "gunes". Webkit ve Firefox ayri
+   sozde-ogeler ister ve tek kuralda birlestirilemez (gecersiz secici tum
+   blogu duserir), bu yuzden bilincli olarak tekrar ediliyor. */
+.sky-time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffd479;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 6px rgba(255, 200, 90, 0.85);
+  cursor: pointer;
+}
+
+.sky-time-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffd479;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 6px rgba(255, 200, 90, 0.85);
+  cursor: pointer;
 }
 
 .tool-btn {
