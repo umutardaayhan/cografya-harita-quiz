@@ -4,9 +4,10 @@ Bu strateji belgesi, **Coğrafya Harita Lab** platformunun yerel bir sınav arac
 
 ---
 
-## 📌 Güncel Durum (Ağustos 2026)
+## 📌 Güncel Durum (Eylül 2026)
 
-Faz 1 ve Faz 2'nin **altyapısı kuruldu**; ayrıntılar: [PAKET_SISTEMI.md](PAKET_SISTEMI.md).
+Faz 1 ve Faz 2'nin **altyapısı kuruldu**; Faz 5'in ilk adımı olan **Dünya Modülü
+yayında** (8 paket · 207 kayıt). Ayrıntılar: [PAKET_SISTEMI.md](PAKET_SISTEMI.md).
 
 | Konu | Durum |
 | :--- | :--- |
@@ -17,7 +18,9 @@ Faz 1 ve Faz 2'nin **altyapısı kuruldu**; ayrıntılar: [PAKET_SISTEMI.md](PAK
 | Arayüz metinlerinin çevirisi | ⏳ Yalnızca paket/rehber ekranları çevrildi; ana arayüz hâlâ HTML'de sabit |
 | Varlık adlarının İngilizcesi | ⏳ Şema hazır, `i18n.en` blokları henüz doldurulmadı |
 | SQLite master veritabanı | ⏳ `tools/build_packs.js` ara katman olarak çalışıyor; `build_dataset.py` bunun yerini alacak |
-| Yeni ülke paketleri | ⏳ Başlanmadı |
+| Yeni ülke paketleri | ⏳ Başlanmadı (tek tek ülkeler) |
+| 🌐 Dünya kapsamı (`world.*`) | ✅ 8 paket: harikalar, boğazlar, denizler, okyanuslar, ülkeler, yapılar, dağlar, sular |
+| Çok kapsamlı harita (ev görünümü + ölçek) | ✅ `GeoScope`: kapsam başına merkez/zoom ve mesafe katsayısı katalogdan okunuyor |
 
 ---
 
@@ -149,7 +152,13 @@ Avrupa, coğrafi eğitim ve sınav standartlarının yüksek olduğu öncelikli 
 
 ## 🏆 FAZ 5: Küresel Özellikler & Topluluk
 
-1. **🌐 "Dünya Modu" (World Explorer):**
-   - Tek bir ülke yerine tüm kıtaları kapsayan "Dünya Dağları", "Dünya Boğazları/Kanalları" (Süveyş, Panama, Malakka vb.) küresel turnuvaları.
+1. **🌐 "Dünya Modu" (World Explorer)** — ✅ **ilk sürüm yayında:**
+   - Ülke ülke değil KONU konu paketlenmiş `world.*` kapsamı: Dünyanın Harikaları,
+     Boğazlar & Kanallar (Süveyş, Panama, Malakka, Hürmüz…), Denizler & Körfezler,
+     Okyanuslar & Akıntılar, Ülkeler & Başkentler, Önemli Yapılar, Dünya Dağları,
+     Dünya Nehirleri & Gölleri.
+   - Harita ev görünümü ve Kör Atış puan ölçeği artık kapsama göre belirlenir
+     (`catalog.countries[].center/zoom/scale` → `GeoScope`).
+   - Sırada: küresel turnuva/lider tablosu ve kıta bazlı alt kapsamlar.
 2. **📦 Topluluk Harita Paketleri (User Decks):**
    - Kullanıcıların kendi ülkeleri/üniversiteleri için hazırladıkları JSON harita paketlerini yükleyip paylaşabilecekleri açık ekosistem.

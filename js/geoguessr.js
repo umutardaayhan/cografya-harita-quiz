@@ -32,12 +32,26 @@ class GeoGuessrGame {
     return Math.round(R * c);
   }
 
-  calculateScore(distanceKm) {
-    if (distanceKm <= 20) return 1000;
-    if (distanceKm <= 50) return Math.max(0, Math.round(1000 - (distanceKm - 20) * 8));
-    if (distanceKm <= 150) return Math.max(0, Math.round(760 - (distanceKm - 50) * 3.6));
-    if (distanceKm <= 350) return Math.max(0, Math.round(400 - (distanceKm - 150) * 1.5));
-    if (distanceKm <= 600) return Math.max(0, Math.round(100 - (distanceKm - 350) * 0.4));
+  /**
+   * Puan eşikleri (20 km = 1000 puan) TÜRKİYE ölçeğine göre ayarlanmıştır.
+   * Dünya paketleri eklendiğinde bu eşikler anlamsızlaşıyordu: Everest'i 300 km
+   * yakınından işaretleyen oyuncu 0 puan alıyordu. Sapma, hedefin kapsam
+   * katsayısına (`GeoScope.scale`: Türkiye 1, Dünya 9) bölünerek değerlendirilir;
+   * eğrinin kendisi hiç değişmez, yalnızca ölçeği kapsama uyar.
+   */
+  scopeScale(item) {
+    if (typeof GeoScope === 'undefined') return 1;
+    const s = GeoScope.scaleForItem(item);
+    return (Number.isFinite(s) && s > 0) ? s : 1;
+  }
+
+  calculateScore(distanceKm, scale = 1) {
+    const d = distanceKm / (scale > 0 ? scale : 1);
+    if (d <= 20) return 1000;
+    if (d <= 50) return Math.max(0, Math.round(1000 - (d - 20) * 8));
+    if (d <= 150) return Math.max(0, Math.round(760 - (d - 50) * 3.6));
+    if (d <= 350) return Math.max(0, Math.round(400 - (d - 150) * 1.5));
+    if (d <= 600) return Math.max(0, Math.round(100 - (d - 350) * 0.4));
     return 0;
   }
 
@@ -69,8 +83,6 @@ class GeoGuessrGame {
     this.hasGuessedThisRound = false;
     this.guessLayerGroup.clearLayers();
     this.geoMap.clearAll();
-    // Önceki turun cevabına uçmuş kamerayı Türkiye geneline geri al
-    this.geoMap.resetView();
 
     let pool = [];
     if (this.customPool && this.customPool.length > 0) {
@@ -96,8 +108,18 @@ class GeoGuessrGame {
 
     if (finalPool.length === 0) {
       this.currentTarget = null;
+      this.geoMap.resetView();
       return null;
     }
+
+    // Kamera, HAVUZUN kapsamına göre sıfırlanır — hedefin kendi konumuna göre
+    // değil. Havuzda dünya kaydı varsa görünüm dünya geneline açılır; aksi
+    // halde Türkiye ölçeğinde kalır. Sıra önemlidir: `resetView` havuz
+    // belirlendikten SONRA çağrılır, yoksa dünya hedefi ekran dışında kalırdı.
+    if (typeof GeoScope !== 'undefined' && this.geoMap.setHomeView) {
+      this.geoMap.setHomeView(GeoScope.viewForItems(finalPool));
+    }
+    this.geoMap.resetView();
 
     this.currentTarget = finalPool[Math.floor(Math.random() * finalPool.length)];
 
@@ -117,7 +139,8 @@ class GeoGuessrGame {
     const targetLng = this.currentTarget.lng;
 
     const distanceKm = this.calculateDistance(clickLat, clickLng, targetLat, targetLng);
-    const score = this.calculateScore(distanceKm);
+    const scale = this.scopeScale(this.currentTarget);
+    const score = this.calculateScore(distanceKm, scale);
     this.totalScore += score;
 
     const result = {
@@ -130,12 +153,15 @@ class GeoGuessrGame {
     };
 
     this.roundResults.push(result);
-    this.renderGuessOnMap(clickLat, clickLng, targetLat, targetLng, distanceKm, score);
+    this.renderGuessOnMap(clickLat, clickLng, targetLat, targetLng, distanceKm, score, scale);
     return result;
   }
 
-  renderGuessOnMap(clickLat, clickLng, targetLat, targetLng, distanceKm, score) {
+  renderGuessOnMap(clickLat, clickLng, targetLat, targetLng, distanceKm, score, scale = 1) {
     this.guessLayerGroup.clearLayers();
+    // Renk eşikleri ve isabet halkası da kapsam ölçeğiyle büyür; dünya turunda
+    // 150 km'lik bir sapma "kırmızı" değil, oldukça iyi bir tahmindir.
+    const k = (scale > 0 ? scale : 1);
 
     const guessMarker = L.circleMarker([clickLat, clickLng], {
       radius: 8,
@@ -162,14 +188,14 @@ class GeoGuessrGame {
     });
 
     const line = L.polyline([[clickLat, clickLng], [targetLat, targetLng]], {
-      color: distanceKm <= 50 ? '#10b981' : distanceKm <= 150 ? '#f59e0b' : '#ef4444',
+      color: distanceKm <= 50 * k ? '#10b981' : distanceKm <= 150 * k ? '#f59e0b' : '#ef4444',
       weight: 3,
       dashArray: '6, 8',
       opacity: 0.85
     });
 
     const targetCircle = L.circle([targetLat, targetLng], {
-      radius: 35000,
+      radius: 35000 * k,
       color: '#10b981',
       fillColor: '#10b981',
       fillOpacity: 0.1,
