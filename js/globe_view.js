@@ -70,6 +70,9 @@ const GLOBE_ATMOSFER_EGRISI = ['interpolate', ['linear'], ['zoom'], 0, 1, 5, 0.8
 
 /** Gök ayarlarının localStorage anahtarları */
 const GOK_ANAHTAR = {
+  // Ultra Gerçekçi Mod ANA anahtarı. İsim eski sürümden korunuyor: kullanıcının
+  // localStorage'ındaki tercihi kaybetmemek için değiştirilmemeli.
+  ultra: 'kpss_cografya_globe_ultra',
   egimKilidi: 'kpss_cografya_globe_egim_kilidi',
   gunduzKilidi: 'kpss_cografya_globe_gunduz_kilidi',
   yildizlar: 'kpss_cografya_globe_yildizlar',
@@ -92,6 +95,11 @@ class GlobeView {
     this._markers = [];
     this._sekiller = [];        // GeoJSON feature listesi (hat / alan)
     this._hataYazildi = false;
+
+    // ☀️ ULTRA GERÇEKÇİ MOD — ANA ANAHTAR. Kapalıyken küre sade bir gezegen
+    // olarak açılır (uzay katmanları hiç çizilmez); açıkken aşağıdaki ayrıntı
+    // ayarları devreye girer. Tercih küre kapalıyken de hatırlanır.
+    this.ultra = this._ayarOku(GOK_ANAHTAR.ultra, false);
 
     // ---- GÖK DURUMU (tek doğruluk kaynağı; katmanlar buradan okur) ----
     // `null` = CANLI SAAT: her karede gerçek zaman kullanılır. Kullanıcı zaman
@@ -122,6 +130,8 @@ class GlobeView {
     } catch (e) { return varsayilan; }
   }
 
+  // Eski sürüm ultra tercihini '1'/'0' olarak yazıyordu; JSON.parse ikisini de
+  // doğru okuduğu için (1 → truthy, 0 → falsy) ayrı bir göç adımı gerekmiyor.
   _ayarYaz(anahtar, deger) {
     try { localStorage.setItem(anahtar, JSON.stringify(deger)); } catch (e) {}
   }
@@ -141,6 +151,35 @@ class GlobeView {
   get gokZamani() {
     if (this._zamanSabit) return this._zamanSabit;
     return new Date(Date.now() + this._zamanOfset);
+  }
+
+  /**
+   * ☀️ ULTRA GERÇEKÇİ MOD — ana anahtar.
+   *
+   * Kapalı: küre sade bir gezegen. Uzay katmanları eklenmiş olarak durur ama
+   * yoğunlukları 0 döndüğü için tek piksel çizmezler; gökyüzü de sabit gece
+   * mavisidir. Açık: yıldızlar, terminatör, şehir ışıkları ve güneşe bağlı
+   * gökyüzü rengi devreye girer, zaman kontrolleri görünür olur.
+   *
+   * NEDEN KATMAN EKLE/ÇIKAR YOK: katmanları her açma-kapamada `addLayer` /
+   * `removeLayer` ile taşımak shader programlarını ve 5070 yıldızlık tamponu
+   * yeniden kurmak demek. Yoğunluğu sıfıra çekmek aynı sonucu veriyor ve
+   * `render()` en başta sıfırı görüp hemen dönüyor — ölçülebilir maliyeti yok.
+   *
+   * Işık ve `_styleReady` bu anahtardan BAĞIMSIZDIR: ışığın coğrafi olarak
+   * doğru yerde durması bir özellik değil, eski davranışın (ekrana çivili
+   * `anchor: viewport`) düzeltmesidir; ultra kapalıyken de geçerli kalır.
+   *
+   * @returns {boolean} modun yeni durumu
+   */
+  setUltraRealistic(acik) {
+    this.ultra = !!acik;
+    this._ayarYaz(GOK_ANAHTAR.ultra, this.ultra);
+    if (!this.ultra) this.oynatmayiDurdur();
+    document.body.classList.toggle('globe-ultra', this.ultra && this.active);
+    this._sonGokyuzu = null;              // renk eşiği sıfırlanmalı, yoksa güncelleme atlanır
+    this._gokuGuncelle();
+    return this.ultra;
   }
 
   /** Alt-güneş noktası + mevsim okuması (arayüz göstergesi de bunu kullanır) */
@@ -300,7 +339,26 @@ class GlobeView {
    * lacivert. Kamera hareket ettikçe merkez değişir, yükselti de değişir.
    */
   _gokyuzunuGuncelle(zorla = false) {
-    if (!this.map || !this.map.setSky || !this.map.isStyleLoaded()) return;
+    // `isStyleLoaded()` DEĞİL: o bayrak döşemelerin yüklenmesini de bekliyor ve
+    // küre ölçeğinde uzun süre false kalıyor (bkz. _styleReady tanımı).
+    if (!this.map || !this.map.setSky || !this._styleReady) return;
+
+    // Ultra kapalı: gökyüzü sabit gece mavisi kalır. Terminatör çizilmiyorken
+    // güneşe bağlı turuncu bir ufuk, eşit aydınlatılmış bir küreyle
+    // çeliştiği için bilinçli olarak devre dışı.
+    if (!this.ultra) {
+      if (this._sonGokyuzu === 'sade') return;
+      this._sonGokyuzu = 'sade';
+      try {
+        this.map.setSky({
+          'sky-color': '#0a1428', 'horizon-color': '#1d4f7c', 'fog-color': '#0b2135',
+          'fog-ground-blend': 0.5, 'horizon-fog-blend': 0.6, 'sky-horizon-blend': 0.72,
+          'atmosphere-blend': GLOBE_ATMOSFER_EGRISI
+        });
+      } catch (e) {}
+      return;
+    }
+
     const c = this.map.getCenter();
     if (!c) return;
 
@@ -311,7 +369,7 @@ class GlobeView {
 
     // Kaydırmanın her karesinde setSky çağırmak stil yeniden hesabı demek;
     // gözle farkı olmayan değişimlerde atlanıyor.
-    if (!zorla && this._sonGokyuzu !== null && Math.abs(h - this._sonGokyuzu) < 0.02) return;
+    if (!zorla && typeof this._sonGokyuzu === 'number' && Math.abs(h - this._sonGokyuzu) < 0.02) return;
     this._sonGokyuzu = h;
 
     const kar = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
@@ -498,7 +556,14 @@ class GlobeView {
     this.map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: false }), 'top-right');
     this.map.addControl(new maplibregl.GlobeControl(), 'top-right');
 
+    // STİL HAZIRLIK BAYRAĞI. `map.isStyleLoaded()` bu iş için YANLIŞ ölçüt:
+    // o bayrak stilin ayrıştırılmasını DEĞİL, tüm kaynakların döşemelerinin
+    // yüklenmesini de bekler — küre ölçeğinde sürekli döşeme istendiği için
+    // uzun süre `false` kalabiliyor ve katman eklemeyi sonsuza erteliyordu.
+    // `addSource/addLayer` için gereken tek koşul `style.load`'dır.
+    this._styleReady = false;
     this.map.on('style.load', () => {
+      this._styleReady = true;
       // Stil zaten küre tanımlıyor; eski sürümlerde veya stil değişiminde
       // garanti olsun diye tekrar yazılır.
       this.map.setProjection({ type: 'globe' });
@@ -561,7 +626,7 @@ class GlobeView {
       if (!this.map.getLayer('gok-yildiz')) {
         this._yildizKatmani = new YildizKatmani(() => ({
           tarih: this.gokZamani,
-          yogunluk: this._yildizlar ? 1 : 0
+          yogunluk: (this.ultra && this._yildizlar) ? 1 : 0
         }));
         this.map.addLayer(this._yildizKatmani, 'taban');
       }
@@ -576,7 +641,7 @@ class GlobeView {
         // görmek isteyen "Gündüz Kilidi"ni açar.
         this._geceKatmani = new GeceKatmani(() => ({
           tarih: this.gokZamani,
-          karanlik: this._gunduzKilidi ? 0 : 0.92,
+          karanlik: (this.ultra && !this._gunduzKilidi) ? 0.92 : 0,
           isiklar: this._sehirIsiklari
         }));
         this.map.addLayer(this._geceKatmani, 'sekil-alan');
@@ -596,12 +661,14 @@ class GlobeView {
     const c = this.container;
     if (c) c.style.display = 'block';
     document.body.classList.add('globe-active');
+    document.body.classList.toggle('globe-ultra', this.ultra);
     this.active = true;
 
     this.syncFromLeaflet();
     // Kap yeni görünür oldu: MapLibre boyut önbelleğini tazele (Leaflet'teki
     // `invalidateSize` ile aynı gerekçe — ölçüsüz kapta kamera hesabı bozulur).
     requestAnimationFrame(() => { if (this.map) this.map.resize(); });
+
     return true;
   }
 
@@ -622,6 +689,10 @@ class GlobeView {
     this.oynatmayiDurdur();      // zaman animasyonu arkada dönmeye devam etmesin
     this.syncToLeaflet();
 
+    // Ultra mod TERCİHİ korunur; çalışan parçalar (zaman animasyonu yukarıda,
+    // uzay katmanları MapLibre örneğiyle birlikte) sökülür. Küre yeniden
+    // açıldığında `style.load` katmanları tekrar kurar.
+    this._styleReady = false;
     if (this.map) {
       try { this.map.stop(); this.map.remove(); }
       catch (e) { console.warn('Küre sökülürken uyarı:', e); }
@@ -636,6 +707,7 @@ class GlobeView {
     const c = this.container;
     if (c) c.style.display = 'none';
     document.body.classList.remove('globe-active');
+    document.body.classList.remove('globe-ultra');
     return true;
   }
 
@@ -968,7 +1040,7 @@ class GlobeView {
    * konsol gürültüsü çıkarıyordu. Tek katman ekleyip çıkarmak yeterli.
    */
   refreshStyle() {
-    if (!this.map || !this.map.isStyleLoaded()) return;
+    if (!this.map || !this._styleReady) return;
     const varMi = !!this.map.getLayer('etiket');
     const olmali = !!this.geoMap.labelsEnabled;
     if (varMi === olmali) return;
@@ -997,4 +1069,5 @@ class GlobeView {
       if (this.map.getSource('etiket')) this.map.removeSource('etiket');
     }
   }
+
 }

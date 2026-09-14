@@ -61,10 +61,22 @@ Paketler ülke ülke değil **konu konu** bölünmüştür — 8 paket / 207 kay
 | 🏞️ **Dünya Nehirleri & Gölleri** | Nil, Amazon, Yangtze, Tuna, Volga, Kongo; Baykal, Victoria, Titicaca; Niagara, Victoria, Angel şelaleleri |
 
 - **🌍 Küre görünümü:** Harita görünüm listesine eklenen **Küre / Gezegen** seçeneği,
-  dünyayı dikdörtgen değil gerçek bir küre olarak gösterir — uydu görüntüsü, atmosfer
-  halkası ve yıldızlı uzay zemini ile. Mercator şişmesi yoktur; yaklaştıkça otomatik
+  dünyayı dikdörtgen değil gerçek bir küre olarak gösterir — uydu görüntüsü ve
+  atmosfer halkası ile. Mercator şişmesi yoktur; yaklaştıkça otomatik
   olarak düz haritaya geçer. Pinler, hatlar, şık işaretçileri, bilgi balonları ve
   Kör Atış tıklaması küre üzerinde de çalışır.
+- **☀️ Ultra Gerçekçi Mod:** Gezegeni o anki gerçek ışığıyla gösterir. Gece-gündüz
+  sınırı (terminatör) **piksel başına** hesaplanır: her nokta için ışın-küre
+  kesişimiyle yüzey normali bulunur ve güneş yükseltisi ölçülür, alacakaranlık
+  ufkun hemen altında fizikî eğrisiyle söner. Gece tarafında NASA Black Marble
+  şehir ışıkları yanar, terminatör boyunca gün batımı halkası geçer.
+  Gökyüzünde **5070 gerçek yıldız** (HYG kataloğu, çıplak gözün kadir ≤ 6.0
+  sınırı) gök küresi üzerinde durur — gezegen kameranın altında dönerken
+  yıldızlar yerinde kalır, çünkü artık sayfa değil DÜNYA uzayındalar.
+  Atmosfer parlaması da gerçek alt-güneş noktasından aydınlatılır.
+  **Zaman kontrolü:** tarih ve UTC saat sürgüsüyle terminatörü Dünya üzerinde
+  süpürebilir, "Oynat" ile bir günü 24 saniyede döndürebilirsiniz — 21 Aralık
+  öğle vaktinde Kutup Dairesi'nin karanlıkta kaldığı doğrudan görünür.
 - **Sınırsız gezinme:** Kaydırma duvarı kaldırıldı (eskiden 3000 px sürükleme 26°
   sonra geri sekiyordu), kesirli zoom açıldı ve dünyanın yanındaki boş kopyalar
   yerine uzay boşluğu geldi.
@@ -158,7 +170,9 @@ Amaç hikâyeyi *okutmak* değil, hikâyenin **içinde çalıştırmak** — her
 │   └── packs/pack.world.*.js      # 🌍 Dünya DLC paketleri (lazy yüklenir)
 ├── js/
 │   ├── pack_manager.js            # DLC motoru + GeoScope (kapsam: ev görünümü & ölçek)
-│   ├── globe_view.js              # 🌍 Küre görünümü (MapLibre GL v5 globe projeksiyonu)
+│   ├── globe_view.js              # 🌍 Küre görünümü + ☀️ Ultra Gerçekçi Mod anahtarı
+│   ├── globe_sky.js               # 🌌 Uzay katmanları: yıldız kataloğu + terminatör (shader)
+│   ├── solar.js                   # ☀️ Güneş konumu astronomisi (birim testli)
 │   ├── pack_store_ui.js           # Rehber ekranı + paket mağazası
 │   ├── i18n.js                    # Çift katmanlı dil motoru
 │   ├── map.js  quiz.js  app.js    # Harita, adaptif soru motoru, akış
@@ -261,7 +275,8 @@ While initially tailored for Turkish physical and human geography (KPSS / YKS na
 - 🎯 **Interactive Game Modes:** GeoGuessr-style blind shot, Map Conqueror (7 regions), Match & Blast pairing, map painting, formation-type drills, 60-second speedrun and an 18-question mock exam.
 - 🧠 **Mnemonic Lab:** 68 Turkish memory codes (68 stories, 272 metaphor links, 190 map stops) drilled six ways — pair matching, cloze, chain ordering, intruder hunt, reverse decoding and map stamping. Solved stories are re-rendered and pinned on the map; four codes literally draw their letters (M+A, V, R) across Türkiye.
 - 🛠️ **Custom Vector Drawing Studio:** Draw points, polylines, and polygons on the live map with JSON Export/Import and AI/NotebookLM clipboard pasting.
-- 🌍 **Globe View:** A sixth base-map option renders the Earth as an actual sphere (MapLibre GL v5 globe projection) with satellite imagery, an atmosphere ring and a starfield backdrop — no Mercator distortion, and it eases back into a flat map as you zoom in. Pins, lines, answer markers, popups and blind-shot clicks all work on the globe; the library is lazy-loaded only when you open the view.
+- 🌍 **Globe View:** A sixth base-map option renders the Earth as an actual sphere (MapLibre GL v5 globe projection) with satellite imagery and an atmosphere ring — no Mercator distortion, and it eases back into a flat map as you zoom in. Pins, lines, answer markers, popups and blind-shot clicks all work on the globe; the library is lazy-loaded only when you open the view.
+- ☀️ **Ultra Realistic Mode:** Lights the planet with the real, current sun. The day/night terminator is computed **per pixel** in a shader — each fragment is ray-traced against the globe to recover the surface normal and measure solar elevation — with twilight falling off on its physical curve just below the horizon, NASA Black Marble city lights on the night side and a sunset ring along the terminator. **5070 real stars** (HYG catalogue, down to the naked-eye limit of magnitude 6.0) sit on the celestial sphere, so they hold still while the planet turns beneath the camera: they live in world space, not page space. A date and UTC-hour slider sweeps the terminator across the Earth, and "play" spins a full day in 24 seconds — making it directly visible that the Arctic Circle stays dark at noon on 21 December.
 - 🔇 **Mute / Blind Map Mode:** Toggle labels off for true blind exam simulations.
 - 🧭 **Mathematical Location Lab:** Sun angle, local time differentials, shadow length, and daylight calculations.
 - 📱 **Modern Glassmorphic UI:** Fast, zero-dependency, dark-mode design with draggable panels, responsive layout and keyboard accessibility.

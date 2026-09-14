@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Uygulama Stili -->
-  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/style.css?v=11">
   <link rel="stylesheet" href="css/packs.css?v=2">
 </head>
 <body>
@@ -323,6 +323,11 @@
           <span>🔍</span> <span id="auto-zoom-label">Otomatik Odak</span>
         </button>
 
+        <!-- ☀️ Ultra Gerçekçi Mod: küre + gece/gündüz sınırı + yıldızlar & güneş -->
+        <button id="ultra-real-btn" class="tool-btn" title="Ultra Gerçekçi Mod: gerçek zamanlı gece-gündüz sınırı (terminatör), 5070 yıldızlık gerçek gökyüzü, şehir ışıkları ve astronomik güneş. Küre görünümünü de açar.">
+          <span>🌞</span> <span id="ultra-real-label">Ultra Gerçekçi</span>
+        </button>
+
         <!-- Dilsiz Harita (Yazısız / İsimsiz Mod) Butonu -->
         <button id="toggle-labels-btn" class="tool-btn" title="Haritadaki Şehir, İlçe ve Coğrafi Yer İsimlerini Gizler (Dilsiz Harita)">
           <span>🔇</span> <span id="labels-btn-label">Dilsiz Harita</span>
@@ -349,7 +354,7 @@
       </div>
 
       <!-- 🌌 GÖK KONTROLLERİ — yalnızca Küre / Gezegen görünümünde görünür
-           (CSS: body:not(.globe-active) .sky-controls-row { display: none }).
+           (CSS: yalnızca body.globe-active.globe-ultra iken görünür).
            Buradaki her ayar GlobeView'daki tek doğruluk kaynağına yazar; gece
            örtüsü, yıldızlar ve atmosfer parlaması aynı ANA bakar. -->
       <div class="map-controls-row sky-controls-row" id="sky-controls-row">
@@ -1319,14 +1324,17 @@
   <script src="js/hafiza_kodu.js?v=5"></script>
   <script src="js/panel_manager.js?v=2"></script>
   <script src="js/study_plan.js?v=2"></script>
-  <!-- 🌌 Küre görünümünün gök mekaniği: yıldız kataloğu → uzay katmanları →
-       küre motoru. Sıra bağlayıcıdır: globe_sky.js kataloğu okur, globe_view.js
-       de katman sınıflarını kurar. -->
+  <!-- 🌌 Küre görünümünün gök mekaniği. SIRA BAĞLAYICIDIR:
+       solar.js            → astronomi çekirdeği (GokMekanigi buradan okur)
+       yildiz_katalogu.js  → 5070 yıldızlık dizge
+       globe_sky.js        → GokMekanigi + uzay katmanları (ikisine de ihtiyaç duyar)
+       globe_view.js       → katman sınıflarını kurar -->
+  <script src="js/solar.js?v=2"></script>
   <script src="data/yildiz_katalogu.js?v=1"></script>
-  <script src="js/globe_sky.js?v=4"></script>
-  <script src="js/globe_view.js?v=3"></script>
-  <script src="js/map.js?v=12"></script>
+  <script src="js/globe_sky.js?v=5"></script>
+  <script src="js/globe_view.js?v=4"></script>
+  <script src="js/map.js?v=13"></script>
   <script src="js/quiz.js?v=6"></script>
-  <script src="js/app.js?v=21"></script>
+  <script src="js/app.js?v=22"></script>
 </body>
 </html>

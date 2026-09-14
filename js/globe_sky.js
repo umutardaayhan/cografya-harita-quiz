@@ -59,44 +59,21 @@
 const GokMekanigi = {
   DER: Math.PI / 180,
 
-  /** J2000.0'dan (2000-01-01 12:00 TT) itibaren geçen gün sayısı */
-  j2000(tarih) {
-    return tarih.getTime() / 86400000 + 2440587.5 - 2451545.0;
-  },
-
-  /** Greenwich ortalama yıldız zamanı, DERECE (0…360) */
-  gmst(n) {
-    return this._sar360(280.46061837 + 360.98564736629 * n);
-  },
-
   /**
    * ALT-GÜNEŞ NOKTASI: Güneş'in o anda tam tepede olduğu coğrafi koordinat.
-   * Terminatör, alacakaranlık ve ışık yönü — hepsi bu tek noktadan türer.
+   * Terminatör, alacakaranlık, yıldız çerçevesi ve ışık yönü — hepsi bu tek
+   * noktadan (ve beraberinde dönen GMST'den) türer.
    *
-   * Astronomical Almanac'in "low precision" güneş formülü. Ekliptik boylamda
-   * hata ≈0.01°, yani alt-güneş noktasında ~1 km: bir gezegen görselleştirmesi
-   * için fazlasıyla yeterli (ekranda piksel altı).
+   * HESAP `js/solar.js`'E DEVREDİLİR. Aynı formülü burada ikinci kez yazmak
+   * sessiz bir sapma kaynağıdır: iki uygulamadan biri düzeltilir, öteki
+   * düzeltilmez ve güneş ile terminatör birbirinden kayar. `Solar` ayrıca
+   * Node'dan çalışıyor ve birim testi var (tools/solar_test.js) — doğruluğun
+   * ölçüldüğü yer orası olsun.
+   *
+   * @returns {{lat:number, lng:number, decl:number, gmst:number}} derece
    */
   altGunesNoktasi(tarih) {
-    const D = this.DER;
-    const n = this.j2000(tarih);
-
-    const L = 280.460 + 0.9856474 * n;                 // ortalama boylam
-    const g = (357.528 + 0.9856003 * n) * D;           // ortalama anomali
-    const lam = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * D;  // ekliptik boylam
-    const eps = (23.439 - 0.0000004 * n) * D;          // ekliptik eğikliği
-
-    const decl = Math.asin(Math.sin(eps) * Math.sin(lam));                 // dik açıklık
-    const ra = Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam));   // sağ açıklık
-
-    const gmst = this.gmst(n);
-    return {
-      lat: decl / D,
-      lng: this._sar180(ra / D - gmst),
-      gmst,
-      // Mevsim okuması: |decl| ≈ 23.44 → gündönümü, ≈0 → ekinoks
-      decl: decl / D
-    };
+    return Solar.subsolarPoint(tarih);
   },
 
   /**
@@ -217,8 +194,8 @@ const GokMekanigi = {
     v[3] = m[3] * x + m[7] * y + m[11] * z + m[15] * w;
   },
 
+  /** Azimut normalleştirmesi (isikKonumu için). Boylam sarması Solar._norm180'de. */
   _sar360(d) { return ((d % 360) + 360) % 360; },
-  _sar180(d) { return ((d % 360) + 540) % 360 - 180; },
 
   /**
    * Yıldız kataloğunu çözer → [ra(rad), dec(rad), kadir, ci] dörtlülerinden
@@ -785,3 +762,7 @@ void main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 }
+
+// Node ortamında (tools/solar_test.js) GokMekanigi'nin saf matematiğini
+// doğrulayabilmek için dışa verilir. Tarayıcıda bu satır çalışmaz.
+if (typeof module !== 'undefined' && module.exports) module.exports = { GokMekanigi };

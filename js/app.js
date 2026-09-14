@@ -3730,6 +3730,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('map:view-changed', redrawCurrentView);
 
+  // =========================================================================
+  // ☀️ ULTRA GERÇEKÇİ MOD
+  // =========================================================================
+  const ultraRealBtn = document.getElementById('ultra-real-btn');
+  const ultraRealLabel = document.getElementById('ultra-real-label');
+
+  function syncUltraRealBtn() {
+    if (!ultraRealBtn) return;
+    const acik = geoMap.ultraRealistic;
+    ultraRealBtn.classList.toggle('active', acik);
+    if (ultraRealLabel) ultraRealLabel.textContent = acik ? 'Ultra Gerçekçi: Açık' : 'Ultra Gerçekçi';
+  }
+
+  if (ultraRealBtn) {
+    ultraRealBtn.addEventListener('click', () => {
+      // Mod küre gerektirir; kilitliyse mağazaya yönlendir (katman kilidiyle
+      // aynı davranış — kullanıcı neden açılmadığını anlamalı).
+      const acilacak = !geoMap.ultraRealistic;
+      if (acilacak && !packManager.isModeAvailable('layer_globe')) {
+        showEditToast('🔒 Ultra Gerçekçi Mod küre görünümüne, küre de bir dünya paketine bağlı.');
+        packStore.openStore(afterPacksReady);
+        return;
+      }
+      geoMap.setUltraRealistic(acilacak);
+      syncUltraRealBtn();
+      syncLayerButtons();
+      // Ana anahtar gök satırının görünürlüğünü de belirliyor (CSS: body.globe-ultra);
+      // değerlerin tazelenmesi lazım, yoksa satır eski bir "an" ile açılır.
+      skyArayuzuTazele();
+      if (acilacak) {
+        showEditToast('🌞 Ultra Gerçekçi Mod: gerçek zamanlı terminatör, 5070 yıldızlık gökyüzü ve şehir ışıkları açık.');
+      }
+    });
+    syncUltraRealBtn();
+  }
+
+  // Küre kapanınca (ör. çizim moduna geçiş) düğme etiketi gerçeği söylemeli
+  document.addEventListener('map:view-changed', syncUltraRealBtn);
+
   // Küre kütüphanesi indirilemedi (çevrimdışı / CDN kapalı): sessizce düşmek
   // yerine kullanıcıya söyle, düğme durumu da düz görünüme dönsün.
   document.addEventListener('globe:failed', (e) => {
@@ -4452,6 +4491,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const packManager = new PackManager(GEO_CATALOG, packEdits);
   // study_plan.js plan satırlarını buradan okur (eski sabit DAILY_PLAN_SPEC yerine)
   window.geoPackManager = packManager;
+  // Küre motoru hata ayıklama ve dış modüller (ör. gece-gündüz dersi) için açık
+  window.geoGlobe = globeView;
   const packStore = new PackStoreUI(packManager);
 
   // ============================================================

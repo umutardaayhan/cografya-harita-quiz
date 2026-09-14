@@ -611,6 +611,21 @@ body {
    #map'in ustu kapali olsa da ekran okuyucu/odak sirasina girmemeleri icin. */
 body.globe-active #map .leaflet-control-container { display: none; }
 
+/* =========================================================================
+   ULTRA GERCEKCI MOD
+   Bu bolum eskiden yildiz alanini <canvas> ile, gunesi de bir <div> diski ile
+   ciziyordu; ikisi de MapLibre tuvalinin ARKASINDA, sayfa koordinatlarinda
+   duruyordu. Yani kamera dondugunde yildizlar kipirdamiyor, gunes diski de
+   siluetin kenarina "yapistirilmis" gibi duruyordu. Ikisi de artik WebGL
+   tarafinda, gercek dunya uzayinda ciziliyor (bkz. js/globe_sky.js):
+   yildizlar gok kuresi uzerinde bir katalogdan, "gunes" ise MapLibre'nin
+   kendi atmosfer sacilmasinin astronomik olarak dogru yonden aydinlatilmasi.
+   Bu yuzden .globe-sky / .globe-stars / .globe-sun stilleri kaldirildi.
+   ========================================================================= */
+
+/* Ultra mod acikken kontroller gokyuzunun ustunde secilebilir kalsin */
+body.globe-ultra #globe .maplibregl-ctrl-group { box-shadow: 0 0 0 1px rgba(120,150,200,.25); }
+
 /* Kure atif kutusu koyu zeminde okunabilir olsun */
 #globe .maplibregl-ctrl-attrib {
   background: rgba(5, 9, 20, 0.7);
@@ -680,7 +695,11 @@ body.globe-active #map .leaflet-control-container { display: none; }
    (eksen egikligi) degistirir. Satir yalnizca kure aktifken gorunur — duz
    haritada gunes/gece diye bir sey yok, dugmeler orada anlamsiz olurdu.
    ========================================================================= */
-body:not(.globe-active) .sky-controls-row { display: none; }
+/* Gok satiri yalnizca KURE ACIK ve ULTRA MOD ACIK iken gorunur: ultra
+   kapaliyken terminator de yildizlar da cizilmiyor, zaman surgusunun
+   degistirecegi bir sey yok. */
+body:not(.globe-active) .sky-controls-row,
+body:not(.globe-ultra) .sky-controls-row { display: none; }
 
 .sky-controls-row {
   padding-top: 6px;

@@ -116,7 +116,9 @@ değil). Rastgele kategori seçen oyun modları (ör. Kör Atış) böylece boş
 | `data/cografya_data.js` | Boş çalışma zamanı kapları + Türkçe-güvenli `trLower`/`trUpper`. |
 | `js/pack_manager.js` | DLC motoru: kurulum, kademe, kaldırma, projeksiyon, mod kilitleri + `GeoScope` kapsam çözücü. |
 | `js/pack_edits.js` | Düzenleme katmanı: kullanıcının sildiği/değiştirdiği/eklediği kayıtlar. Kaynak paket dosyası değişmez. |
-| `js/globe_view.js` | 🌍 Küre görünümü: MapLibre GL v5 globe projeksiyonu (ikinci render motoru). |
+| `js/globe_view.js` | 🌍 Küre görünümü: MapLibre GL v5 globe projeksiyonu (ikinci render motoru) + Ultra Gerçekçi Mod. |
+| `js/solar.js` | ☀️ Güneş konumu astronomisi (alt-güneş noktası, GMST, güneş yükseltisi). Node'dan da çalışır; birim testi var. |
+| `js/globe_sky.js` | 🌌 Uzay katmanları: gerçek yıldız kataloğu + Samanyolu + piksel başına terminatör (WebGL shader). |
 | `js/pack_store_ui.js` | Rehber ekranı + mağaza arayüzü. |
 | `js/i18n.js` | Çift katmanlı dil motoru. |
 | `locales/tr.js`, `locales/en.js` | Arayüz metin sözlükleri. |
@@ -539,6 +541,132 @@ bir seçenek** olarak girer — `js/globe_view.js`.
 | Pin ve markup TEK kaynak | Pinler `GeographyMap.getCustomCategoryIcon()` ve `GeographyMap.buildChoicePin()` çıktısını aynen kullanır. Cevap renklendirmesi (`highlightMultiChoiceAnswer`) ve rozet durumları (`applyChoicePinStates`) katman nesnesi değil **DOM sorgusu** kullandığı için küre pinlerinde de ek kod olmadan çalışır. |
 | Tıklama köprüsü | Küre tıklaması Leaflet haritasında sentetik `click` tetikler; Kör Atış ve Koordinat Avcısı dinleyicileri app.js'te tek yerde durduğu için oyun motorlarına dokunulmadı. |
 | Desteklenmeyeni reddetme | Bağlı grup şekilleri (`isGroup`) küre tarafında yok: `false` döner ve `GeographyMap` o an düz haritaya iner. Sessizce eksik çizmekten iyidir. |
+
+### ☀️ Ultra Gerçekçi Mod
+
+Küre açıkken devreye giren gerçeklik paketi
+(`js/solar.js` + `js/globe_sky.js` + `js/globe_view.js`). Sol alt panelde
+**🌞 Ultra Gerçekçi** düğmesiyle açılır; mod küre gerektirdiği için kapalıyken
+tek tıkla küreyi de açar, dünya paketi yoksa mağazaya yönlendirir.
+
+#### Neden yeniden yazıldı
+
+İlk sürüm üç parçadan oluşuyordu ve ikisi YANLIŞ UZAYDAYDI:
+
+| İlk sürüm | Sorun |
+| :--- | :--- |
+| Terminatör: gece yarımküresi + üç alacakaranlık kuşağı **poligon dolgusu** | Kuşak sayısı kadar basamak; alacakaranlık −18°'ye kadar doğrusal yayıldığı için Grönland karı −9°'de hâlâ "gündüz" gibi okunuyordu |
+| Yıldızlar: kabın arkasına **`<canvas>`** ile, tohumlu üreticiyle | Tuval MapLibre'nin ARKASINDA, sayfa koordinatlarında. Kamera döndüğünde yıldızların kıpırdaması fizikî olarak imkânsızdı |
+| Güneş: silüetin kenarında bir **`<div>` diski** | Disk ekran uzayında konumlandığı için gezegene "yapıştırılmış" gibi duruyordu; kerteriz motoru da kamera hareketiyle uyumsuz kayıyordu |
+
+Kusur "kamera sabit, Dünya dönüyor" DEĞİLDİ — MapLibre'nin küre
+projeksiyonunda kamera zaten sabit bir Dünya'nın çevresinde yörüngededir.
+Hatalı olan güneş ile yıldızların **referans çerçevesiydi**: ikisi de dünya
+uzayında değildi. Yeni sürüm ikisini de WebGL tarafına, gerçek dünya uzayına
+taşıyor.
+
+#### Şimdiki üç katman
+
+1. **Terminatör — piksel başına shader** (`GeceKatmani`). Her fragment için
+   kameradan çıkan ışın küreyle kesiştirilir, yüzey normali bulunur ve
+   `dot(N, güneşYönü)` = güneş yükseltisinin sinüsü hesaplanır. Karartma
+   eğrisi fizikî: aydınlanma öğle vakti ~100.000 lux, sivil alacakaranlığın
+   sonunda (−6°) ~3 lux, denizci alacakaranlığında (−12°) ~0,008 lux — dört
+   kat büyüklük düşüş ufkun hemen altında olduğu için karartma −6°'de doyuyor
+   (yaklaşık 780 km genişliğinde bir kuşak, Dünya'nın gerçek alacakaranlık
+   şeridi kadar). Terminatör boyunca sıcak bir gün batımı halkası geçer.
+   Gece tarafında **NASA GIBS Black Marble** şehir ışıkları yanar; raster
+   katmanı olarak eklenseydi gündüz tarafında da görünürdü, doku olarak
+   shader'a verilince maskeleme zaten hesaplanmış güneş yükseltisinden
+   bedavaya geliyor.
+2. **Yıldızlar — gerçek katalog** (`YildizKatmani`). HYG v3.8'den süzülmüş
+   **5070 yıldız** (kadir ≤ 6.0, çıplak gözün sınırı) gök küresi üzerinde
+   çiziliyor; `data/yildiz_katalogu.js`, yıldız başına 12 karakterlik base36
+   kayıtla 59 KB. ra/dec **göksel** çerçevede saklanır, Dünya-sabit çerçeveye
+   çevirim (λ = ra − GMST) vertex shader'da tek uniform ile yapılır — zaman
+   değişince 5070 yıldızın tamponu yeniden yüklenmez. Kadir → boyut ve
+   parlaklık, B−V renk indisi → renk sıcaklığı. Üstüne prosedürel bir
+   Samanyolu bandı (galaktik kutup + 4 oktav fbm) biner. Gezegenin arkasında
+   kalan yıldızlar analitik ışın-küre testiyle atılır: MapLibre özel
+   katmanları `DepthMode.ReadOnly` ile çizildiği ve raster katmanları derinlik
+   yazmadığı için bu işi derinlik testi YAPAMAZ.
+3. **Güneş — atmosferin kendisi.** Ayrı bir disk çizilmiyor. MapLibre'nin
+   atmosfer saçılma shader'ı zaten bir güneş yönü kullanıyor; sorun onun
+   varsayılan `light.anchor: "viewport"` ile **ekrana çivili** olmasıydı.
+   Artık `anchor: 'map'` ve `light.position` gerçek alt-güneş noktasından
+   türetiliyor, yani parlama aynı coğrafi noktanın üzerinde kalıyor.
+   Gökyüzü/ufuk/pus renkleri de ekran merkezindeki güneş yükseltisine bağlı.
+
+#### Zaman kontrolü (öğretici yarısı)
+
+Tarih seçici + UTC saat sürgüsü + **Şimdi** + **Oynat** (1 gerçek saniye =
+1 saat, bir gün 24 saniyede döner) ve alt-güneş noktası göstergesi. Mutlak
+Konum modülünün sayısal olarak öğrettiği şeyin görsel karşılığı: 21 Aralık
+öğle vaktinde Kutup Dairesi'nin karanlıkta kaldığı, terminatörün eksen
+eğikliği yüzünden mevsimle eğildiği doğrudan izlenebiliyor.
+
+#### `light.position` çevirimi neden dolambaçlı
+
+MapLibre ışığı `[radial, azimuthal, polar]` küresel üçlüsü olarak alıp
+`sphericalToCartesian` ile karteziyene çeviriyor, sonra **işaretini ters
+çevirip** güneş yönü olarak kullanıyor (`draw_sky.ts · getSunPos`). Dolayısıyla
+istediğimiz güneş yönü **S** için çözülmesi gereken denklem
+`cartesian(position) = −S`. Analitik çözüm:
+
+```
+polar     = acos(−S.z)
+azimuthal = atan2(−S.y, −S.x) − 90°
+```
+
+Bu çevirim `tools/solar_test.js` içinde gidiş-dönüş olarak doğrulanıyor
+(bileşen sapması < 1e-15).
+
+#### Ölçümler
+
+`js/solar.js` node'dan çalışır; `node tools/solar_test.js`:
+
+| Kontrol | Sonuç |
+| :--- | :--- |
+| Deklinasyon, gündönümleri | 0,005° sapma (21.06 → +23,44°, 21.12 → −23,43°) |
+| Saatlik dönüş | 14,998°/saat |
+| Alt-güneş noktasında yükseklik | 90,0000° |
+| **Shader ölçütü ↔ küresel trigonometri** | 840 nokta × 4 tarih, en büyük sapma **2,3e-13°** |
+| **`light.position` gidiş-dönüş** | bileşen sapması **4,4e-16** |
+
+Üçüncü satır en önemlisi: shader gündüz/gece kararını `dot(N, güneşYönü)` ile
+veriyor, `Solar.elevation()` ise tamamen farklı bir yolla (saat açısı + küresel
+trigonometri) aynı büyüklüğü hesaplıyor. İkisi örtüşmezse terminatör yanlış
+yerden geçer — test bunu yakalar.
+
+Çalışma zamanı: zaman oynatılırken (sürekli yeniden çizim + iki tam ekran
+shader geçişi + 5070 nokta, 1280×960 tuval) **75 FPS**.
+
+#### Yol boyunca düzeltilen hatalar
+
+1. `map.isStyleLoaded()` katman eklemek için YANLIŞ ölçüt: o bayrak tüm
+   kaynakların döşemelerinin yüklenmesini de bekliyor, küre ölçeğinde uzun süre
+   `false` kalıyor ve mod kurulumunu sonsuza erteliyordu → `style.load`
+   olayıyla tutulan kendi hazırlık bayrağı (`_styleReady`). Bu düzeltme ilk
+   sürümden korundu ve `refreshStyle()` de artık onu kullanıyor.
+2. GLSL şablon dizgesi içindeki bir yorumda ters tırnak kalmış, JS template
+   literal'ini kapatıp dosyanın tamamını `SyntaxError`'a düşürmüştü. Denetim
+   için kaba bir tarama eklendi.
+3. Şehir ışıklarının `smoothstep` eşikleri ters sıradaydı (GLSL'de **tanımsız
+   davranış**; bazı sürücülerde kazara çalışıyor) → sıralı eşik + tersleme.
+4. Gece örtüsünün koyuluğu ilk denemede 0,8'di; örtünün altından geçen %20,
+   Grönland ve kutup buzu gibi çok parlak yüzeylerde "aydınlık" gibi
+   okunuyordu → 0,92. Tam 1,0 değil: gece tarafında kıyı çizgisinin silik izi,
+   haritanın hangi bölgeye baktığını kaybetmemek için bırakıldı. Coğrafyayı
+   tamamen görmek isteyen **Gündüz Kilidi**'ni açar.
+
+#### Ana anahtar nasıl çalışıyor
+
+`GlobeView.setUltraRealistic()` katmanları **ekleyip çıkarmıyor**: uzay
+katmanları yerinde durur, yoğunlukları 0 döner ve `render()` en başta sıfırı
+görüp hemen döner. Her açma-kapamada shader programlarını ve 5070 yıldızlık
+tamponu yeniden kurmamak için. Işık ve `_styleReady` bu anahtardan bağımsızdır:
+ışığın coğrafi olarak doğru yerde durması bir özellik değil, eski davranışın
+(ekrana çivili `anchor: viewport`) düzeltmesidir.
 
 **Küre ile uyumlu modlar:** Keşif Modu, standart test, Şimşek Turu, Genel
 Deneme, Kör Atış. Diğer modlara girerken `requireFlatView()` devreye girer ve
