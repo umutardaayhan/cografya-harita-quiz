@@ -128,6 +128,34 @@ function hapTerimleriHtml(item) {
   return `<div class="hap-terimler" title="Sınav anahtarı">${t.map(x => `<span class="hap-terim">${escAttr(x)}</span>`).join('')}</div>`;
 }
 
+/**
+ * 🖼️ Mekân görseli (keşif balonları, Yanlışlarım haritası).
+ *
+ * `width`/`height` öznitelikleri bilerek yazılıyor: görsel tembel yüklendiği
+ * için boyutu önceden bilinmezse Leaflet balonu önce küçük açılıp görsel
+ * gelince büyüyor ve balonu harita kenarından taşırıyordu. Çevrimdışıyken
+ * görsel yüklenemezse figür tamamen gizlenir (kırık resim simgesi kalmaz).
+ * Atıf (yazar + lisans + Commons sayfası) CC lisanslarının şartıdır.
+ */
+function gorselHtml(item) {
+  const g = item && item.gorsel;
+  // Yalnızca https adresleri: veri derleyiciden gelse de `javascript:` gibi bir
+  // şema bağlantıya ya da görsele sızmasın.
+  const guvenli = u => /^https:\/\//i.test(String(u || ''));
+  if (!g || !guvenli(g.src)) return '';
+  const dikey = g.h > g.w ? ' dikey' : '';
+  const lisans = guvenli(g.lisansUrl)
+    ? `<a href="${escAttr(g.lisansUrl)}" target="_blank" rel="noopener">${escAttr(g.lisans)}</a>`
+    : escAttr(g.lisans);
+  const yazar = guvenli(g.sayfa)
+    ? `<a href="${escAttr(g.sayfa)}" target="_blank" rel="noopener">${escAttr(g.yazar)}</a>`
+    : escAttr(g.yazar);
+  return `<figure class="hap-gorsel${dikey}">`
+    + `<img src="${escAttr(g.src)}" width="${Number(g.w) || 500}" height="${Number(g.h) || 333}" loading="lazy" decoding="async" alt="${escAttr(item.name || '')}" onerror="this.parentNode.hidden=true">`
+    + `<figcaption>${yazar} · ${lisans}</figcaption>`
+    + `</figure>`;
+}
+
 function escAttr(text) {
   return String(text == null ? '' : text)
     .replace(/&/g, '&amp;')
@@ -2274,6 +2302,7 @@ class GeographyMap {
       <div class="popup-title">${baslik !== null ? baslik : item.name}</div>
       <div class="popup-type">${altBaslik !== null ? altBaslik : `${item.type} (${item.region || ''})`}</div>
       ${hapTerimleriHtml(item)}
+      ${gorselHtml(item)}
       <div class="popup-text">${metin !== null ? metin : (item.kpssNot || '')}</div>
       ${this._popupActions(item)}
     `;
@@ -2297,6 +2326,7 @@ class GeographyMap {
             <div class="popup-title">${it.name}</div>
             <div class="popup-type">${it.type} (${it.region || ''})</div>
             ${hapTerimleriHtml(it)}
+            ${gorselHtml(it)}
             <div class="popup-text">${it.kpssNot || ''}</div>
             ${this._popupActions(it)}
           </div>

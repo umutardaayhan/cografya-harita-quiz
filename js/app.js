@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const kpssInfoText = document.getElementById('kpss-info-text');
   const kpssInfoTanim = document.getElementById('kpss-info-tanim');
   const kpssInfoHap = document.getElementById('kpss-info-hap');
+  const kpssInfoGorsel = document.getElementById('kpss-info-gorsel');
   const nextBtn = document.getElementById('next-btn');
 
   // İstatistik Elemanları
@@ -572,6 +573,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return s;
       }));
       kpssInfoHap.hidden = !terimler.length;
+    }
+    // Görsel YALNIZCA cevaptan sonra: soru sırasında göstermek cevabı verirdi.
+    // Aynı üretici keşif balonlarında da kullanılıyor (bkz. map.js · gorselHtml).
+    if (kpssInfoGorsel) {
+      const html = (typeof gorselHtml === 'function') ? gorselHtml(result.gorsel ? { name: result.name, gorsel: result.gorsel } : null) : '';
+      kpssInfoGorsel.innerHTML = html;
+      kpssInfoGorsel.hidden = !html;
     }
     if (kpssInfoTanim) {
       kpssInfoTanim.textContent = result.tanim || '';
@@ -4358,6 +4366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="popup-title">${it.name}</div>
         <div class="popup-type">${it.type || ''} (${it.region || ''})</div>
         ${hapTerimleriHtml(it)}
+        ${gorselHtml(it)}
         <div class="popup-text">${it.kpssNot || ''}</div>
       `, { maxWidth: 280 });
 

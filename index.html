@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Uygulama Stili -->
-  <link rel="stylesheet" href="css/style.css?v=15">
+  <link rel="stylesheet" href="css/style.css?v=16">
   <link rel="stylesheet" href="css/packs.css?v=2">
 </head>
 <body>
@@ -678,6 +678,8 @@
           </div>
           <!-- Hap terimleri: sınav anında akla gelen 1-2 kelimelik anahtarlar (bkz. data/hap_terimleri.js) -->
           <div id="kpss-info-hap" class="hap-terimler" hidden></div>
+          <!-- Mekân görseli: yalnızca cevap sonrası (bkz. data/gorseller.js) -->
+          <div id="kpss-info-gorsel" class="kpss-info-gorsel" hidden></div>
           <!-- Tanım: eskiden soru başlığı olan uzun KPSS kökü (bkz. quiz.js · soruKokunuTanimaCevir) -->
           <p id="kpss-info-tanim" class="kpss-info-tanim" hidden></p>
           <p id="kpss-info-text"></p>
@@ -1310,6 +1312,7 @@
   <!-- 2) Paket kataloğu + i18n çekirdeği + dil sözlükleri -->
   <!-- Hap terimleri pack_manager.js'ten ÖNCE yüklenmeli: projeksiyon onu okur -->
   <script src="data/hap_terimleri.js?v=1"></script>
+  <script src="data/gorseller.js?v=1"></script>
   <script src="data/packs/catalog.js?v=4"></script>
   <script src="js/i18n.js?v=2"></script>
   <script src="locales/tr.js?v=3"></script>
@@ -1317,7 +1320,7 @@
 
   <!-- 3) DLC motoru ve mağaza arayüzü (paket dosyaları lazy yüklenir) -->
   <script src="js/pack_edits.js?v=2"></script>
-  <script src="js/pack_manager.js?v=5"></script>
+  <script src="js/pack_manager.js?v=6"></script>
   <script src="js/pack_store_ui.js?v=4"></script>
   <script src="js/gruplama.js?v=6"></script>
   <script src="js/custom_draw.js?v=2"></script>
@@ -1339,8 +1342,8 @@
   <script src="data/yildiz_katalogu.js?v=1"></script>
   <script src="js/globe_sky.js?v=5"></script>
   <script src="js/globe_view.js?v=5"></script>
-  <script src="js/map.js?v=15"></script>
-  <script src="js/quiz.js?v=9"></script>
-  <script src="js/app.js?v=24"></script>
+  <script src="js/map.js?v=16"></script>
+  <script src="js/quiz.js?v=10"></script>
+  <script src="js/app.js?v=25"></script>
 </body>
 </html>

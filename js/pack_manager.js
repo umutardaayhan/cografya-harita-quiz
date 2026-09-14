@@ -402,6 +402,10 @@ class PackManager {
     if (typeof HAP_TERIMLERI !== 'undefined' && HAP_TERIMLERI[packItem.id]) {
       out.hap = HAP_TERIMLERI[packItem.id].slice();
     }
+    // 🖼️ Görsel de ayrı katman (bkz. data/gorseller.js, tools/build_gorseller.js)
+    if (typeof GORSELLER !== 'undefined' && GORSELLER[packItem.id]) {
+      out.gorsel = GORSELLER[packItem.id];
+    }
 
     return out;
   }
