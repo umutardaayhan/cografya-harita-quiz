@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const kpssInfoType = document.getElementById('kpss-info-type');
   const kpssInfoText = document.getElementById('kpss-info-text');
   const kpssInfoTanim = document.getElementById('kpss-info-tanim');
+  const kpssInfoHap = document.getElementById('kpss-info-hap');
   const nextBtn = document.getElementById('next-btn');
 
   // İstatistik Elemanları
@@ -560,6 +561,18 @@ document.addEventListener('DOMContentLoaded', () => {
     kpssInfoCard.style.display = 'block';
     kpssInfoTitle.textContent = result.name;
     kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
+    // Hap terimleri kartın EN ÜSTÜNDE: sınav anında akla gelecek olan uzun
+    // cümle değil bu 1-2 kelimelik anahtarlardır (bkz. data/hap_terimleri.js).
+    if (kpssInfoHap) {
+      const terimler = Array.isArray(result.hap) ? result.hap.filter(Boolean) : [];
+      kpssInfoHap.replaceChildren(...terimler.map(t => {
+        const s = document.createElement('span');
+        s.className = 'hap-terim';
+        s.textContent = t;
+        return s;
+      }));
+      kpssInfoHap.hidden = !terimler.length;
+    }
     if (kpssInfoTanim) {
       kpssInfoTanim.textContent = result.tanim || '';
       kpssInfoTanim.hidden = !result.tanim;
@@ -4344,6 +4357,7 @@ document.addEventListener('DOMContentLoaded', () => {
       marker.bindPopup(`
         <div class="popup-title">${it.name}</div>
         <div class="popup-type">${it.type || ''} (${it.region || ''})</div>
+        ${hapTerimleriHtml(it)}
         <div class="popup-text">${it.kpssNot || ''}</div>
       `, { maxWidth: 280 });
 
@@ -5493,7 +5507,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const type = (it.type || '').toLowerCase();
       const region = (it.region || '').toLowerCase();
       const kpss = (it.kpssNot || '').toLowerCase();
-      return name.includes(q) || type.includes(q) || region.includes(q) || kpss.includes(q);
+      // Hap terimiyle de bulunur: "barkan" yazan Karapınar'a ulaşır.
+      const hap = (it.hap || []).join(' ').toLowerCase();
+      return name.includes(q) || type.includes(q) || region.includes(q) || kpss.includes(q) || hap.includes(q);
     });
   }
 

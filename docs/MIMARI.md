@@ -18,6 +18,7 @@ Bu uygulama, KPSS adaylarının Türkiye fiziki coğrafyasında yer alan kritik 
    - `cografya_data.legacy.js`: yazım kaynağı — yer şekillerinin koordinatları, oluşum tipleri ve hap sınav notları. Uygulamaya **yüklenmez**, yalnızca derleyici okur.
    - `packs/catalog.js` + `packs/pack.tr.*.js`: kurulabilir konu paketleri. Her kayıt bir detay kademesi (1-3), dilden bağımsız alt tür anahtarları ve çok dilli `i18n` bloğu taşır.
    - `cografya_data.js`: artık **boş çalışma zamanı kaplarıdır**. `PackManager`, kullanıcının kurduğu paketlerden `COGRAFYA_DATA` / `CATEGORIES` / `SUB_TYPES`'ı yerinde yeniden inşa eder.
+   - `hap_terimleri.js`: her kayda 1-2 kelimelik **sınav anahtarı** ("Barkan", "Tarih çizgisi", "Konya"). Paketler derleyiciyle üretildiği için terimler ayrı bir katmanda, kayıt kimliğine bağlı durur; `PackManager.project()` onu `item.hap` olarak ekler, cevap sonrası hap kartında ve keşif balonlarında gösterilir. Kapsam ve biçim denetimi: `node tools/hap_terimleri_test.js`.
 
 4. **`js/custom_draw.js` (YENİ)**:
    - Kullanıcının haritaya eklediği serbest Nokta (Point), Çizgi/Hat (Polyline) ve Geometrik Alanların (Polygon) LocalStorage üzerinde yönetimi.

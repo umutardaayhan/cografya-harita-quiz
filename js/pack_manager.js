@@ -397,6 +397,11 @@ class PackManager {
     if (tr.matchSource) out.matchSource = tr.matchSource;
     if (tr.questionText) out.questionText = tr.questionText;
     if (tr.promptTitle) out.promptTitle = tr.promptTitle;
+    // 🔑 Hap terimleri paketten AYRI bir katmandır (bkz. data/hap_terimleri.js):
+    // paketler derleyiciyle üretildiği için terimler oraya yazılamaz.
+    if (typeof HAP_TERIMLERI !== 'undefined' && HAP_TERIMLERI[packItem.id]) {
+      out.hap = HAP_TERIMLERI[packItem.id].slice();
+    }
 
     return out;
   }

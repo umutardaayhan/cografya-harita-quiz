@@ -118,6 +118,16 @@ function topicColor(category, fallback = '#ef4444') {
  * Serbest metin bir HTML özniteliğine gömülüyor (özel harita kayıtlarında ad
  * alanı kullanıcı yazımıdır). Tırnak kaçmadığında ikon HTML'i bozuluyordu.
  */
+/**
+ * 🔑 Hap terimleri çipleri (keşif balonları, Yanlışlarım haritası).
+ * Kayıtta terim yoksa boş dizge: balonda boş bir satır bırakılmaz.
+ */
+function hapTerimleriHtml(item) {
+  const t = item && Array.isArray(item.hap) ? item.hap.filter(Boolean) : [];
+  if (!t.length) return '';
+  return `<div class="hap-terimler" title="Sınav anahtarı">${t.map(x => `<span class="hap-terim">${escAttr(x)}</span>`).join('')}</div>`;
+}
+
 function escAttr(text) {
   return String(text == null ? '' : text)
     .replace(/&/g, '&amp;')
@@ -2263,6 +2273,7 @@ class GeographyMap {
     return `
       <div class="popup-title">${baslik !== null ? baslik : item.name}</div>
       <div class="popup-type">${altBaslik !== null ? altBaslik : `${item.type} (${item.region || ''})`}</div>
+      ${hapTerimleriHtml(item)}
       <div class="popup-text">${metin !== null ? metin : (item.kpssNot || '')}</div>
       ${this._popupActions(item)}
     `;
@@ -2285,6 +2296,7 @@ class GeographyMap {
           <div class="multi-popup-card">
             <div class="popup-title">${it.name}</div>
             <div class="popup-type">${it.type} (${it.region || ''})</div>
+            ${hapTerimleriHtml(it)}
             <div class="popup-text">${it.kpssNot || ''}</div>
             ${this._popupActions(it)}
           </div>

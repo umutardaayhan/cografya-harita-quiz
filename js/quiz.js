@@ -1039,6 +1039,7 @@ class GeographyQuiz {
       selectedId,
       kpssNot: this.currentQuestion.kpssNot,
       tanim: this.tanimMetni(this.currentQuestion),
+      hap: this.currentQuestion.hap || [],
       type: this.currentQuestion.type,
       region: this.currentQuestion.region,
       name: this.currentQuestion.name,
