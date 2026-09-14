@@ -580,6 +580,18 @@ class GlobeView {
     // ufuk ve pus rengi buna bağlı (eşik kontrolü _gokyuzunuGuncelle içinde).
     this.map.on('move', () => this._gokyuzunuGuncelle());
 
+    // 📏 Gösterge ölçeği: düz haritayla AYNI eğri (GeographyMap.pinOlcegi).
+    // MapLibre zoom'u Leaflet'inkinden GLOBE_ZOOM_OFSET kadar küçük olduğu için
+    // eklenerek çevrilir. Değişken kaba yazılır, pinler CSS kalıtımıyla okur.
+    const pinOlcegiYaz = () => {
+      const kap = this.container;
+      if (!kap || !this.map || typeof GeographyMap === 'undefined') return;
+      kap.style.setProperty('--pin-olcek',
+        GeographyMap.pinOlcegi(this.map.getZoom() + GLOBE_ZOOM_OFSET).toFixed(3));
+    };
+    this.map.on('zoom', pinOlcegiYaz);
+    pinOlcegiYaz();
+
     // Küre tıklaması → Leaflet'te sentetik `click`. Kör Atış ve Koordinat
     // Avcısı dinleyicileri böylece değişmeden çalışır.
     this.map.on('click', (e) => {

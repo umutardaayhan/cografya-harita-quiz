@@ -473,6 +473,17 @@ class GeographyMap {
     // Zoom kontrolünü sağ üste al
     L.control.zoom({ position: 'topright' }).addTo(this.map);
 
+    // 📏 Gösterge ölçeği zoom'a bağlı (bkz. GeographyMap.pinOlcegi). Değişken
+    // harita KABINA yazılır; işaretçiler onu CSS kalıtımıyla okur, yani sonradan
+    // eklenen pinler için ayrıca bir şey yapmak gerekmez. `zoom` olayı animasyon
+    // boyunca da tetiklendiği için ölçek zoom'la birlikte akıcı değişir.
+    const pinOlcegiYaz = () => {
+      this.map.getContainer().style.setProperty('--pin-olcek',
+        GeographyMap.pinOlcegi(this.map.getZoom()).toFixed(3));
+    };
+    this.map.on('zoom', pinOlcegiYaz);
+    pinOlcegiYaz();
+
     // Harita tıklama ve fare hareketi olayları
     this.map.on('click', (e) => this.handleMapClick(e));
     this.map.on('mousemove', (e) => this.handleMouseMove(e));
@@ -819,64 +830,111 @@ class GeographyMap {
     return true;
   }
 
+  /**
+   * Koordinat → Türkiye ili.
+   *
+   * ESKİ HATA: poligon testi tutmazsa "kıyı/sınır kayması" gerekçesiyle 81 il
+   * merkezinden EN YAKININI mesafe sınırı olmadan döndürüyordu. Türkiye
+   * kapsamında bu işe yarıyordu (adalar, kıyı noktaları); ama dünya paketleri
+   * gelince Everest, Kilimanjaro ya da Vatikan için de bir Türk ili seçiyordu —
+   * dünya haritasındaki pinlerde görünen Türk il adları buradan geliyordu.
+   * Yakınlık yedeği artık yalnızca il sınırlarının kapsayıcı kutusu (±0,6° pay)
+   * içindeki noktalara uygulanır.
+   */
   findCityByCoordinate(lat, lng) {
+    return this._ilPoligonunda(lat, lng) || this._yakinIl(lat, lng);
+  }
+
+  /** Nokta bir il poligonunun İÇİNDEYSE ilin adı, değilse null (sonuç önbellekli) */
+  _ilPoligonunda(lat, lng) {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-    const cacheKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+    const fc = window.TR_CITIES_GEOJSON;
+    if (!fc || !Array.isArray(fc.features)) return null;
+
+    const cacheKey = `p:${lat.toFixed(4)},${lng.toFixed(4)}`;
     if (this._cityCoordCache && this._cityCoordCache.has(cacheKey)) {
       return this._cityCoordCache.get(cacheKey);
     }
 
-    if (typeof window.TR_CITIES_GEOJSON === 'undefined' || !Array.isArray(window.TR_CITIES_GEOJSON.features)) {
-      return null;
-    }
-
-    const features = window.TR_CITIES_GEOJSON.features;
-
-    // 1. Ray-casting ile poligon sınırları testi
-    for (let f of features) {
-      const geom = f.geometry;
-      if (!geom) continue;
-      const coords = geom.coordinates;
-      if (geom.type === 'Polygon') {
-        if (this._pointInPoly(lng, lat, coords)) {
-          const name = f.properties && f.properties.name;
-          if (name) {
-            if (this._cityCoordCache) this._cityCoordCache.set(cacheKey, name);
-            return name;
-          }
-        }
-      } else if (geom.type === 'MultiPolygon') {
-        for (let poly of coords) {
-          if (this._pointInPoly(lng, lat, poly)) {
-            const name = f.properties && f.properties.name;
-            if (name) {
-              if (this._cityCoordCache) this._cityCoordCache.set(cacheKey, name);
-              return name;
-            }
-          }
+    let bulunan = null;
+    // Kutunun dışındaysa 81 poligonu taramaya gerek yok: dünya pinleri için
+    // her render'da boşuna ışın testi yapılıyordu.
+    const kutu = this._trIlKutusu();
+    if (!kutu || (lat >= kutu.guney && lat <= kutu.kuzey && lng >= kutu.bati && lng <= kutu.dogu)) {
+      for (const f of fc.features) {
+        const geom = f.geometry;
+        if (!geom || !(f.properties && f.properties.name)) continue;
+        const polys = geom.type === 'Polygon' ? [geom.coordinates]
+          : (geom.type === 'MultiPolygon' ? geom.coordinates : []);
+        if (polys.some(poly => this._pointInPoly(lng, lat, poly))) {
+          bulunan = f.properties.name;
+          break;
         }
       }
     }
+    // null da önbelleğe yazılır: dünya noktaları tekrar tekrar taranmasın
+    if (this._cityCoordCache) this._cityCoordCache.set(cacheKey, bulunan);
+    return bulunan;
+  }
 
-    // 2. Kıyı/sınır kaymalarında en yakın il merkezine (centroid) fallback
+  /**
+   * Kıyı/ada kaymaları için en yakın il merkezi — YALNIZCA Türkiye kutusu
+   * içinde. Kutu dışındaki bir nokta hiçbir Türk iline "yakın" sayılmaz.
+   */
+  _yakinIl(lat, lng) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    const fc = window.TR_CITIES_GEOJSON;
+    const kutu = this._trIlKutusu();
+    if (!fc || !Array.isArray(fc.features) || !kutu) return null;
+    if (lat < kutu.guney || lat > kutu.kuzey || lng < kutu.bati || lng > kutu.dogu) return null;
+
     let bestDist = Infinity;
     let bestName = null;
-    for (let f of features) {
+    for (const f of fc.features) {
       const p = f.properties;
       if (!p || !Number.isFinite(p.lat) || !Number.isFinite(p.lng)) continue;
       const d = (p.lat - lat) ** 2 + (p.lng - lng) ** 2;
-      if (d < bestDist) {
-        bestDist = d;
-        bestName = p.name;
-      }
-    }
-
-    if (bestName && this._cityCoordCache) {
-      this._cityCoordCache.set(cacheKey, bestName);
+      if (d < bestDist) { bestDist = d; bestName = p.name; }
     }
     return bestName;
   }
 
+  /**
+   * İl sınırlarının kapsayıcı kutusu (±0,6° pay: kıyıya birkaç km açıktaki
+   * adalar ve koordinatı hafifçe denize kaymış burunlar içeride kalsın).
+   * GeoJSON henüz yüklenmediyse null döner ve ÖNBELLEĞE YAZILMAZ.
+   */
+  _trIlKutusu() {
+    if (this._ilKutusu) return this._ilKutusu;
+    const fc = window.TR_CITIES_GEOJSON;
+    if (!fc || !Array.isArray(fc.features) || !fc.features.length) return null;
+    const k = { bati: 180, dogu: -180, guney: 90, kuzey: -90 };
+    const gez = (c) => {
+      if (typeof c[0] === 'number') {
+        if (c[0] < k.bati) k.bati = c[0];
+        if (c[0] > k.dogu) k.dogu = c[0];
+        if (c[1] < k.guney) k.guney = c[1];
+        if (c[1] > k.kuzey) k.kuzey = c[1];
+      } else {
+        c.forEach(gez);
+      }
+    };
+    fc.features.forEach(f => { if (f.geometry && f.geometry.coordinates) gez(f.geometry.coordinates); });
+    if (k.bati > k.dogu) return null;
+    const PAY = 0.6;
+    this._ilKutusu = { bati: k.bati - PAY, dogu: k.dogu + PAY, guney: k.guney - PAY, kuzey: k.kuzey + PAY };
+    return this._ilKutusu;
+  }
+
+  /**
+   * Bir kaydın bulunduğu il (Türkiye) ya da ülke/şehir (dünya).
+   *
+   * SIRA ÖNEMLİ: (1) il poligonu, (2) kaydın KENDİ `city` alanı, (3) Türkiye
+   * kutusu içindeyse en yakın il. Eskiden koordinat taraması yedeğiyle
+   * birlikte HER ZAMAN bir sonuç ürettiği için (2)'ye hiç sıra gelmiyordu:
+   * dünya kayıtlarının `city` alanındaki ülke adı ("Nepal", "Tanzanya")
+   * kullanılamıyordu.
+   */
   findCityName(optOrLatLng) {
     if (!optOrLatLng) return '';
     // Eğer doğrudan şehir nesnesi ise kendi adı şehirdir
@@ -886,17 +944,57 @@ class GeographyMap {
 
     const lat = typeof optOrLatLng.lat === 'number' ? optOrLatLng.lat : (Array.isArray(optOrLatLng) ? optOrLatLng[0] : null);
     const lng = typeof optOrLatLng.lng === 'number' ? optOrLatLng.lng : (Array.isArray(optOrLatLng) ? optOrLatLng[1] : null);
+    const koordinatVar = Number.isFinite(lat) && Number.isFinite(lng);
 
-    if (Number.isFinite(lat) && Number.isFinite(lng)) {
-      const detected = this.findCityByCoordinate(lat, lng);
-      if (detected) return detected;
+    if (koordinatVar) {
+      const il = this._ilPoligonunda(lat, lng);
+      if (il) return il;
     }
 
     if (optOrLatLng.city && typeof optOrLatLng.city === 'string') {
-      return optOrLatLng.city.split(/[\/\-–]/)[0].trim().replace(/\s*\(.*?\)/, '');
+      const temiz = optOrLatLng.city.split(/[\/\-–]/)[0].trim().replace(/\s*\(.*?\)/, '');
+      if (temiz) return temiz;
     }
 
+    if (koordinatVar) {
+      return this._yakinIl(lat, lng) || '';
+    }
     return '';
+  }
+
+  /**
+   * Şık pininde gösterilecek il/ülke etiketi. Etiket CEVABI ELE VERİYORSA boş
+   * döner ve pin roma rakamına düşer: "Van Gölü" pininde "Van", "Vatikan"
+   * pininde "Vatikan", "Singapur" pininde "Singapur" yazması soruyu
+   * doğrudan cevaplıyordu.
+   */
+  pinSehirEtiketi(opt) {
+    const ad = this.findCityName(opt);
+    if (!ad) return '';
+    const norm = (v) => String(v || '').toLocaleLowerCase('tr').replace(/\s*\(.*?\)/g, '').trim();
+    const etiket = norm(ad);
+    if (!etiket) return '';
+    const adlar = [opt && opt.name, opt && opt.shortName].map(norm).filter(Boolean);
+    if (adlar.some(x => x === etiket || x.includes(etiket) || etiket.includes(x))) return '';
+    return ad;
+  }
+
+  /**
+   * 📏 ZOOM DUYARLI GÖSTERGE ÖLÇEĞİ.
+   *
+   * İşaretçiler SABİT PİKSEL boyutludur (36×44 şık kutusu, 28-32 px ikon).
+   * Türkiye ölçeğinde (zoom ≈6,4) sorun yok; ama zoom 2'de 1 px ≈ 40 km olduğu
+   * için 36 px'lik bir rozet ~1400 km yer kaplıyor — şehirleri, küçük ülkeleri
+   * tamamen örtüyordu. Ölçek zoom ≥ 6'da 1, zoom ≤ 2'de 0,5; arası doğrusal.
+   * CSS `scale` özelliğiyle uygulanır (bkz. style.css · "ZOOM DUYARLI ÖLÇEK"):
+   * `transform` DEĞİL, çünkü hover ve doğru/yanlış animasyonları `transform`'u
+   * tümüyle eziyor.
+   *
+   * Küre de aynı fonksiyonu kullanır (MapLibre zoom'u + GLOBE_ZOOM_OFSET).
+   */
+  static pinOlcegi(leafletZoom) {
+    if (!Number.isFinite(leafletZoom)) return 1;
+    return Math.max(0.5, Math.min(1, 0.5 + (leafletZoom - 2) * 0.125));
   }
 
   // --- KLASİK MOD: TEK SORU VURGULAMA MOTORU ---
@@ -1091,7 +1189,7 @@ class GeographyMap {
 
     let cityName = '';
     if (isPoint) {
-      cityName = this.findCityName(opt);
+      cityName = this.pinSehirEtiketi(opt);
     }
     const useCity = this.pinCityEnabled && isPoint && !!cityName;
     const labelDisplay = useCity ? cityName : roman;
@@ -1246,7 +1344,7 @@ class GeographyMap {
 
           let subCityName = '';
           if (subIsPoint) {
-            subCityName = this.findCityName(subItem);
+            subCityName = this.pinSehirEtiketi(subItem);
           }
           const subUseCity = this.pinCityEnabled && subIsPoint && !!subCityName;
           const subLabelDisplay = subUseCity ? subCityName : roman;
