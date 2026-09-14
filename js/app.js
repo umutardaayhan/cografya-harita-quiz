@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const kpssInfoTitle = document.getElementById('kpss-info-title');
   const kpssInfoType = document.getElementById('kpss-info-type');
   const kpssInfoText = document.getElementById('kpss-info-text');
+  const kpssInfoTanim = document.getElementById('kpss-info-tanim');
   const nextBtn = document.getElementById('next-btn');
 
   // İstatistik Elemanları
@@ -547,6 +548,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof panelManager !== 'undefined' && panelManager) panelManager.clampAll();
   }
 
+  /**
+   * Cevap sonrası hap bilgi kartı. Plan, Deneme ve serbest modda aynı dört satır
+   * üç kez tekrar ediliyordu; tanım satırı eklenince tek yerde toplandı.
+   *
+   * TANIM: veride elle yazılmış uzun KPSS kökü. Soru metni olmaktan çıkarıldı,
+   * yalnızca cevap verildikten sonra burada görünür (bkz. js/quiz.js ·
+   * soruKokunuTanimaCevir). Tanımı olmayan kayıtta satır gizlenir.
+   */
+  function hapKartiniGoster(result) {
+    kpssInfoCard.style.display = 'block';
+    kpssInfoTitle.textContent = result.name;
+    kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
+    if (kpssInfoTanim) {
+      kpssInfoTanim.textContent = result.tanim || '';
+      kpssInfoTanim.hidden = !result.tanim;
+    }
+    kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+  }
+
   function renderQuestion(qData) {
     if (exploreBanner) exploreBanner.style.display = 'none';
     if (kpssInfoCard) kpssInfoCard.style.display = 'none';
@@ -758,10 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
       studyPlan.recordAnswer(result.isCorrect, result.correctId);
       updatePlanHud();
 
-      kpssInfoCard.style.display = 'block';
-      kpssInfoTitle.textContent = result.name;
-      kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
-      kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+      hapKartiniGoster(result);
 
       nextBtn.style.display = 'block';
       const kalan = studyPlan.progress();
@@ -790,10 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
         examWrongText.textContent = examStats.wrong;
 
         // Yanlış cevapta hap bilgisini göster ve butonu aç
-        kpssInfoCard.style.display = 'block';
-        kpssInfoTitle.textContent = result.name;
-        kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
-        kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+        hapKartiniGoster(result);
 
         nextBtn.style.display = 'block';
         nextBtn.textContent = (examCurrentIndex === 17) ? '🎯 Denemeyi Bitir' : 'Sonraki Soru ➡️';
@@ -822,10 +836,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 450);
     } else {
       // Normal Mod: KPSS Hap Bilgisini Göster
-      kpssInfoCard.style.display = 'block';
-      kpssInfoTitle.textContent = result.name;
-      kpssInfoType.textContent = `${result.type} (${result.region || ''})`;
-      kpssInfoText.textContent = result.kpssNot || 'Bu soru için ek not girilmemiştir.';
+      hapKartiniGoster(result);
 
       // Sonraki Soru butonunu aç
       nextBtn.style.display = 'block';

@@ -3063,6 +3063,23 @@ body.game-mode-active .tools-selector {
   margin-left: auto;
 }
 
+/* TANIM: eskiden soru başlığı olan uzun KPSS kökü. Hap notundan önce gelir ve
+   ondan kesik bir çizgiyle ayrılır; soru değil bilgi olduğu için sakin/italik. */
+.kpss-info-tanim {
+  margin: 4px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(245, 158, 11, 0.25);
+  color: #cbd5e1;
+  font-style: italic;
+}
+
+.kpss-info-tanim::before {
+  content: 'Tanım: ';
+  font-style: normal;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
 /* Sonraki Soru Butonu */
 .next-btn {
   display: none;

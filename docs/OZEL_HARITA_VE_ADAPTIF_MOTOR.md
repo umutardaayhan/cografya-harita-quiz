@@ -72,7 +72,7 @@ Sistem, soruların basit kalmasını önlemek için çeldiricileri doğru cevab�
 ## 6. 🛡️ Cevap İfşası (Spoiler) Önleme Sistemi
 Soru kökü ve şık butonları arasında ipucu sızmasını önleyen çift yönlü koruma:
 - **`find_on_map` (Haritada Bul) Modunda:** Şık butonlarında şehir isimleri (`📍 Erzurum`) tamamen gizlenerek ÖSYM formatında `A) I. Konum (A Pini)`, `B) II. Konum (B Pini)` gösterilir. Öğrenci haritadaki pini ve coğrafi konumu incelemek zorunda kalır.
-- **Soru Başlıklarında:** İklim ve ilişkili sorularda soru başlığı doğrudan soru niteliğini sorar (`Türkiye'de kışların en sert ve soğuk geçtiği yöre haritada neresidir?`), cevap şehri soru kökünde açık edilmez.
+- **Soru Başlıklarında:** Soru metni yalnızca yapının adı ya da kısa bir kategori kalıbıdır. İklim ve ilişkili sorulardaki niteleyici cümleler (`Türkiye'de kışların en sert ve soğuk geçtiği yöre`) soru başlığında kullanılmaz; cevap verildikten sonra hap bilgi kartında **Tanım** olarak görünür (bkz. §18.2).
 
 ---
 
@@ -324,45 +324,64 @@ Tüm ulaşım hatları, limanlar, geçitler, sınır kapıları, serbest ticaret
 
 ## 18. ❓ SORU KÖKÜ MOTORU (`promptTitle`) VE OLUMSUZ SORU YASAĞI
 
-### 18.1 İki kademeli başlık üretimi
+### 18.1 Soru metni: yalnızca ad ya da kısa kalıp
 
 Bütün modlar (serbest test, Deneme Sınavı, Günlük Plan, Şimşek Turu, Harita
 Fatihi) soru başlığını **tek bir üreticiden** alır:
 `GeographyQuiz.buildQuestionText(item, format)`.
 
-| Kademe | Kaynak | Örnek |
+| Format | Soru metni | Örnek |
 | :--- | :--- | :--- |
-| 1 | `item.questionText` (hazır tam cümle) | İlişkili eşleştirmeler |
-| 2 | `item.promptTitle` (elle yazılmış KPSS soru kökü) | "1958'de ilan edilen İLK MİLLİ PARK haritada neresidir?" |
-| 3 | Kategori + şekil kalıbı (`QUESTION_STEMS`) | "Haritada işaretli plato hangisidir?" |
+| `find_on_map` (İsimden Haritada Bul) | Yalnızca yapının adı | "📍 Süveyş Kanalı ?" |
+| `identify` (Konumdan İsmi Bul) | Kategori + şekil kalıbı (`QUESTION_STEMS`) | "Haritada işaretli boğaz / kanal hangisidir?" |
+| Bağlı grup | `QUESTION_STEMS.group` kalıbı | "Haritada birlikte işaretli tesisler hangi enerji kaynağına aittir?" |
 
 `QUESTION_STEMS` dört tablodan oluşur: `point`, `area`, `line`, `group`
 (+ ulaşıma özel `ulasimGroup`). Her kategori/şekil bileşiminin kendi cümlesi
-vardır; jenerik `_` kalıbına düşen kayıt kalmamıştır.
+vardır.
 
-### 18.2 Soru kökü güvenlik denetimi
+**İstisna — ilişkili coğrafya (`iliskili`):** süreç → sonuç eşleştiren karışık
+kategoride şekil içeriği anlatmıyor (deltaların çoğu çizgi, bir kısmı nokta).
+Kalıp kaydın `type` alanında okun sağındaki sonuca göre seçilir: delta ovası /
+geçit / göl / yer şekli.
 
-Her `promptTitle` her formatta kullanılamaz. `js/gruplama.js` içindeki
-`guvenliSoruKoku(item, format)` iki sızıntıyı eler:
+### 18.2 Uzun kökler → cevap sonrası TANIM
 
-| Denetim | Neyi engeller | Elenen format |
-| :--- | :--- | :--- |
-| `promptAdiSizdiriyorMu` | Kök, ŞIKTA YAZAN ADI söylüyor | `identify` |
-| `promptYeriSizdiriyorMu` | Kök, CEVABIN İLİNİ söylüyor | `find_on_map` |
-
-Örnekler:
+Veride elle yazılmış uzun KPSS kökleri (`promptTitle`, 657 kayıt; ilişkili
+coğrafyada hazır `questionText`, 16 kayıt) eskiden soru başlığına basılıyordu:
 
 ```
-"...Ankara Beypazarı-Kazan trona sahası neresidir?"   → identify'da elenir (cevap "Trona")
-"...en fazla Sivas ilinde üretilen tahıl neresidir?"  → find_on_map'te elenir (Sivas'a tıkla)
+✗ "Asya ile Kuzey Amerika kıtalarını birbirinden ayıran, iki ülke sınırının ve
+   tarih değiştirme çizgisinin geçtiği boğaz haritada hangisidir?"
 ```
 
-Elenen kök sessizce 3. kademeye (kategori kalıbına) düşer; soru asla bozulmaz.
-Denetim, kaydin KENDİ adında geçen yer adlarını sızıntı saymaz — "Ankara" zaten
-"Ankara" ilinin adıdır.
+Bu cümleler soruyu bir okuma parçasına çeviriyor ve yapıyı tarif ederek cevabı
+çoğu zaman kendiliğinden veriyordu. Artık **soru metni olarak hiç
+kullanılmazlar.** Bilgi değerli olduğu için atılmadı: cevap verildikten sonra
+hap bilgi kartında **Tanım** satırı olarak görünür
+(`js/quiz.js · soruKokunuTanimaCevir`, `GeographyQuiz.tanimMetni`):
 
-**Birleşik (composite) kayıtların kökü yoktur.** Bir üyenin kökü grubu
-anlatmaz; grup daima `QUESTION_STEMS.group` kalıbıyla sorulur.
+```
+Soru : 📍 Süveyş Kanalı ?
+Kart : Tanım: 1869'da açılan, Akdeniz ile Kızıldeniz'i birleştirerek
+       Avrupa-Asya deniz yolunu binlerce km kısaltan yapay su yolu.
+```
+
+Dönüşüm baştaki emojiyi ve sondaki "(haritada) neresidir / nerededir /
+hangisidir / hangileridir?" ekini atar, ilk harfi büyütüp nokta koyar. 657
+kökün 656'sı bu kalıpla bittiği için geriye dilbilgisel olarak tam bir isim
+tamlaması kalır. Kalıba uymayan kök (ör. "…hangi illerden geçer?") olduğu gibi
+gösterilir.
+
+Kök artık soru metni olmadığı için eski **sızıntı denetimi**
+(`guvenliSoruKoku` — kökün şıktaki adı ya da cevabın ilini ele verip
+vermediği) gereksizleşti ve kaldırıldı: tanım yalnızca cevaptan SONRA görünür.
+
+**Birleşik (composite) kayıtlarda tanım gösterilmez.** Bir üyenin kökü grubu
+anlatmaz.
+
+**Yeni veri yazarken:** `promptTitle` bir soru değil, bir TANIMdır; asıl işi
+cevap sonrası öğretmektir. "… haritada neresidir?" biçimi dönüşümle uyumludur.
 
 ### 18.3 🚫 OLUMSUZ SORU YASAĞI ("olanı sor, olmayanı sorma")
 

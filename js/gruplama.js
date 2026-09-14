@@ -83,107 +83,11 @@ function sikEtiketleri(secenekler) {
   });
 }
 
-/* ==========================================================================
- * ❓ SORU KÖKÜ (promptTitle) GÜVENLİK DENETİMİ
- *
- * Veride her kaydın elle yazılmış bir KPSS soru kökü (`promptTitle`) var ve
- * bu kökler jenerik "Haritada işaretli konum hangisidir?" cümlesinden çok daha
- * iyi sorular üretiyor. Ancak hepsi her formatta kullanılamaz:
- *
- *   • "Konumdan İsmi Bul"da kök, ŞIKTA YAZAN ADI söylememeli.
- *     ("...Ankara Beypazarı-Kazan trona sahası neresidir?" → cevap "Trona")
- *   • "İsimden Haritada Bul"da kök, CEVABIN İLİNİ söylememeli.
- *     ("...en fazla Sivas ilinde üretilen tahıl neresidir?" → Sivas'a tıkla)
- *
- * Veri tarafında düzeltilebilecekler düzeltildi; burası kalanları sessizce
- * eleyip eski (jenerik ama doğru) kalıba düşen GÜVENLİK AĞI'dır.
- * ========================================================================== */
-
-/** Ad karşılaştırmasında ayırt edici olmayan genel coğrafya sözcükleri */
-const GENEL_COGRAFYA_SOZCUKLERI = new Set(('iklim iklimi dag dagi daglari gol golu golleri ova ovasi plato platosu ' +
-  'liman limani limanlari kapi kapisi kapilari sinir hat hatti hatlari bolge bolgesi bolgeleri saha sahasi sahalari ' +
-  'havza havzasi alan alani alanlari merkez merkezi merkezleri il ili iller fabrika fabrikasi fabrikalari sanayi ' +
-  'sanayisi tesis tesisi tesisleri maden madeni madenleri cami camii camileri kilise kilisesi manastir manastiri ' +
-  'turbe turbesi milli park parki antik kent kenti yarimada yarimadasi ada adasi deniz denizi korfez korfezi ' +
-  'gecit gecidi gecitleri tunel tuneli otoyol otoyolu demiryolu boru santral santrali baraj baraji toprak topragi ' +
-  'topraklari kusagi kusak sistemi sistem sehir sehri sehirleri gar gari istasyon istasyonu terminal terminali ' +
-  'tipi tipik turk turkiye anadolu guzergahi guzergah etabi kolu agi rafinerisi rafineri ocak ocaklari yatagi ' +
-  'yataklari buyuk kucuk yeni eski ilk son orta bati dogu kuzey guney tarihi dogal karma miras mirasi dunya unesco ' +
-  'kultur kulturel guncel gaz enerji elektrik uretim uretimi tas tasi vadi vadisi cayi nehri irmagi delta deltasi ' +
-  'grup grubu akim akimi bagalantili bagli serbest ticaret').split(' '));
-
-/** Türkçe karakterleri sadeleştirip küçültür (karşılaştırma için) */
-function trSade(metin) {
-  return String(metin || '').toLocaleLowerCase('tr-TR')
-    .replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i')
-    .replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u');
-}
-
-/** `kok` metinde SÖZCÜK BAŞINDA geçiyor mu? (Türkçe ek toleranslı) */
-function kokIceriyor(metin, kok) {
-  if (!kok || kok.length < 4) return false;
-  let i = metin.indexOf(kok);
-  while (i !== -1) {
-    const onceki = i > 0 ? metin[i - 1] : ' ';
-    if (!/[a-z0-9]/.test(onceki)) return true;
-    i = metin.indexOf(kok, i + 1);
-  }
-  return false;
-}
-
-/** Kaydın ekranda görünen adından ayırt edici sözcükler */
-function adAnahtarlari(item) {
-  return trSade((item.shortName || item.name || '').replace(/\([^)]*\)/g, ' '))
-    .split(/[^a-z0-9]+/)
-    .filter(w => w.length >= 4 && !GENEL_COGRAFYA_SOZCUKLERI.has(w));
-}
-
-/** Kaydın il / ilçe adları */
-function yerAnahtarlari(item) {
-  return String(item.city || '').split(/[(),\-&/]/)
-    .map(x => trSade(x.trim()))
-    .filter(x => x.length >= 4);
-}
-
-/** Kök, şıkta yazan adı ele veriyor mu? */
-function promptAdiSizdiriyorMu(item) {
-  if (!item || !item.promptTitle) return false;
-  const p = trSade(item.promptTitle);
-  return adAnahtarlari(item).some(k => kokIceriyor(p, k));
-}
-
-/** Kök, cevabın konumunu ele veriyor mu? (kaydın kendi adındaki yer adı sayılmaz) */
-function promptYeriSizdiriyorMu(item) {
-  if (!item || !item.promptTitle) return false;
-  const p = trSade(item.promptTitle);
-  const adlar = adAnahtarlari(item);
-  return yerAnahtarlari(item).some(k =>
-    kokIceriyor(p, k) && !adlar.some(a => k.indexOf(a) === 0 || a.indexOf(k) === 0)
-  );
-}
-
-/**
- * Kaydın soru kökünü verilen formatta kullanmak güvenli mi?
- * Güvenliyse biçimlendirilmiş metni, değilse null döner.
- */
-function guvenliSoruKoku(item, format) {
-  if (!item || !item.promptTitle) return null;
-  // Birleşik kayıtların kökü yoktur; bir üyenin kökü grubu anlatmaz.
-  if (item.isGroup || item.shapeType === 'composite') return null;
-
-  if (format === 'identify') {
-    if (promptAdiSizdiriyorMu(item)) return null;
-    // Harita zaten şekli gösteriyor: "...haritada neresidir?" → "...hangisidir?"
-    return item.promptTitle
-      .replace(/\s*haritada\s+(neresidir|nerededir)\s*\?\s*$/i, ' hangisidir?')
-      .replace(/\s*(neresidir|nerededir)\s*\?\s*$/i, ' hangisidir?');
-  }
-  if (format === 'find_on_map') {
-    if (promptYeriSizdiriyorMu(item)) return null;
-    return item.promptTitle;
-  }
-  return null;
-}
+/* Soru kökü (promptTitle) güvenlik denetimi — kökün şıktaki adı ya da cevabın
+ * ilini ele verip vermediği — burada dururdu. Uzun kökler artık soru başlığı
+ * olarak HİÇ kullanılmıyor, yalnızca cevap SONRASI tanım olarak gösteriliyor;
+ * sızıntı denetimine gerek kalmadığı için kaldırıldı.
+ * Bkz. js/quiz.js · soruKokunuTanimaCevir, docs/OZEL_HARITA_VE_ADAPTIF_MOTOR.md §18. */
 
 /**
  * 🔎 AKTİF ALT TÜR SÜZGECİ

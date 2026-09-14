@@ -66,6 +66,18 @@ const QUESTION_STEMS = {
     dunya_yapilari:    { text: 'Haritada işaretli yapı hangisidir?',                  title: 'YAPI SORUSU' },
     _:           { text: 'Haritada işaretli alan / plato hangisidir?',                title: 'ALAN SORUSU' }
   },
+  // İLİŞKİLİ COĞRAFYA: bir süreci sonucuyla eşleştiren KARIŞIK kategori
+  // (akarsu → delta, dağ → geçit, volkanizma → göl / yer şekli). Şekil türü
+  // burada içeriği anlatmıyor: deltaların çoğu ÇİZGİ, bir kısmı NOKTA; bir
+  // geçit nokta, göller nokta. Şekle göre kalıp seçilince çizgi deltalar
+  // "geçit / hat", nokta göller "yer şekli" diye soruluyordu. Kalıp bu yüzden
+  // kaydın `type` alanından seçilir (bkz. GeographyQuiz.iliskiliKalipSec).
+  iliskili: {
+    delta: { text: 'Haritada işaretli delta ovası hangisidir?', title: 'İLİŞKİLİ COĞRAFYA' },
+    gecit: { text: 'Haritada işaretli geçit hangisidir?',        title: 'İLİŞKİLİ COĞRAFYA' },
+    gol:   { text: 'Haritada işaretli göl hangisidir?',          title: 'İLİŞKİLİ COĞRAFYA' },
+    _:     { text: 'Haritada işaretli yer şekli hangisidir?',    title: 'İLİŞKİLİ COĞRAFYA' }
+  },
   // ÇİZGİ (polyline) soruları. Eskiden tek bir "akarsu / hat" cümlesi vardı:
   // Dalmaçya tipi bir KIYI ya da Kuzey Anadolu FAYI da "akarsu" diye soruluyordu.
   line: {
@@ -122,6 +134,36 @@ const QUESTION_STEMS = {
     _:                { text: 'Haritada işaretli coğrafi konum / merkez hangisidir?',   title: 'KONUM SORUSU' }
   }
 };
+
+/**
+ * 📝 SORU KÖKÜ → TANIM
+ *
+ * Soru metni artık HER modda yalnızca yapının adıdır ("📍 Bering Boğazı ?")
+ * ya da kısa bir kategori kalıbıdır ("Haritada işaretli boğaz / kanal
+ * hangisidir?"). Eskiden veride elle yazılmış uzun KPSS kökleri
+ * (`promptTitle`; ilişkili coğrafyada `questionText`) soru başlığına
+ * basılıyordu: "Asya ile Kuzey Amerika kıtalarını birbirinden ayıran, iki ülke
+ * sınırının ve tarih değiştirme çizgisinin geçtiği boğaz haritada
+ * hangisidir?". Bu cümleler soruyu bir okuma parçasına çeviriyor ve yapıyı
+ * tarif ederek cevabı çoğu zaman kendiliğinden veriyordu.
+ *
+ * Bilgi değerli olduğu için atılmadı: cevap verildikten SONRA hap bilgi
+ * kartında "Tanım" olarak görünür. Köklerin neredeyse tamamı "… haritada
+ * neresidir / hangisidir?" kalıbıyla bittiği için soru eki atılınca geriye
+ * dilbilgisel olarak tam bir isim tamlaması kalıyor ("…geçtiği boğaz.").
+ * Kalıba uymayan kök (ör. "…hangi illerden geçer?") olduğu gibi gösterilir.
+ */
+const KOK_SORU_EKI = /\s*(?:haritada\s+)?(?:neresidir|nerededir|hangisidir|hangileridir)\s*\?\s*$/i;
+const KOK_BAS_SEMBOL = /^[\s\p{Extended_Pictographic}️‍]+/u;
+
+function soruKokunuTanimaCevir(metin) {
+  const ham = String(metin || '').replace(KOK_BAS_SEMBOL, '').trim();
+  if (!ham) return '';
+  if (!KOK_SORU_EKI.test(ham)) return ham;
+  const govde = ham.replace(KOK_SORU_EKI, '').trim().replace(/[,;:]$/, '');
+  if (!govde) return '';
+  return govde.charAt(0).toLocaleUpperCase('tr-TR') + govde.slice(1) + '.';
+}
 
 class GeographyQuiz {
   constructor(categoryKey = 'daglar', customDrawManager = null) {
@@ -698,28 +740,16 @@ class GeographyQuiz {
    * Maden)" gibi hem cevabın ilini hem türünü söyleyen başlıklar, birleşik bir
    * havza için "İşaretli Yer Şekli Nedir?" gibi kalıplar üretiyorlardı. Artık
    * bütün modlar bu tek üreticiden geçer.
+   *
+   * KURAL: soru metni ya YALNIZCA YAPININ ADIDIR ya da KISA BİR KALIPTIR.
+   * Veride yazılı uzun kökler (`promptTitle`, `questionText`) burada HİÇ
+   * kullanılmaz; cevap sonrası tanım olarak gösterilirler (bkz. tanimMetni).
    */
   buildQuestionText(item, actualFormat) {
     if (!item) return { questionText: '', questionTypeTitle: 'SORU' };
 
-    // 1) Veride hazır, tam bir soru cümlesi varsa (ilişkili eşleştirmeler)
-    if (item.questionText) {
-      return { questionText: item.questionText, questionTypeTitle: 'İLİŞKİLİ EŞLEŞTİRME' };
-    }
-
-    // 2) İSİMDEN HARİTADA BUL
+    // 1) İSİMDEN HARİTADA BUL — soru yapının adıdır, başka hiçbir şey değil.
     if (actualFormat === 'find_on_map') {
-      // Önce veride elle yazılmış KPSS soru kökü denenir: "📍 Yozgat Çamlığı ?"
-      // yerine "1958'de ilan edilen İLK MİLLİ PARK haritada neresidir?" sorulur.
-      // `guvenliSoruKoku` cevabın ilini söyleyen kökleri eler.
-      const kok = (typeof guvenliSoruKoku === 'function')
-        ? guvenliSoruKoku(item, 'find_on_map') : null;
-      if (kok) {
-        return {
-          questionText: '<span style="color: #60a5fa; font-weight:700;">📍</span> ' + kok,
-          questionTypeTitle: 'HARİTADA BUL'
-        };
-      }
       // Şehir/yöre ipucu içeren parantezleri temizle (ör. "Fındık (Giresun - Ordu)"
       // -> "Fındık"). Temizlik `shortName` için de geçerlidir; aksi halde
       // "Demir (Divriği)" gibi kısa adlar cevabın ilini başlıkta açık ederdi.
@@ -732,27 +762,49 @@ class GeographyQuiz {
       };
     }
 
-    // 3) KONUMDAN İSMİ BUL
+    // 2) KONUMDAN İSMİ BUL — cevap bir ad olduğu için soru ad olamaz; kısa
+    //    kategori + şekil kalıbı kullanılır.
     const cat = item.category;
     const cokluMu = !!item.isGroup || item.shapeType === 'composite';
 
-    // Bağlı grupta bir üyenin kökü grubu anlatmaz; grup kalıbı kullanılır.
     if (cokluMu) {
       const grupKalibi = this.grupKalibiSec(cat, item.type);
       return { questionText: grupKalibi.text, questionTypeTitle: grupKalibi.title };
     }
 
-    // Veride yazılı soru kökü, şıkta yazan adı ele vermiyorsa jenerik kalıbın
-    // yerine geçer. Rozet başlığı kategori kalıbından alınmaya devam eder.
-    const kok = (typeof guvenliSoruKoku === 'function')
-      ? guvenliSoruKoku(item, 'identify') : null;
+    if (cat === 'iliskili_cografya') {
+      const iliskili = this.iliskiliKalipSec(item.type);
+      return { questionText: iliskili.text, questionTypeTitle: iliskili.title };
+    }
 
     let kalip;
     if (item.shapeType === 'polyline')      kalip = QUESTION_STEMS.line[cat]  || QUESTION_STEMS.line._;
     else if (item.shapeType === 'polygon')  kalip = QUESTION_STEMS.area[cat]  || QUESTION_STEMS.area._;
     else                                    kalip = QUESTION_STEMS.point[cat] || QUESTION_STEMS.point._;
 
-    return { questionText: kok || kalip.text, questionTypeTitle: kalip.title };
+    return { questionText: kalip.text, questionTypeTitle: kalip.title };
+  }
+
+  /**
+   * İlişkili coğrafya kalıbı. Tür "Süreç ➡️ Sonuç" biçimindedir ("Akarsu ➡️
+   * Delta Eşleştirmesi"); soru SONUCU sorduğu için okun sağına bakılır.
+   */
+  iliskiliKalipSec(type) {
+    const sonuc = String(type || '').split('➡️').pop().toLocaleLowerCase('tr-TR');
+    const T = QUESTION_STEMS.iliskili;
+    if (sonuc.includes('delta')) return T.delta;
+    if (sonuc.includes('geçit') || sonuc.includes('boğaz')) return T.gecit;
+    if (sonuc.includes('göl')) return T.gol;
+    return T._;
+  }
+
+  /**
+   * Cevap sonrası hap kartında gösterilecek TANIM (soru metni olmaktan çıkarılan
+   * uzun kök). Birleşik kayıtlarda boş: bir üyenin kökü grubu anlatmaz.
+   */
+  tanimMetni(item) {
+    if (!item || item.isGroup || item.shapeType === 'composite') return '';
+    return soruKokunuTanimaCevir(item.promptTitle || item.questionText || '');
   }
 
   /**
@@ -986,6 +1038,7 @@ class GeographyQuiz {
       isGroup: !!this.currentQuestion.isGroup,
       selectedId,
       kpssNot: this.currentQuestion.kpssNot,
+      tanim: this.tanimMetni(this.currentQuestion),
       type: this.currentQuestion.type,
       region: this.currentQuestion.region,
       name: this.currentQuestion.name,
@@ -1001,4 +1054,9 @@ class GeographyQuiz {
     if (total === 0) return 0;
     return Math.round((this.stats.correct / total) * 100);
   }
+}
+
+// Node ortamında (araç/test betikleri) soru üreticisini doğrulayabilmek için.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { GeographyQuiz, QUESTION_STEMS, soruKokunuTanimaCevir };
 }
