@@ -484,6 +484,13 @@ class GlobeView {
         paint: { 'line-color': ['get', 'renk'], 'line-width': 2, 'line-opacity': 0.95 }
       },
       {
+        // 🛣️🚆 Ulaşım hattı kenarı (bkz. map.js · ulasimHatKatmani)
+        id: 'hat-kasa', type: 'line', source: 'sekiller',
+        filter: ['has', 'desen'],
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'kasa'], 'line-width': ['+', ['get', 'kalinlik'], 4], 'line-opacity': 0.9 }
+      },
+      {
         id: 'sekil-hat', type: 'line', source: 'sekiller',
         filter: ['==', ['geometry-type'], 'LineString'],
         layout: { 'line-cap': 'round', 'line-join': 'round' },
@@ -493,6 +500,25 @@ class GlobeView {
           'line-opacity': 0.95,
           'line-blur': 0.5
         }
+      },
+      // `line-dasharray` veriye bağlanamadığı için her desen ayrı katman
+      {
+        id: 'hat-orta-serit', type: 'line', source: 'sekiller',
+        filter: ['==', ['get', 'desen'], 'otoyol'],
+        layout: { 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'cizgi'], 'line-width': ['max', 1.2, ['*', ['get', 'kalinlik'], 0.28]], 'line-dasharray': [4, 4] }
+      },
+      {
+        id: 'hat-travers', type: 'line', source: 'sekiller',
+        filter: ['==', ['get', 'desen'], 'demiryolu'],
+        layout: { 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'cizgi'], 'line-width': ['get', 'kalinlik'], 'line-dasharray': [2, 2] }
+      },
+      {
+        id: 'hat-travers-yht', type: 'line', source: 'sekiller',
+        filter: ['==', ['get', 'desen'], 'yht'],
+        layout: { 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'cizgi'], 'line-width': ['get', 'kalinlik'], 'line-dasharray': [3, 1] }
       }
     );
 
@@ -829,9 +855,18 @@ class GlobeView {
         geometry: { type: 'Polygon', coordinates: [kapali] }
       });
     } else {
+      const ozellik = { renk, kalinlik, dolgu, id: item.id };
+      const desen = (typeof ulasimHatDeseni === 'function') ? ulasimHatDeseni(item) : null;
+      const st = desen && typeof ULASIM_HAT_STILI !== 'undefined' ? ULASIM_HAT_STILI[desen] : null;
+      if (st) {
+        ozellik.desen = desen;
+        ozellik.kasa = st.kasa;
+        ozellik.renk = st.renkli === 'govde' && renk ? renk : st.govde;
+        ozellik.cizgi = st.renkli === 'desen' && renk ? renk : st.desen;
+      }
       this._sekiller.push({
         type: 'Feature',
-        properties: { renk, kalinlik, dolgu, id: item.id },
+        properties: ozellik,
         geometry: { type: 'LineString', coordinates: halka }
       });
     }
@@ -911,7 +946,7 @@ class GlobeView {
         if (feat && this._featureEkle(feat, { renk, dolgu: 0.35, id: item.id })) return;
       }
 
-      if (tip !== 'point' && this._sekilEkle(item, { renk, kalinlik: 4, dolgu: 0.3 })) {
+      if (tip !== 'point' && this._sekilEkle(item, { renk: (typeof ulasimHatDeseni === 'function' && ulasimHatDeseni(item)) ? null : renk, kalinlik: 4, dolgu: 0.3 })) {
         // Hat/alan şeklinin adı okunabilsin diye merkezine küçük bir pin
         if (Number.isFinite(item.lat) && Number.isFinite(item.lng)) {
           const ikon = this.geoMap.getCustomCategoryIcon(item);
@@ -956,7 +991,7 @@ class GlobeView {
     }
 
     if (tip !== 'point') {
-      if (!this._sekilEkle(item, { renk, kalinlik: 6, dolgu: 0.45 })) return false;
+      if (!this._sekilEkle(item, { renk: (typeof ulasimHatDeseni === 'function' && ulasimHatDeseni(item)) ? null : renk, kalinlik: 6, dolgu: 0.45 })) return false;
       this._sekilleriYaz();
       this._odakla(item);
       return true;

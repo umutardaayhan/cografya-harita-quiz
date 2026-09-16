@@ -4372,10 +4372,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Çizgisel şekillerde hattı da göster
       if (it.shapeType === 'polyline' && Array.isArray(it.coordinates) && Array.isArray(it.coordinates[0])) {
-        mistakesLayerGroup.addLayer(L.polyline(it.coordinates, {
-          color: m.severity === 'kritik' ? '#ef4444' : m.severity === 'orta' ? '#f97316' : '#facc15',
-          weight: 4, opacity: 0.75, dashArray: '6, 6'
-        }));
+        const hatDeseni = typeof ulasimHatDeseni === 'function' ? ulasimHatDeseni(it) : null;
+        mistakesLayerGroup.addLayer(hatDeseni
+          ? ulasimHatKatmani(it.coordinates, hatDeseni, { kalinlik: 3.5 })
+          : L.polyline(it.coordinates, {
+            color: m.severity === 'kritik' ? '#ef4444' : m.severity === 'orta' ? '#f97316' : '#facc15',
+            weight: 4, opacity: 0.75, dashArray: '6, 6'
+          }));
         it.coordinates.forEach(c => coords.push(c));
       }
       mistakesLayerGroup.addLayer(marker);

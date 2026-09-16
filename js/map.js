@@ -156,6 +156,71 @@ function gorselHtml(item) {
     + `</figure>`;
 }
 
+/**
+ * 🛣️🚆 ULAŞIM HATTI DESENİ
+ *
+ * Otoyol ve demiryolu kayıtları tek renkli düz bir çizgi olunca akarsudan ya
+ * da fay hattından ayırt edilemiyordu. Harita lejantlarının alışılmış işaretleri:
+ *   otoyol    → koyu kenar + turuncu gövde + beyaz kesikli orta şerit
+ *   demiryolu → koyu kenar + beyaz gövde + koyu traversler (siyah-beyaz)
+ *   yht       → bordo kenar + beyaz gövde + uzun kırmızı traversler
+ * Bir `renk` verilirse (şık rengi) yalnızca RENKLİ rol boyanır; kenar ve desen
+ * korunduğu için hat yine ilk bakışta yol/ray olarak okunur.
+ */
+function ulasimHatDeseni(item) {
+  if (!item || item.category !== 'ulasim' || item.shapeType !== 'polyline') return null;
+  const t = String(item.type || '').toLocaleLowerCase('tr');
+  if (t.includes('otoyol')) return 'otoyol';
+  if (t.includes('yht')) return 'yht';
+  if (t.includes('demiryolu')) return 'demiryolu';
+  return null;
+}
+
+const ULASIM_HAT_STILI = {
+  otoyol:    { kasa: '#1c1917', govde: '#f59e0b', desen: '#fffbeb', renkli: 'govde' },
+  demiryolu: { kasa: '#0f172a', govde: '#f8fafc', desen: '#0f172a', renkli: 'desen' },
+  yht:       { kasa: '#450a0a', govde: '#ffffff', desen: '#dc2626', renkli: 'desen' }
+};
+
+/** Üst üste üç çizgiden (kenar, gövde, desen) oluşan Leaflet katman grubu */
+function ulasimHatKatmani(coords, desen, { renk = null, kalinlik = 4, sinif = '' } = {}) {
+  const st = ULASIM_HAT_STILI[desen];
+  const grup = L.featureGroup();
+  if (!st || !Array.isArray(coords)) return grup;
+  const k = kalinlik;
+  const ekle = (rol, opt) => {
+    const cizgi = L.polyline(coords, Object.assign({ lineJoin: 'round', opacity: 1 }, opt));
+    cizgi.hatRol = rol;
+    cizgi.hatRenkli = st.renkli === rol;
+    grup.addLayer(cizgi);
+  };
+  ekle('kasa', { color: st.kasa, weight: k + 4, opacity: 0.9, lineCap: 'round', className: ('ulasim-hat-kasa ' + sinif).trim() });
+  ekle('govde', { color: st.renkli === 'govde' && renk ? renk : st.govde, weight: k, lineCap: 'round' });
+  const desenRenk = st.renkli === 'desen' && renk ? renk : st.desen;
+  if (desen === 'otoyol') {
+    ekle('desen', { color: desenRenk, weight: Math.max(1.2, k * 0.28), dashArray: '8 7', lineCap: 'butt' });
+  } else {
+    ekle('desen', { color: desenRenk, weight: k, dashArray: desen === 'yht' ? '16 6' : '9 9', lineCap: 'butt' });
+  }
+  return grup;
+}
+
+/**
+ * Cevap durumunu desenli hattın TEK bir alt çizgisine uygular. Genel
+ * `setStyle({color, weight})` üç katmanı aynı renge boyayıp deseni siliyordu.
+ */
+function ulasimHatDurumu(l, durum) {
+  if (!l || !l.hatRol) return false;
+  if (durum === 'sonuk') { l.setStyle({ opacity: 0.22 }); return true; }
+  l.setStyle({ opacity: l.hatRol === 'kasa' ? 0.9 : 1 });
+  if (l.hatRenkli) l.setStyle({ color: durum === 'dogru' ? '#10b981' : '#ef4444' });
+  if (l.hatRol === 'kasa' && l._path) {
+    l._path.classList.remove('ulasim-hat-vurgu', 'ulasim-hat-dogru', 'ulasim-hat-yanlis');
+    l._path.classList.add(durum === 'dogru' ? 'ulasim-hat-dogru' : 'ulasim-hat-yanlis');
+  }
+  return true;
+}
+
 function escAttr(text) {
   return String(text == null ? '' : text)
     .replace(/&/g, '&amp;')
@@ -1081,6 +1146,8 @@ class GeographyMap {
         if (sType === 'point' || !subItem.coordinates || !Array.isArray(subItem.coordinates[0])) {
           const icon = this.getCustomCategoryIcon(subItem, { isimsiz: true });
           L.marker([subItem.lat, subItem.lng], { icon: icon }).addTo(groupLayer);
+        } else if (sType === 'polyline' && ulasimHatDeseni(subItem)) {
+          ulasimHatKatmani(subItem.coordinates, ulasimHatDeseni(subItem), { kalinlik: 6, sinif: 'ulasim-hat-vurgu' }).addTo(groupLayer);
         } else if (sType === 'polyline') {
           L.polyline(subItem.coordinates, {
             color: '#f59e0b',
@@ -1128,6 +1195,12 @@ class GeographyMap {
       }
     } else if (shapeType === 'polyline') {
       const coords = questionItem.coordinates;
+      const hatDeseni = ulasimHatDeseni(questionItem);
+      if (hatDeseni) {
+        this.currentShapeLayer = ulasimHatKatmani(coords, hatDeseni, { kalinlik: 6, sinif: 'ulasim-hat-vurgu' }).addTo(this.map);
+        if (this.autoZoomEnabled) this.flyToBoundsSafely(L.latLngBounds(coords).pad(0.35));
+        return;
+      }
       
       let polyColor = '#ef4444';
       let polyClass = 'animated-pulse-polyline';
@@ -1304,7 +1377,8 @@ class GeographyMap {
           .filter(it => Number.isFinite(it.lat) && Number.isFinite(it.lng))
           .map(it => [it.lat, it.lng]);
 
-        if (validCoords.length >= 2) {
+        // Ulaşım hatlarında güzergâh zaten çizili; kuş uçuşu kesikli bağlayıcı onu karalardı.
+        if (validCoords.length >= 2 && !itemsToRender.some(it => ulasimHatDeseni(it))) {
           const connectorLine = L.polyline(validCoords, {
             color: choiceColor.main,
             weight: 2.5,
@@ -1336,6 +1410,11 @@ class GeographyMap {
             poly.optionId = opt.id;
             poly.subItemId = subItem.id;
             poly.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
+          } else if (ulasimHatDeseni(subItem) && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
+            subGeometriVar = true;
+            const hat = ulasimHatKatmani(subItem.coordinates, ulasimHatDeseni(subItem), { renk: choiceColor.main, kalinlik: 3.5 }).addTo(this.multiChoiceLayerGroup);
+            hat.eachLayer(c => { c.optionId = opt.id; c.subItemId = subItem.id; });
+            hat.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
           } else if (subItem.shapeType === 'polyline' && Array.isArray(subItem.coordinates) && Array.isArray(subItem.coordinates[0])) {
             subGeometriVar = true;
             const line = L.polyline(subItem.coordinates, {
@@ -1482,6 +1561,11 @@ class GeographyMap {
           }).addTo(this.multiChoiceLayerGroup);
           geoLayer.optionId = opt.id;
         }
+      } else if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0]) && ulasimHatDeseni(opt)) {
+        geometriVar = true;
+        const hat = ulasimHatKatmani(opt.coordinates, ulasimHatDeseni(opt), { renk: choiceColor.main, kalinlik: 3.5 }).addTo(this.multiChoiceLayerGroup);
+        hat.eachLayer(c => { c.optionId = opt.id; });
+        hat.on('click', () => { if (onSelectOption) onSelectOption(opt.id); });
       } else if (shapeType === 'polyline' && opt.coordinates && Array.isArray(opt.coordinates[0])) {
         geometriVar = true;
         const polyline = L.polyline(opt.coordinates, {
@@ -1566,6 +1650,12 @@ class GeographyMap {
           const isCorrect = (id === correctId);
           const isSelectedWrong = (id === selectedId && selectedId !== correctId);
 
+          if (l.hatRol) {
+            ulasimHatDurumu(l, isCorrect ? 'dogru' : (isSelectedWrong ? 'yanlis' : 'sonuk'));
+            if ((isCorrect || isSelectedWrong) && l.bringToFront) l.bringToFront();
+            return;
+          }
+
           if (isCorrect) {
             if (typeof l.setStyle === 'function') {
               l.setStyle({
@@ -1625,6 +1715,7 @@ class GeographyMap {
 
     if (this.currentShapeLayer) {
       const updateSingleStyle = (l) => {
+        if (ulasimHatDurumu(l, isCorrect ? 'dogru' : 'yanlis')) return;
         if (isCorrect) {
           if (typeof l.setStyle === 'function') {
             l.setStyle({
@@ -1694,6 +1785,13 @@ class GeographyMap {
           const id = l.optionId || (l.feature && l.feature.properties && (l.feature.properties.id || l.feature.properties.name));
           if (!id || !states[id]) return;
           const st = states[id].state;
+          if (l.hatRol) {
+            if (st === 'correct' || st === 'wrong' || st === 'dim') {
+              ulasimHatDurumu(l, st === 'correct' ? 'dogru' : (st === 'wrong' ? 'yanlis' : 'sonuk'));
+              if (st !== 'dim' && l.bringToFront) l.bringToFront();
+            }
+            return;
+          }
           if (st === 'correct') {
             if (typeof l.setStyle === 'function') l.setStyle({ color: '#10b981', weight: 4.5, fillColor: '#10b981', fillOpacity: 0.72 });
             if (l._path) { l._path.classList.remove('glow-red-polygon', 'dimmed-choice-polygon'); l._path.classList.add('glow-green-polygon'); }
@@ -1794,6 +1892,8 @@ class GeographyMap {
           fillOpacity: 0.35,
           className: 'animated-pulse-polygon'
         }).addTo(this.networkLayerGroup);
+      } else if (ulasimHatDeseni(member) && Array.isArray(member.coordinates) && Array.isArray(member.coordinates[0])) {
+        ulasimHatKatmani(member.coordinates, ulasimHatDeseni(member), { kalinlik: 4.5 }).addTo(this.networkLayerGroup);
       } else if (member.shapeType === 'polyline' && Array.isArray(member.coordinates) && Array.isArray(member.coordinates[0])) {
         L.polyline(member.coordinates, {
           color: netColor,
@@ -1804,8 +1904,11 @@ class GeographyMap {
       }
     });
 
-    // Noktalar arası bağlantı ağı (TSP döngüsü)
-    if (points.length === 2) {
+    // Noktalar arası bağlantı ağı (TSP döngüsü). Ulaşım hatlarında gerçek
+    // güzergâh zaten çizili; kuş uçuşu kesikli döngü onun üstünü karalıyordu.
+    if (members.some(m => ulasimHatDeseni(m))) {
+      // güzergâh yeterli
+    } else if (points.length === 2) {
       const line = L.polyline(points, {
         color: netColor,
         weight: 3.5,
@@ -2530,7 +2633,7 @@ class GeographyMap {
     });
 
     groupMap.forEach((members, gId) => {
-      if (members.length >= 2) {
+      if (members.length >= 2 && !members.some(m => ulasimHatDeseni(m))) {
         for (let i = 0; i < members.length; i++) {
           if (members.length === 2 && i === 1) break; // 2 üye için tek çizgi yeterli
           const nextIdx = (i + 1) % members.length;
@@ -2674,7 +2777,13 @@ class GeographyMap {
 
       const customIcon = this.getCustomCategoryIcon(item);
 
-      if (shapeType === 'polyline') {
+      const hatDeseni = shapeType === 'polyline' ? ulasimHatDeseni(item) : null;
+      if (hatDeseni) {
+        const hat = ulasimHatKatmani(item.coordinates, hatDeseni, { kalinlik: 4 });
+        hat.bindPopup(this._popupHtml(item, null, `${item.type} (${item.region || 'Hat/Güzergah'})`), { maxWidth: 280 });
+        this._enableDragLinking(hat, item, flatItems);
+        this.exploreLayerGroup.addLayer(hat);
+      } else if (shapeType === 'polyline') {
         let polyColor = topicColor(item.category, color);
         if (isMountain) polyColor = '#d97706';
         else if (isStrait) polyColor = '#0284c7';

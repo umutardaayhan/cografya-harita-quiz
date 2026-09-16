@@ -3614,6 +3614,18 @@ path.dimmed-choice-polygon {
   to { stroke-dashoffset: -24; }
 }
 
+/* 🛣️🚆 ULAŞIM HATLARI (bkz. map.js · ulasimHatKatmani): ışıma yalnızca kenar
+   katmanına verilir. Gövde/desen katmanlarına genel çizgi animasyonları
+   (stroke-dasharray) UYGULANMAMALI — traversleri ve orta şeridi siler. */
+.ulasim-hat-kasa { cursor: pointer; }
+.ulasim-hat-vurgu {
+  filter: drop-shadow(0 0 7px rgba(250, 204, 21, 0.9));
+  animation: ulasimHatNabiz 1.4s ease-in-out infinite alternate;
+}
+@keyframes ulasimHatNabiz { from { stroke-opacity: 0.55; } to { stroke-opacity: 1; } }
+.ulasim-hat-dogru { filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.95)); }
+.ulasim-hat-yanlis { filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.95)); }
+
 .animated-pulse-polygon {
   animation: polygonGlow 2s ease-in-out infinite alternate;
 }

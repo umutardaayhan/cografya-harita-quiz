@@ -374,7 +374,8 @@ const PACK_DEFS = [
     recommends: []
   },
   {
-    id: 'tr.ulasim', country: 'tr', categories: ['ulasim'],
+    // v2: otoyol ve demiryolu kayıtları nokta yerine güzergâh çizgisi taşır
+    id: 'tr.ulasim', country: 'tr', categories: ['ulasim'], version: 2,
     icon: '🚢', color: '#3b82f6',
     tr: { title: 'Ulaşım & Ticaret Koridorları', desc: 'Limanlar, havalimanları, köprüler, tüneller, boru hatları ve Türk Boğazları.' },
     en: { title: 'Transport & Trade Corridors', desc: 'Ports, airports, bridges, tunnels, pipelines and the Turkish Straits.' },
@@ -653,7 +654,7 @@ function writePack(def, itemsByCat) {
     ' * Şema: { id, cat, tier(1-3), sub[], formation, geom, i18n: { lang: {...} } }',
     ' */',
     'GeoPacks.register(' + JSON.stringify(def.id) + ', {',
-    '  version: 1,',
+    '  version: ' + (def.version || 1) + ',',
     '  country: ' + JSON.stringify(def.country) + ',',
     '  categories: ' + JSON.stringify(def.categories) + ',',
     '  items: ['
@@ -712,7 +713,7 @@ PACK_DEFS.forEach(def => {
     // Önbellek kırıcı: paket dosyaları `?v=` ile istenir. Bir paketin içeriği
     // güncellendiğinde bu numarayı artırmak, CDN'deki immutable kopyayı geçersiz
     // kılar (bkz. vercel.json).
-    version: 1,
+    version: def.version || 1,
     icon: def.icon,
     color: def.color,
     file: file,

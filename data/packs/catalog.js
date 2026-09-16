@@ -3737,7 +3737,7 @@ const GEO_CATALOG = {
       "id": "tr.ulasim",
       "country": "tr",
       "group": "ekonomik",
-      "version": 1,
+      "version": 2,
       "icon": "🚢",
       "color": "#3b82f6",
       "file": "data/packs/pack.tr.ulasim.js",
@@ -3752,8 +3752,8 @@ const GEO_CATALOG = {
       },
       "sizeKb": {
         "1": 17,
-        "2": 33,
-        "3": 51
+        "2": 35,
+        "3": 53
       },
       "unlocks": [
         "quiz",
